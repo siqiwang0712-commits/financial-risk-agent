@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="650" viewBox="0 0 1440 650" role="img" aria-labelledby="title desc">
+  <title id="title">FinRisk three-layer architecture</title><desc id="desc">The interface delegates to an agent, which coordinates deterministic tools and verified evidence.</desc>
+  <defs><linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#071525"/><stop offset="1" stop-color="#102c3a"/></linearGradient><marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0 0l10 5-10 5z" fill="#688497"/></marker></defs>
+  <rect width="1440" height="650" rx="24" fill="url(#bg)"/>
+  <g font-family="Inter,Segoe UI,sans-serif">
+    <text x="64" y="62" fill="#f5fbff" font-size="30" font-weight="700">A decision-grade separation of responsibilities</text>
+    <text x="64" y="94" fill="#91a9b8" font-size="16">Interface shows · Agent reasons · Tools execute · Evidence grounds</text>
+    <g transform="translate(64 128)">
+      <rect width="1312" height="108" rx="16" fill="#102b3b" stroke="#2e5064"/>
+      <text x="26" y="34" fill="#79ead9" font-size="13" font-weight="700" letter-spacing="1.7">01  INTERFACE LAYER</text>
+      <text x="26" y="68" fill="#f5fbff" font-size="21" font-weight="650">Portfolio · Entity · Risk Case · Scenario · Governance · Audit</text>
+      <text x="26" y="91" fill="#91a9b8" font-size="14">Presents conclusions and proof paths. Never performs financial reasoning.</text>
+      <g transform="translate(895 24)" fill="#16384a"><rect width="110" height="52" rx="10"/><rect x="122" width="110" height="52" rx="10"/><rect x="244" width="110" height="52" rx="10"/></g>
+    </g>
+    <path d="M720 240v34" stroke="#688497" stroke-width="2" marker-end="url(#arrow)"/>
+    <g transform="translate(64 280)">
+      <rect width="1312" height="132" rx="16" fill="#142a40" stroke="#5275a7"/>
+      <text x="26" y="34" fill="#a8c7ff" font-size="13" font-weight="700" letter-spacing="1.7">02  AGENT REASONING LAYER</text>
+      <text x="26" y="68" fill="#f5fbff" font-size="21" font-weight="650">Plan → Collect → Call tools → Cross-check → Verify → Reflect → Synthesize / Abstain</text>
+      <text x="26" y="96" fill="#91a9b8" font-size="14">Coordinates typed tools, judges sufficiency, records structured trace—never hidden chain-of-thought.</text>
+      <g transform="translate(984 24)"><rect width="298" height="76" rx="12" fill="#1a3553"/><text x="20" y="29" fill="#a8c7ff" font-size="13" font-weight="700">FAIL-CLOSED OUTCOMES</text><text x="20" y="54" fill="#f5fbff" font-size="16">PASS · FLAG · REVIEW · ABSTAIN</text></g>
+    </g>
+    <path d="M720 416v34" stroke="#688497" stroke-width="2" marker-end="url(#arrow)"/>
+    <g transform="translate(64 456)">
+      <rect width="846" height="138" rx="16" fill="#102f37" stroke="#319b8d"/>
+      <text x="26" y="34" fill="#79ead9" font-size="13" font-weight="700" letter-spacing="1.7">03  TOOL / CODE LAYER</text>
+      <text x="26" y="68" fill="#f5fbff" font-size="19" font-weight="650">XBRL/PDF · normalization · metrics · models · rules</text>
+      <text x="26" y="98" fill="#f5fbff" font-size="19" font-weight="650">evidence verification · contradiction · fusion · replay</text>
+      <text x="26" y="121" fill="#91a9b8" font-size="14">Typed, deterministic and independently testable.</text>
+      <g transform="translate(648 24)"><path d="M34 17h86v70H34zM18 87h118v18H18z" fill="none" stroke="#79ead9" stroke-width="3"/><path d="M52 37h50M52 52h50M52 67h32" stroke="#79ead9" stroke-width="3"/></g>
+    </g>
+    <g transform="translate(936 456)">
+      <rect width="440" height="138" rx="16" fill="#34271f" stroke="#d88b58"/>
+      <text x="26" y="34" fill="#ffc49a" font-size="13" font-weight="700" letter-spacing="1.7">PROOF &amp; GOVERNANCE</text>
+      <text x="26" y="67" fill="#f5fbff" font-size="18" font-weight="650">Immutable snapshot + version pins</text>
+      <text x="26" y="95" fill="#f5fbff" font-size="18" font-weight="650">Tenant-scoped audit trail</text>
+      <text x="26" y="120" fill="#bea798" font-size="14">Historical results remain distinguishable from replay.</text>
+    </g>
+  </g>
+</svg>

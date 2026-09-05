@@ -1,305 +1,218 @@
 <div align="center">
 
-<img src="docs/assets/finrisk-hero.svg" alt="FinRisk-Agent — evidence-grounded hybrid financial risk assessment" width="100%" />
+<img src="docs/assets/finrisk-platform.svg" alt="FinRisk — evidence-grounded financial risk intelligence" width="100%" />
 
-# FinRisk — Enterprise Financial Risk Intelligence & Management
+# FinRisk
 
-### Evidence-first financial risk intelligence, workflow and research
+### Enterprise Financial Risk Intelligence & Management — Research Prototype
 
 [![CI](https://github.com/siqiwang0712-commits/financial-risk-agent/actions/workflows/ci.yml/badge.svg)](https://github.com/siqiwang0712-commits/financial-risk-agent/actions/workflows/ci.yml)
-[![Python 3.11+](https://img.shields.io/badge/python-3.11%2B-356a5b.svg)](https://www.python.org/)
-[![FastAPI](https://img.shields.io/badge/API-FastAPI-009688.svg)](https://fastapi.tiangolo.com/)
-[![Next.js](https://img.shields.io/badge/UI-Next.js-111111.svg)](https://nextjs.org/)
-[![Tests](https://img.shields.io/badge/tests-64%20passed-2f855a.svg)](#quality-and-testing)
-[![Coverage](https://img.shields.io/badge/coverage-93.15%25-2f855a.svg)](#quality-and-testing)
-[![License: MIT](https://img.shields.io/badge/license-MIT-d45b3e.svg)](LICENSE)
+[![Python 3.11+](https://img.shields.io/badge/Python-3.11%2B-3776AB?logo=python&logoColor=white)](https://www.python.org/)
+[![FastAPI](https://img.shields.io/badge/API-FastAPI-009688?logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com/)
+[![Next.js](https://img.shields.io/badge/UI-Next.js-111111?logo=next.js&logoColor=white)](https://nextjs.org/)
+[![Tests](https://img.shields.io/badge/tests-64%20passed-2f855a)](#verification)
+[![Coverage](https://img.shields.io/badge/coverage-93.15%25-2f855a)](#verification)
+[![License](https://img.shields.io/badge/license-MIT-d45b3e)](LICENSE)
 
-**An enterprise financial-risk research platform where deterministic systems own authoritative data and arithmetic, a constrained LLM acts as a semantic sensor, and material decisions require a verifiable evidence path.**
+**An evidence-grounded financial risk platform where an LLM plans and interprets, deterministic financial tools execute, and every material conclusion must trace back to verified evidence.**
 
-> **Interface shows. Agent reasons. Tools execute. Evidence grounds.**
-
-> **Evidence → Intelligence → Decision → Action → Monitoring**
-
-[Quick start](#quick-start) · [Architecture](#architecture) · [Evidence model](#evidence-first-by-design) · [Research](#research-and-evaluation) · [Limitations](#limitations)
+[Quick start](#quick-start) · [Architecture](#architecture) · [Research results](#real-results-not-marketing-results) · [Workbench](#analyst-workbench) · [Documentation](#documentation)
 
 </div>
 
----
+> [!IMPORTANT]
+> **Risk ≠ confidence ≠ evidence coverage ≠ disagreement.** FinRisk's 0–100 risk index is an expert-designed heuristic, not a bankruptcy probability, credit rating, fraud finding, or investment recommendation.
 
-## Research snapshot
+## Why FinRisk exists
 
-**Problem →** LLM-only financial analysis can lose units, miscalculate ratios, accept optimistic language and emit unsupported claims.
+Annual reports, 10-Ks and 20-Fs scatter material evidence across XBRL facts, statements, footnotes, MD&A, risk factors and auditor language. An analyst must reconcile periods, units and restatements; calculate metrics consistently; test management claims against the numbers; and preserve a defensible source trail.
 
-**Design →** SEC XBRL is the authoritative numerical layer; annual-report pages are the narrative layer. Deterministic formulas, configured rules, structured semantic extraction, quote verification and cross-modal consistency checks remain separate and auditable.
+An unconstrained LLM is the wrong financial-risk oracle. It may transpose columns, lose units, improvise arithmetic, accept optimistic narrative, or produce an unsupported conclusion. FinRisk instead treats the LLM as a **fallible semantic sensor** inside a controlled system:
 
-**Pilot result →** The first frozen public-company benchmark is deliberately small: Apple, Microsoft and Intel FY2024, split by company. It produced a useful negative result—on this `n=3` pilot, Full Hybrid risk-classification F1 was `0.00` with `2/3` decision coverage, while Ratios Only was `1.00`. Full Hybrid contradiction F1 was `0.667`. Bootstrap intervals are correspondingly uninformative (`[0, 1]` for most accuracy estimates). **This does not establish model superiority; it demonstrates that the experiment is runnable and that the current aggregation requires more validation.**
+| Responsibility | System owner | Invariant |
+|---|---|---|
+| Authoritative numbers and normalization | XBRL + deterministic code | Preserve unit, period, filing and restatement provenance |
+| Ratios, trends, scenarios and model formulas | Deterministic tools | Independently reproducible and tested |
+| MD&A, notes and audit-language interpretation | Schema-constrained LLM | Semantic extraction only; never final scoring |
+| Risk patterns and thresholds | Versioned rules and policy | Inspectable, replayable and organization-scoped |
+| Material conclusions | Failure-aware fusion + verification | No valid evidence path → `REVIEW` or `ABSTAIN` |
 
-<img src="research/results/public_v1/baseline-risk-f1.svg" alt="Actually executed public-company baseline results" width="760" />
+The core research proposition is simple:
 
-| Baseline | Coverage | Risk F1 | Balanced accuracy |
+> **Financial arithmetic belongs to deterministic systems. Semantic interpretation belongs to a constrained LLM. Decisions belong to an auditable evidence path.**
+
+## What you can do
+
+- Ingest SEC Company Facts / inline XBRL and page-aware annual-report PDFs.
+- Normalize financial values across currency, scale, period, taxonomy and restatement candidates.
+- Compute liquidity, leverage, profitability, cash-flow, working-capital and trend metrics.
+- Run Altman Z, Beneish M, Piotroski F and Ohlson O with explicit applicability checks.
+- Evaluate 68 versioned expert rules without scattering thresholds through application code.
+- Extract structured narrative claims through mock or real OpenAI-compatible providers.
+- Verify quotations against cited pages before admitting them as evidence.
+- Compare narrative with multi-signal numeric evidence across six consistency domains.
+- Fuse risk using weighted-average, max-severity, hierarchical or interaction-aware strategies.
+- Convert findings into tenant-scoped risk cases, actions, reviews and immutable audit events.
+- Replay an assessment from frozen inputs and versions, then show any output drift.
+- Apply deterministic stress scenarios and compare baseline versus stressed decisions.
+
+## Architecture
+
+<img src="docs/assets/decision-architecture.svg" alt="FinRisk three-layer decision architecture" width="100%" />
+
+The three layers enforce a strict dependency boundary:
+
+1. **Interface Layer** — FastAPI and the Next.js Workbench present data, workflow and proof. They do not calculate financial risk.
+2. **Agent Reasoning Layer** — the planner and orchestrator select typed tools, assess sufficiency, cross-check signals, verify claims, reflect, and synthesize or abstain.
+3. **Tool / Code Layer** — ingestion, normalization, metrics, models, rules, evidence, contradiction detection, fusion and replay execute deterministically.
+
+```text
+User
+  ↓
+Interface ── Portfolio · Entity · Risk Case · Scenario · Governance · Audit
+  ↓
+Agent ───── Understand → Plan → Collect → Execute → Cross-check → Verify → Reflect
+  ↓                                      ↓
+Tools ───── XBRL/PDF · Metrics · Models · Rules · Evidence · Fusion · Replay
+  ↓
+Verified evidence graph → PASS / FLAG / REVIEW / ABSTAIN
+```
+
+Only structured execution metadata is retained: plan step, tool name, status, result summary, evidence references, rationale and confidence. Hidden chain-of-thought is neither stored nor displayed.
+
+### Agent tool registry
+
+The typed registry exposes:
+
+| Tool family | Capabilities |
+|---|---|
+| Ingestion | PDF extraction, XBRL normalization, period and unit reconciliation |
+| Financial | ratios, trends, period comparison, missing-data detection, scenarios |
+| Models | Altman, Beneish, Piotroski, Ohlson, applicability checks |
+| Rules | versioned single-factor and cross-factor risk signals |
+| Evidence | retrieval, quote verification, provenance graph construction |
+| Consistency | narrative–numeric support, tension and contradiction classification |
+| Decision | signal calculation, policy resolution, fusion, snapshot and replay |
+
+Unknown tools, malformed arguments and missing required inputs fail closed.
+
+## Evidence is the product
+
+<img src="docs/assets/decision-trace-v2.svg" alt="Auditable FinRisk decision trace" width="100%" />
+
+Every material conclusion follows this graph:
+
+```text
+document → page/section/span → extracted fact or claim → metric/rule/model
+         → fusion contribution → risk dimension → final decision
+```
+
+A decision trace records reason code, document hash, accession, source page or XBRL concept, rule/model/prompt/fusion versions, confidence, coverage, disagreement and contribution. Evidence states remain explicit:
+
+- `UNVERIFIED` — proposed but not confirmed at the cited location.
+- `LOCATED` — extracted from a source location but not reconciled.
+- `VERIFIED` — matched to the cited report evidence.
+- `REJECTED` — verification failed; the claim cannot influence the result.
+
+Conflicting top-ranked facts are not silently selected. Missing values are never replaced with zero. Broken paths trigger review or abstention.
+
+### Deterministic replay
+
+Each analysis can freeze its input hash, document version, policy and rule versions, prompt/model version, fusion strategy, configuration and timestamp into an immutable snapshot. Replay creates a separate result and diff; it never overwrites the historical decision.
+
+This makes questions such as these answerable:
+
+- Was the source document different?
+- Did a threshold, model, prompt or fusion strategy change?
+- Is the result byte-for-byte reproducible under the pinned configuration?
+- Which decision path changed, and why?
+
+See [Decision-grade controls](docs/decision_grade_controls.md).
+
+## Analyst Workbench
+
+<img src="docs/assets/dashboard-running.png" alt="FinRisk analyst workbench running locally" width="100%" />
+
+The Workbench follows the analyst's path rather than a chat metaphor:
+
+```text
+Portfolio → Entity → Risk Case → Risk Drivers → Evidence
+          → Scenario → Governance → Audit
+```
+
+It keeps severity, trajectory, evidence coverage, decision confidence and model disagreement visually separate. Risk findings can become owned cases with reviewer status, due dates, actions, comments and an audited human override.
+
+> The screenshot is from the local prototype. It is not evidence of a hosted production deployment.
+
+## Real results, not marketing results
+
+The checked-in public pilot runs five baselines on **three company-disjoint FY2024 observations**: Apple, Microsoft and Intel. It is intentionally too small for inferential claims, but it is reproducible and preserves a valuable negative result.
+
+<img src="research/results/public_v1/baseline-risk-f1.svg" alt="Executed n=3 pilot baseline F1 results" width="760" />
+
+| Baseline | Decision coverage | Risk F1 | Balanced accuracy |
 |---|---:|---:|---:|
 | LLM Only¹ | 3/3 | 0.000 | 0.500 |
-| Ratios Only | 3/3 | 1.000 | 1.000 |
+| Ratios Only | 3/3 | **1.000** | **1.000** |
 | Rule Engine | 3/3 | 0.667 | 0.750 |
 | Traditional Models | 3/3 | 0.500 | 0.500 |
 | Full Hybrid | 2/3 | 0.000 | 0.500 |
 
-¹ Offline deterministic semantic provider; the real-provider run is explicitly `NOT RUN`.
+¹ The recorded pilot used the deterministic offline semantic provider. A paid LLM baseline was **NOT RUN** because no API credential was supplied.
 
-<details>
-<summary><strong>Open complete metrics and reproducible artifacts</strong></summary>
+Full Hybrid did **not** outperform Ratios Only. Its contradiction F1 was `0.667`; most bootstrap intervals span `[0, 1]`. The result supports only two claims: the evaluation pipeline executes end to end, and the current fusion design needs a larger independently labelled validation set. It does not establish superiority of any architecture.
 
-The complete output includes accuracy with 95% bootstrap intervals, precision, recall, F1, balanced accuracy, AUROC/AUPRC where applicable, Brier score, ECE, evidence precision, unsupported-claim rate, contradiction F1 and coverage.
+Artifacts:
 
-- [Interpreted research results](research/results.md)
+- [Interpretation and limitations](research/results.md)
 - [Machine-readable summary](research/results/public_v1/summary.json)
 - [Raw predictions](research/results/public_v1/predictions.csv)
 - [Per-company score decomposition](research/results/public_v1/score_decomposition.csv)
 - [Confusion matrices](research/results/public_v1/confusion_matrices.csv)
-- [Ablation results](research/results/public_v1/ablations.csv)
+- [Ablations](research/results/public_v1/ablations.csv)
 - [Robustness checks](research/results/public_v1/robustness.csv)
-
-</details>
-
-Sample output: [Intel 2024 text assessment](examples/intel_2024_sample_report.txt) · [Intel 2024 PDF assessment](examples/intel_2024_sample_report.pdf)
-
-> The pilot is single-reviewer and too small for inferential claims. The “LLM Only” run used the offline deterministic provider because no API credential was supplied; the production structured provider is implemented but no paid-provider result is claimed.
+- [Error analysis](research/error_analysis.md)
 
 ### Research questions
 
-- **RQ1:** Does hybrid reasoning reduce unsupported claims relative to semantic-only analysis?
-- **RQ2:** Does cross-modal consistency improve contradiction detection?
-- **RQ3:** Does Full Hybrid improve company-level risk classification under company-disjoint evaluation?
-- **RQ4:** How sensitive are predictions to removing narrative, rules, models, trends or inputs?
+- **RQ1 — Grounding:** Does hybrid reasoning reduce unsupported claims relative to semantic-only analysis?
+- **RQ2 — Consistency:** Do cross-modal checks improve narrative–numeric contradiction detection?
+- **RQ3 — Classification:** Does Full Hybrid improve company-level risk classification under company-disjoint evaluation?
+- **RQ4 — Robustness:** How sensitive are decisions to narrative, rules, models, trends, missing evidence and perturbations?
 
-Only diagnostic evidence exists so far: RQ3 is not supported by the pilot, RQ2 has one true positive and one false positive, and RQ1 requires a real LLM run. See the [full results](research/results.md) and [dataset card](research/dataset_card.md).
+Current evidence is diagnostic only: RQ3 is not supported by the pilot, RQ2 has one true positive and one false positive, and RQ1 still requires a real-provider run.
 
-### Maturity boundary
+## Project maturity
 
-| State | Scope |
+| Status | What it means here |
 |---|---|
-| VALIDATED (limited local scope) | 64 automated tests, 93.15% coverage, deterministic finance fixtures, three-company offline pilot reproduction, frontend build |
-| IMPLEMENTED BUT NOT EXTERNALLY VALIDATED | XBRL reconciliation, constrained LLM adapter, decision trace, immutable snapshots/replay diff, RBAC/API keys, policy/fusion, cases, PostgreSQL migration, governance/drift and Workbench |
-| PLANNED / NOT RUN | Independently dual-reviewed ~90 company-year benchmark, live paid-LLM evaluation, production identity/object storage/worker/telemetry deployment, calibrated risk model |
+| **VALIDATED — limited local scope** | 64 automated tests; 93.15% line coverage; Ruff, TypeScript and production frontend build; deterministic finance fixtures; frozen three-company pilot reproduction |
+| **IMPLEMENTED, NOT EXTERNALLY VALIDATED** | XBRL/PDF reconciliation, constrained provider adapter, evidence graph, decision trace, snapshots/replay, risk cases, RBAC/API keys, PostgreSQL migration, policy/fusion, governance/drift and Workbench |
+| **PLANNED / NOT RUN** | Independently dual-reviewed ~90 company-year benchmark, paid-LLM evaluation, calibrated risk model, production identity/object storage/worker/telemetry deployment |
 
-### Enterprise platform upgrade
-
-The repository now adds organization/entity isolation, five-role RBAC, versioned KRI policies, risk-case lifecycle and human overrides, append-only audit events, idempotent background-job semantics, tenant-scoped document storage, deterministic scenarios, temporal classification, disclosure-tension taxonomy, four replaceable fusion strategies, portfolio summaries and an enterprise REST surface. PostgreSQL DDL is included; external PostgreSQL operation is **NOT VALIDATED** in this environment.
-
-The operational decision contract separates `Risk Severity`, `Risk Trajectory`, `Evidence Coverage`, `Decision Confidence`, `Model Disagreement` and `PASS / FLAG / REVIEW / ABSTAIN`. Low coverage abstains; concentrated risk is no longer silently diluted by a single averaging strategy.
-
-See the [enterprise architecture and honest maturity boundary](docs/enterprise_platform.md).
-
-### Decision-grade controls
-
-Every Agent response now carries reason-coded decision paths and a content-addressed analysis snapshot. A path records source spans, rule/model family and versions, confidence, coverage, disagreement and fusion role. Historical output hashes are preserved; replay produces a separate equality/drift result. Caller-supplied role headers are not trusted—the enterprise API resolves organization, user and role from a server-side hashed API credential. Risk cases cannot reach Accepted or Resolved without verified proof.
-
-See [reproducibility, governance, threat model, observability and readiness](docs/decision_grade_controls.md).
-
-
-## Why FinRisk-Agent?
-
-Annual reports, 10-Ks and 20-Fs distribute financial risk evidence across statements, footnotes, MD&A, risk factors and auditor language. A reader must reconcile numbers across years while deciding whether management's narrative agrees with the underlying indicators.
-
-Using an LLM alone is not enough. It may transpose columns, lose units, calculate ratios inconsistently, accept optimistic language at face value or produce claims without a source page.
-
-FinRisk-Agent treats an LLM as a **fallible semantic sensor**, not a financial-risk oracle. It assigns each task to the component that can perform it most auditably:
-
-| Responsibility | Owner | Why |
-|---|---|---|
-| Parse and normalize financial values | Deterministic code | Units, signs and fiscal years must be reproducible |
-| Calculate ratios, growth and model formulas | Deterministic code | Arithmetic should be independently testable |
-| Detect financial risk patterns | Versioned expert rules | Thresholds and interactions must be inspectable |
-| Interpret MD&A, notes and audit language | Structured narrative provider | Language understanding is the LLM's useful role |
-| Admit textual evidence | Evidence verifier | A quote must exist on the cited page |
-| Aggregate risk and coverage | Configured scoring engine | The LLM never chooses the final score |
-
-> **Risk Score ≠ bankruptcy probability.** The 0–100 output is an expert-designed heuristic risk index. It is not a credit rating, fraud finding, investment recommendation or statistically calibrated probability of default.
-
-## What the system produces
-
-For a company and reporting period, the assessment contains:
-
-- Overall risk score and level: Very Low, Low, Moderate, High or Critical
-- A separate, uncalibrated evidence-coverage score with component breakdown
-- Eight risk dimensions with key contributing signals
-- Financial metrics, formulas, inputs and missing-data reasons
-- Altman Z, Beneish M, Piotroski F and Ohlson O model breakdowns
-- Triggered rule IDs, severity, rationale and page-level source references
-- Narrative–numeric inconsistencies phrased as signals—not allegations
-- Missing and conflicting information requiring review
-- A typed evidence graph connecting source values to conclusions
-- Text and PDF assessment output
-
-### Eight risk dimensions
-
-| Dimension | Typical questions |
-|---|---|
-| Liquidity | Can current resources cover near-term obligations? |
-| Solvency & leverage | Is debt capacity or long-term balance-sheet resilience deteriorating? |
-| Profitability | Are margins, ROA or ROE weakening? |
-| Cash flow | Do operations and free cash flow support reported performance? |
-| Earnings quality | Do profit, receivables, inventory and cash conversion agree? |
-| Accounting | Are there screening signals that warrant additional review? |
-| Governance & audit | Do audit opinions, controls or governance disclosures raise concern? |
-| Business & going concern | Are refinancing, concentration, litigation or continuity risks present? |
-
-## Architecture
-
-<img src="docs/assets/hybrid-architecture.svg" alt="FinRisk-Agent hybrid architecture" width="900" />
-
-The runtime has three strict dependency layers:
-
-```text
-Interface Layer (FastAPI + Next.js)
-                  ↓
-Agent Reasoning Layer (plan → orchestrate → verify → reflect → synthesize/abstain)
-                  ↓
-Tool / Code Layer (PDF/XBRL · metrics · models · rules · evidence · consistency)
-```
-
-The Interface never calls financial models. The Agent coordinates typed tools but does not reimplement formulas. Tool implementations do not depend on the Agent or frontend. Financial arithmetic, applicability, rules and aggregation remain outside the LLM; narrative candidates cannot affect a result until their quoted evidence is verified.
-
-The public workflow is:
-
-```text
-Understand → Plan → Collect Evidence → Call Tools → Analyze → Cross-check
-→ Verify → Reflect → Synthesize → Finalize / Abstain / Review Required
-```
-
-Only structured execution metadata is retained: plan step, tool, status, result summary, evidence references, rationale and confidence. Hidden chain-of-thought is neither stored nor displayed. See the [migration map](docs/three_layer_migration.md).
-
-### Agent tool registry
-
-The typed registry exposes PDF and XBRL extraction, normalization, financial metrics, four traditional models, model-applicability checks, configured rules, evidence retrieval, narrative evidence verification, contradiction detection, period comparison, missing-data detection, risk-signal calculation and deterministic assessment synthesis. Unknown tools and missing required inputs fail closed.
-
-### Processing pipeline
-
-```text
-SEC 10-K / 20-F
-    ├── Company Facts / inline XBRL ──→ authoritative financial values
-    │                                   └── year, unit, accession, restatement provenance
-    ├── PDF/page-aware parsing ───────→ narrative evidence + document candidates
-    │                                   └── XBRL ↔ document reconciliation
-    │                            ├── metrics and trends
-    │                            ├── traditional risk models
-    │                            └── versioned expert rules
-    └── narrative extraction ─→ candidate claims ─→ evidence verifier
-                                                     │
-metrics + rules + models + verified claims ─────────┤
-                                                     ↓
-                                      consistency detection
-                                                     ↓
-                                       8 risk dimensions
-                                                     ↓
-                              risk score + evidence coverage
-                                                     ↓
-                                API · dashboard · PDF report
-```
-
-## Evidence-first by design
-
-<img src="docs/assets/evidence-trace.svg" alt="Evidence trace from conclusion to report page" width="900" />
-
-Every extracted value can preserve:
-
-```text
-value · unit · currency · fiscal year · statement · line item
-document · page · original text · extraction confidence · restated status
-source type · taxonomy · concept · accession · filed date · period · source URL
-```
-
-Derived metrics retain their formulas and inputs. Rules and model mappings retain stable identifiers. The assessment exposes typed nodes and edges connecting financial values, metrics, models, signals, contradictions, dimensions and the overall result.
-
-Evidence states are intentionally distinct:
-
-- `unverified` — proposed but not located
-- `located` — extracted directly from a report location but not reconciled
-- `verified` — textual evidence matched to the cited page
-- `rejected` — the proposed evidence could not be confirmed
-
-Conflicting top-ranked financial candidates are excluded from scoring and returned as review issues. The system never silently replaces a missing value with zero.
-
-## Financial reasoning engine
-
-### Metrics
-
-- Liquidity: current, quick and cash ratios; working capital
-- Leverage: debt/equity, debt/assets, liabilities/assets and net debt
-- Debt service: interest coverage and debt/EBITDA
-- Profitability: gross, operating and net margins; ROA and ROE
-- Cash flow: CFO/net income, free cash flow and FCF margin
-- Working capital: receivable, inventory and payable days; cash conversion cycle
-- Trends: revenue, earnings, CFO, FCF, debt, cash, receivables and inventory growth
-
-Where prior-year data exists, balance-based return and working-capital metrics use average balances. Single-year calculations explicitly identify ending-balance proxies.
-
-### Traditional models
-
-| Model | Output | Guardrails |
-|---|---|---|
-| Altman Z-Score | Distress screening zone | Public-manufacturer applicability and domain checks |
-| Beneish M-Score | Manipulation-risk screening signal | Never presented as proof of manipulation or fraud |
-| Piotroski F-Score | Nine-signal financial-strength score | Original value-stock context disclosed |
-| Ohlson O-Score | O-score plus separately derived logistic probability | Input-domain and index-unit warnings |
-
-Model-to-risk mappings live in [`config/model_scoring.json`](config/model_scoring.json), including the metric, threshold, direction, dimension and score delta.
-
-### Expert rule engine
-
-The repository contains 68 versioned rules in [`rules/rules.json`](rules/rules.json). Rules cover both individual indicators and cross-metric interactions, for example:
-
-```yaml
-Revenue ↑ + Net income ↑ + Operating cash flow ↓
-→ earnings-quality warning
-
-Cash ↓ + Short-term debt ↑ + Current ratio below 1
-→ liquidity and refinancing warning
-```
-
-Major correlated rule groups use explicit `family` metadata. Within a family, aggregation retains the strongest applicable signal instead of blindly summing overlapping thresholds. Cross-factor rules remain visible and auditable.
-
-## Missing data and uncertainty
-
-FinRisk-Agent follows two invariants:
-
-```text
-Missing data ≠ zero risk
-Missing data = lower evidence coverage
-```
-
-If interest expense cannot be identified, interest coverage is reported as N/A with the missing input and impact. No value is guessed by the narrative provider.
-
-The evidence-coverage score is separate from risk and currently combines:
-
-1. Core financial data availability
-2. Numeric provenance coverage
-3. Verified narrative-claim coverage
-4. Applicable traditional-model coverage
-5. Multi-year temporal depth
-
-This score is transparent but **not empirically calibrated**. Calibration is part of the planned real-data evaluation.
+FinRisk is a research and enterprise-architecture prototype. It does not claim production deployment, regulatory approval, SOC 2, ISO 27001, external model validation or real enterprise customers.
 
 ## Quick start
 
 ### Prerequisites
 
-- Python 3.11–3.13 recommended
+- Python 3.11–3.13
 - Node.js 22+
 - npm 10+
-- Docker Desktop optional
+- Docker Desktop (optional)
 
-### 1. Install the backend
+### Backend
 
 ```bash
 python -m venv .venv
 ```
 
-Windows:
+Windows PowerShell:
 
 ```powershell
 .venv\Scripts\Activate.ps1
 python -m pip install -e ".[dev]"
+uvicorn finrisk.api:app --reload
 ```
 
 macOS/Linux:
@@ -307,19 +220,12 @@ macOS/Linux:
 ```bash
 source .venv/bin/activate
 python -m pip install -e ".[dev]"
-```
-
-### 2. Run the API
-
-```bash
 uvicorn finrisk.api:app --reload
 ```
 
-- API: `http://localhost:8000`
-- Interactive API docs: `http://localhost:8000/docs`
-- Health check: `http://localhost:8000/health`
+API documentation is available at `http://localhost:8000/docs`; health is at `http://localhost:8000/health`.
 
-### 3. Run the dashboard
+### Frontend
 
 ```bash
 cd frontend
@@ -327,7 +233,7 @@ npm ci
 npm run dev
 ```
 
-Open `http://localhost:3000`, enter the company and fiscal year, select a PDF and run the local analysis.
+Open `http://localhost:3000`.
 
 ### Docker Compose
 
@@ -335,119 +241,76 @@ Open `http://localhost:3000`, enter the company and fiscal year, select a PDF an
 docker compose up --build
 ```
 
-The default narrative provider is deterministic and offline. No API key is required for development or automated tests.
+Docker runtime validation was not available in the recorded local environment. The compose configuration and PostgreSQL-backed CI path exist, but local Docker operation is **NOT VALIDATED**.
 
-To enable the real schema-constrained provider, copy `.env.example`, set `FINRISK_LLM_PROVIDER=openai`, configure `OPENAI_API_KEY`, and explicitly set current model pricing if cost estimates are required. Every call records prompt version, attempts, token usage, estimated cost, latency and status. Pricing defaults to zero rather than silently assuming stale rates.
-
-### Reproduce the public pilot
-
-```powershell
-$env:PYTHONPATH="backend"
-python scripts/run_public_benchmark.py
-pytest --cov=finrisk --cov-fail-under=90
-```
-
-The benchmark command deterministically regenerates CSV, JSON and the result chart under `research/results/public_v1`. Rebuilding SEC snapshots separately requires an identifying `SEC_USER_AGENT`:
-
-```powershell
-$env:SEC_USER_AGENT="FinRisk-Agent your-email@example.com"
-python scripts/build_public_benchmark.py
-```
-
-## API overview
-
-### Analyze normalized data
-
-```http
-POST /api/v1/assess
-Content-Type: application/json
-```
-
-This endpoint accepts normalized current/prior financial dictionaries and optional page text. It is useful for deterministic tests and upstream structured-data integrations.
-
-### Analyze a PDF
-
-```http
-POST /api/v1/documents/analyze
-Content-Type: multipart/form-data
-```
-
-Fields:
-
-- `company`
-- `fiscal_year`
-- `file`
-
-The upload path validates PDF magic bytes, limits files to 50 MB and 500 pages, parses outside the async event loop, preserves prior-year candidates and always returns `review_required: true`. Production deployment still requires authentication, rate limiting and isolated workers.
-
-### Normalize SEC XBRL
-
-```http
-POST /api/v1/xbrl/normalize
-Content-Type: application/json
-```
-
-Pass an SEC Company Facts payload and optional fiscal years. The response contains normalized line items plus taxonomy, concept, accession, filing date, reporting period, original unit, restatement status and SEC provenance URL. `reconcile_sources()` compares document candidates against XBRL with a configured tolerance; XBRL remains authoritative while conflicts are surfaced for review.
-
-## Example: offline synthetic demo
-
-The repository includes one clearly labelled synthetic company fixture. It exists to validate system mechanics, not to demonstrate real-world performance.
+### Run the synthetic offline demo
 
 ```powershell
 $env:PYTHONPATH="backend"
 python scripts/run_demo.py
 ```
 
-The demo exercises multi-year metrics, cross-factor rules, verified narrative evidence, a liquidity contradiction, missing model inputs and the final report structure.
+The included company fixture is explicitly `synthetic`. It validates mechanics, not real-world performance.
 
-## Research and evaluation
+### Reproduce the public pilot
 
-The project asks:
-
-> Can combining deterministic financial reasoning, expert rules and evidence-grounded LLM analysis produce more reliable and explainable corporate risk assessments than using an LLM alone?
-
-### Baselines
-
-1. LLM Only
-2. Ratios Only
-3. Rule Engine Only
-4. Traditional Financial Models
-5. Full Hybrid FinRisk-Agent
-
-The repository retains the explicitly synthetic orchestration smoke test:
-
-```bash
-python scripts/run_benchmark.py
+```powershell
+$env:PYTHONPATH="backend"
+python scripts/run_public_benchmark.py
 ```
 
-The runner loads [`research/synthetic_manifest.json`](research/synthetic_manifest.json) and writes ignored JSONL artifacts. These results are **synthetic smoke outputs**, not empirical evidence.
+This regenerates the checked-in CSV, JSON and SVG result artifacts under `research/results/public_v1`.
 
-The checked-in public pilot actually runs all five baselines and five variants (`full_hybrid`, `without_narrative`, `without_rules`, `without_models`, `without_trends`) on frozen SEC-derived observations. It reports classification metrics, evidence precision, unsupported-claim rate, contradiction F1, evidence coverage, ECE and 2,000-resample company bootstrap intervals. Extraction accuracy remains **not established** because the SEC Company Facts endpoint returned HTTP 403 in the recorded environment; the ingestion code and offline tests are complete, but no circular “gold equals parser output” number is reported.
+Rebuilding SEC snapshots separately requires an identifying User-Agent:
 
-The full protocol still requires independent double annotation, adjudication and a larger company-disjoint sample before testing the research hypothesis.
+```powershell
+$env:SEC_USER_AGENT="FinRisk-Agent your-email@example.com"
+python scripts/build_public_benchmark.py
+```
 
-Research documents:
+The ingestion client includes cache, rate limiting, retry/backoff, accession provenance and content hashes. A previously recorded live Company Facts rebuild received HTTP 403; this is preserved as a real failure, not replaced with synthetic “live” data.
 
-- [`research/research_question.md`](research/research_question.md)
-- [`research/methodology.md`](research/methodology.md)
-- [`research/evaluation_protocol.md`](research/evaluation_protocol.md)
-- [`research/ablation.md`](research/ablation.md)
-- [`research/error_analysis.md`](research/error_analysis.md)
-- [`research/limitations.md`](research/limitations.md)
+## API surface
 
-## Quality and testing
+| Endpoint | Purpose |
+|---|---|
+| `POST /api/v1/assess` | Assess normalized current/prior financial data and optional page text |
+| `POST /api/v1/documents/analyze` | Validate and analyze a PDF upload |
+| `POST /api/v1/xbrl/normalize` | Normalize SEC Company Facts with provenance |
+| `/api/v1/enterprise/*` | Tenant-scoped entities, cases, scenarios, policies, governance and audit |
 
-Current local verification:
+PDF uploads validate magic bytes and limits (50 MB, 500 pages), and parsing runs outside the async event loop. Internet-facing deployment still needs production identity, malware scanning, isolated workers and operational validation.
 
-- 43 Python tests passing
-- 93.15% line coverage in the current local decision-grade run
-- Ruff static analysis passing
-- TypeScript type checking passing
-- Next.js production build passing
-- PDF upload integration, evidence-state, multi-year extraction and scoring-family tests
-- CI enforces a 90% backend coverage threshold
+The default narrative provider is deterministic and offline. To enable the schema-constrained real provider, copy `.env.example`, set `FINRISK_LLM_PROVIDER=openai`, configure `OPENAI_API_KEY`, and pin model pricing if cost estimates are needed. Calls record prompt version, attempts, tokens, estimated cost, latency and schema status. Tests never require a live API.
 
-Run locally:
+## Financial reasoning
+
+### Metrics and trends
+
+Liquidity, leverage, debt service, profitability, cash flow, working capital and multi-period growth are calculated from normalized inputs. Where prior-year values exist, balance-based return and working-capital metrics use average balances; single-period proxies are labelled.
+
+### Traditional models
+
+| Model | Output | Guardrail |
+|---|---|---|
+| Altman Z | distress screening zone | public-manufacturer applicability checks |
+| Beneish M | manipulation-risk screening signal | never presented as fraud proof |
+| Piotroski F | nine-signal financial-strength score | original value-stock context disclosed |
+| Ohlson O | O-score and separately derived logistic probability | input-domain and unit warnings |
+
+Model mappings are configured in [config/model_scoring.json](config/model_scoring.json).
+
+### Expert rules and policy
+
+[rules/rules.json](rules/rules.json) contains 68 versioned rules covering single-factor and cross-factor patterns. Correlated rules carry family metadata so aggregation retains the strongest applicable family signal instead of blindly summing overlapping thresholds. Global baseline, sector and organization policy remain separable and versioned.
+
+### Failure-aware decisions
+
+Missing evidence, low coverage, conflicting evidence, stale data, parser failure, unavailable LLMs, applicability failures and rule/model disagreement are first-class states. Depending on pinned policy, they reduce confidence, increase review requirements or force abstention—never fabricated certainty.
+
+## Verification
+
+Run the same gates used locally:
 
 ```bash
 pytest --cov=finrisk --cov-report=term-missing --cov-fail-under=90
@@ -460,83 +323,68 @@ npm run typecheck
 npm run build
 ```
 
-GitHub Actions runs backend and frontend checks on pushes and pull requests.
+Recorded local status: **64 tests passed**, **93.15% line coverage**, Ruff passed, TypeScript passed, and the Next.js production build passed. GitHub Actions additionally declares a PostgreSQL service integration path and benchmark smoke test.
 
-## Repository structure
+## Repository map
 
 ```text
 financial-risk-agent/
-├── backend/finrisk/       # XBRL, LLM, consistency, metrics, models, rules, API
-├── config/                # scoring weights and traditional-model mappings
-├── frontend/              # Next.js dashboard
-├── rules/                 # 68 versioned expert risk rules
-├── tests/                 # unit, boundary and integration tests
-├── research/              # public pilot, results, method, ablation and errors
-├── docs/                  # architecture assets and independent audit responses
-├── examples/              # explicitly synthetic fixtures
-├── scripts/               # demo and benchmark entry points
-├── portfolio/             # interview narrative and technical deep dive
+├── backend/finrisk/       # domain, tools, agent, services and REST API
+├── frontend/              # Next.js analyst Workbench
+├── config/                # scoring, model and policy configuration
+├── rules/                 # 68 versioned expert rules
+├── tests/                 # unit, security, replay and integration tests
+├── research/              # protocol, frozen pilot, ablations and errors
+├── docs/                  # architecture, controls, threat model and assets
+├── examples/              # explicitly synthetic fixtures and sample report
+├── scripts/               # demo, benchmark and data-build entry points
+├── portfolio/             # technical narrative and interview materials
 ├── docker-compose.yml
 └── FINAL_PROJECT_STATUS.md
 ```
 
-## Security and privacy
+## Security and governance
 
-The repository ignores credentials, `.env`, private reports, uploads, generated assessments, caches, dependency folders and local build output. Do not commit confidential filings or API keys.
+- Organization-scoped repositories and service checks enforce tenant boundaries.
+- Enterprise API credentials are hashed server-side; caller-supplied role headers are not trusted.
+- Human overrides retain original decision, new decision, actor, reason and timestamp.
+- Model, prompt, rule, fusion and policy versions are recorded for formal runs.
+- Credentials, `.env`, private reports, uploads, caches, generated assessments and local builds are ignored.
 
-Before internet-facing deployment, add:
-
-- Authentication and authorization
-- Rate limits and upload quotas
-- Malware scanning and isolated PDF workers
-- Persistent job and audit logging
-- Dependency locking and supply-chain scanning
-- Data retention and deletion controls
-
-See [`.env.example`](.env.example) and [`.gitignore`](.gitignore).
+These are implemented controls in a prototype, not certification claims. Review the [threat model and readiness boundary](docs/decision_grade_controls.md) before any deployment.
 
 ## Limitations
 
-This repository is a rigorously tested research prototype, not a production credit-rating system.
+- The public benchmark has only three company-year observations and single-reviewer labels.
+- No paid-provider LLM benchmark has been run; mock/offline semantics are for testing and pipeline reproduction.
+- PDF table reconstruction is conservative; complex geometry, OCR and cross-page headers need further work.
+- Live SEC Company Facts retrieval was blocked by HTTP 403 in the recorded environment, although offline ingestion tests pass.
+- The consistency engine covers six domains; breadth and contextual precision require independent annotation.
+- Rules, weights, fusion thresholds and evidence-coverage confidence are not externally calibrated.
+- Traditional financial models have population and sector limitations, especially for financial institutions.
+- Evidence matching proves provenance, not the truth or completeness of corporate disclosure.
+- PostgreSQL, Docker, identity, object storage, worker and telemetry configurations have not been validated in a production environment.
 
-- PDF table reconstruction remains conservative; complex geometry, cross-page headers and OCR need further work.
-- SEC Company Facts normalization and cross-source reconciliation are implemented and tested offline, but a live rebuild was blocked by HTTP 403 in the recorded environment.
-- V1 is English-first. The consistency engine covers six categories, but semantic breadth and contextual precision still require a larger independently annotated benchmark.
-- Rule families and weights require further domain-expert validation.
-- Traditional models have population and sector limitations, especially for financial institutions.
-- Evidence matching establishes provenance, not the truth or completeness of a disclosure.
-- Confidence is an uncalibrated evidence-coverage score.
-- No licensed, adjudicated real-company benchmark has yet been completed.
+For a precise implemented/partial/not-implemented inventory, see [FINAL_PROJECT_STATUS.md](FINAL_PROJECT_STATUS.md).
 
-The complete implementation status is maintained in [`FINAL_PROJECT_STATUS.md`](FINAL_PROJECT_STATUS.md).
+## Documentation
 
-## Roadmap
-
-- [x] XBRL normalization, provenance and PDF reconciliation contract
-- [ ] Complete and independently review the registered 30-company benchmark
-- [ ] Table geometry and OCR fallback with bounding-box provenance
-- [ ] Extend the six-category consistency ontology to all eight reporting dimensions
-- [ ] Sector-specific applicability and rule packs
-- [ ] Professional PDF report with internal evidence links
-- [ ] Licensed, double-annotated benchmark corpus
-- [ ] Empirical confidence calibration and rule sensitivity analysis
-- [ ] Authenticated background-worker deployment
+| Topic | Document |
+|---|---|
+| Architecture and enterprise boundary | [Enterprise platform](docs/enterprise_platform.md) |
+| Decision trace, replay, governance and threat model | [Decision-grade controls](docs/decision_grade_controls.md) |
+| Three-layer migration | [Migration map](docs/three_layer_migration.md) |
+| Dataset and label provenance | [Dataset card](research/dataset_card.md) |
+| Evaluation design | [Evaluation protocol](research/evaluation_protocol.md) |
+| Results and negative findings | [Results](research/results.md) |
+| Error analysis | [Error analysis](research/error_analysis.md) |
+| Research limitations | [Limitations](research/limitations.md) |
 
 ## Contributing
 
-Contributions are welcome. Financial formula changes require edge-case tests and a primary-source rationale. New rules require a unique stable ID, category, severity, explicit conditions, bounded effect and non-duplication review. Synthetic fixtures must be labelled `synthetic`.
+Contributions are welcome. Financial formula changes require edge-case tests and a primary-source rationale. New rules require a stable ID, category, severity, explicit conditions, bounded effect and duplication review. Synthetic fixtures must be labelled `synthetic`.
 
-Read [`CONTRIBUTING.md`](CONTRIBUTING.md) before opening a pull request.
-
-## Project audits
-
-The repository keeps independent Agent review responses as engineering records:
-
-- [`docs/optimization_review.md`](docs/optimization_review.md)
-- [`docs/second_agent_review.md`](docs/second_agent_review.md)
-- [`docs/third_agent_review.md`](docs/third_agent_review.md)
-
-They document what was fixed, what remains partial and why the project avoids overstating maturity.
+Read [CONTRIBUTING.md](CONTRIBUTING.md) before opening a pull request.
 
 ## License
 
@@ -545,6 +393,9 @@ Released under the [MIT License](LICENSE).
 ---
 
 <div align="center">
-<strong>FinRisk-Agent</strong><br/>
-Deterministic where correctness matters. Semantic where language matters. Evidence-grounded everywhere.
+
+**Evidence first. Failure aware. Reproducible by design.**
+
+<sub>FinRisk studies what financial AI should automate, what it must verify, and what must remain a human decision.</sub>
+
 </div>
