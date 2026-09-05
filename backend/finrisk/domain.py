@@ -13,6 +13,20 @@ class Evidence:
     confidence: float = 1.0
     verified: bool = False
     verification_status: str = "unverified"
+    source: str | None = None
+    company: str | None = None
+    period: str | None = None
+    quote: str | None = None
+    value: float | None = None
+    unit: str | None = None
+
+    def __post_init__(self) -> None:
+        if self.source is None:
+            object.__setattr__(self, "source", self.document)
+        if self.quote is None:
+            object.__setattr__(self, "quote", self.source_text)
+        if self.period is None and self.fiscal_year is not None:
+            object.__setattr__(self, "period", str(self.fiscal_year))
 
 
 @dataclass(frozen=True)

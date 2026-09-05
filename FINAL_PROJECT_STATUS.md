@@ -1,5 +1,18 @@
 # Final Project Status
 
+## Three-layer Agent refactor
+
+Fully implemented locally:
+
+- Interface Layer: FastAPI transport and Next.js dashboard; no financial formulas in the frontend.
+- Agent Reasoning Layer: typed `AgentState`, explicit planner, orchestrator, registry calls, conclusion verification, reflection, synthesis and terminal abstention/review states.
+- Tool / Code Layer: PDF/XBRL ingestion, normalization, metrics, traditional models, configured rules, evidence retrieval/verification, contradiction detection, period comparison, missing-data detection and risk-signal calculation.
+- Public workflow trace shows plan/tool/status/result summaries and evidence references, never hidden chain-of-thought.
+- Material conclusions use `Claim → Evidence → Tool/Rule/Model → Rationale → Confidence`.
+- Risk score, confidence and evidence coverage are separate output fields.
+
+Verification after refactor: 49 tests passed, 91.69% line coverage, Ruff passed, TypeScript passed, Next.js production build passed, and checked-in benchmark artifacts remained unchanged.
+
 Status date: 2026-09-05. This is an honest research-prototype status, not a production or performance claim.
 
 ## Fully Implemented

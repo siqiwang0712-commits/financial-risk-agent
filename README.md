@@ -4,7 +4,7 @@
 
 # FinRisk-Agent
 
-### An Evidence-Grounded Hybrid Agent for Explainable Corporate Financial Risk Assessment
+### An Evidence-Grounded Financial Risk Agent with Deterministic Tools
 
 [![CI](https://github.com/siqiwang0712-commits/financial-risk-agent/actions/workflows/ci.yml/badge.svg)](https://github.com/siqiwang0712-commits/financial-risk-agent/actions/workflows/ci.yml)
 [![Python 3.11+](https://img.shields.io/badge/python-3.11%2B-356a5b.svg)](https://www.python.org/)
@@ -14,7 +14,9 @@
 [![Coverage](https://img.shields.io/badge/coverage-91.06%25-2f855a.svg)](#quality-and-testing)
 [![License: MIT](https://img.shields.io/badge/license-MIT-d45b3e.svg)](LICENSE)
 
-**Traceable risk signals from annual reports—not an LLM-generated opinion.**
+**An evidence-grounded financial risk agent where an LLM plans and interprets, deterministic financial tools execute, and every material conclusion is traceable to evidence.**
+
+> **Interface shows. Agent reasons. Tools execute. Evidence grounds.**
 
 [Quick start](#quick-start) · [Architecture](#architecture) · [Evidence model](#evidence-first-by-design) · [Research](#research-and-evaluation) · [Limitations](#limitations)
 
@@ -130,7 +132,30 @@ For a company and reporting period, the assessment contains:
 
 <img src="docs/assets/hybrid-architecture.svg" alt="FinRisk-Agent hybrid architecture" width="900" />
 
-The architecture deliberately separates deterministic and semantic reasoning. Financial arithmetic, model applicability, rule evaluation and score aggregation remain outside the LLM. Narrative candidates cannot affect a result until their quoted evidence is verified against the cited page.
+The runtime has three strict dependency layers:
+
+```text
+Interface Layer (FastAPI + Next.js)
+                  ↓
+Agent Reasoning Layer (plan → orchestrate → verify → reflect → synthesize/abstain)
+                  ↓
+Tool / Code Layer (PDF/XBRL · metrics · models · rules · evidence · consistency)
+```
+
+The Interface never calls financial models. The Agent coordinates typed tools but does not reimplement formulas. Tool implementations do not depend on the Agent or frontend. Financial arithmetic, applicability, rules and aggregation remain outside the LLM; narrative candidates cannot affect a result until their quoted evidence is verified.
+
+The public workflow is:
+
+```text
+Understand → Plan → Collect Evidence → Call Tools → Analyze → Cross-check
+→ Verify → Reflect → Synthesize → Finalize / Abstain / Review Required
+```
+
+Only structured execution metadata is retained: plan step, tool, status, result summary, evidence references, rationale and confidence. Hidden chain-of-thought is neither stored nor displayed. See the [migration map](docs/three_layer_migration.md).
+
+### Agent tool registry
+
+The typed registry exposes PDF and XBRL extraction, normalization, financial metrics, four traditional models, model-applicability checks, configured rules, evidence retrieval, narrative evidence verification, contradiction detection, period comparison, missing-data detection, risk-signal calculation and deterministic assessment synthesis. Unknown tools and missing required inputs fail closed.
 
 ### Processing pipeline
 
