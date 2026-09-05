@@ -9,18 +9,26 @@ def risk_level(score): return "Very Low" if score<20 else "Low" if score<40 else
 
 
 def aggregate(signals,contradictions,config:dict):
-    base=config.get("base_score",10); caps=config.get("category_cap",100); scores=defaultdict(lambda:base)
-    for s in signals:scores[s.category]+=s.score_delta
-    for c in contradictions:scores[c.category]+=config.get("contradiction_delta",10)
-    dims={c:{"score":round(min(caps,max(0,scores[c])),1),"level":risk_level(min(caps,max(0,scores[c]))),"trend":"unknown","key_drivers":[s.rule_id for s in signals if s.category==c]} for c in CATEGORIES}
+    base=config.get("base_score",10); caps=config.get("category_cap",100); scores=defaultdict(lambda:base); covered=set()
+    for s in signals:scores[s.category]+=s.score_delta;covered.add(s.category)
+    for c in contradictions:scores[c.category]+=config.get("contradiction_delta",10);covered.add(c.category)
+    dims={c:({"score":round(min(caps,max(0,scores[c])),1),"level":risk_level(min(caps,max(0,scores[c]))),"trend":"unknown","coverage":1.0,"key_drivers":[s.rule_id for s in signals if s.category==c]} if c in covered else {"score":None,"level":"N/A","trend":"unknown","coverage":0.0,"key_drivers":[]}) for c in CATEGORIES}
     weights=config["weights"]
-    overall=sum(dims[c]["score"]*weights.get(c,0) for c in CATEGORIES)/sum(weights.values())
+    active=sum(weights.get(c,0) for c in covered)
+    overall=sum(dims[c]["score"]*weights.get(c,0) for c in covered)/active if active else 0
     return round(overall,1),risk_level(overall),dims
 
 
-def confidence(values,verified_evidence,models,multi_year=False):
-    completeness=sum(v is not None for v in values.values())/max(1,len(values))
+REQUIRED_FIELDS=("cash","current_assets","total_assets","current_liabilities","total_liabilities","shareholder_equity","revenue","operating_income","net_income","operating_cash_flow")
+
+def confidence_components(values,verified_evidence,models,multi_year=False):
+    completeness=sum(values.get(k) is not None for k in REQUIRED_FIELDS)/len(REQUIRED_FIELDS)
     ev=sum(e.verified for e in verified_evidence)/max(1,len(verified_evidence)) if verified_evidence else .5
     applicable=sum(m.output is not None for m in models)/max(1,len(models))
-    score=.5*completeness+.25*ev+.15*applicable+.1*(1 if multi_year else .5)
+    components={"core_data_completeness":completeness,"verified_evidence_coverage":ev,"applicable_model_coverage":applicable,"multi_year_coverage":1.0 if multi_year else 0.5}
+    return {k:round(v,3) for k,v in components.items()}
+
+def confidence(values,verified_evidence,models,multi_year=False):
+    c=confidence_components(values,verified_evidence,models,multi_year)
+    score=.5*c["core_data_completeness"]+.25*c["verified_evidence_coverage"]+.15*c["applicable_model_coverage"]+.1*c["multi_year_coverage"]
     return round(min(.99,max(.05,score)),2)

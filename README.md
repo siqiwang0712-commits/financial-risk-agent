@@ -25,7 +25,7 @@ Every value can retain its fiscal year, statement, normalized line item, unit, c
 - Liquidity, leverage, profitability, cash-flow, working-capital, and trend formulas with inspectable inputs and formulas.
 - Altman Z, Beneish M, Piotroski F, and Ohlson O with missing-component and applicability handling.
 - 68 independent JSON rules across liquidity, solvency, profitability, cash flow, earnings quality, accounting, governance/audit, refinancing, and going concern.
-- Native-text PDF parser (PyMuPDF), conservative normalization, page-level evidence verifier, offline mock narrative provider, and contradiction detector.
+- Native-text PDF parser (PyMuPDF), conservative normalization, page-level evidence verifier, offline mock narrative provider, and a liquidity contradiction prototype.
 - Eight-dimension aggregation using documented **expert-designed heuristic weights**, separate confidence scoring, FastAPI endpoint, PDF/text report, responsive Next.js UI, synthetic demo, and evaluation utilities.
 
 ## Local setup
@@ -60,11 +60,11 @@ Or run both services with `docker compose up --build`. No API key is needed: the
 
 ## API
 
-`POST /api/v1/assess` accepts company, fiscal year, normalized current/prior financial dictionaries, and page text. It returns dimensions, metrics, models, triggered rules, verified contradictions, missing information, confidence, and the non-probability disclaimer. V1 prioritizes English US GAAP/IFRS filings. The parser exposes candidates conservatively; production ingestion should add table/XBRL reconciliation and human-review queues before high-stakes use.
+`POST /api/v1/assess` accepts normalized data. `POST /api/v1/documents/analyze` accepts a PDF, company, and fiscal year; it validates size/type, parses page text, attaches source references, and returns a review-required assessment. The current extractor is intentionally conservative and does not yet solve complex tables, multi-column reconciliation, XBRL cross-checking, or OCR.
 
 ## Scoring and uncertainty
 
-Rules add bounded category deltas to a transparent base score; category scores are weighted using [config/scoring.json](config/scoring.json). Thresholds and [rules/rules.json](rules/rules.json) are versioned. Confidence is a separate function of data completeness, verified evidence, applicable model coverage, and multi-year coverage. A high-risk/low-confidence result is therefore possible and meaningful.
+Rules add bounded category deltas to a transparent base score; categories without supporting signals are N/A rather than receiving automatic risk. Thresholds and [rules/rules.json](rules/rules.json) are versioned. Confidence is an **uncalibrated coverage score** based on a fixed core-field matrix, verified evidence, applicable-model coverage, and multi-year coverage; its component breakdown is returned.
 
 ## Evaluation
 
@@ -84,5 +84,4 @@ PDF tables and OCR remain inherently noisy; model assumptions vary by sector; na
 
 ## License and contribution
 
-MIT licensed. See [CONTRIBUTING.md](CONTRIBUTING.md). This local stage intentionally creates no remote repository and performs no push.
-
+MIT licensed. See [CONTRIBUTING.md](CONTRIBUTING.md). The public repository is maintained at `siqiwang0712-commits/financial-risk-agent`.

@@ -19,20 +19,20 @@ Status date: 2026-09-05. This is an honest V1 engineering status; it does not cl
 - OCR is designed as an explicit fallback but no OCR adapter is bundled yet.
 - Narrative analysis has a strict provider interface and deterministic mock. A real LLM provider, schema retries, prompt versioning, and cost controls remain to be added when credentials are intentionally configured.
 - Contradiction detection implements the flagship liquidity pattern; a broader claim ontology and all-category contradiction library remain future work.
-- The frontend is a production-building dashboard shell with upload interaction and evidence-oriented layout; it is not yet wired to multipart PDF ingestion or a live evidence-page viewer.
+- The frontend calls the multipart PDF analysis endpoint and renders returned dimensions and rule sources. A full PDF page viewer and manual extraction-review editor remain pending.
 - PDF export works and includes all assessment sections, but visual branding, tables, charts, hyperlinks, and source-page thumbnails are basic.
-- Confidence is transparent and bounded but not empirically calibrated.
+- Confidence has a fixed-field component breakdown and is explicitly an uncalibrated coverage score.
 
 ## Not Implemented
 
 - Production OCR, SEC/XBRL ingestion, database/object storage, user authentication, job queue, antivirus sandbox, rate limiting, cloud deployment, and real LLM API integration.
 - Bank/insurance-specific models and sector-calibrated rules.
 - A licensed, adjudicated real-company benchmark or trained/calibrated scoring model.
-- Remote GitHub repository or push (intentionally prohibited at this stage).
+- Production release automation and CI/CD; the repository itself is now published on GitHub.
 
 ## Tests Passed
 
-- `14 passed` on Python 3.12.10; line coverage: `83%`.
+- `19 passed` on Python 3.12.10; line coverage: `92%`.
 - Static analysis: Ruff, all checks passed.
 - Next.js 15 production build: passed (static route generated).
 - Synthetic pipeline CLI: passed; emitted eight dimensions, model missing reasons, triggered rules, verified contradiction, confidence, and disclaimer.

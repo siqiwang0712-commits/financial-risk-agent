@@ -15,6 +15,7 @@ build/
 *.egg-info/
 coverage/
 *.log
+*.tsbuildinfo
 .DS_Store
 .idea/
 .vscode/

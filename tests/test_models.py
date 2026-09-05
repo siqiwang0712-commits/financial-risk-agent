@@ -1,4 +1,4 @@
-from finrisk.models import altman_z, piotroski_f
+from finrisk.models import altman_z, ohlson_o, piotroski_f
 
 
 def test_altman_formula():
@@ -8,6 +8,12 @@ def test_altman_formula():
 def test_model_missing_and_not_applicable():
     assert altman_z({}).output is None
     assert altman_z({},"bank").interpretation=="Model not applicable"
+
+def test_models_reject_invalid_domains():
+    v={"working_capital":1,"retained_earnings":1,"ebit":1,"market_value_equity":1,"total_liabilities":1,"revenue":1,"total_assets":0}
+    assert altman_z(v).interpretation=="Invalid input domain"
+    o={"total_assets":-1,"total_liabilities":1,"working_capital":1,"current_liabilities":1,"current_assets":1,"net_income":1,"funds_from_operations":1,"prior_net_income":1,"gnp_price_index":1}
+    assert ohlson_o(o).interpretation=="Invalid input domain"
 
 def test_piotroski_range():
     p={"net_income":2,"operating_cash_flow":3,"total_assets":100,"long_term_debt":30,"current_assets":40,"current_liabilities":30,"shares_outstanding":10,"gross_profit":30,"revenue":100}

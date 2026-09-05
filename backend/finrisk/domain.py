@@ -37,6 +37,7 @@ class Metric:
     inputs: dict[str, float | None]
     fiscal_year: int
     missing_reason: str | None = None
+    source_refs: list[Evidence] = field(default_factory=list)
 
 
 @dataclass
@@ -58,6 +59,7 @@ class RuleSignal:
     score_delta: float
     rationale: str
     evidence: list[str]
+    source_refs: list[Evidence] = field(default_factory=list)
 
 
 @dataclass
@@ -90,8 +92,9 @@ class Assessment:
     triggered_rules: list[RuleSignal]
     contradictions: list[Contradiction]
     missing_information: list[str]
+    confidence_components: dict[str, float] = field(default_factory=dict)
+    evidence_graph: dict[str, list[dict[str, Any]]] = field(default_factory=dict)
     disclaimer: str = "Risk scores are heuristic assessment scores, not bankruptcy probabilities or investment advice."
 
     def to_dict(self) -> dict[str, Any]:
         return asdict(self)
-

@@ -19,5 +19,6 @@ def test_aggregation_is_bounded():
     assert 0<=score<=100 and dims["liquidity"]["score"]==100
 
 def test_confidence_reduces_with_missing_data():
-    assert confidence({"a":1,"b":None},[],[])<confidence({"a":1,"b":2},[],[])
-
+    partial={"cash":1,"current_assets":2}
+    complete={k:1 for k in ("cash","current_assets","total_assets","current_liabilities","total_liabilities","shareholder_equity","revenue","operating_income","net_income","operating_cash_flow")}
+    assert confidence(partial,[],[])<confidence(complete,[],[])

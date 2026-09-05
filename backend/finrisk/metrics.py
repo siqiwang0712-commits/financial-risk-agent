@@ -21,8 +21,14 @@ def calculate_metrics(v: dict[str, float | None], year: int, previous: dict[str,
     fcf = None if v.get("operating_cash_flow") is None or capex is None else v["operating_cash_flow"] - abs(capex)
     ebit = v.get("ebit", v.get("operating_income"))
     cogs = None if v.get("revenue") is None or v.get("gross_profit") is None else v["revenue"] - v["gross_profit"]
-    avg_assets = v.get("total_assets")
-    avg_equity = v.get("shareholder_equity")
+    def average_balance(key):
+        current=v.get(key); prior=previous.get(key) if previous else None
+        return current if prior is None or current is None else (current+prior)/2
+    avg_assets = average_balance("total_assets")
+    avg_equity = average_balance("shareholder_equity")
+    avg_ar = average_balance("accounts_receivable")
+    avg_inventory = average_balance("inventory")
+    avg_ap = average_balance("accounts_payable")
     m: dict[str, Metric] = {}
     specs = {
       "current_ratio": (_safe_div(v.get("current_assets"), v.get("current_liabilities")), "current_assets / current_liabilities", {"current_assets":v.get("current_assets"),"current_liabilities":v.get("current_liabilities")}),
@@ -38,14 +44,14 @@ def calculate_metrics(v: dict[str, float | None], year: int, previous: dict[str,
       "gross_margin": (_safe_div(v.get("gross_profit"),v.get("revenue")), "gross_profit / revenue", {"gross_profit":v.get("gross_profit"),"revenue":v.get("revenue")}),
       "operating_margin": (_safe_div(v.get("operating_income"),v.get("revenue")), "operating_income / revenue", {"operating_income":v.get("operating_income"),"revenue":v.get("revenue")}),
       "net_margin": (_safe_div(v.get("net_income"),v.get("revenue")), "net_income / revenue", {"net_income":v.get("net_income"),"revenue":v.get("revenue")}),
-      "roa": (_safe_div(v.get("net_income"),avg_assets), "net_income / average_total_assets", {"net_income":v.get("net_income"),"average_total_assets":avg_assets}),
-      "roe": (_safe_div(v.get("net_income"),avg_equity), "net_income / average_shareholder_equity", {"net_income":v.get("net_income"),"average_shareholder_equity":avg_equity}),
+      "roa": (_safe_div(v.get("net_income"),avg_assets), "net_income / average_total_assets" if previous else "net_income / ending_total_assets (single-year proxy)", {"net_income":v.get("net_income"),"assets_basis":avg_assets}),
+      "roe": (_safe_div(v.get("net_income"),avg_equity), "net_income / average_shareholder_equity" if previous else "net_income / ending_shareholder_equity (single-year proxy)", {"net_income":v.get("net_income"),"equity_basis":avg_equity}),
       "cfo_to_net_income": (_safe_div(v.get("operating_cash_flow"),v.get("net_income")), "operating_cash_flow / net_income", {"operating_cash_flow":v.get("operating_cash_flow"),"net_income":v.get("net_income")}),
       "free_cash_flow": (fcf, "operating_cash_flow - abs(capital_expenditure)", {"operating_cash_flow":v.get("operating_cash_flow"),"capital_expenditure":capex}),
       "fcf_margin": (_safe_div(fcf,v.get("revenue")), "free_cash_flow / revenue", {"free_cash_flow":fcf,"revenue":v.get("revenue")}),
-      "receivable_days": (None if cogs is None else _safe_div(v.get("accounts_receivable"),v.get("revenue"))*365 if _safe_div(v.get("accounts_receivable"),v.get("revenue")) is not None else None, "accounts_receivable / revenue * 365", {"accounts_receivable":v.get("accounts_receivable"),"revenue":v.get("revenue")}),
-      "inventory_days": (_safe_div(v.get("inventory"),cogs)*365 if _safe_div(v.get("inventory"),cogs) is not None else None, "inventory / COGS * 365", {"inventory":v.get("inventory"),"COGS":cogs}),
-      "payable_days": (_safe_div(v.get("accounts_payable"),cogs)*365 if _safe_div(v.get("accounts_payable"),cogs) is not None else None, "accounts_payable / COGS * 365", {"accounts_payable":v.get("accounts_payable"),"COGS":cogs}),
+      "receivable_days": (_safe_div(avg_ar,v.get("revenue"))*365 if _safe_div(avg_ar,v.get("revenue")) is not None else None, "average_accounts_receivable / revenue * 365" if previous else "ending_accounts_receivable / revenue * 365 (single-year proxy)", {"receivables_basis":avg_ar,"revenue":v.get("revenue")}),
+      "inventory_days": (_safe_div(avg_inventory,cogs)*365 if _safe_div(avg_inventory,cogs) is not None else None, "average_inventory / COGS * 365" if previous else "ending_inventory / COGS * 365 (single-year proxy)", {"inventory_basis":avg_inventory,"COGS":cogs}),
+      "payable_days": (_safe_div(avg_ap,cogs)*365 if _safe_div(avg_ap,cogs) is not None else None, "average_accounts_payable / COGS * 365" if previous else "ending_accounts_payable / COGS * 365 (single-year proxy)", {"payables_basis":avg_ap,"COGS":cogs}),
     }
     for name,(value,formula,inputs) in specs.items(): m[name]=_metric(name,value,formula,inputs,year)
     if all(m[x].value is not None for x in ("receivable_days","inventory_days","payable_days")):

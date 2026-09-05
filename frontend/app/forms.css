@@ -1,0 +1,7 @@
+form > input { display:block; width:330px; margin:10px 0; padding:12px; border:1px solid #aaa; background:#fff; }
+button { margin-top:12px; padding:12px 20px; border:0; background:#d45b3e; color:white; font-weight:700; cursor:pointer; }
+button:disabled { opacity:.5; }
+.error { color:#a3281b; }
+.rule { border-top:1px solid #c8c2b6; padding:14px 0; }
+.rule blockquote { margin:8px 0; padding-left:12px; border-left:3px solid #83a598; font-size:13px; }
+@media(max-width:480px){ form > input { width:100%; } }
