@@ -3,6 +3,7 @@
   "base_score": 10,
   "category_cap": 100,
   "contradiction_delta": 10,
+  "minimum_dimension_coverage": 2,
   "weights": {
     "liquidity": 0.17,
     "solvency_leverage": 0.17,

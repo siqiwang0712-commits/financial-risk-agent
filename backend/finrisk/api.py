@@ -7,6 +7,7 @@ try:
     from fastapi import FastAPI, File, Form, HTTPException, UploadFile
     from fastapi.middleware.cors import CORSMiddleware
     from pydantic import BaseModel, Field
+    from starlette.concurrency import run_in_threadpool
 except ImportError: FastAPI=None
 from .domain import Evidence
 from .parser import DocumentParser
@@ -34,16 +35,23 @@ if FastAPI:
         with NamedTemporaryFile(suffix=".pdf",delete=False) as tmp:
             tmp.write(data);path=Path(tmp.name)
         try:
-            pages=parser.extract_pages(path)
+            try:pages=await run_in_threadpool(parser.extract_pages,path)
+            except Exception as exc:raise HTTPException(422,"PDF parsing failed; the file may be damaged or unsupported") from exc
+            if len(pages)>500:raise HTTPException(422,"PDF exceeds the 500-page analysis limit")
             extracted=parser.extract_values(pages,file.filename or "Annual Report",fiscal_year)
             if not extracted:raise HTTPException(422,"No reliable financial line items were extracted; manual review is required")
-            current={};sources={}
+            current={};sources={};candidates={};review_issues=[]
             for item in extracted:
-                if item.value is not None and (item.line_item not in current or item.confidence>sources[item.line_item][0].confidence):
-                    current[item.line_item]=item.value
-                sources.setdefault(item.line_item,[]).append(Evidence(item.document,item.page,item.source_text,item.fiscal_year,item.confidence,True))
+                if item.fiscal_year!=fiscal_year:continue
+                candidates.setdefault(item.line_item,set()).add(item.value)
+                sources.setdefault(item.line_item,[]).append(Evidence(item.document,item.page,item.source_text,item.fiscal_year,item.confidence,False,"located"))
+            for key,values in candidates.items():
+                usable={v for v in values if v is not None}
+                if len(usable)==1:current[key]=usable.pop()
+                elif len(usable)>1:review_issues.append({"line_item":key,"reason":"conflicting candidates","values":sorted(usable)})
+            if not current:raise HTTPException(422,"No unambiguous values were available for the requested fiscal year")
             result=pipeline.assess(company,fiscal_year,current,pages=pages,document=file.filename or "Annual Report",source_map=sources)
-            payload=result.to_dict();payload["extraction"]={"candidate_count":len(extracted),"review_required":True,"sections":parser.identify_sections(pages)}
+            payload=result.to_dict();payload["extraction"]={"candidate_count":len(extracted),"review_required":True,"review_issues":review_issues,"sections":parser.identify_sections(pages)}
             return payload
         finally:path.unlink(missing_ok=True)
 else:

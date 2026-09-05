@@ -14,3 +14,6 @@ def test_mock_claim_and_contradiction():
     out=detect_contradictions(claims,{"cash_growth":-.3,"current_ratio":.8})
     assert len(out)==1 and "not evidence of fraud" in out[0].interpretation
 
+def test_negated_going_concern_is_not_extracted_as_risk():
+    claims=MockNarrativeProvider().extract({1:"There is no substantial doubt about going concern."},"x",2025)
+    assert not claims

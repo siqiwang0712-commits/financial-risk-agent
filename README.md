@@ -24,9 +24,9 @@ Every value can retain its fiscal year, statement, normalized line item, unit, c
 
 - Liquidity, leverage, profitability, cash-flow, working-capital, and trend formulas with inspectable inputs and formulas.
 - Altman Z, Beneish M, Piotroski F, and Ohlson O with missing-component and applicability handling.
-- 68 independent JSON rules across liquidity, solvency, profitability, cash flow, earnings quality, accounting, governance/audit, refinancing, and going concern.
+- 68 JSON rules across liquidity, solvency, profitability, cash flow, earnings quality, accounting, governance/audit, refinancing, and going concern. Nested single-metric thresholds are de-duplicated before aggregation.
 - Native-text PDF parser (PyMuPDF), conservative normalization, page-level evidence verifier, offline mock narrative provider, and a liquidity contradiction prototype.
-- Eight-dimension aggregation using documented **expert-designed heuristic weights**, separate confidence scoring, FastAPI endpoint, PDF/text report, responsive Next.js UI, synthetic demo, and evaluation utilities.
+- Eight-dimension aggregation using documented **expert-designed heuristic weights**, explicit traditional-model mappings, separate evidence-coverage scoring, FastAPI endpoint, PDF/text report, responsive Next.js UI, synthetic demo, and evaluation utilities.
 
 ## Local setup
 

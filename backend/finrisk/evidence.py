@@ -13,5 +13,4 @@ class EvidenceVerifier:
         if not exact and source:
             tokens=set(re.findall(r"\w+",source.casefold())); hay=set(re.findall(r"\w+",page.casefold()))
             exact=len(tokens)>=5 and len(tokens & hay)/len(tokens)>=.9
-        return Evidence(evidence.document,evidence.page,evidence.source_text,evidence.fiscal_year,evidence.confidence if exact else min(evidence.confidence,.25),exact)
-
+        return Evidence(evidence.document,evidence.page,evidence.source_text,evidence.fiscal_year,evidence.confidence if exact else min(evidence.confidence,.25),exact,"verified" if exact else "rejected")

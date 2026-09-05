@@ -33,12 +33,21 @@ class DocumentParser:
 
     def extract_values(self,pages:dict[int,str],document:str,default_year:int,currency="USD",scale=None)->list[FinancialValue]:
         out=[]
-        line_re=re.compile(r"^\s*([A-Za-z][A-Za-z '&-]{2,60})\s+\$?\(?([\d,]+(?:\.\d+)?)\)?\s*$")
+        line_re=re.compile(r"^\s*([A-Za-z][A-Za-z '&-]{2,60})\s+((?:[$€£]?\(?[\d,]+(?:\.\d+)?\)?\s*){1,3})$")
+        number_re=re.compile(r"[$€£]?\(?[\d,]+(?:\.\d+)?\)?")
         for page,text in pages.items():
+            header=" ".join(text.splitlines()[:15])
+            years=[int(y) for y in re.findall(r"\b20\d{2}\b",header)][:3] or [default_year]
+            detected_currency="EUR" if "€" in text or re.search(r"\bEUR\b",header) else "GBP" if "£" in text or re.search(r"\bGBP\b",header) else "USD" if "$" in text or re.search(r"\bUSD\b",header) else currency
+            scale_match=re.search(r"(?:in|amounts in)\s+(thousands|millions|billions)",header,re.IGNORECASE)
+            detected_scale=scale_match.group(1) if scale_match else scale
+            statement=next((name for name,pat in self.SECTION_PATTERNS.items() if name in {"balance_sheet","income_statement","cash_flow"} and re.search(pat,header,re.IGNORECASE)),"unknown")
             for line in text.splitlines():
                 m=line_re.match(line); key=normalize_line_item(m.group(1)) if m else None
                 if key:
-                    raw=m.group(2); negative="(" in line and ")" in line
-                    value=parse_number(f"({raw})" if negative else raw,scale)
-                    out.append(FinancialValue(key,value,default_year,"unknown",currency=currency,document=document,page=page,source_text=line.strip(),confidence=.75))
+                    raws=number_re.findall(m.group(2))
+                    mapped_years=years if len(years)>=len(raws) else [default_year]*len(raws)
+                    for raw,year in zip(raws,mapped_years):
+                        value=parse_number(raw,detected_scale)
+                        out.append(FinancialValue(key,value,year,statement,currency=detected_currency,document=document,page=page,source_text=line.strip(),confidence=.8 if statement!="unknown" else .65,restated=bool(re.search(r"restated",header,re.IGNORECASE))))
         return out

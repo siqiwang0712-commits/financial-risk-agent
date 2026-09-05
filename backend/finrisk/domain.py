@@ -12,6 +12,7 @@ class Evidence:
     fiscal_year: int | None = None
     confidence: float = 1.0
     verified: bool = False
+    verification_status: str = "unverified"
 
 
 @dataclass(frozen=True)
@@ -83,7 +84,7 @@ class Contradiction:
 class Assessment:
     company: str
     reporting_period: str
-    overall_score: float
+    overall_score: float | None
     risk_level: str
     confidence: float
     dimensions: dict[str, dict[str, Any]]
@@ -93,7 +94,7 @@ class Assessment:
     contradictions: list[Contradiction]
     missing_information: list[str]
     confidence_components: dict[str, float] = field(default_factory=dict)
-    evidence_graph: dict[str, list[dict[str, Any]]] = field(default_factory=dict)
+    evidence_graph: dict[str, Any] = field(default_factory=dict)
     disclaimer: str = "Risk scores are heuristic assessment scores, not bankruptcy probabilities or investment advice."
 
     def to_dict(self) -> dict[str, Any]:

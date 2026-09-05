@@ -19,5 +19,7 @@ class MockNarrativeProvider:
             for phrase,(cat,polarity) in self.patterns.items():
                 if phrase in low:
                     sentence=next((s.strip() for s in text.replace("\n"," ").split(".") if phrase in s.lower()),phrase)
+                    before=sentence.lower().split(phrase,1)[0]
+                    if any(token in before.split()[-6:] for token in ("no","not","without")):continue
                     claims.append(NarrativeClaim(sentence,cat,Evidence(document,page,sentence,year,.9),polarity))
         return claims

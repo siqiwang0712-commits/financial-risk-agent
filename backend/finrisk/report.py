@@ -7,9 +7,15 @@ from .domain import Assessment
 
 def render_text_report(a:Assessment)->str:
     lines=[f"FINRISK ASSESSMENT — {a.company}",f"Reporting period: {a.reporting_period}",f"Overall Risk: {a.overall_score}/100 ({a.risk_level})",f"Confidence: {a.confidence:.2f}",a.disclaimer,"","EIGHT RISK DIMENSIONS"]
-    for name,d in a.dimensions.items():lines.append(f"- {name}: {d['score']}/100 ({d['level']}); drivers: {', '.join(d['key_drivers']) or 'none triggered'}")
+    lines.append("Confidence is an uncalibrated evidence-coverage score: "+", ".join(f"{k}={v:.2f}" for k,v in a.confidence_components.items()))
+    for name,d in a.dimensions.items():
+        display="N/A" if d["score"] is None else f'{d["score"]}/100'
+        lines.append(f"- {name}: {display} ({d['level']}); drivers: {', '.join(d['key_drivers']) or 'none triggered'}")
     lines += ["","QUANTITATIVE MODELS"]+[f"- {m.name}: {m.output if m.output is not None else 'N/A'} — {m.interpretation}; missing: {', '.join(m.missing_components) or 'none'}" for m in a.models]
-    lines += ["","TRIGGERED RULES"]+[f"- {r.rule_id} [{r.severity}] {r.rationale} Evidence: {', '.join(r.evidence)}" for r in a.triggered_rules]
+    lines += ["","TRIGGERED RULES"]
+    for r in a.triggered_rules:
+        lines.append(f"- {r.rule_id} [{r.severity}] {r.rationale} Evidence: {', '.join(r.evidence)}")
+        lines.extend(f"  Source: {e.document}, page {e.page}: {e.source_text} [{e.verification_status}]" for e in r.source_refs)
     lines += ["","CONTRADICTIONS"]+[f"- {c.management_claim} | {'; '.join(c.conflicting_evidence)} | {c.interpretation}" for c in a.contradictions]
     lines += ["","MISSING INFORMATION"]+(a.missing_information or ["- None identified."])
     return "\n".join(lines)

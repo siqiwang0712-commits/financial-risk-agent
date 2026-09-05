@@ -1,0 +1,9 @@
+{
+  "description":"Transparent heuristic mappings from applicable traditional-model outputs to risk dimensions.",
+  "mappings":[
+    {"model":"Altman Z-Score","metric":"altman_z_score","operator":"<","threshold":1.81,"category":"solvency_leverage","delta":18,"id":"MODEL_ALTMAN_DISTRESS"},
+    {"model":"Beneish M-Score","metric":"beneish_m_score","operator":">","threshold":-1.78,"category":"accounting","delta":18,"id":"MODEL_BENEISH_ELEVATED"},
+    {"model":"Piotroski F-Score","metric":"piotroski_f_score","operator":"<=","threshold":3,"category":"profitability","delta":12,"id":"MODEL_PIOTROSKI_WEAK"},
+    {"model":"Ohlson O-Score","metric":"ohlson_o_score","operator":">","threshold":0.5,"category":"solvency_leverage","delta":12,"id":"MODEL_OHLSON_ELEVATED"}
+  ]
+}
