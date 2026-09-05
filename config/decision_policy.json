@@ -1,0 +1,12 @@
+{
+  "version": "decision-policy-v1",
+  "status": "expert-designed; not calibrated",
+  "minimum_coverage": 0.4,
+  "maximum_disagreement": 0.45,
+  "flag_score": 60.0,
+  "review_score": 40.0,
+  "severe_dimension_score": 70.0,
+  "elevated_dimension_score": 50.0,
+  "interaction_dimension_score": 50.0,
+  "interaction_premium": 8.0
+}

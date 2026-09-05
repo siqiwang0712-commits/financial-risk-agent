@@ -63,6 +63,13 @@ class AgentState:
     risk_score: float | None = None
     confidence: float = 0.0
     evidence_coverage: float = 0.0
+    risk_severity: str = "unknown"
+    risk_trajectory: str = "insufficient_history"
+    decision: str = "ABSTAIN"
+    model_disagreement: float = 0.0
+    fusion: dict[str, Any] = field(default_factory=dict)
+    decision_trace: dict[str, Any] = field(default_factory=dict)
+    analysis_snapshot: dict[str, Any] = field(default_factory=dict)
 
     def transition(self, target: AgentStatus) -> None:
         terminal = {

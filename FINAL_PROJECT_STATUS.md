@@ -11,11 +11,23 @@ Fully implemented locally:
 - Material conclusions use `Claim → Evidence → Tool/Rule/Model → Rationale → Confidence`.
 - Risk score, confidence and evidence coverage are separate output fields.
 
-Verification after refactor: 49 tests passed, 91.69% line coverage, Ruff passed, TypeScript passed, Next.js production build passed, and checked-in benchmark artifacts remained unchanged.
+Decision-grade upgrade verification: 64 tests pass at 93.15% line coverage. Final Ruff, benchmark and frontend checks are listed below. Docker Compose runtime validation was NOT RUN because Docker is unavailable on this machine.
 
 Status date: 2026-09-05. This is an honest research-prototype status, not a production or performance claim.
 
 ## Fully Implemented
+
+- Decision-grade provenance projection: reason code, source evidence, rule/model and fusion versions, coverage/confidence/disagreement, fusion role and verified-path status.
+- Canonical immutable analysis snapshots with input/output/document/component hashes and non-destructive replay diff.
+- API authentication now resolves tenant/user/role from hashed server-side credentials; caller-supplied role impersonation was removed. Rotation revokes the previous key.
+- Final-state proof gate: a case cannot be accepted or resolved without a verified decision trace.
+- Benchmark protocol utilities for company-disjoint/leakage validation, dual review/adjudication, deterministic logistic/stump baselines, selective coverage, false-negative cost, ranking and calibration curves.
+- Model lifecycle validation gates, champion/challenger recommendation without automatic promotion, score/coverage drift checks, correlation IDs and redacted structured stage logs.
+
+- Enterprise domain core: organizations/entities, tenant enforcement, Admin/Risk Manager/Analyst/Reviewer/Viewer RBAC, versioned KRI policies, risk cases, lifecycle transitions, mandatory-reason overrides and append-only audit events.
+- Failure-aware fusion interface with weighted average, max severity, hierarchical escalation and interpretable interactions; separate severity, trajectory, coverage, confidence, disagreement and decision fields.
+- Deterministic scenario shocks, temporal trajectory classification, six-state disclosure-tension taxonomy, idempotent job queue semantics, hashed API-key abstraction, local rate limiter and tenant-safe document-storage protocol.
+- Enterprise REST endpoints and PostgreSQL migration for organizations, entities, policies, cases, documents, jobs, model registry, alerts and audit events.
 
 - Existing deterministic metrics, four traditional models, 68-rule engine, eight dimensions, evidence graph, confidence decomposition, FastAPI, Next.js and PDF/text reporting remain intact.
 - SEC Company Facts XBRL normalization for US GAAP/IFRS aliases with fiscal year, unit, taxonomy, concept, accession, filed date, period, restatement and source URL provenance.
@@ -36,13 +48,14 @@ Status date: 2026-09-05. This is an honest research-prototype status, not a prod
 
 - Independently double-annotated, adjudicated, sector-diverse benchmark large enough for a confirmatory hypothesis test.
 - Empirical XBRL extraction accuracy on a frozen independently labelled gold set.
-- Production OCR, filing bundle orchestration, database/storage, authentication, worker queue, malware scanning and deployment hardening.
+- Production OCR, filing bundle orchestration, distributed worker deployment, external object storage, SSO, malware scanning and deployment hardening.
+- External PostgreSQL deployment validation. The schema and optional adapter exist; this run did not provision a production database.
 - Calibrated probability of default. The heuristic score is explicitly not a bankruptcy probability.
 
 ## Tests Passed
 
 - 43 Python tests passed.
-- Total line coverage: 91.06%; CI threshold remains 90%.
+- Total line coverage: 93.15%; CI threshold remains 90%.
 - Public pilot and ablation artifacts regenerated successfully.
 - Previous Ruff, TypeScript and Next.js build checks remain CI-defined; final local QA should be read with the current command logs.
 

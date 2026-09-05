@@ -2,21 +2,23 @@
 
 <img src="docs/assets/finrisk-hero.svg" alt="FinRisk-Agent — evidence-grounded hybrid financial risk assessment" width="100%" />
 
-# FinRisk-Agent
+# FinRisk — Enterprise Financial Risk Intelligence & Management
 
-### An Evidence-Grounded Financial Risk Agent with Deterministic Tools
+### Evidence-first financial risk intelligence, workflow and research
 
 [![CI](https://github.com/siqiwang0712-commits/financial-risk-agent/actions/workflows/ci.yml/badge.svg)](https://github.com/siqiwang0712-commits/financial-risk-agent/actions/workflows/ci.yml)
 [![Python 3.11+](https://img.shields.io/badge/python-3.11%2B-356a5b.svg)](https://www.python.org/)
 [![FastAPI](https://img.shields.io/badge/API-FastAPI-009688.svg)](https://fastapi.tiangolo.com/)
 [![Next.js](https://img.shields.io/badge/UI-Next.js-111111.svg)](https://nextjs.org/)
-[![Tests](https://img.shields.io/badge/tests-43%20passed-2f855a.svg)](#quality-and-testing)
-[![Coverage](https://img.shields.io/badge/coverage-91.06%25-2f855a.svg)](#quality-and-testing)
+[![Tests](https://img.shields.io/badge/tests-64%20passed-2f855a.svg)](#quality-and-testing)
+[![Coverage](https://img.shields.io/badge/coverage-93.15%25-2f855a.svg)](#quality-and-testing)
 [![License: MIT](https://img.shields.io/badge/license-MIT-d45b3e.svg)](LICENSE)
 
-**An evidence-grounded financial risk agent where an LLM plans and interprets, deterministic financial tools execute, and every material conclusion is traceable to evidence.**
+**An enterprise financial-risk research platform where deterministic systems own authoritative data and arithmetic, a constrained LLM acts as a semantic sensor, and material decisions require a verifiable evidence path.**
 
 > **Interface shows. Agent reasons. Tools execute. Evidence grounds.**
+
+> **Evidence → Intelligence → Decision → Action → Monitoring**
 
 [Quick start](#quick-start) · [Architecture](#architecture) · [Evidence model](#evidence-first-by-design) · [Research](#research-and-evaluation) · [Limitations](#limitations)
 
@@ -76,9 +78,23 @@ Only diagnostic evidence exists so far: RQ3 is not supported by the pilot, RQ2 h
 
 | State | Scope |
 |---|---|
-| Implemented | XBRL normalization/reconciliation; deterministic finance; structured LLM adapter; evidence verification; consistency engine; reproducible evaluation |
-| Experimentally validated | Three-company offline pilot, score decomposition, confusion matrices, ablations, unit-scale and missingness checks |
-| Planned / NOT RUN | Independently reviewed 30-company benchmark, live SEC rebuild on an allowed network, real paid-LLM baseline, calibrated risk model |
+| VALIDATED (limited local scope) | 64 automated tests, 93.15% coverage, deterministic finance fixtures, three-company offline pilot reproduction, frontend build |
+| IMPLEMENTED BUT NOT EXTERNALLY VALIDATED | XBRL reconciliation, constrained LLM adapter, decision trace, immutable snapshots/replay diff, RBAC/API keys, policy/fusion, cases, PostgreSQL migration, governance/drift and Workbench |
+| PLANNED / NOT RUN | Independently dual-reviewed ~90 company-year benchmark, live paid-LLM evaluation, production identity/object storage/worker/telemetry deployment, calibrated risk model |
+
+### Enterprise platform upgrade
+
+The repository now adds organization/entity isolation, five-role RBAC, versioned KRI policies, risk-case lifecycle and human overrides, append-only audit events, idempotent background-job semantics, tenant-scoped document storage, deterministic scenarios, temporal classification, disclosure-tension taxonomy, four replaceable fusion strategies, portfolio summaries and an enterprise REST surface. PostgreSQL DDL is included; external PostgreSQL operation is **NOT VALIDATED** in this environment.
+
+The operational decision contract separates `Risk Severity`, `Risk Trajectory`, `Evidence Coverage`, `Decision Confidence`, `Model Disagreement` and `PASS / FLAG / REVIEW / ABSTAIN`. Low coverage abstains; concentrated risk is no longer silently diluted by a single averaging strategy.
+
+See the [enterprise architecture and honest maturity boundary](docs/enterprise_platform.md).
+
+### Decision-grade controls
+
+Every Agent response now carries reason-coded decision paths and a content-addressed analysis snapshot. A path records source spans, rule/model family and versions, confidence, coverage, disagreement and fusion role. Historical output hashes are preserved; replay produces a separate equality/drift result. Caller-supplied role headers are not trusted—the enterprise API resolves organization, user and role from a server-side hashed API credential. Risk cases cannot reach Accepted or Resolved without verified proof.
+
+See [reproducibility, governance, threat model, observability and readiness](docs/decision_grade_controls.md).
 
 
 ## Why FinRisk-Agent?
@@ -424,7 +440,7 @@ Research documents:
 Current local verification:
 
 - 43 Python tests passing
-- 91.06% line coverage
+- 93.15% line coverage in the current local decision-grade run
 - Ruff static analysis passing
 - TypeScript type checking passing
 - Next.js production build passing

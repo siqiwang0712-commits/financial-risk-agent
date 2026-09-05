@@ -1,11 +1,12 @@
 from __future__ import annotations
 
+import logging
 from pathlib import Path
 from tempfile import NamedTemporaryFile
 from typing import Annotated
 
 try:
-    from fastapi import FastAPI, File, Form, HTTPException, UploadFile
+    from fastapi import FastAPI, File, Form, HTTPException, Request, UploadFile
     from fastapi.middleware.cors import CORSMiddleware
     from pydantic import BaseModel, Field
     from starlette.concurrency import run_in_threadpool
@@ -13,6 +14,8 @@ except ImportError:
     FastAPI = None
 
 from .agent import FinancialRiskAgent
+from .enterprise.api import enterprise_router
+from .enterprise.observability import bind_correlation_id, structured_event
 from .pipeline import FinRiskPipeline
 from .xbrl import parse_companyfacts, values_by_year
 
@@ -44,6 +47,22 @@ if FastAPI:
     )
     pipeline = FinRiskPipeline(Path(__file__).resolve().parents[2])
     agent = FinancialRiskAgent(Path(__file__).resolve().parents[2], pipeline.provider)
+    app.include_router(enterprise_router())
+    api_logger = logging.getLogger("finrisk.api")
+
+    @app.middleware("http")
+    async def correlation_middleware(request: Request, call_next):
+        identifier = bind_correlation_id(request.headers.get("X-Correlation-Id"))
+        response = await call_next(request)
+        response.headers["X-Correlation-Id"] = identifier
+        structured_event(
+            api_logger,
+            "http.request",
+            method=request.method,
+            path=request.url.path,
+            status=response.status_code,
+        )
+        return response
 
     @app.get("/health")
     def health():

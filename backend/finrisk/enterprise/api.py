@@ -1,0 +1,241 @@
+from __future__ import annotations
+
+from dataclasses import asdict
+from typing import Annotated
+
+from fastapi import APIRouter, Depends, Header, HTTPException
+from pydantic import BaseModel, Field
+
+from .decision import create_snapshot, replay_diff
+from .domain import Principal, RiskCase, RiskCaseStatus, RiskDomain, Role, new_id
+from .fusion import FUSION_METHODS
+from .policy import evaluate_kri
+from .portfolio import portfolio_overview
+from .scenario import Scenario, compare_scenario
+from .security import CredentialStore, SlidingWindowRateLimiter, issue_api_key
+from .service import EnterpriseRiskService
+
+
+class OrganizationCreate(BaseModel):
+    name: str = Field(min_length=1)
+    actor_id: str = Field(min_length=1)
+
+
+class EntityCreate(BaseModel):
+    name: str = Field(min_length=1)
+    sector: str = "unspecified"
+    parent_id: str | None = None
+
+
+class CaseCreate(BaseModel):
+    entity_id: str
+    domain: RiskDomain
+    severity: str
+    trajectory: str = "insufficient_history"
+    confidence: float = Field(ge=0, le=1)
+    evidence_coverage: float = Field(ge=0, le=1)
+    rationale: str
+    evidence_ids: list[str] = []
+    reason_codes: list[str] = []
+    decision_trace: dict = {}
+    snapshot_id: str | None = None
+    fusion_version: str | None = None
+
+
+class TransitionRequest(BaseModel):
+    target: RiskCaseStatus
+
+
+class OverrideRequest(BaseModel):
+    original: str
+    override: str
+    reason: str = Field(min_length=1)
+
+
+class FusionRequest(BaseModel):
+    method: str
+    scores: dict[str, float | None]
+    weights: dict[str, float] = {}
+    coverage: float = Field(ge=0, le=1)
+    confidence: float = Field(ge=0, le=1)
+    decision_policy: dict[str, float] = {}
+
+
+class ScenarioRequest(BaseModel):
+    year: int
+    baseline: dict[str, float | None]
+    shocks: dict[str, float]
+
+
+class PolicyCreate(BaseModel):
+    name: str
+    version: int = Field(ge=1)
+    thresholds: dict[str, dict[str, float | str]]
+
+
+class SnapshotCreate(BaseModel):
+    entity_id: str
+    frozen_input: dict
+    frozen_output: dict
+    document_versions: dict[str, str]
+    component_versions: dict[str, str]
+
+
+class ReplayRequest(BaseModel):
+    replayed_output: dict
+
+
+def enterprise_router(service: EnterpriseRiskService | None = None) -> APIRouter:
+    service = service or EnterpriseRiskService()
+    router = APIRouter(prefix="/api/v1/enterprise", tags=["enterprise"])
+    credentials = CredentialStore()
+    limiter = SlidingWindowRateLimiter()
+
+    def principal(
+        api_key: Annotated[str, Header(alias="X-API-Key")],
+    ) -> Principal:
+        try:
+            actor = credentials.authenticate(api_key)
+        except PermissionError as exc:
+            raise HTTPException(401, str(exc)) from exc
+        if not limiter.allow(actor.organization_id):
+            raise HTTPException(429, "rate limit exceeded")
+        return actor
+
+    principal_dependency = Depends(principal)
+
+    @router.post("/organizations")
+    def create_organization(req: OrganizationCreate):
+        organization = service.create_organization(req.name, req.actor_id)
+        raw, credential = issue_api_key(organization.id, req.actor_id, Role.ADMIN)
+        credentials.register(credential)
+        return {**asdict(organization), "api_key": raw, "api_key_id": credential.id}
+
+    @router.post("/entities")
+    def create_entity(req: EntityCreate, actor: Principal = principal_dependency):
+        return asdict(service.create_entity(actor, req.name, req.sector, req.parent_id))
+
+    @router.post("/risk-cases")
+    def create_case(req: CaseCreate, actor: Principal = principal_dependency):
+        case = RiskCase(
+            new_id("case"),
+            actor.organization_id,
+            req.entity_id,
+            req.domain,
+            req.severity,
+            req.trajectory,
+            req.confidence,
+            req.evidence_coverage,
+            rationale=req.rationale,
+            evidence_ids=req.evidence_ids,
+            reason_codes=req.reason_codes,
+            decision_trace=req.decision_trace,
+            snapshot_id=req.snapshot_id,
+            fusion_version=req.fusion_version,
+        )
+        return service.create_case(actor, case).to_dict()
+
+    @router.get("/risk-cases")
+    def list_cases(actor: Principal = principal_dependency):
+        return [
+            case.to_dict()
+            for case in service.repository.list_cases(actor.organization_id)
+        ]
+
+    @router.post("/risk-cases/{case_id}/transition")
+    def transition(
+        case_id: str,
+        req: TransitionRequest,
+        actor: Principal = principal_dependency,
+    ):
+        try:
+            return service.transition(actor, case_id, req.target).to_dict()
+        except (KeyError, PermissionError, ValueError) as exc:
+            raise HTTPException(422, str(exc)) from exc
+
+    @router.post("/risk-cases/{case_id}/override")
+    def override(
+        case_id: str,
+        req: OverrideRequest,
+        actor: Principal = principal_dependency,
+    ):
+        try:
+            return service.override(
+                actor, case_id, req.original, req.override, req.reason
+            ).to_dict()
+        except (KeyError, PermissionError, ValueError) as exc:
+            raise HTTPException(422, str(exc)) from exc
+
+    @router.get("/overview")
+    def overview(actor: Principal = principal_dependency):
+        return portfolio_overview(service.repository.list_cases(actor.organization_id))
+
+    @router.post("/policies")
+    def create_policy(req: PolicyCreate, actor: Principal = principal_dependency):
+        return asdict(
+            service.create_policy(actor, req.name, req.thresholds, req.version)
+        )
+
+    @router.post("/policies/{policy_id}/evaluate")
+    def evaluate_policy(
+        policy_id: str,
+        metrics: dict[str, float | None],
+        actor: Principal = principal_dependency,
+    ):
+        policy = service.repository.policies.get(policy_id)
+        if policy is None or policy.organization_id != actor.organization_id:
+            raise HTTPException(404, "policy not found")
+        return evaluate_kri(policy, metrics)
+
+    @router.post("/snapshots")
+    def save_snapshot(req: SnapshotCreate, actor: Principal = principal_dependency):
+        snapshot = create_snapshot(
+            actor.organization_id,
+            req.entity_id,
+            req.frozen_input,
+            req.frozen_output,
+            req.document_versions,
+            req.component_versions,
+        )
+        return asdict(service.save_snapshot(actor, snapshot))
+
+    @router.post("/snapshots/{snapshot_id}/replay-diff")
+    def compare_replay(
+        snapshot_id: str, req: ReplayRequest, actor: Principal = principal_dependency
+    ):
+        try:
+            snapshot = service.repository.get_snapshot(
+                actor.organization_id, snapshot_id
+            )
+        except KeyError as exc:
+            raise HTTPException(404, "snapshot not found") from exc
+        return replay_diff(snapshot, req.replayed_output)
+
+    @router.get("/audit-events")
+    def events(actor: Principal = principal_dependency):
+        return [
+            asdict(event)
+            for event in service.repository.list_events(actor.organization_id)
+        ]
+
+    @router.post("/fusion")
+    def fuse(req: FusionRequest):
+        method = FUSION_METHODS.get(req.method)
+        if method is None:
+            raise HTTPException(422, "unknown fusion method")
+        kwargs = (
+            (req.scores, req.weights, req.coverage, req.confidence, req.decision_policy)
+            if req.method == "weighted_average"
+            else (req.scores, req.coverage, req.confidence, req.decision_policy)
+        )
+        return asdict(method(*kwargs))
+
+    @router.post("/scenarios")
+    def scenario(req: ScenarioRequest):
+        allowed = set(Scenario.__dataclass_fields__) - {"name"}
+        unknown = set(req.shocks) - allowed
+        if unknown:
+            raise HTTPException(422, f"unknown scenario shock(s): {sorted(unknown)}")
+        return compare_scenario(req.baseline, req.year, Scenario("api", **req.shocks))
+
+    return router

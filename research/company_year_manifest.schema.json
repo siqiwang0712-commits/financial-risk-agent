@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "FinRisk point-in-time company-year manifest",
+  "type": "array",
+  "items": {
+    "type": "object",
+    "required": ["observation_id", "company_id", "fiscal_year", "as_of_date", "split", "source_url", "source_hash", "review_status"],
+    "properties": {
+      "observation_id": {"type": "string"},
+      "company_id": {"type": "string"},
+      "fiscal_year": {"type": "integer"},
+      "as_of_date": {"type": "string", "format": "date"},
+      "label_available_at": {"type": ["string", "null"], "format": "date"},
+      "split": {"enum": ["development", "validation", "test"]},
+      "source_url": {"type": "string", "format": "uri"},
+      "source_hash": {"type": "string"},
+      "review_status": {"enum": ["pending", "reviewer_1", "reviewer_2", "adjudicated"]}
+    },
+    "additionalProperties": true
+  }
+}

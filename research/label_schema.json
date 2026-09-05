@@ -1,0 +1,12 @@
+{
+  "version": "decision-grade-v1-draft",
+  "status": "NOT VALIDATED",
+  "evidence_level": ["fact", "quote", "page", "evidence_relationship", "tension_label"],
+  "outcome_level": {
+    "window": "T+12 months",
+    "positive": "publicly verifiable material deterioration event",
+    "allowed_sources": ["SEC filing", "auditor report", "court/regulator record", "issuer announcement"],
+    "prohibited": ["system-generated label", "post-window information", "unreviewed inference"]
+  },
+  "review_fields": ["reviewer_1_label", "reviewer_1_reason", "reviewer_2_label", "reviewer_2_reason", "adjudicated_label", "adjudicator_reason", "review_status"]
+}
