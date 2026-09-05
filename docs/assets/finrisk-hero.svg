@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="440" viewBox="0 0 1200 440" role="img" aria-labelledby="title desc">
+<title id="title">FinRisk-Agent</title><desc id="desc">Evidence-grounded hybrid corporate financial risk assessment</desc>
+<defs><linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#102820"/><stop offset="1" stop-color="#1f4b3d"/></linearGradient><pattern id="grid" width="36" height="36" patternUnits="userSpaceOnUse"><path d="M36 0H0V36" fill="none" stroke="#7da394" stroke-opacity=".12"/></pattern></defs>
+<rect width="1200" height="440" rx="24" fill="url(#bg)"/><rect width="1200" height="440" rx="24" fill="url(#grid)"/>
+<g transform="translate(74 72)"><rect width="66" height="66" rx="16" fill="#ee7455"/><path d="M18 42V25h8v17zm12 0V15h8v27zm12 0V29h8v13" fill="#fff"/><path d="M15 48h38" stroke="#fff" stroke-width="3"/></g>
+<text x="164" y="112" fill="#f5f1e8" font-family="Georgia,serif" font-size="49" font-weight="700">FinRisk-Agent</text>
+<text x="76" y="184" fill="#f5f1e8" font-family="Arial,sans-serif" font-size="31" font-weight="600">Evidence-grounded financial risk reasoning</text>
+<text x="76" y="226" fill="#bcd0c8" font-family="Arial,sans-serif" font-size="19">Deterministic metrics · traditional models · expert rules · verified narrative evidence</text>
+<g transform="translate(76 286)" font-family="Arial,sans-serif" font-size="15"><rect width="250" height="50" rx="25" fill="#f5f1e8"/><text x="24" y="31" fill="#17382e" font-weight="700">NO EVIDENCE, NO CLAIM</text><rect x="270" width="214" height="50" rx="25" fill="#83a598"/><text x="295" y="31" fill="#102820" font-weight="700">MISSING ≠ ZERO RISK</text><rect x="504" width="260" height="50" rx="25" fill="#ee7455"/><text x="529" y="31" fill="#fff" font-weight="700">SCORE ≠ DEFAULT PROBABILITY</text></g>
+<g transform="translate(905 88)"><circle cx="95" cy="95" r="92" fill="none" stroke="#83a598" stroke-width="12" opacity=".35"/><path d="M95 3a92 92 0 0 1 86 124" fill="none" stroke="#ee7455" stroke-width="12" stroke-linecap="round"/><text x="95" y="91" text-anchor="middle" fill="#fff" font-family="Georgia,serif" font-size="54" font-weight="700">8</text><text x="95" y="122" text-anchor="middle" fill="#bcd0c8" font-family="Arial,sans-serif" font-size="14">RISK DIMENSIONS</text></g>
+</svg>
