@@ -1,0 +1,16 @@
+from finrisk.contradictions import detect_contradictions
+from finrisk.domain import Evidence
+from finrisk.evidence import EvidenceVerifier
+from finrisk.llm import MockNarrativeProvider
+
+
+def test_evidence_verification_rejects_hallucination():
+    v=EvidenceVerifier();pages={2:"Liquidity remains strong despite market volatility."}
+    assert v.verify(Evidence("x",2,"Liquidity remains strong",2025,.9),pages).verified
+    assert not v.verify(Evidence("x",2,"Debt covenant was breached",2025,.9),pages).verified
+
+def test_mock_claim_and_contradiction():
+    pages={4:"Liquidity remains strong."};claims=MockNarrativeProvider().extract(pages,"x",2025)
+    out=detect_contradictions(claims,{"cash_growth":-.3,"current_ratio":.8})
+    assert len(out)==1 and "not evidence of fraud" in out[0].interpretation
+

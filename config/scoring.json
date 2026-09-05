@@ -1,0 +1,16 @@
+{
+  "method": "expert-designed heuristic weights",
+  "base_score": 10,
+  "category_cap": 100,
+  "contradiction_delta": 10,
+  "weights": {
+    "liquidity": 0.17,
+    "solvency_leverage": 0.17,
+    "profitability": 0.12,
+    "cash_flow": 0.16,
+    "earnings_quality": 0.12,
+    "accounting": 0.09,
+    "governance_audit": 0.08,
+    "business_going_concern": 0.09
+  }
+}
