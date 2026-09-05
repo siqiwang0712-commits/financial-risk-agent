@@ -1,6 +1,6 @@
 <div align="center">
 
-![FinRisk-Agent — evidence-grounded hybrid financial risk assessment](docs/assets/finrisk-hero.svg)
+<img src="docs/assets/finrisk-hero.svg" alt="FinRisk-Agent — evidence-grounded hybrid financial risk assessment" width="100%" />
 
 # FinRisk-Agent
 
@@ -30,17 +30,32 @@
 
 **Pilot result →** The first frozen public-company benchmark is deliberately small: Apple, Microsoft and Intel FY2024, split by company. It produced a useful negative result—on this `n=3` pilot, Full Hybrid risk-classification F1 was `0.00` with `2/3` decision coverage, while Ratios Only was `1.00`. Full Hybrid contradiction F1 was `0.667`. Bootstrap intervals are correspondingly uninformative (`[0, 1]` for most accuracy estimates). **This does not establish model superiority; it demonstrates that the experiment is runnable and that the current aggregation requires more validation.**
 
-![Actually executed public-company baseline results](research/results/public_v1/baseline-risk-f1.svg)
+<img src="research/results/public_v1/baseline-risk-f1.svg" alt="Actually executed public-company baseline results" width="760" />
 
-| Baseline | Decisions | Risk F1 | Contradiction F1 | ECE | Accuracy (95% bootstrap CI) |
-|---|---:|---:|---:|---:|---:|
-| LLM Only (offline deterministic semantic provider) | 3/3 | 0.000 | 0.000 | 0.333 | 0.667 [0, 1] |
-| Ratios Only | 3/3 | 1.000 | 0.000 | 0.250 | 1.000 [1, 1] |
-| Rule Engine | 3/3 | 0.667 | 0.000 | 0.371 | 0.667 [0, 1] |
-| Traditional Models | 3/3 | 0.500 | 0.000 | 0.167 | 0.333 [0, 1] |
-| Full Hybrid | 2/3 | 0.000 | 0.667 | 0.407 | 0.500 [0, 1] |
+| Baseline | Coverage | Risk F1 | Balanced accuracy |
+|---|---:|---:|---:|
+| LLM Only¹ | 3/3 | 0.000 | 0.500 |
+| Ratios Only | 3/3 | 1.000 | 1.000 |
+| Rule Engine | 3/3 | 0.667 | 0.750 |
+| Traditional Models | 3/3 | 0.500 | 0.500 |
+| Full Hybrid | 2/3 | 0.000 | 0.500 |
 
-Results: [research summary](research/results.md) · [`summary.json`](research/results/public_v1/summary.json) · [`predictions.csv`](research/results/public_v1/predictions.csv) · [`score_decomposition.csv`](research/results/public_v1/score_decomposition.csv) · [`confusion_matrices.csv`](research/results/public_v1/confusion_matrices.csv) · [`ablations.csv`](research/results/public_v1/ablations.csv) · [`robustness.csv`](research/results/public_v1/robustness.csv)
+¹ Offline deterministic semantic provider; the real-provider run is explicitly `NOT RUN`.
+
+<details>
+<summary><strong>Open complete metrics and reproducible artifacts</strong></summary>
+
+The complete output includes accuracy with 95% bootstrap intervals, precision, recall, F1, balanced accuracy, AUROC/AUPRC where applicable, Brier score, ECE, evidence precision, unsupported-claim rate, contradiction F1 and coverage.
+
+- [Interpreted research results](research/results.md)
+- [Machine-readable summary](research/results/public_v1/summary.json)
+- [Raw predictions](research/results/public_v1/predictions.csv)
+- [Per-company score decomposition](research/results/public_v1/score_decomposition.csv)
+- [Confusion matrices](research/results/public_v1/confusion_matrices.csv)
+- [Ablation results](research/results/public_v1/ablations.csv)
+- [Robustness checks](research/results/public_v1/robustness.csv)
+
+</details>
 
 Sample output: [Intel 2024 text assessment](examples/intel_2024_sample_report.txt) · [Intel 2024 PDF assessment](examples/intel_2024_sample_report.pdf)
 
@@ -65,7 +80,7 @@ Only diagnostic evidence exists so far: RQ3 is not supported by the pilot, RQ2 h
 
 ### Running system
 
-![FinRisk-Agent local dashboard running in Next.js](docs/assets/dashboard-running.png)
+<img src="docs/assets/dashboard-running.png" alt="FinRisk-Agent local dashboard running in Next.js" width="900" />
 
 ## Why FinRisk-Agent?
 
@@ -116,7 +131,7 @@ For a company and reporting period, the assessment contains:
 
 ## Architecture
 
-![FinRisk-Agent hybrid architecture](docs/assets/hybrid-architecture.svg)
+<img src="docs/assets/hybrid-architecture.svg" alt="FinRisk-Agent hybrid architecture" width="900" />
 
 The architecture deliberately separates deterministic and semantic reasoning. Financial arithmetic, model applicability, rule evaluation and score aggregation remain outside the LLM. Narrative candidates cannot affect a result until their quoted evidence is verified against the cited page.
 
@@ -146,7 +161,7 @@ metrics + rules + models + verified claims ─────────┤
 
 ## Evidence-first by design
 
-![Evidence trace from conclusion to report page](docs/assets/evidence-trace.svg)
+<img src="docs/assets/evidence-trace.svg" alt="Evidence trace from conclusion to report page" width="900" />
 
 Every extracted value can preserve:
 
@@ -447,8 +462,8 @@ See [`.env.example`](.env.example) and [`.gitignore`](.gitignore).
 This repository is a rigorously tested research prototype, not a production credit-rating system.
 
 - PDF table reconstruction remains conservative; complex geometry, cross-page headers and OCR need further work.
-- XBRL reconciliation is not implemented.
-- V1 is English-first and the contradiction detector remains a liquidity-focused prototype.
+- SEC Company Facts normalization and cross-source reconciliation are implemented and tested offline, but a live rebuild was blocked by HTTP 403 in the recorded environment.
+- V1 is English-first. The consistency engine covers six categories, but semantic breadth and contextual precision still require a larger independently annotated benchmark.
 - Rule families and weights require further domain-expert validation.
 - Traditional models have population and sector limitations, especially for financial institutions.
 - Evidence matching establishes provenance, not the truth or completeness of a disclosure.
@@ -459,9 +474,10 @@ The complete implementation status is maintained in [`FINAL_PROJECT_STATUS.md`](
 
 ## Roadmap
 
-- [ ] XBRL-first extraction and PDF reconciliation
+- [x] XBRL normalization, provenance and PDF reconciliation contract
+- [ ] Complete and independently review the registered 30-company benchmark
 - [ ] Table geometry and OCR fallback with bounding-box provenance
-- [ ] Eight-dimension structured narrative ontology
+- [ ] Extend the six-category consistency ontology to all eight reporting dimensions
 - [ ] Sector-specific applicability and rule packs
 - [ ] Professional PDF report with internal evidence links
 - [ ] Licensed, double-annotated benchmark corpus
