@@ -78,9 +78,6 @@ Only diagnostic evidence exists so far: RQ3 is not supported by the pilot, RQ2 h
 | Experimentally validated | Three-company offline pilot, score decomposition, confusion matrices, ablations, unit-scale and missingness checks |
 | Planned / NOT RUN | Independently reviewed 30-company benchmark, live SEC rebuild on an allowed network, real paid-LLM baseline, calibrated risk model |
 
-### Running system
-
-<img src="docs/assets/dashboard-running.png" alt="FinRisk-Agent local dashboard running in Next.js" width="900" />
 
 ## Why FinRisk-Agent?
 
