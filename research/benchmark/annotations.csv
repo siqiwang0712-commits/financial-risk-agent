@@ -1,0 +1,4 @@
+example_id,company,feature_year,risk_label,contradiction_label,risk_review_status,contradiction_review_status,label_definition,source_url
+aapl-2024,Apple Inc.,2024,0,0,single_reviewed,single_reviewed,pilot holistic distress review,https://www.sec.gov/Archives/edgar/data/320193/000032019324000123/aapl-20240928.htm
+msft-2024,Microsoft Corporation,2024,0,0,single_reviewed,single_reviewed,pilot holistic distress review,https://www.sec.gov/Archives/edgar/data/789019/000095017024087843/msft-20240630.htm
+intc-2024,Intel Corporation,2024,1,1,single_reviewed,single_reviewed,pilot holistic distress review,https://www.sec.gov/Archives/edgar/data/50863/000005086325000009/intc-20241228.htm

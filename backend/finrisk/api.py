@@ -12,16 +12,21 @@ except ImportError: FastAPI=None
 from .domain import Evidence
 from .parser import DocumentParser
 from .pipeline import FinRiskPipeline
+from .xbrl import parse_companyfacts, values_by_year
 
 if FastAPI:
     class AssessmentRequest(BaseModel):
         company:str=Field(min_length=1); fiscal_year:int; current:dict[str,float|bool|str|None]; previous:dict[str,float|bool|str|None]|None=None; pages:dict[int,str]={}; document:str="Annual Report"; entity_type:str="industrial"
-    app=FastAPI(title="FinRisk-Agent API",version="0.1.0",description="Evidence-grounded hybrid financial risk assessment")
+    app=FastAPI(title="FinRisk-Agent API",version="0.2.0",description="Evidence-grounded hybrid financial risk assessment")
     app.add_middleware(CORSMiddleware,allow_origins=["http://localhost:3000"],allow_methods=["GET","POST"],allow_headers=["*"])
     pipeline=FinRiskPipeline(Path(__file__).resolve().parents[2])
     parser=DocumentParser()
     @app.get("/health")
-    def health():return {"status":"ok","llm_provider":"mock"}
+    def health():return {"status":"ok","llm_provider":pipeline.provider.__class__.__name__}
+    @app.post("/api/v1/xbrl/normalize")
+    def normalize_xbrl(req:XbrlNormalizeRequest):
+        values=parse_companyfacts(req.companyfacts,req.fiscal_years)
+        return {"values":[v.__dict__ for v in values],"by_year":values_by_year(values)}
     @app.post("/api/v1/assess")
     def assess(req:AssessmentRequest):
         try:return pipeline.assess(req.company,req.fiscal_year,req.current,req.previous,req.pages,req.document,req.entity_type).to_dict()
@@ -61,3 +66,5 @@ if FastAPI:
         finally:path.unlink(missing_ok=True)
 else:
     app=None
+    class XbrlNormalizeRequest(BaseModel):
+        companyfacts:dict; fiscal_years:list[int]|None=None

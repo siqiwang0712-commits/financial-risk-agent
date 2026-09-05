@@ -1,0 +1,13 @@
+example_id,check,setting,score,prediction,confidence
+aapl-2024,unit_scale,1,,,0.65
+aapl-2024,unit_scale,1000,,,0.65
+aapl-2024,missingness,0.1,,,0.61
+aapl-2024,missingness,0.3,,,0.58
+msft-2024,unit_scale,1,24.0,0,0.45
+msft-2024,unit_scale,1000,24.0,0,0.45
+msft-2024,missingness,0.1,24.0,0,0.45
+msft-2024,missingness,0.3,24.0,0,0.34
+intc-2024,unit_scale,1,42.7,0,0.65
+intc-2024,unit_scale,1000,42.7,0,0.65
+intc-2024,missingness,0.1,42.7,0,0.65
+intc-2024,missingness,0.3,36.3,0,0.51

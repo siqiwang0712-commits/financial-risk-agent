@@ -6,7 +6,7 @@ from pathlib import Path
 from .contradictions import detect_contradictions
 from .domain import Assessment, RuleSignal
 from .evidence import EvidenceVerifier
-from .llm import MockNarrativeProvider, NarrativeProvider
+from .llm import NarrativeProvider, provider_from_env
 from .metrics import calculate_metrics
 from .models import altman_z, beneish_m, ohlson_o, piotroski_f
 from .rules import RuleEngine
@@ -19,7 +19,7 @@ class FinRiskPipeline:
         self.rules=RuleEngine.from_file(self.root/"rules"/"rules.json")
         self.scoring=json.loads((self.root/"config"/"scoring.json").read_text(encoding="utf-8"))
         self.model_scoring=json.loads((self.root/"config"/"model_scoring.json").read_text(encoding="utf-8"))
-        self.provider=provider or MockNarrativeProvider(); self.verifier=EvidenceVerifier()
+        self.provider=provider or provider_from_env(); self.verifier=EvidenceVerifier()
 
     def assess(self,company:str,year:int,current:dict,previous:dict|None=None,pages:dict[int,str]|None=None,document="Annual Report",entity_type="industrial",source_map:dict|None=None) -> Assessment:
         pages=pages or {}
@@ -38,6 +38,8 @@ class FinRiskPipeline:
             for key in ("gross_margin","operating_margin","receivable_days","inventory_days","cash_conversion_cycle"):
                 prior=calculate_metrics(previous,year-1).get(key); now=metrics.get(key)
                 facts[f"{key}_change"]=None if not prior or not now or prior.value is None or now.value is None else now.value-prior.value
+            facts["accounts_receivable_growth_gap"] = None if facts.get("accounts_receivable_growth") is None or facts.get("revenue_growth") is None else facts["accounts_receivable_growth"]-facts["revenue_growth"]
+            facts["inventory_growth_gap"] = None if facts.get("inventory_growth") is None or facts.get("revenue_growth") is None else facts["inventory_growth"]-facts["revenue_growth"]
         model_input=current|{"working_capital":metrics["working_capital"].value,"ebit":current.get("ebit",current.get("operating_income"))}
         models=[altman_z(model_input,"bank" if entity_type in {"bank","financial_institution"} else "public_manufacturer")]
         if previous: models += [beneish_m(current,previous),piotroski_f(current,previous)]

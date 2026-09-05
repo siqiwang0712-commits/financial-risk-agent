@@ -12,6 +12,10 @@ jobs:
       - run: python -m pip install -e ".[dev]"
       - run: ruff check backend tests scripts
       - run: pytest --cov=finrisk --cov-report=term-missing --cov-fail-under=90
+      - name: Reproduce the checked-in public benchmark
+        run: |
+          python scripts/run_public_benchmark.py
+          git diff --exit-code -- research/results/public_v1
   frontend:
     runs-on: ubuntu-latest
     defaults:

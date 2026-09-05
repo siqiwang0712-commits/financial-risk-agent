@@ -1,0 +1,12 @@
+{
+  "provider": "openai-compatible",
+  "status": "NOT_RUN",
+  "reason": "OPENAI_API_KEY was not present in the execution environment",
+  "mock_usage": "tests and offline semantic baseline only",
+  "prompt_version": "narrative-v1.0.0",
+  "temperature": 0,
+  "tokens": null,
+  "cost_usd": null,
+  "latency_ms": null,
+  "schema_success_rate": null
+}

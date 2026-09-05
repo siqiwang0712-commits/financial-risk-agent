@@ -4,6 +4,8 @@
 __pycache__/
 *.py[cod]
 .pytest_cache/
+.cache/
+logs/
 .coverage
 htmlcov/
 .venv/
@@ -22,7 +24,11 @@ coverage/
 data/private/
 uploads/
 reports/generated/
-research/results/
+research/results/*
+!research/results/public_v1/
+!research/results/public_v1/*.csv
+!research/results/public_v1/*.json
+!research/results/public_v1/*.svg
 *.pem
 *.key
 secrets.*

@@ -1,0 +1,16 @@
+example_id,ablation,risk_probability,risk_prediction,risk_label
+aapl-2024,full_hybrid,,,0
+aapl-2024,without_narrative,0.7625,1,0
+aapl-2024,without_rules,0.375,0,0
+aapl-2024,without_models,0.50625,1,0
+aapl-2024,without_trends,,,0
+msft-2024,full_hybrid,0.24,0,0
+msft-2024,without_narrative,0.35,0,0
+msft-2024,without_rules,0.25,0,0
+msft-2024,without_models,0.175,0,0
+msft-2024,without_trends,,,0
+intc-2024,full_hybrid,0.427,0,1
+intc-2024,without_narrative,1.0,1,1
+intc-2024,without_rules,0.5,1,1
+intc-2024,without_models,0.75,1,1
+intc-2024,without_trends,0.34,0,1

@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from pathlib import Path
+from textwrap import wrap
 
 from .domain import Assessment
 
@@ -26,10 +27,16 @@ def export_pdf(a:Assessment,path:str|Path)->Path:
         from reportlab.lib.pagesizes import A4
         from reportlab.pdfgen import canvas
     except ImportError as exc:raise RuntimeError("PDF export requires reportlab.") from exc
-    path=Path(path);path.parent.mkdir(parents=True,exist_ok=True);c=canvas.Canvas(str(path),pagesize=A4);_,h=A4;y=h-50
+    path=Path(path);path.parent.mkdir(parents=True,exist_ok=True);c=canvas.Canvas(str(path),pagesize=A4);w,h=A4;y=h-50;page=1
+    c.setTitle(f"FinRisk Assessment - {a.company}");c.setAuthor("FinRisk-Agent")
+    def footer():
+        c.setFont("Helvetica",7);c.setFillColorRGB(.35,.35,.35);c.drawRightString(w-40,25,f"FinRisk-Agent | Page {page}");c.setFillColorRGB(0,0,0)
     for raw in render_text_report(a).splitlines():
-        chunks=[raw[i:i+105] for i in range(0,max(1,len(raw)),105)] or [""]
+        safe=raw.replace("—","-").replace("–","-")
+        chunks=wrap(safe,width=92,break_long_words=True,break_on_hyphens=False) or [""]
         for line in chunks:
-            if y<50:c.showPage();y=h-50
-            c.drawString(40,y,line);y-=14
-    c.save();return path
+            if y<48:
+                footer();c.showPage();page+=1;y=h-50
+            c.setFont("Helvetica-Bold" if line.isupper() else "Helvetica",9)
+            c.drawString(40,y,line);y-=12
+    footer();c.save();return path

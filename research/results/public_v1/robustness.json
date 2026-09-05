@@ -1,0 +1,98 @@
+[
+  {
+    "example_id": "aapl-2024",
+    "check": "unit_scale",
+    "setting": 1,
+    "score": null,
+    "prediction": null,
+    "confidence": 0.65
+  },
+  {
+    "example_id": "aapl-2024",
+    "check": "unit_scale",
+    "setting": 1000,
+    "score": null,
+    "prediction": null,
+    "confidence": 0.65
+  },
+  {
+    "example_id": "aapl-2024",
+    "check": "missingness",
+    "setting": 0.1,
+    "score": null,
+    "prediction": null,
+    "confidence": 0.61
+  },
+  {
+    "example_id": "aapl-2024",
+    "check": "missingness",
+    "setting": 0.3,
+    "score": null,
+    "prediction": null,
+    "confidence": 0.58
+  },
+  {
+    "example_id": "msft-2024",
+    "check": "unit_scale",
+    "setting": 1,
+    "score": 24.0,
+    "prediction": 0,
+    "confidence": 0.45
+  },
+  {
+    "example_id": "msft-2024",
+    "check": "unit_scale",
+    "setting": 1000,
+    "score": 24.0,
+    "prediction": 0,
+    "confidence": 0.45
+  },
+  {
+    "example_id": "msft-2024",
+    "check": "missingness",
+    "setting": 0.1,
+    "score": 24.0,
+    "prediction": 0,
+    "confidence": 0.45
+  },
+  {
+    "example_id": "msft-2024",
+    "check": "missingness",
+    "setting": 0.3,
+    "score": 24.0,
+    "prediction": 0,
+    "confidence": 0.34
+  },
+  {
+    "example_id": "intc-2024",
+    "check": "unit_scale",
+    "setting": 1,
+    "score": 42.7,
+    "prediction": 0,
+    "confidence": 0.65
+  },
+  {
+    "example_id": "intc-2024",
+    "check": "unit_scale",
+    "setting": 1000,
+    "score": 42.7,
+    "prediction": 0,
+    "confidence": 0.65
+  },
+  {
+    "example_id": "intc-2024",
+    "check": "missingness",
+    "setting": 0.1,
+    "score": 42.7,
+    "prediction": 0,
+    "confidence": 0.65
+  },
+  {
+    "example_id": "intc-2024",
+    "check": "missingness",
+    "setting": 0.3,
+    "score": 36.3,
+    "prediction": 0,
+    "confidence": 0.51
+  }
+]

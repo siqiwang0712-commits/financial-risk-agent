@@ -28,6 +28,30 @@ class FinancialValue:
     source_text: str = ""
     confidence: float = 1.0
     restated: bool = False
+    source_type: str = "document"
+    taxonomy: str | None = None
+    concept: str | None = None
+    accession: str | None = None
+    filed_at: str | None = None
+    period_start: str | None = None
+    period_end: str | None = None
+    original_unit: str | None = None
+    provenance_url: str | None = None
+
+
+@dataclass(frozen=True)
+class ReconciliationResult:
+    line_item: str
+    fiscal_year: int
+    status: str
+    authoritative_source: str
+    xbrl_value: float | None
+    document_value: float | None
+    absolute_difference: float | None
+    relative_difference: float | None
+    explanation: str
+    xbrl_provenance: FinancialValue | None = None
+    document_provenance: FinancialValue | None = None
 
 
 @dataclass

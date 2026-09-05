@@ -1,0 +1,31 @@
+candidate_id,ticker,sector,feature_year,selection_stratum,review_status,included_in_results
+01,AAPL,Technology,2023,non_distress,pending_sec_download,false
+02,MSFT,Technology,2023,non_distress,pending_sec_download,false
+03,INTC,Semiconductors,2023,distress_candidate,pending_sec_download,false
+04,F,Automotive,2023,distress_candidate,pending_sec_download,false
+05,GM,Automotive,2023,non_distress,pending_sec_download,false
+06,DAL,Airlines,2023,distress_candidate,pending_sec_download,false
+07,LUV,Airlines,2023,distress_candidate,pending_sec_download,false
+08,WMT,Retail,2023,non_distress,pending_sec_download,false
+09,TGT,Retail,2023,non_distress,pending_sec_download,false
+10,WBA,Retail Pharmacy,2023,distress_candidate,pending_sec_download,false
+11,PFE,Pharmaceuticals,2023,distress_candidate,pending_sec_download,false
+12,JNJ,Pharmaceuticals,2023,non_distress,pending_sec_download,false
+13,CVX,Energy,2023,non_distress,pending_sec_download,false
+14,OXY,Energy,2023,distress_candidate,pending_sec_download,false
+15,NEE,Utilities,2023,non_distress,pending_sec_download,false
+16,AEP,Utilities,2023,distress_candidate,pending_sec_download,false
+17,CAT,Industrials,2023,non_distress,pending_sec_download,false
+18,BA,Aerospace,2023,distress_candidate,pending_sec_download,false
+19,UPS,Logistics,2023,non_distress,pending_sec_download,false
+20,FDX,Logistics,2023,distress_candidate,pending_sec_download,false
+21,KO,Consumer Staples,2023,non_distress,pending_sec_download,false
+22,KHC,Consumer Staples,2023,distress_candidate,pending_sec_download,false
+23,DIS,Media,2023,distress_candidate,pending_sec_download,false
+24,NFLX,Media,2023,non_distress,pending_sec_download,false
+25,VZ,Telecommunications,2023,distress_candidate,pending_sec_download,false
+26,TMUS,Telecommunications,2023,non_distress,pending_sec_download,false
+27,AMT,Real Estate,2023,distress_candidate,pending_sec_download,false
+28,PLD,Real Estate,2023,non_distress,pending_sec_download,false
+29,NUE,Materials,2023,non_distress,pending_sec_download,false
+30,FCX,Materials,2023,distress_candidate,pending_sec_download,false

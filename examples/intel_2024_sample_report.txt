@@ -1,0 +1,42 @@
+FINRISK ASSESSMENT — Intel Corporation
+Reporting period: 2024
+Overall Risk: 42.7/100 (Moderate)
+Confidence: 0.65
+Risk scores are heuristic assessment scores, not bankruptcy probabilities or investment advice.
+
+EIGHT RISK DIMENSIONS
+Confidence is an uncalibrated evidence-coverage score: core_data_completeness=1.00, numeric_provenance_coverage=0.00, verified_claim_coverage=1.00, applicable_model_coverage=0.00, temporal_depth=1.00
+- liquidity: 20/100 (Low); drivers: none triggered
+- solvency_leverage: N/A (N/A); drivers: none triggered
+- profitability: 73/100 (High); drivers: PRO_008, PRO_002, PRO_003, PRO_004, PRO_006
+- cash_flow: 44/100 (Moderate); drivers: CFL_002, CFL_004, CFL_007
+- earnings_quality: N/A (N/A); drivers: none triggered
+- accounting: N/A (N/A); drivers: none triggered
+- governance_audit: N/A (N/A); drivers: none triggered
+- business_going_concern: N/A (N/A); drivers: none triggered
+
+QUANTITATIVE MODELS
+- Altman Z-Score: N/A — Insufficient data; missing: market_value_equity
+- Beneish M-Score: N/A — Insufficient data; missing: depreciation, ppe, sga
+- Piotroski F-Score: N/A — Insufficient data; missing: shares_outstanding
+- Ohlson O-Score: N/A — Insufficient data; missing: funds_from_operations, prior_net_income, gnp_price_index
+
+TRIGGERED RULES
+- PRO_001 [high] The company is loss-making at net income level. Evidence: net_margin=-0.3621965688028474 < 0
+- PRO_002 [medium] Operating profitability is thin. Evidence: operating_margin=-0.2199205288036007 < 0.03
+- PRO_003 [medium] Gross margin contracted materially. Evidence: gross_margin_change=-0.07372344219682914 < -0.03
+- PRO_004 [high] Operating margin deteriorated sharply. Evidence: operating_margin_change=-0.22163550999412956 < -0.05
+- PRO_006 [high] Net income deteriorated substantially. Evidence: net_income_growth=-12.482388059701492 < -0.3
+- PRO_007 [medium] Assets are generating accounting losses. Evidence: roa=-0.09912461313672992 < 0
+- PRO_008 [high] Revenue contraction and operating losses coincide. Evidence: revenue_growth=-0.020782621523935976 < 0, operating_margin=-0.2199205288036007 < 0
+- CFL_002 [high] Free cash flow is negative. Evidence: free_cash_flow=-15656 < 0
+- CFL_003 [medium] Free-cash-flow deficit is material relative to revenue. Evidence: fcf_margin=-0.2948343722340446 < -0.05
+- CFL_004 [medium] Operating cash flow declined rapidly. Evidence: operating_cash_flow_growth=-0.27748234678755124 < -0.25
+- CFL_007 [medium] Cash conversion from reported earnings is weak. Evidence: cfo_to_net_income=-0.43092601258254043 < 0.8
+
+CONTRADICTIONS
+- We believe we have sufficient sources of funding to meet our business requirements for the next 12 months and in the longer term | Operating cash flow declined by more than 10% [operating_cash_flow_growth=-0.2775]; Short-term debt increased by more than 20% [short_term_debt_growth=0.6298] | The narrative is more optimistic than the available indicators. This is a traceable consistency signal, not evidence of fraud or misstatement.
+
+MISSING INFORMATION
+interest_coverage: N/A — Required input(s) not reliably identified: interest_expense. Impact: assessment confidence reduced.
+debt_to_ebitda: N/A — Required input(s) not reliably identified: EBITDA. Impact: assessment confidence reduced.

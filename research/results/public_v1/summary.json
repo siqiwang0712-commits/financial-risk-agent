@@ -1,0 +1,880 @@
+{
+  "dataset_id": "finrisk-sec-mini-v1",
+  "annotation_status": "single-reviewer pilot; not a definitive financial-risk benchmark",
+  "company_disjoint": true,
+  "bootstrap_samples": 2000,
+  "summaries": [
+    {
+      "baseline": "llm_only",
+      "n_companies": 3,
+      "n_decisions": 3,
+      "decision_coverage": 1.0,
+      "accuracy": 0.6667,
+      "accuracy_ci_low": 0,
+      "accuracy_ci_high": 1,
+      "balanced_accuracy": 0.5,
+      "risk_precision": 0,
+      "risk_recall": 0.0,
+      "risk_f1": 0,
+      "auroc": 0.5,
+      "auprc": 1.0,
+      "brier": 0.3333,
+      "confusion_matrix": {
+        "tn": 2,
+        "fp": 0,
+        "fn": 1,
+        "tp": 0
+      },
+      "contradiction_f1": 0,
+      "evidence_coverage": 0.5833,
+      "ece": 0.3333,
+      "unsupported_claim_rate": 0.0,
+      "evidence_precision": 1.0
+    },
+    {
+      "baseline": "ratios_only",
+      "n_companies": 3,
+      "n_decisions": 3,
+      "decision_coverage": 1.0,
+      "accuracy": 1,
+      "accuracy_ci_low": 1,
+      "accuracy_ci_high": 1,
+      "balanced_accuracy": 1.0,
+      "risk_precision": 1.0,
+      "risk_recall": 1.0,
+      "risk_f1": 1.0,
+      "auroc": 1.0,
+      "auprc": 1.0,
+      "brier": 0.1042,
+      "confusion_matrix": {
+        "tn": 2,
+        "fp": 0,
+        "fn": 0,
+        "tp": 1
+      },
+      "contradiction_f1": 0,
+      "evidence_coverage": 0.5833,
+      "ece": 0.25,
+      "unsupported_claim_rate": 0.0,
+      "evidence_precision": 1.0
+    },
+    {
+      "baseline": "rule_engine",
+      "n_companies": 3,
+      "n_decisions": 3,
+      "decision_coverage": 1.0,
+      "accuracy": 0.6667,
+      "accuracy_ci_low": 0,
+      "accuracy_ci_high": 1,
+      "balanced_accuracy": 0.75,
+      "risk_precision": 0.5,
+      "risk_recall": 1.0,
+      "risk_f1": 0.6667,
+      "auroc": 1.0,
+      "auprc": 1.0,
+      "brier": 0.2346,
+      "confusion_matrix": {
+        "tn": 1,
+        "fp": 1,
+        "fn": 0,
+        "tp": 1
+      },
+      "contradiction_f1": 0,
+      "evidence_coverage": 0.5833,
+      "ece": 0.3708,
+      "unsupported_claim_rate": 0.0,
+      "evidence_precision": 1.0
+    },
+    {
+      "baseline": "traditional_models",
+      "n_companies": 3,
+      "n_decisions": 3,
+      "decision_coverage": 1.0,
+      "accuracy": 0.3333,
+      "accuracy_ci_low": 0,
+      "accuracy_ci_high": 1,
+      "balanced_accuracy": 0.5,
+      "risk_precision": 0.3333,
+      "risk_recall": 1.0,
+      "risk_f1": 0.5,
+      "auroc": 0.5,
+      "auprc": 1.0,
+      "brier": 0.25,
+      "confusion_matrix": {
+        "tn": 0,
+        "fp": 2,
+        "fn": 0,
+        "tp": 1
+      },
+      "contradiction_f1": 0,
+      "evidence_coverage": 0.5833,
+      "ece": 0.1667,
+      "unsupported_claim_rate": 0.0,
+      "evidence_precision": 1.0
+    },
+    {
+      "baseline": "full_hybrid",
+      "n_companies": 3,
+      "n_decisions": 2,
+      "decision_coverage": 0.6667,
+      "accuracy": 0.5,
+      "accuracy_ci_low": 0,
+      "accuracy_ci_high": 1,
+      "balanced_accuracy": 0.5,
+      "risk_precision": 0,
+      "risk_recall": 0.0,
+      "risk_f1": 0,
+      "auroc": 1.0,
+      "auprc": 1.0,
+      "brier": 0.193,
+      "confusion_matrix": {
+        "tn": 1,
+        "fp": 0,
+        "fn": 1,
+        "tp": 0
+      },
+      "contradiction_f1": 0.6667,
+      "evidence_coverage": 0.5833,
+      "ece": 0.4065,
+      "unsupported_claim_rate": 0.0,
+      "evidence_precision": 1.0
+    }
+  ],
+  "decompositions": [
+    {
+      "example_id": "aapl-2024",
+      "company": "Apple Inc.",
+      "split": "train",
+      "gold_label": 0,
+      "raw_current": {
+        "cash": 29943,
+        "accounts_receivable": 33410,
+        "inventory": 7286,
+        "current_assets": 152987,
+        "total_assets": 364980,
+        "accounts_payable": 68960,
+        "current_liabilities": 176392,
+        "short_term_debt": 20879,
+        "long_term_debt": 85750,
+        "total_debt": 106629,
+        "total_liabilities": 308030,
+        "shareholder_equity": 56950,
+        "retained_earnings": -19154,
+        "revenue": 391035,
+        "gross_profit": 180683,
+        "operating_income": 123216,
+        "net_income": 93736,
+        "operating_cash_flow": 118254,
+        "capital_expenditure": 9447
+      },
+      "raw_previous": {
+        "cash": 29965,
+        "accounts_receivable": 29508,
+        "inventory": 6331,
+        "current_assets": 143566,
+        "total_assets": 352583,
+        "accounts_payable": 62611,
+        "current_liabilities": 145308,
+        "short_term_debt": 15807,
+        "long_term_debt": 95281,
+        "total_debt": 111088,
+        "total_liabilities": 290437,
+        "shareholder_equity": 62146,
+        "retained_earnings": -214,
+        "revenue": 383285,
+        "gross_profit": 169148,
+        "operating_income": 114301,
+        "net_income": 96995,
+        "operating_cash_flow": 110543,
+        "capital_expenditure": 10959
+      },
+      "ratios": {
+        "current_ratio": 0.8673125765340832,
+        "quick_ratio": 0.8260068483831466,
+        "cash_ratio": 0.16975259648963673,
+        "working_capital": -23405,
+        "debt_to_equity": 1.872326602282704,
+        "debt_to_assets": 0.29215025480848267,
+        "liabilities_to_assets": 0.8439640528248123,
+        "net_debt": 76686,
+        "interest_coverage": null,
+        "debt_to_ebitda": null,
+        "gross_margin": 0.4620634981523393,
+        "operating_margin": 0.31510222870075566,
+        "net_margin": 0.23971255769943867,
+        "roa": 0.2612620773367635,
+        "roe": 1.5741250755692886,
+        "cfo_to_net_income": 1.2615643936161134,
+        "free_cash_flow": 108807,
+        "fcf_margin": 0.27825386474356517,
+        "receivable_days": 29.364468653701074,
+        "inventory_days": 11.814018882634823,
+        "payable_days": 114.15012693009812,
+        "cash_conversion_cycle": -72.97163939376223,
+        "revenue_growth": 0.020219940775141214,
+        "net_income_growth": -0.033599670086086914,
+        "operating_cash_flow_growth": 0.06975566069312394,
+        "free_cash_flow_growth": 0.092615279562982,
+        "total_debt_growth": -0.0401393489845888,
+        "cash_growth": -0.0007341898882029034,
+        "accounts_receivable_growth": 0.13223532601328453,
+        "inventory_growth": 0.15084504817564365
+      },
+      "models": [
+        {
+          "name": "Altman Z-Score",
+          "output": null,
+          "applicability": "Applicable to public manufacturers only",
+          "missing": [
+            "market_value_equity"
+          ]
+        },
+        {
+          "name": "Beneish M-Score",
+          "output": null,
+          "applicability": "Screening signal, not proof of manipulation",
+          "missing": [
+            "depreciation",
+            "ppe",
+            "sga"
+          ]
+        },
+        {
+          "name": "Piotroski F-Score",
+          "output": null,
+          "applicability": "Originally designed for value stocks",
+          "missing": [
+            "shares_outstanding"
+          ]
+        },
+        {
+          "name": "Ohlson O-Score",
+          "output": null,
+          "applicability": "Industrial firms; coefficient-era and input limitations apply",
+          "missing": [
+            "funds_from_operations",
+            "prior_net_income",
+            "gnp_price_index"
+          ]
+        }
+      ],
+      "rules": [
+        {
+          "id": "LIQ_001",
+          "category": "liquidity",
+          "delta": 18,
+          "evidence": [
+            "current_ratio=0.8673125765340832 < 1.0"
+          ]
+        },
+        {
+          "id": "LIQ_002",
+          "category": "liquidity",
+          "delta": 9,
+          "evidence": [
+            "current_ratio=0.8673125765340832 < 1.25"
+          ]
+        },
+        {
+          "id": "LIQ_005",
+          "category": "liquidity",
+          "delta": 16,
+          "evidence": [
+            "working_capital=-23405 < 0"
+          ]
+        },
+        {
+          "id": "LIQ_007",
+          "category": "liquidity",
+          "delta": 18,
+          "evidence": [
+            "current_ratio=0.8673125765340832 < 1.0",
+            "short_term_debt_growth=0.32087050041121024 > 0.2",
+            "cash_growth=-0.0007341898882029034 < 0"
+          ]
+        }
+      ],
+      "narrative_pages": {
+        "30": "The Company believes its balances of unrestricted cash, cash equivalents and marketable securities, which totaled $140.8 billion as of September 28, 2024, along with cash generated by ongoing operations and continued access to debt markets, will be sufficient to satisfy its cash requirements and capital return program over the next 12 months and beyond."
+      },
+      "contradictions": [
+        {
+          "category": "liquidity",
+          "claim": "8 billion as of September 28, 2024, along with cash generated by ongoing operations and continued access to debt markets, will be sufficient to satisfy its cash requirements and capital return program over the next 12 months and beyond",
+          "conflicts": [
+            "Short-term debt increased by more than 20% [short_term_debt_growth=0.3209]",
+            "Current ratio is below 1.0 [current_ratio=0.8673]"
+          ]
+        }
+      ],
+      "dimensions": {
+        "liquidity": {
+          "score": 38,
+          "level": "Low",
+          "trend": "unknown",
+          "coverage": 1.0,
+          "key_drivers": [
+            "LIQ_001"
+          ]
+        },
+        "solvency_leverage": {
+          "score": null,
+          "level": "N/A",
+          "trend": "unknown",
+          "coverage": 0.0,
+          "key_drivers": []
+        },
+        "profitability": {
+          "score": null,
+          "level": "N/A",
+          "trend": "unknown",
+          "coverage": 0.0,
+          "key_drivers": []
+        },
+        "cash_flow": {
+          "score": null,
+          "level": "N/A",
+          "trend": "unknown",
+          "coverage": 0.0,
+          "key_drivers": []
+        },
+        "earnings_quality": {
+          "score": null,
+          "level": "N/A",
+          "trend": "unknown",
+          "coverage": 0.0,
+          "key_drivers": []
+        },
+        "accounting": {
+          "score": null,
+          "level": "N/A",
+          "trend": "unknown",
+          "coverage": 0.0,
+          "key_drivers": []
+        },
+        "governance_audit": {
+          "score": null,
+          "level": "N/A",
+          "trend": "unknown",
+          "coverage": 0.0,
+          "key_drivers": []
+        },
+        "business_going_concern": {
+          "score": null,
+          "level": "N/A",
+          "trend": "unknown",
+          "coverage": 0.0,
+          "key_drivers": []
+        }
+      },
+      "overall_score": null,
+      "prediction": 0,
+      "confidence": 0.65
+    },
+    {
+      "example_id": "msft-2024",
+      "company": "Microsoft Corporation",
+      "split": "validation",
+      "gold_label": 0,
+      "raw_current": {
+        "cash": 18315,
+        "accounts_receivable": 56924,
+        "inventory": 1247,
+        "current_assets": 159734,
+        "total_assets": 512163,
+        "accounts_payable": 21996,
+        "current_liabilities": 125286,
+        "short_term_debt": 24999,
+        "long_term_debt": 42688,
+        "total_debt": 67687,
+        "total_liabilities": 243686,
+        "shareholder_equity": 268477,
+        "retained_earnings": 173144,
+        "revenue": 245122,
+        "gross_profit": 171008,
+        "operating_income": 109433,
+        "net_income": 88136,
+        "operating_cash_flow": 118548,
+        "capital_expenditure": 44477
+      },
+      "raw_previous": {
+        "cash": 34704,
+        "accounts_receivable": 48688,
+        "inventory": 2500,
+        "current_assets": 184257,
+        "total_assets": 411976,
+        "accounts_payable": 18095,
+        "current_liabilities": 104149,
+        "short_term_debt": 0,
+        "long_term_debt": 41990,
+        "total_debt": 41990,
+        "total_liabilities": 205753,
+        "shareholder_equity": 206223,
+        "retained_earnings": 118848,
+        "revenue": 211915,
+        "gross_profit": 146052,
+        "operating_income": 88523,
+        "net_income": 72361,
+        "operating_cash_flow": 87582,
+        "capital_expenditure": 28107
+      },
+      "ratios": {
+        "current_ratio": 1.2749549031815206,
+        "quick_ratio": 1.2650016761649345,
+        "cash_ratio": 0.14618552751305014,
+        "working_capital": 34448,
+        "debt_to_equity": 0.25211470628768945,
+        "debt_to_assets": 0.1321590977872279,
+        "liabilities_to_assets": 0.47579774407756903,
+        "net_debt": 49372,
+        "interest_coverage": null,
+        "debt_to_ebitda": null,
+        "gross_margin": 0.6976444382797138,
+        "operating_margin": 0.44644299573273716,
+        "net_margin": 0.35955972944084985,
+        "roa": 0.19074186891798744,
+        "roe": 0.3713334737729092,
+        "cfo_to_net_income": 1.345057638195516,
+        "free_cash_flow": 74071,
+        "fcf_margin": 0.3021801388696241,
+        "receivable_days": 78.63100823263518,
+        "inventory_days": 9.226698059745797,
+        "payable_days": 98.72099063604718,
+        "cash_conversion_cycle": -10.863284343666194,
+        "revenue_growth": 0.15669962013071279,
+        "net_income_growth": 0.2180041735188845,
+        "operating_cash_flow_growth": 0.35356580119202574,
+        "free_cash_flow_growth": 0.24541403951240018,
+        "total_debt_growth": 0.6119790426291974,
+        "cash_growth": -0.47225103734439833,
+        "accounts_receivable_growth": 0.16915872494249096,
+        "inventory_growth": -0.5012
+      },
+      "models": [
+        {
+          "name": "Altman Z-Score",
+          "output": null,
+          "applicability": "Applicable to public manufacturers only",
+          "missing": [
+            "market_value_equity"
+          ]
+        },
+        {
+          "name": "Beneish M-Score",
+          "output": null,
+          "applicability": "Screening signal, not proof of manipulation",
+          "missing": [
+            "depreciation",
+            "ppe",
+            "sga"
+          ]
+        },
+        {
+          "name": "Piotroski F-Score",
+          "output": null,
+          "applicability": "Originally designed for value stocks",
+          "missing": [
+            "shares_outstanding"
+          ]
+        },
+        {
+          "name": "Ohlson O-Score",
+          "output": null,
+          "applicability": "Industrial firms; coefficient-era and input limitations apply",
+          "missing": [
+            "funds_from_operations",
+            "prior_net_income",
+            "gnp_price_index"
+          ]
+        }
+      ],
+      "rules": [
+        {
+          "id": "LIQ_004",
+          "category": "liquidity",
+          "delta": 8,
+          "evidence": [
+            "cash_ratio=0.14618552751305014 < 0.15"
+          ]
+        },
+        {
+          "id": "LIQ_006",
+          "category": "liquidity",
+          "delta": 10,
+          "evidence": [
+            "cash_growth=-0.47225103734439833 < -0.2"
+          ]
+        },
+        {
+          "id": "SOL_007",
+          "category": "solvency_leverage",
+          "delta": 10,
+          "evidence": [
+            "total_debt_growth=0.6119790426291974 > 0.25"
+          ]
+        }
+      ],
+      "narrative_pages": {},
+      "contradictions": [],
+      "dimensions": {
+        "liquidity": {
+          "score": 28,
+          "level": "Low",
+          "trend": "unknown",
+          "coverage": 1.0,
+          "key_drivers": [
+            "LIQ_004",
+            "LIQ_006"
+          ]
+        },
+        "solvency_leverage": {
+          "score": 20,
+          "level": "Low",
+          "trend": "unknown",
+          "coverage": 1.0,
+          "key_drivers": [
+            "SOL_007"
+          ]
+        },
+        "profitability": {
+          "score": null,
+          "level": "N/A",
+          "trend": "unknown",
+          "coverage": 0.0,
+          "key_drivers": []
+        },
+        "cash_flow": {
+          "score": null,
+          "level": "N/A",
+          "trend": "unknown",
+          "coverage": 0.0,
+          "key_drivers": []
+        },
+        "earnings_quality": {
+          "score": null,
+          "level": "N/A",
+          "trend": "unknown",
+          "coverage": 0.0,
+          "key_drivers": []
+        },
+        "accounting": {
+          "score": null,
+          "level": "N/A",
+          "trend": "unknown",
+          "coverage": 0.0,
+          "key_drivers": []
+        },
+        "governance_audit": {
+          "score": null,
+          "level": "N/A",
+          "trend": "unknown",
+          "coverage": 0.0,
+          "key_drivers": []
+        },
+        "business_going_concern": {
+          "score": null,
+          "level": "N/A",
+          "trend": "unknown",
+          "coverage": 0.0,
+          "key_drivers": []
+        }
+      },
+      "overall_score": 24.0,
+      "prediction": 0,
+      "confidence": 0.45
+    },
+    {
+      "example_id": "intc-2024",
+      "company": "Intel Corporation",
+      "split": "test",
+      "gold_label": 1,
+      "raw_current": {
+        "cash": 8249,
+        "accounts_receivable": 3478,
+        "inventory": 12198,
+        "current_assets": 47324,
+        "total_assets": 196485,
+        "accounts_payable": 12556,
+        "current_liabilities": 35666,
+        "short_term_debt": 3729,
+        "long_term_debt": 46282,
+        "total_debt": 50011,
+        "total_liabilities": 91453,
+        "shareholder_equity": 105032,
+        "retained_earnings": 49032,
+        "revenue": 53101,
+        "gross_profit": 17345,
+        "operating_income": -11678,
+        "net_income": -19233,
+        "operating_cash_flow": 8288,
+        "capital_expenditure": 23944
+      },
+      "raw_previous": {
+        "cash": 7079,
+        "accounts_receivable": 3402,
+        "inventory": 11127,
+        "current_assets": 43269,
+        "total_assets": 191572,
+        "accounts_payable": 8578,
+        "current_liabilities": 28053,
+        "short_term_debt": 2288,
+        "long_term_debt": 46978,
+        "total_debt": 49266,
+        "total_liabilities": 81607,
+        "shareholder_equity": 109965,
+        "retained_earnings": 69156,
+        "revenue": 54228,
+        "gross_profit": 21711,
+        "operating_income": 93,
+        "net_income": 1675,
+        "operating_cash_flow": 11471,
+        "capital_expenditure": 25750
+      },
+      "ratios": {
+        "current_ratio": 1.3268659227275277,
+        "quick_ratio": 0.9848595300846745,
+        "cash_ratio": 0.23128469691022263,
+        "working_capital": 11658,
+        "debt_to_equity": 0.47615012567598447,
+        "debt_to_assets": 0.25452833549634835,
+        "liabilities_to_assets": 0.46544519937908746,
+        "net_debt": 41762,
+        "interest_coverage": null,
+        "debt_to_ebitda": null,
+        "gross_margin": 0.32664168283083184,
+        "operating_margin": -0.2199205288036007,
+        "net_margin": -0.3621965688028474,
+        "roa": -0.09912461313672992,
+        "roe": -0.17891412438313092,
+        "cfo_to_net_income": -0.43092601258254043,
+        "free_cash_flow": -15656,
+        "fcf_margin": -0.2948343722340446,
+        "receivable_days": 23.645505734355286,
+        "inventory_days": 119.05169761718314,
+        "payable_days": 107.86874930081665,
+        "cash_conversion_cycle": 34.82845405072179,
+        "revenue_growth": -0.020782621523935976,
+        "net_income_growth": -12.482388059701492,
+        "operating_cash_flow_growth": -0.27748234678755124,
+        "free_cash_flow_growth": -0.09643532460256321,
+        "total_debt_growth": 0.015121990825315634,
+        "cash_growth": 0.1652775815793191,
+        "accounts_receivable_growth": 0.022339800117577895,
+        "inventory_growth": 0.09625235912644918
+      },
+      "models": [
+        {
+          "name": "Altman Z-Score",
+          "output": null,
+          "applicability": "Applicable to public manufacturers only",
+          "missing": [
+            "market_value_equity"
+          ]
+        },
+        {
+          "name": "Beneish M-Score",
+          "output": null,
+          "applicability": "Screening signal, not proof of manipulation",
+          "missing": [
+            "depreciation",
+            "ppe",
+            "sga"
+          ]
+        },
+        {
+          "name": "Piotroski F-Score",
+          "output": null,
+          "applicability": "Originally designed for value stocks",
+          "missing": [
+            "shares_outstanding"
+          ]
+        },
+        {
+          "name": "Ohlson O-Score",
+          "output": null,
+          "applicability": "Industrial firms; coefficient-era and input limitations apply",
+          "missing": [
+            "funds_from_operations",
+            "prior_net_income",
+            "gnp_price_index"
+          ]
+        }
+      ],
+      "rules": [
+        {
+          "id": "PRO_001",
+          "category": "profitability",
+          "delta": 15,
+          "evidence": [
+            "net_margin=-0.3621965688028474 < 0"
+          ]
+        },
+        {
+          "id": "PRO_002",
+          "category": "profitability",
+          "delta": 9,
+          "evidence": [
+            "operating_margin=-0.2199205288036007 < 0.03"
+          ]
+        },
+        {
+          "id": "PRO_003",
+          "category": "profitability",
+          "delta": 10,
+          "evidence": [
+            "gross_margin_change=-0.07372344219682914 < -0.03"
+          ]
+        },
+        {
+          "id": "PRO_004",
+          "category": "profitability",
+          "delta": 14,
+          "evidence": [
+            "operating_margin_change=-0.22163550999412956 < -0.05"
+          ]
+        },
+        {
+          "id": "PRO_006",
+          "category": "profitability",
+          "delta": 14,
+          "evidence": [
+            "net_income_growth=-12.482388059701492 < -0.3"
+          ]
+        },
+        {
+          "id": "PRO_007",
+          "category": "profitability",
+          "delta": 9,
+          "evidence": [
+            "roa=-0.09912461313672992 < 0"
+          ]
+        },
+        {
+          "id": "PRO_008",
+          "category": "profitability",
+          "delta": 16,
+          "evidence": [
+            "revenue_growth=-0.020782621523935976 < 0",
+            "operating_margin=-0.2199205288036007 < 0"
+          ]
+        },
+        {
+          "id": "CFL_002",
+          "category": "cash_flow",
+          "delta": 14,
+          "evidence": [
+            "free_cash_flow=-15656 < 0"
+          ]
+        },
+        {
+          "id": "CFL_003",
+          "category": "cash_flow",
+          "delta": 11,
+          "evidence": [
+            "fcf_margin=-0.2948343722340446 < -0.05"
+          ]
+        },
+        {
+          "id": "CFL_004",
+          "category": "cash_flow",
+          "delta": 10,
+          "evidence": [
+            "operating_cash_flow_growth=-0.27748234678755124 < -0.25"
+          ]
+        },
+        {
+          "id": "CFL_007",
+          "category": "cash_flow",
+          "delta": 10,
+          "evidence": [
+            "cfo_to_net_income=-0.43092601258254043 < 0.8"
+          ]
+        }
+      ],
+      "narrative_pages": {
+        "28": "We believe we have sufficient sources of funding to meet our business requirements for the next 12 months and in the longer term. Cash generated by operations, and total cash and short-term investments as shown in the table below, are our primary sources of liquidity for funding our strategic business requirements."
+      },
+      "contradictions": [
+        {
+          "category": "liquidity",
+          "claim": "We believe we have sufficient sources of funding to meet our business requirements for the next 12 months and in the longer term",
+          "conflicts": [
+            "Operating cash flow declined by more than 10% [operating_cash_flow_growth=-0.2775]",
+            "Short-term debt increased by more than 20% [short_term_debt_growth=0.6298]"
+          ]
+        }
+      ],
+      "dimensions": {
+        "liquidity": {
+          "score": 20,
+          "level": "Low",
+          "trend": "unknown",
+          "coverage": 1.0,
+          "key_drivers": []
+        },
+        "solvency_leverage": {
+          "score": null,
+          "level": "N/A",
+          "trend": "unknown",
+          "coverage": 0.0,
+          "key_drivers": []
+        },
+        "profitability": {
+          "score": 73,
+          "level": "High",
+          "trend": "unknown",
+          "coverage": 1.0,
+          "key_drivers": [
+            "PRO_008",
+            "PRO_002",
+            "PRO_003",
+            "PRO_004",
+            "PRO_006"
+          ]
+        },
+        "cash_flow": {
+          "score": 44,
+          "level": "Moderate",
+          "trend": "unknown",
+          "coverage": 1.0,
+          "key_drivers": [
+            "CFL_002",
+            "CFL_004",
+            "CFL_007"
+          ]
+        },
+        "earnings_quality": {
+          "score": null,
+          "level": "N/A",
+          "trend": "unknown",
+          "coverage": 0.0,
+          "key_drivers": []
+        },
+        "accounting": {
+          "score": null,
+          "level": "N/A",
+          "trend": "unknown",
+          "coverage": 0.0,
+          "key_drivers": []
+        },
+        "governance_audit": {
+          "score": null,
+          "level": "N/A",
+          "trend": "unknown",
+          "coverage": 0.0,
+          "key_drivers": []
+        },
+        "business_going_concern": {
+          "score": null,
+          "level": "N/A",
+          "trend": "unknown",
+          "coverage": 0.0,
+          "key_drivers": []
+        }
+      },
+      "overall_score": 42.7,
+      "prediction": 0,
+      "confidence": 0.65
+    }
+  ]
+}

@@ -1,0 +1,25 @@
+example_id,company,gold_label,prediction,overall_score,category,dimension_score,drivers
+aapl-2024,Apple Inc.,0,0,,liquidity,38,LIQ_001
+aapl-2024,Apple Inc.,0,0,,solvency_leverage,,
+aapl-2024,Apple Inc.,0,0,,profitability,,
+aapl-2024,Apple Inc.,0,0,,cash_flow,,
+aapl-2024,Apple Inc.,0,0,,earnings_quality,,
+aapl-2024,Apple Inc.,0,0,,accounting,,
+aapl-2024,Apple Inc.,0,0,,governance_audit,,
+aapl-2024,Apple Inc.,0,0,,business_going_concern,,
+msft-2024,Microsoft Corporation,0,0,24.0,liquidity,28,LIQ_004|LIQ_006
+msft-2024,Microsoft Corporation,0,0,24.0,solvency_leverage,20,SOL_007
+msft-2024,Microsoft Corporation,0,0,24.0,profitability,,
+msft-2024,Microsoft Corporation,0,0,24.0,cash_flow,,
+msft-2024,Microsoft Corporation,0,0,24.0,earnings_quality,,
+msft-2024,Microsoft Corporation,0,0,24.0,accounting,,
+msft-2024,Microsoft Corporation,0,0,24.0,governance_audit,,
+msft-2024,Microsoft Corporation,0,0,24.0,business_going_concern,,
+intc-2024,Intel Corporation,1,0,42.7,liquidity,20,
+intc-2024,Intel Corporation,1,0,42.7,solvency_leverage,,
+intc-2024,Intel Corporation,1,0,42.7,profitability,73,PRO_008|PRO_002|PRO_003|PRO_004|PRO_006
+intc-2024,Intel Corporation,1,0,42.7,cash_flow,44,CFL_002|CFL_004|CFL_007
+intc-2024,Intel Corporation,1,0,42.7,earnings_quality,,
+intc-2024,Intel Corporation,1,0,42.7,accounting,,
+intc-2024,Intel Corporation,1,0,42.7,governance_audit,,
+intc-2024,Intel Corporation,1,0,42.7,business_going_concern,,

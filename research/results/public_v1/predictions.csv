@@ -1,0 +1,16 @@
+dataset_id,example_id,company,split,baseline,risk_label,risk_probability,risk_prediction,contradiction_label,contradiction_prediction,verified_claim_count,evidence_coverage
+finrisk-sec-mini-v1,aapl-2024,Apple Inc.,train,llm_only,0,0.0,0,0,0,1,0.65
+finrisk-sec-mini-v1,aapl-2024,Apple Inc.,train,ratios_only,0,0.25,0,0,0,1,0.65
+finrisk-sec-mini-v1,aapl-2024,Apple Inc.,train,rule_engine,0,0.7625,1,0,0,1,0.65
+finrisk-sec-mini-v1,aapl-2024,Apple Inc.,train,traditional_models,0,0.5,1,0,0,1,0.65
+finrisk-sec-mini-v1,aapl-2024,Apple Inc.,train,full_hybrid,0,,,0,1,1,0.65
+finrisk-sec-mini-v1,msft-2024,Microsoft Corporation,validation,llm_only,0,0.0,0,0,0,0,0.45
+finrisk-sec-mini-v1,msft-2024,Microsoft Corporation,validation,ratios_only,0,0.0,0,0,0,0,0.45
+finrisk-sec-mini-v1,msft-2024,Microsoft Corporation,validation,rule_engine,0,0.35,0,0,0,0,0.45
+finrisk-sec-mini-v1,msft-2024,Microsoft Corporation,validation,traditional_models,0,0.5,1,0,0,0,0.45
+finrisk-sec-mini-v1,msft-2024,Microsoft Corporation,validation,full_hybrid,0,0.24,0,0,0,0,0.45
+finrisk-sec-mini-v1,intc-2024,Intel Corporation,test,llm_only,1,0.0,0,1,0,1,0.65
+finrisk-sec-mini-v1,intc-2024,Intel Corporation,test,ratios_only,1,0.5,1,1,0,1,0.65
+finrisk-sec-mini-v1,intc-2024,Intel Corporation,test,rule_engine,1,1.0,1,1,0,1,0.65
+finrisk-sec-mini-v1,intc-2024,Intel Corporation,test,traditional_models,1,0.5,1,1,0,1,0.65
+finrisk-sec-mini-v1,intc-2024,Intel Corporation,test,full_hybrid,1,0.427,0,1,1,1,0.65

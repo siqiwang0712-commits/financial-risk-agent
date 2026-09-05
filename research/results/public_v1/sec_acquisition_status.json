@@ -1,0 +1,12 @@
+{
+  "status": "BLOCKED",
+  "companyfacts_attempts": 2,
+  "bulk_dataset_attempts": 2,
+  "http_status": 403,
+  "bulk_sources": [
+    "https://www.sec.gov/files/dera/data/financial-statement-data-sets/2023q4.zip",
+    "https://www.sec.gov/files/dera/data/financial-statement-data-sets/2024q4.zip"
+  ],
+  "policy": "No bypass attempted; no data or labels fabricated",
+  "candidate_rows_promoted": 0
+}

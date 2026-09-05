@@ -10,8 +10,8 @@
 [![Python 3.11+](https://img.shields.io/badge/python-3.11%2B-356a5b.svg)](https://www.python.org/)
 [![FastAPI](https://img.shields.io/badge/API-FastAPI-009688.svg)](https://fastapi.tiangolo.com/)
 [![Next.js](https://img.shields.io/badge/UI-Next.js-111111.svg)](https://nextjs.org/)
-[![Tests](https://img.shields.io/badge/tests-28%20passed-2f855a.svg)](#quality-and-testing)
-[![Coverage](https://img.shields.io/badge/coverage-93%25-2f855a.svg)](#quality-and-testing)
+[![Tests](https://img.shields.io/badge/tests-43%20passed-2f855a.svg)](#quality-and-testing)
+[![Coverage](https://img.shields.io/badge/coverage-91.06%25-2f855a.svg)](#quality-and-testing)
 [![License: MIT](https://img.shields.io/badge/license-MIT-d45b3e.svg)](LICENSE)
 
 **Traceable risk signals from annual reports—not an LLM-generated opinion.**
@@ -21,6 +21,51 @@
 </div>
 
 ---
+
+## Research snapshot
+
+**Problem →** LLM-only financial analysis can lose units, miscalculate ratios, accept optimistic language and emit unsupported claims.
+
+**Design →** SEC XBRL is the authoritative numerical layer; annual-report pages are the narrative layer. Deterministic formulas, configured rules, structured semantic extraction, quote verification and cross-modal consistency checks remain separate and auditable.
+
+**Pilot result →** The first frozen public-company benchmark is deliberately small: Apple, Microsoft and Intel FY2024, split by company. It produced a useful negative result—on this `n=3` pilot, Full Hybrid risk-classification F1 was `0.00` with `2/3` decision coverage, while Ratios Only was `1.00`. Full Hybrid contradiction F1 was `0.667`. Bootstrap intervals are correspondingly uninformative (`[0, 1]` for most accuracy estimates). **This does not establish model superiority; it demonstrates that the experiment is runnable and that the current aggregation requires more validation.**
+
+![Actually executed public-company baseline results](research/results/public_v1/baseline-risk-f1.svg)
+
+| Baseline | Decisions | Risk F1 | Contradiction F1 | ECE | Accuracy (95% bootstrap CI) |
+|---|---:|---:|---:|---:|---:|
+| LLM Only (offline deterministic semantic provider) | 3/3 | 0.000 | 0.000 | 0.333 | 0.667 [0, 1] |
+| Ratios Only | 3/3 | 1.000 | 0.000 | 0.250 | 1.000 [1, 1] |
+| Rule Engine | 3/3 | 0.667 | 0.000 | 0.371 | 0.667 [0, 1] |
+| Traditional Models | 3/3 | 0.500 | 0.000 | 0.167 | 0.333 [0, 1] |
+| Full Hybrid | 2/3 | 0.000 | 0.667 | 0.407 | 0.500 [0, 1] |
+
+Results: [research summary](research/results.md) · [`summary.json`](research/results/public_v1/summary.json) · [`predictions.csv`](research/results/public_v1/predictions.csv) · [`score_decomposition.csv`](research/results/public_v1/score_decomposition.csv) · [`confusion_matrices.csv`](research/results/public_v1/confusion_matrices.csv) · [`ablations.csv`](research/results/public_v1/ablations.csv) · [`robustness.csv`](research/results/public_v1/robustness.csv)
+
+Sample output: [Intel 2024 text assessment](examples/intel_2024_sample_report.txt) · [Intel 2024 PDF assessment](examples/intel_2024_sample_report.pdf)
+
+> The pilot is single-reviewer and too small for inferential claims. The “LLM Only” run used the offline deterministic provider because no API credential was supplied; the production structured provider is implemented but no paid-provider result is claimed.
+
+### Research questions
+
+- **RQ1:** Does hybrid reasoning reduce unsupported claims relative to semantic-only analysis?
+- **RQ2:** Does cross-modal consistency improve contradiction detection?
+- **RQ3:** Does Full Hybrid improve company-level risk classification under company-disjoint evaluation?
+- **RQ4:** How sensitive are predictions to removing narrative, rules, models, trends or inputs?
+
+Only diagnostic evidence exists so far: RQ3 is not supported by the pilot, RQ2 has one true positive and one false positive, and RQ1 requires a real LLM run. See the [full results](research/results.md) and [dataset card](research/dataset_card.md).
+
+### Maturity boundary
+
+| State | Scope |
+|---|---|
+| Implemented | XBRL normalization/reconciliation; deterministic finance; structured LLM adapter; evidence verification; consistency engine; reproducible evaluation |
+| Experimentally validated | Three-company offline pilot, score decomposition, confusion matrices, ablations, unit-scale and missingness checks |
+| Planned / NOT RUN | Independently reviewed 30-company benchmark, live SEC rebuild on an allowed network, real paid-LLM baseline, calibrated risk model |
+
+### Running system
+
+![FinRisk-Agent local dashboard running in Next.js](docs/assets/dashboard-running.png)
 
 ## Why FinRisk-Agent?
 
@@ -78,8 +123,11 @@ The architecture deliberately separates deterministic and semantic reasoning. Fi
 ### Processing pipeline
 
 ```text
-Financial report
-    ├── page-aware parsing ──→ structured financial values
+SEC 10-K / 20-F
+    ├── Company Facts / inline XBRL ──→ authoritative financial values
+    │                                   └── year, unit, accession, restatement provenance
+    ├── PDF/page-aware parsing ───────→ narrative evidence + document candidates
+    │                                   └── XBRL ↔ document reconciliation
     │                            ├── metrics and trends
     │                            ├── traditional risk models
     │                            └── versioned expert rules
@@ -105,6 +153,7 @@ Every extracted value can preserve:
 ```text
 value · unit · currency · fiscal year · statement · line item
 document · page · original text · extraction confidence · restated status
+source type · taxonomy · concept · accession · filed date · period · source URL
 ```
 
 Derived metrics retain their formulas and inputs. Rules and model mappings retain stable identifiers. The assessment exposes typed nodes and edges connecting financial values, metrics, models, signals, contradictions, dimensions and the overall result.
@@ -235,6 +284,23 @@ docker compose up --build
 
 The default narrative provider is deterministic and offline. No API key is required for development or automated tests.
 
+To enable the real schema-constrained provider, copy `.env.example`, set `FINRISK_LLM_PROVIDER=openai`, configure `OPENAI_API_KEY`, and explicitly set current model pricing if cost estimates are required. Every call records prompt version, attempts, token usage, estimated cost, latency and status. Pricing defaults to zero rather than silently assuming stale rates.
+
+### Reproduce the public pilot
+
+```powershell
+$env:PYTHONPATH="backend"
+python scripts/run_public_benchmark.py
+pytest --cov=finrisk --cov-fail-under=90
+```
+
+The benchmark command deterministically regenerates CSV, JSON and the result chart under `research/results/public_v1`. Rebuilding SEC snapshots separately requires an identifying `SEC_USER_AGENT`:
+
+```powershell
+$env:SEC_USER_AGENT="FinRisk-Agent your-email@example.com"
+python scripts/build_public_benchmark.py
+```
+
 ## API overview
 
 ### Analyze normalized data
@@ -261,6 +327,15 @@ Fields:
 
 The upload path validates PDF magic bytes, limits files to 50 MB and 500 pages, parses outside the async event loop, preserves prior-year candidates and always returns `review_required: true`. Production deployment still requires authentication, rate limiting and isolated workers.
 
+### Normalize SEC XBRL
+
+```http
+POST /api/v1/xbrl/normalize
+Content-Type: application/json
+```
+
+Pass an SEC Company Facts payload and optional fiscal years. The response contains normalized line items plus taxonomy, concept, accession, filing date, reporting period, original unit, restatement status and SEC provenance URL. `reconcile_sources()` compares document candidates against XBRL with a configured tolerance; XBRL remains authoritative while conflicts are surfaced for review.
+
 ## Example: offline synthetic demo
 
 The repository includes one clearly labelled synthetic company fixture. It exists to validate system mechanics, not to demonstrate real-world performance.
@@ -286,7 +361,7 @@ The project asks:
 4. Traditional Financial Models
 5. Full Hybrid FinRisk-Agent
 
-Two executable ablations remove narrative evidence and temporal trends. Run the explicitly synthetic orchestration smoke test with:
+The repository retains the explicitly synthetic orchestration smoke test:
 
 ```bash
 python scripts/run_benchmark.py
@@ -294,7 +369,9 @@ python scripts/run_benchmark.py
 
 The runner loads [`research/synthetic_manifest.json`](research/synthetic_manifest.json) and writes ignored JSONL artifacts. These results are **synthetic smoke outputs**, not empirical evidence.
 
-The real benchmark protocol specifies company-disjoint splits, double annotation, adjudication, extraction accuracy, evidence precision, unsupported-claim rate, contradiction precision/recall/F1, valid-label classification metrics, calibration, bootstrap intervals, sector slices and error analysis.
+The checked-in public pilot actually runs all five baselines and five variants (`full_hybrid`, `without_narrative`, `without_rules`, `without_models`, `without_trends`) on frozen SEC-derived observations. It reports classification metrics, evidence precision, unsupported-claim rate, contradiction F1, evidence coverage, ECE and 2,000-resample company bootstrap intervals. Extraction accuracy remains **not established** because the SEC Company Facts endpoint returned HTTP 403 in the recorded environment; the ingestion code and offline tests are complete, but no circular “gold equals parser output” number is reported.
+
+The full protocol still requires independent double annotation, adjudication and a larger company-disjoint sample before testing the research hypothesis.
 
 Research documents:
 
@@ -309,8 +386,8 @@ Research documents:
 
 Current local verification:
 
-- 28 Python tests passing
-- 93% line coverage
+- 43 Python tests passing
+- 91.06% line coverage
 - Ruff static analysis passing
 - TypeScript type checking passing
 - Next.js production build passing
@@ -336,12 +413,12 @@ GitHub Actions runs backend and frontend checks on pushes and pull requests.
 
 ```text
 financial-risk-agent/
-├── backend/finrisk/       # domain, parser, metrics, models, rules, scoring, API
+├── backend/finrisk/       # XBRL, LLM, consistency, metrics, models, rules, API
 ├── config/                # scoring weights and traditional-model mappings
 ├── frontend/              # Next.js dashboard
 ├── rules/                 # 68 versioned expert risk rules
 ├── tests/                 # unit, boundary and integration tests
-├── research/              # question, method, manifests and evaluation protocol
+├── research/              # public pilot, results, method, ablation and errors
 ├── docs/                  # architecture assets and independent audit responses
 ├── examples/              # explicitly synthetic fixtures
 ├── scripts/               # demo and benchmark entry points
