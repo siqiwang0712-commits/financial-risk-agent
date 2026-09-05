@@ -50,6 +50,7 @@ class ModelResult:
     inputs: dict[str, float | None]
     formula: str
     missing_components: list[str] = field(default_factory=list)
+    derived_outputs: dict[str, float] = field(default_factory=dict)
 
 
 @dataclass
@@ -61,6 +62,7 @@ class RuleSignal:
     rationale: str
     evidence: list[str]
     source_refs: list[Evidence] = field(default_factory=list)
+    family: str | None = None
 
 
 @dataclass

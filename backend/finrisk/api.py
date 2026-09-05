@@ -40,18 +40,23 @@ if FastAPI:
             if len(pages)>500:raise HTTPException(422,"PDF exceeds the 500-page analysis limit")
             extracted=parser.extract_values(pages,file.filename or "Annual Report",fiscal_year)
             if not extracted:raise HTTPException(422,"No reliable financial line items were extracted; manual review is required")
-            current={};sources={};candidates={};review_issues=[]
+            current={};previous={};sources={};candidates={};review_issues=[]
             for item in extracted:
-                if item.fiscal_year!=fiscal_year:continue
-                candidates.setdefault(item.line_item,set()).add(item.value)
-                sources.setdefault(item.line_item,[]).append(Evidence(item.document,item.page,item.source_text,item.fiscal_year,item.confidence,False,"located"))
-            for key,values in candidates.items():
-                usable={v for v in values if v is not None}
-                if len(usable)==1:current[key]=usable.pop()
-                elif len(usable)>1:review_issues.append({"line_item":key,"reason":"conflicting candidates","values":sorted(usable)})
+                candidates.setdefault((item.fiscal_year,item.line_item),[]).append(item)
+                if item.fiscal_year==fiscal_year:sources.setdefault(item.line_item,[]).append(Evidence(item.document,item.page,item.source_text,item.fiscal_year,item.confidence,False,"located"))
+            prior_year=max((y for y,_ in candidates if y<fiscal_year),default=None)
+            for (candidate_year,key),items in candidates.items():
+                if candidate_year not in {fiscal_year,prior_year}:continue
+                ranked=sorted(items,key=lambda x:(x.restated,x.statement!="unknown",x.confidence),reverse=True)
+                top_rank=(ranked[0].restated,ranked[0].statement!="unknown",ranked[0].confidence)
+                top=[x for x in ranked if (x.restated,x.statement!="unknown",x.confidence)==top_rank]
+                usable={x.value for x in top if x.value is not None}
+                target=current if candidate_year==fiscal_year else previous
+                if len(usable)==1:target[key]=usable.pop()
+                elif len(usable)>1:review_issues.append({"line_item":key,"fiscal_year":candidate_year,"reason":"conflicting top-ranked candidates","values":sorted(usable)})
             if not current:raise HTTPException(422,"No unambiguous values were available for the requested fiscal year")
-            result=pipeline.assess(company,fiscal_year,current,pages=pages,document=file.filename or "Annual Report",source_map=sources)
-            payload=result.to_dict();payload["extraction"]={"candidate_count":len(extracted),"review_required":True,"review_issues":review_issues,"sections":parser.identify_sections(pages)}
+            result=pipeline.assess(company,fiscal_year,current,previous or None,pages,file.filename or "Annual Report",source_map=sources)
+            payload=result.to_dict();payload["extraction"]={"candidate_count":len(extracted),"prior_year":prior_year,"review_required":True,"review_issues":review_issues,"sections":parser.identify_sections(pages)}
             return payload
         finally:path.unlink(missing_ok=True)
 else:

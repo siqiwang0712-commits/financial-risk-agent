@@ -1,0 +1,1 @@
+{"$schema":"https://json-schema.org/draft/2020-12/schema","type":"object","required":["kind","version","examples"],"properties":{"kind":{"const":"synthetic_smoke"},"version":{"type":"string"},"examples":{"type":"array","items":{"type":"object","required":["id","path","synthetic"],"properties":{"id":{"type":"string"},"path":{"type":"string"},"synthetic":{"const":true}}}}}}

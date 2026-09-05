@@ -67,4 +67,4 @@ def ohlson_o(v: dict) -> ModelResult:
     size=math.log(v["total_assets"]/v["gnp_price_index"])
     o=-1.32-.407*size+6.03*v["total_liabilities"]/v["total_assets"]-1.43*v["working_capital"]/v["total_assets"]+.0757*v["current_liabilities"]/v["current_assets"]-2.37*v["net_income"]/v["total_assets"]-1.83*v["funds_from_operations"]/v["total_liabilities"]+.285*(1 if v["total_liabilities"]>v["total_assets"] else 0)-1.72*(1 if v["net_income"]<0 and v["prior_net_income"]<0 else 0)-.521*(v["net_income"]-v["prior_net_income"])/(abs(v["net_income"])+abs(v["prior_net_income"]))
     probability=1/(1+math.exp(-o))
-    return ModelResult("Ohlson O-Score",round(o,4),f"Model-implied distress probability {probability:.1%}","Industrial firms; not the FinRisk overall score",v,"Ohlson (1980) nine-factor logit")
+    return ModelResult("Ohlson O-Score",round(o,4),f"Model-implied distress probability {probability:.1%}","Industrial firms; not the FinRisk overall score",v,"Ohlson (1980) nine-factor logit",derived_outputs={"probability":round(probability,6)})

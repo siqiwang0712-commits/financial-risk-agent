@@ -12,9 +12,8 @@ def aggregate(signals,contradictions,config:dict):
     base=config.get("base_score",10); caps=config.get("category_cap",100); scores=defaultdict(lambda:base); covered=set()
     grouped={};ungrouped=[]
     for s in signals:
-        if len(s.evidence)>1:ungrouped.append(s);continue
-        metric=s.evidence[0].split("=",1)[0] if s.evidence else s.rule_id
-        key=(s.category,metric)
+        if not s.family:ungrouped.append(s);continue
+        key=(s.category,s.family)
         if key not in grouped or s.score_delta>grouped[key].score_delta:grouped[key]=s
     effective=list(grouped.values())+ungrouped
     for s in effective:scores[s.category]+=s.score_delta;covered.add(s.category)
@@ -30,14 +29,16 @@ def aggregate(signals,contradictions,config:dict):
 
 REQUIRED_FIELDS=("cash","current_assets","total_assets","current_liabilities","total_liabilities","shareholder_equity","revenue","operating_income","net_income","operating_cash_flow")
 
-def confidence_components(values,verified_evidence,models,multi_year=False):
+def confidence_components(values,verified_evidence,models,multi_year=False,numeric_evidence=None):
     completeness=sum(values.get(k) is not None for k in REQUIRED_FIELDS)/len(REQUIRED_FIELDS)
-    ev=sum(e.verified for e in verified_evidence)/max(1,len(verified_evidence)) if verified_evidence else .5
+    ev=sum(e.verified for e in verified_evidence)/len(verified_evidence) if verified_evidence else 0
+    numeric_evidence=numeric_evidence or []
+    numeric_provenance=sum(e.verification_status in {"located","verified"} for e in numeric_evidence)/len(numeric_evidence) if numeric_evidence else 0
     applicable=sum(m.output is not None for m in models)/max(1,len(models))
-    components={"core_data_completeness":completeness,"verified_evidence_coverage":ev,"applicable_model_coverage":applicable,"multi_year_coverage":1.0 if multi_year else 0.5}
+    components={"core_data_completeness":completeness,"numeric_provenance_coverage":numeric_provenance,"verified_claim_coverage":ev,"applicable_model_coverage":applicable,"temporal_depth":1.0 if multi_year else 0.5}
     return {k:round(v,3) for k,v in components.items()}
 
-def confidence(values,verified_evidence,models,multi_year=False):
-    c=confidence_components(values,verified_evidence,models,multi_year)
-    score=.5*c["core_data_completeness"]+.25*c["verified_evidence_coverage"]+.15*c["applicable_model_coverage"]+.1*c["multi_year_coverage"]
+def confidence(values,verified_evidence,models,multi_year=False,numeric_evidence=None):
+    c=confidence_components(values,verified_evidence,models,multi_year,numeric_evidence)
+    score=.35*c["core_data_completeness"]+.25*c["numeric_provenance_coverage"]+.2*c["verified_claim_coverage"]+.1*c["applicable_model_coverage"]+.1*c["temporal_depth"]
     return round(min(.99,max(.05,score)),2)

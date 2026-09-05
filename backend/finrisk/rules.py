@@ -12,6 +12,8 @@ class RuleEngine:
     def __init__(self, rules: list[dict]):
         ids=[r["id"] for r in rules]
         if len(ids)!=len(set(ids)): raise ValueError("Duplicate rule IDs")
+        for rule in rules:
+            if rule.get("aggregation","max") not in {"max","additive"}:raise ValueError(f'Invalid aggregation for {rule["id"]}')
         self.rules=rules
 
     @classmethod
@@ -27,6 +29,5 @@ class RuleEngine:
                 passed=actual is not None and c["operator"] in OPS and OPS[c["operator"]](actual,c["value"])
                 ok &= passed
                 if passed: matches.append(f'{c["metric"]}={actual} {c["operator"]} {c["value"]}')
-            if ok: out.append(RuleSignal(r["id"],r["category"],r["severity"],r["effect"]["score_delta"],r["rationale"],matches))
+            if ok: out.append(RuleSignal(r["id"],r["category"],r["severity"],r["effect"]["score_delta"],r["rationale"],matches,family=r.get("family")))
         return out
-

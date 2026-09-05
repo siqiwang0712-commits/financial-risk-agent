@@ -44,6 +44,8 @@ class FinRiskPipeline:
         models += [ohlson_o(model_input)]
         model_metric_names={"Altman Z-Score":"altman_z_score","Beneish M-Score":"beneish_m_score","Piotroski F-Score":"piotroski_f_score","Ohlson O-Score":"ohlson_o_score"}
         for model in models:facts[model_metric_names[model.name]]=model.output
+        ohlson=next(m for m in models if m.name=="Ohlson O-Score")
+        facts["ohlson_probability"]=ohlson.derived_outputs.get("probability")
         claims=self.provider.extract(pages,document,year)
         verified=[]; accepted=[]
         for claim in claims:
@@ -58,10 +60,10 @@ class FinRiskPipeline:
                 model=next(m for m in models if m.name==mapping["model"])
                 refs=[]
                 for key in model.inputs:refs.extend(source_map.get(key,[]))
-                signals.append(RuleSignal(mapping["id"],mapping["category"],"model",mapping["delta"],f'{mapping["model"]} crossed configured risk threshold; model limitations still apply.',[f'{mapping["metric"]}={value} {mapping["operator"]} {mapping["threshold"]}'],refs))
+                signals.append(RuleSignal(mapping["id"],mapping["category"],"model",mapping["delta"],f'{mapping["model"]} crossed configured risk threshold; model limitations still apply.',[f'{mapping["metric"]}={value} {mapping["operator"]} {mapping["threshold"]}'],refs,family=f'model:{mapping["model"]}'))
         for signal in signals:
             keys=[item.split("=",1)[0] for item in signal.evidence]
-            refs=[]
+            refs=list(signal.source_refs)
             for key in keys:
                 refs.extend(source_map.get(key,[]))
                 if key in metrics:refs.extend(metrics[key].source_refs)
@@ -69,8 +71,9 @@ class FinRiskPipeline:
         contradictions=detect_contradictions(accepted,facts)
         score,level,dimensions=aggregate(signals,contradictions,self.scoring)
         missing=[f"{m.name}: N/A — {m.missing_reason} Impact: assessment confidence reduced." for m in metrics.values() if m.value is None]
-        conf=confidence(current,verified,models,previous is not None)
-        components=confidence_components(current,verified,models,previous is not None)
+        numeric_evidence=[e for refs in source_map.values() for e in refs]
+        conf=confidence(current,verified,models,previous is not None,numeric_evidence)
+        components=confidence_components(current,verified,models,previous is not None,numeric_evidence)
         nodes=[];edges=[]
         for key,refs in source_map.items():
             for i,e in enumerate(refs):nodes.append({"id":f"value:{key}:{i}","type":"financial_value","label":key,"document":e.document,"page":e.page,"status":e.verification_status})
@@ -78,12 +81,25 @@ class FinRiskPipeline:
             nodes.append({"id":f"metric:{name}","type":"metric","label":name,"formula":m.formula})
             for key in m.inputs:
                 for i,_ in enumerate(source_map.get(key,[])):edges.append({"from":f"value:{key}:{i}","to":f"metric:{name}","relation":"input_to"})
+        for model in models:
+            model_id="model:"+model.name.lower().replace(" ","_")
+            nodes.append({"id":model_id,"type":"model","label":model.name,"applicability":model.applicability})
+            for key in model.inputs:
+                for i,_ in enumerate(source_map.get(key,[])):edges.append({"from":f"value:{key}:{i}","to":model_id,"relation":"model_input"})
         for s in signals:
             nodes.append({"id":f"signal:{s.rule_id}","type":"signal","label":s.rule_id})
+            if s.rule_id.startswith("MODEL_"):
+                model_name=next((m["model"] for m in self.model_scoring["mappings"] if m["id"]==s.rule_id),None)
+                if model_name:edges.append({"from":"model:"+model_name.lower().replace(" ","_"),"to":f"signal:{s.rule_id}","relation":"mapped_to"})
             for key in [x.split("=",1)[0] for x in s.evidence]:
                 target=f"metric:{key}" if key in metrics else None
                 if target:edges.append({"from":target,"to":f"signal:{s.rule_id}","relation":"triggers"})
             edges.append({"from":f"signal:{s.rule_id}","to":f"dimension:{s.category}","relation":"contributes_to"})
+        for i,claim in enumerate(accepted):nodes.append({"id":f"claim:{i}","type":"claim","label":claim.claim,"page":claim.evidence.page})
+        for i,c in enumerate(contradictions):
+            nodes.append({"id":f"contradiction:{i}","type":"contradiction","label":c.category})
+            edges.append({"from":f"claim:{accepted.index(next(x for x in accepted if x.claim==c.management_claim))}","to":f"contradiction:{i}","relation":"claim_input"})
+            edges.append({"from":f"contradiction:{i}","to":f"dimension:{c.category}","relation":"contributes_to"})
         for category in dimensions:nodes.append({"id":f"dimension:{category}","type":"dimension","label":category});edges.append({"from":f"dimension:{category}","to":"overall","relation":"weighted_into"})
         nodes.append({"id":"overall","type":"assessment","label":"overall risk"})
         graph={"nodes":nodes,"edges":edges}

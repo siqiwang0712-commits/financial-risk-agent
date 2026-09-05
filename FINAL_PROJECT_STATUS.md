@@ -32,7 +32,7 @@ Status date: 2026-09-05. This is an honest V1 engineering status; it does not cl
 
 ## Tests Passed
 
-- `24 passed` on Python 3.12.10; line coverage: `92%` with a 90% CI threshold.
+- `28 passed` on Python 3.12.10; line coverage: `93%`, above the 90% CI threshold.
 - Static analysis: Ruff, all checks passed.
 - Next.js 15 production build: passed (static route generated).
 - Synthetic pipeline CLI: passed; emitted eight dimensions, model missing reasons, triggered rules, verified contradiction, confidence, and disclaimer.

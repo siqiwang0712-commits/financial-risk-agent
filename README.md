@@ -68,7 +68,7 @@ Rules add bounded category deltas to a transparent base score; categories withou
 
 ## Evaluation
 
-The research design compares LLM Only, Ratios Only, Rule Engine Only, Traditional Models, and Full Hybrid on the same company-disjoint benchmark. Planned measures include extraction accuracy, evidence precision, unsupported-claim and hallucination rates, valid-label classification metrics, contradiction precision/recall/F1, calibration, ablation, and error analysis. The repository contains evaluation code and a **synthetic** regression fixture, but does not claim real-world experimental performance. See [research/evaluation_protocol.md](research/evaluation_protocol.md).
+An executable synthetic smoke runner exercises LLM Only, Ratios Only, Rule Engine Only, Traditional Models, Full Hybrid, and two ablations from a versioned manifest (`python scripts/run_benchmark.py`). It validates orchestration only. The planned real study uses a company-disjoint benchmark and reports extraction accuracy, evidence precision, unsupported claims, contradiction F1, calibration, ablation, and error analysis. No real-world performance is claimed. See [research/evaluation_protocol.md](research/evaluation_protocol.md).
 
 ## Security and privacy
 

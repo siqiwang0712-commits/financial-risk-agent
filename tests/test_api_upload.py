@@ -26,3 +26,10 @@ def test_conflicting_candidates_are_not_silently_selected():
     assert response.status_code==200
     issues=response.json()["extraction"]["review_issues"]
     assert any(x["line_item"]=="cash" for x in issues)
+
+def test_pdf_upload_preserves_prior_year_for_trends():
+    doc=fitz.open();page=doc.new_page();page.insert_text((72,72),"BALANCE SHEET\n2025 2024\nCash and cash equivalents 120 100\nTotal assets 500 450")
+    pdf=doc.tobytes();doc.close()
+    response=TestClient(app).post("/api/v1/documents/analyze",data={"company":"X","fiscal_year":"2025"},files={"file":("x.pdf",pdf,"application/pdf")})
+    assert response.status_code==200
+    assert response.json()["extraction"]["prior_year"]==2024
