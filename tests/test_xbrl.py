@@ -5,6 +5,7 @@ import pytest
 from finrisk.domain import FinancialValue
 from finrisk.xbrl import (
     SecClient,
+    acquire_latest_filing,
     parse_companyfacts,
     reconcile_sources,
     values_by_year,
@@ -42,3 +43,19 @@ def test_sec_cache_is_hash_verified(tmp_path):
     assert client.get_json("https://example.invalid","sample")=={"ok":True}
     cache.write_text("{}",encoding="utf-8")
     with pytest.raises(ValueError,match="hash mismatch"):client.get_json("https://example.invalid","sample")
+
+
+def test_companyfacts_preserves_and_prefers_authoritative_unit():
+    payload = fixture()
+    payload["facts"]["us-gaap"]["Assets"]["units"]["EUR"] = [
+        {"fy": 2024, "fp": "FY", "form": "10-K", "val": 999, "filed": "2025-01-01", "accn": "3", "end": "2024-09-30"}
+    ]
+    value = next(item for item in parse_companyfacts(payload, [2024]) if item.line_item == "total_assets")
+    assert value.value == 110 and value.currency == "USD" and value.original_unit == "USD"
+
+
+def test_sec_acquisition_fails_closed():
+    client = SecClient("FinRisk test@example.com")
+    client.latest_filing = lambda ticker: (_ for _ in ()).throw(RuntimeError("SEC unavailable"))
+    result = acquire_latest_filing(client, "ACME")
+    assert result["decision"] == "ABSTAIN" and result["filing"] is None

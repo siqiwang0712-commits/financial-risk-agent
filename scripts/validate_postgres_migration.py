@@ -5,12 +5,16 @@ from finrisk.enterprise.postgres import PostgresEnterpriseRepository
 
 root = Path(__file__).resolve().parents[1]
 repository = PostgresEnterpriseRepository.connect(os.environ["DATABASE_URL"])
-repository.migrate(root / "migrations" / "001_enterprise_core.sql")
+for migration in sorted((root / "migrations").glob("*.sql")):
+    repository.migrate(migration)
 with repository.connection.cursor() as cursor:
     cursor.execute(
-        "SELECT to_regclass('public.analysis_snapshots'), to_regclass('public.audit_events')"
+        "SELECT to_regclass('public.analysis_snapshots'), "
+        "to_regclass('public.audit_events'), "
+        "to_regclass('public.risk_snapshots'), "
+        "to_regclass('public.decision_bundles')"
     )
-    snapshots, audit = cursor.fetchone()
-if not snapshots or not audit:
+    snapshots, audit, risk_snapshots, bundles = cursor.fetchone()
+if not all((snapshots, audit, risk_snapshots, bundles)):
     raise SystemExit("enterprise migration did not create required tables")
 print("PostgreSQL enterprise migration validated")

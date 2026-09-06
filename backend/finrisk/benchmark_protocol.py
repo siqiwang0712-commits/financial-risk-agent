@@ -61,6 +61,32 @@ def adjudicate_label(
     return {"status": "ADJUDICATED", "label": adjudicated}
 
 
+def inter_rater_agreement(
+    reviewer_1: list[int | None], reviewer_2: list[int | None]
+) -> dict:
+    if len(reviewer_1) != len(reviewer_2):
+        raise ValueError("reviewer labels must be aligned")
+    pairs = [
+        (first, second)
+        for first, second in zip(reviewer_1, reviewer_2, strict=True)
+        if first in {0, 1} and second in {0, 1}
+    ]
+    if not pairs:
+        return {"n": 0, "observed_agreement": None, "cohen_kappa": None}
+    observed = sum(first == second for first, second in pairs) / len(pairs)
+    first_positive = sum(first == 1 for first, _ in pairs) / len(pairs)
+    second_positive = sum(second == 1 for _, second in pairs) / len(pairs)
+    expected = first_positive * second_positive + (1 - first_positive) * (
+        1 - second_positive
+    )
+    kappa = None if expected == 1 else (observed - expected) / (1 - expected)
+    return {
+        "n": len(pairs),
+        "observed_agreement": round(observed, 6),
+        "cohen_kappa": None if kappa is None else round(kappa, 6),
+    }
+
+
 def fit_logistic_baseline(
     features: list[list[float]],
     labels: list[int],

@@ -123,6 +123,8 @@ class RiskCase:
     snapshot_id: str | None = None
     fusion_version: str | None = None
     actions: list[dict[str, Any]] = field(default_factory=list)
+    resolution_evidence: list[str] = field(default_factory=list)
+    monitoring_state: str = "active"
     comments: list[dict[str, Any]] = field(default_factory=list)
     created_at: str = field(default_factory=now_iso)
     updated_at: str = field(default_factory=now_iso)

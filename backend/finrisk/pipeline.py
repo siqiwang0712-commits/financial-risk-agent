@@ -5,6 +5,7 @@ from pathlib import Path
 
 from .contradictions import detect_contradictions
 from .domain import Assessment, RuleSignal
+from .enterprise.applicability import enforce_applicability
 from .evidence import EvidenceVerifier
 from .llm import NarrativeProvider, provider_from_env
 from .metrics import calculate_metrics
@@ -44,11 +45,12 @@ class FinRiskPipeline:
         models=[altman_z(model_input,"bank" if entity_type in {"bank","financial_institution"} else "public_manufacturer")]
         if previous: models += [beneish_m(current,previous),piotroski_f(current,previous)]
         models += [ohlson_o(model_input)]
+        models = enforce_applicability(models, entity_type, model_input | current)
         model_metric_names={"Altman Z-Score":"altman_z_score","Beneish M-Score":"beneish_m_score","Piotroski F-Score":"piotroski_f_score","Ohlson O-Score":"ohlson_o_score"}
         for model in models:facts[model_metric_names[model.name]]=model.output
         ohlson=next(m for m in models if m.name=="Ohlson O-Score")
         facts["ohlson_probability"]=ohlson.derived_outputs.get("probability")
-        claims=self.provider.extract(pages,document,year)
+        claims=self.provider.extract(pages,document,year) if pages else []
         verified=[]; accepted=[]
         for claim in claims:
             ev=self.verifier.verify(claim.evidence,pages); verified.append(ev)

@@ -11,11 +11,18 @@ Fully implemented locally:
 - Material conclusions use `Claim → Evidence → Tool/Rule/Model → Rationale → Confidence`.
 - Risk score, confidence and evidence coverage are separate output fields.
 
-Decision-grade upgrade verification: 66 tests pass at 93.16% line coverage. Final Ruff, benchmark and frontend checks are listed below. Docker Compose runtime validation was NOT RUN because Docker is unavailable on this machine.
+Current verification: 80 tests pass at 92.93% line coverage. Ruff, benchmark reproduction, TypeScript and the Next.js production build pass. Docker Compose runtime validation was NOT RUN because Docker is unavailable on this machine.
 
-Status date: 2026-09-05. This is an honest research-prototype status, not a production or performance claim.
+Status date: 2026-09-06. This is an honest research-prototype status, not a production or performance claim.
 
 ## Fully Implemented
+
+- Temporal entity risk snapshots, deterministic risk/evidence deltas and evidence-linked change attribution.
+- Seven-relation temporal evidence graph, tenant-scoped timeline API and PostgreSQL migration.
+- Model Applicability Router, calibration utilities, risk–coverage curves and selective automation policy.
+- Structured Analyst–Critic–Verifier challenge record and content-addressed DecisionBundle.
+- Risk Case action ownership, deadline, resolution-evidence gate, monitoring state and reason-required reopen.
+- SEC ticker-to-CIK/latest 10-K/10-Q metadata path, Failure Lab and synthetic-only Human–AI analysis pipeline.
 
 - Decision-grade provenance projection: reason code, source evidence, rule/model and fusion versions, coverage/confidence/disagreement, fusion role and verified-path status.
 - Canonical immutable analysis snapshots with input/output/document/component hashes and non-destructive replay diff.
@@ -39,12 +46,19 @@ Status date: 2026-09-05. This is an honest research-prototype status, not a prod
 
 ## Partially Implemented
 
+- Temporal intelligence is implemented and fixture-tested but lacks an independently labelled multi-period public corpus.
+- Calibration calculations and policy gates are implemented; reliability is not calibrated on a sufficient held-out dataset.
+- Analyst–Critic–Verifier uses structured deterministic verification around existing semantic extraction; paid-LLM role comparison is NOT RUN.
+
 - SEC ingestion: normalization/reconciliation and rebuild client exist, but the live Company Facts endpoint returned HTTP 403 in this environment. Inline filing HTML and annual-report PDF remain separate inputs rather than a fully automated filing bundle downloader.
 - Public benchmark: actually executed, but only three technology companies and one single-reviewer label. It is useful for pipeline/error discovery, not inference.
 - LLM integration: production adapter is implemented and mock-tested; no paid API run was performed because no key was supplied.
 - Confidence remains an uncalibrated evidence-coverage score. ECE is computed for baseline risk probabilities, not used to retrofit confidence.
 
 ## Not Implemented
+
+- Real participant Human Only versus FinRisk Assisted study; only protocol, validation and analysis code exist.
+- Production chaos tests for PostgreSQL, object storage and workers.
 
 - Independently double-annotated, adjudicated, sector-diverse benchmark large enough for a confirmatory hypothesis test.
 - Empirical XBRL extraction accuracy on a frozen independently labelled gold set.
@@ -54,8 +68,8 @@ Status date: 2026-09-05. This is an honest research-prototype status, not a prod
 
 ## Tests Passed
 
-- 66 Python tests passed.
-- Total line coverage: 93.16%; CI threshold remains 90%.
+- 80 Python tests passed.
+- Total line coverage: 92.93%; CI threshold remains 90%.
 - Public pilot and ablation artifacts regenerated successfully.
 - Previous Ruff, TypeScript and Next.js build checks remain CI-defined; final local QA should be read with the current command logs.
 

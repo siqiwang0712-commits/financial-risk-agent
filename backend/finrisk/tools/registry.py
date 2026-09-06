@@ -4,6 +4,7 @@ from pathlib import Path
 
 from ..agent.tool_registry import ToolRegistry, ToolSpec
 from ..contradictions import detect_contradictions
+from ..enterprise.applicability import applicability_report, enforce_applicability
 from ..evidence import EvidenceVerifier
 from ..llm import NarrativeProvider
 from ..metrics import calculate_metrics
@@ -137,16 +138,8 @@ def build_tool_registry(root: Path, provider: NarrativeProvider) -> ToolRegistry
         ToolSpec(
             "model_applicability",
             "Expose model scope and missing inputs",
-            lambda models, **_: [
-                {
-                    "model": model.name,
-                    "applicable": model.output is not None,
-                    "missing": model.missing_components,
-                    "scope": model.applicability,
-                }
-                for model in models
-            ],
-            ("models",),
+            lambda industry, facts, **_: applicability_report(industry, facts),
+            ("industry", "facts"),
         )
     )
     registry.register(
@@ -176,7 +169,8 @@ def _models(current: dict, previous: dict | None, entity_type: str):
     ]
     if previous:
         results += [beneish_m(current, previous), piotroski_f(current, previous)]
-    return results + [ohlson_o(inputs)]
+    results += [ohlson_o(inputs)]
+    return enforce_applicability(results, entity_type, inputs | current)
 
 
 def _claims(provider, verifier, pages, document, year):

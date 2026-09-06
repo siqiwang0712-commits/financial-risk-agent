@@ -5,12 +5,14 @@ from pathlib import Path
 from typing import Any
 
 from ..domain import Evidence
+from ..enterprise.applicability import applicability_report
 from ..enterprise.decision import (
     build_decision_trace,
     canonical_hash,
     create_snapshot,
     replay_snapshot,
 )
+from ..enterprise.decision_bundle import build_decision_bundle
 from ..enterprise.domain import AnalysisSnapshot
 from ..enterprise.fusion import (
     failure_aware_decision,
@@ -23,6 +25,7 @@ from ..llm import NarrativeProvider, provider_from_env
 from ..tools import build_tool_registry
 from .planner import AgentPlanner
 from .reflection import reflect
+from .review import StructuredJudgement, three_role_review
 from .state import AgentState, AgentStatus, ToolCallTrace
 from .synthesis import synthesize_conclusions
 from .verification import verify_conclusions
@@ -79,9 +82,16 @@ class FinancialRiskAgent:
             context["facts"] = facts
             self._call(state, "models", traditional_models=context)
             self._call(state, "rules", risk_rules={"facts": facts})
-            claims = (
-                self._call(state, "claims", narrative_evidence=context) if pages else []
-            )
+            claims = []
+            semantic_failed = False
+            if pages:
+                try:
+                    claims = self._call(
+                        state, "claims", narrative_evidence=context
+                    )
+                except Exception as exc:  # noqa: BLE001 - semantic failure degrades safely
+                    semantic_failed = True
+                    state.warnings.append(f"Narrative provider unavailable: {exc}")
             state.transition(AgentStatus.CROSS_CHECKING)
             contradictions = []
             if pages:
@@ -105,7 +115,7 @@ class FinancialRiskAgent:
                     "year": year,
                     "current": current,
                     "previous": previous,
-                    "pages": pages,
+                    "pages": {} if semantic_failed else pages,
                     "document": document,
                     "entity_type": entity_type,
                     "source_map": source_map,
@@ -183,6 +193,8 @@ class FinancialRiskAgent:
                 dimension_scores, fusion, policy=decision_policy
             )
             state.assessment["decision_trace"] = state.decision_trace
+            applicability = applicability_report(entity_type, facts)
+            state.assessment["model_applicability"] = applicability
             frozen_input = {
                 "company": company,
                 "year": year,
@@ -201,6 +213,35 @@ class FinancialRiskAgent:
                 if pages
                 else {document: "NO_DOCUMENT"}
             )
+            candidates = synthesize_conclusions(state.assessment)
+            state.transition(AgentStatus.VERIFYING)
+            self._call(
+                state, "verification", claim_verification={"conclusions": candidates}
+            )
+            state.conclusions, warnings = verify_conclusions(candidates)
+            state.warnings.extend(warnings)
+            evidence_paths = {
+                path["reason_code"]: path for path in state.decision_trace["paths"]
+            }
+            judgements = [
+                StructuredJudgement(
+                    claim=item.claim,
+                    risk_domain=path["risk_domain"],
+                    strength="material",
+                    evidence_path_ids=(path_id,),
+                )
+                for item in state.conclusions
+                for path_id, path in evidence_paths.items()
+                if path_id in item.claim
+            ]
+            state.role_review = three_role_review(
+                judgements,
+                evidence_paths,
+                {item["model"]: item["status"] for item in applicability},
+            )
+            state.assessment["agent_role_review"] = state.role_review
+            if state.role_review["recommended_decision"] == "REVIEW":
+                state.decision = "REVIEW"
             snapshot = create_snapshot(
                 "local",
                 company,
@@ -210,13 +251,30 @@ class FinancialRiskAgent:
                 versions,
             )
             state.analysis_snapshot = snapshot.__dict__
-            candidates = synthesize_conclusions(state.assessment)
-            state.transition(AgentStatus.VERIFYING)
-            self._call(
-                state, "verification", claim_verification={"conclusions": candidates}
+            bundle = build_decision_bundle(
+                "local",
+                company,
+                document_versions,
+                frozen_input,
+                state.assessment,
+                {
+                    "score": state.risk_score,
+                    "severity": state.risk_severity,
+                    "trajectory": state.risk_trajectory,
+                    "coverage": state.evidence_coverage,
+                    "confidence": state.confidence,
+                },
+                state.decision_trace["paths"],
+                {
+                    "metrics": state.assessment.get("metrics", {}),
+                    "models": state.assessment.get("models", []),
+                    "rules": state.assessment.get("triggered_rules", []),
+                },
+                [trace.__dict__ for trace in state.trace],
+                versions,
+                state.decision,
             )
-            state.conclusions, warnings = verify_conclusions(candidates)
-            state.warnings.extend(warnings)
+            state.decision_bundle = bundle.to_dict()
             state.transition(AgentStatus.REFLECTING)
             state.reflection = reflect(state.assessment)
             if assessment.contradictions:
@@ -250,6 +308,10 @@ class FinancialRiskAgent:
             ),
             "decision_policy": canonical_hash(decision_policy),
             "fusion": "hierarchical_escalation:v1",
+            "applicability": "applicability-router:v1",
+            "calibration": "selective-policy:v1-uncalibrated",
+            "evidence_verifier": "exact-page-quote:v1",
+            "agent_review": "analyst-critic-verifier:v1",
             "prompt": getattr(self.provider, "prompt_version", "mock-or-unversioned"),
             "model": self.provider.__class__.__name__,
         }

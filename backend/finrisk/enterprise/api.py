@@ -6,14 +6,25 @@ from typing import Annotated
 from fastapi import APIRouter, Depends, Header, HTTPException
 from pydantic import BaseModel, Field
 
+from .applicability import applicability_report
+from .calibration import selective_decision
 from .decision import create_snapshot, replay_diff
-from .domain import Principal, RiskCase, RiskCaseStatus, RiskDomain, Role, new_id
+from .domain import (
+    Decision,
+    Principal,
+    RiskCase,
+    RiskCaseStatus,
+    RiskDomain,
+    Role,
+    new_id,
+)
 from .fusion import FUSION_METHODS
 from .policy import evaluate_kri
 from .portfolio import portfolio_overview
 from .scenario import Scenario, compare_scenario
 from .security import CredentialStore, SlidingWindowRateLimiter, issue_api_key
 from .service import EnterpriseRiskService
+from .temporal import RiskSnapshot, compare_risk_snapshots
 
 
 class OrganizationCreate(BaseModel):
@@ -52,6 +63,20 @@ class OverrideRequest(BaseModel):
     reason: str = Field(min_length=1)
 
 
+class ActionRequest(BaseModel):
+    description: str = Field(min_length=1)
+    owner_id: str = Field(min_length=1)
+    due_date: str = Field(min_length=1)
+
+
+class ResolutionEvidenceRequest(BaseModel):
+    evidence_id: str = Field(min_length=1)
+
+
+class ReopenRequest(BaseModel):
+    reason: str = Field(min_length=1)
+
+
 class FusionRequest(BaseModel):
     method: str
     scores: dict[str, float | None]
@@ -83,6 +108,31 @@ class SnapshotCreate(BaseModel):
 
 class ReplayRequest(BaseModel):
     replayed_output: dict
+
+
+class RiskSnapshotRequest(BaseModel):
+    period: str = Field(min_length=1)
+    filing_id: str = Field(min_length=1)
+    risk_score: float | None
+    dimension_scores: dict[str, float | None]
+    metrics: dict[str, float | None]
+    evidence_paths: dict[str, list[str]]
+    decision: Decision
+    coverage: float = Field(ge=0, le=1)
+    reliability: float | None = Field(default=None, ge=0, le=1)
+
+
+class ApplicabilityRequest(BaseModel):
+    industry: str
+    facts: dict[str, float | str | bool | None]
+
+
+class SelectiveDecisionRequest(BaseModel):
+    proposed_decision: Decision
+    coverage: float = Field(ge=0, le=1)
+    reliability: float | None = Field(default=None, ge=0, le=1)
+    disagreement: float = Field(ge=0, le=1)
+    policy: dict[str, float] = Field(default_factory=dict)
 
 
 def enterprise_router(service: EnterpriseRiskService | None = None) -> APIRouter:
@@ -168,6 +218,39 @@ def enterprise_router(service: EnterpriseRiskService | None = None) -> APIRouter
         except (KeyError, PermissionError, ValueError) as exc:
             raise HTTPException(422, str(exc)) from exc
 
+    @router.post("/risk-cases/{case_id}/actions")
+    def add_action(
+        case_id: str, req: ActionRequest, actor: Principal = principal_dependency
+    ):
+        try:
+            return service.add_action(
+                actor, case_id, req.description, req.owner_id, req.due_date
+            ).to_dict()
+        except (KeyError, PermissionError, ValueError) as exc:
+            raise HTTPException(422, str(exc)) from exc
+
+    @router.post("/risk-cases/{case_id}/resolution-evidence")
+    def add_resolution_evidence(
+        case_id: str,
+        req: ResolutionEvidenceRequest,
+        actor: Principal = principal_dependency,
+    ):
+        try:
+            return service.add_resolution_evidence(
+                actor, case_id, req.evidence_id
+            ).to_dict()
+        except (KeyError, PermissionError, ValueError) as exc:
+            raise HTTPException(422, str(exc)) from exc
+
+    @router.post("/risk-cases/{case_id}/reopen")
+    def reopen(
+        case_id: str, req: ReopenRequest, actor: Principal = principal_dependency
+    ):
+        try:
+            return service.reopen(actor, case_id, req.reason).to_dict()
+        except (KeyError, PermissionError, ValueError) as exc:
+            raise HTTPException(422, str(exc)) from exc
+
     @router.get("/overview")
     def overview(actor: Principal = principal_dependency):
         return portfolio_overview(service.repository.list_cases(actor.organization_id))
@@ -219,6 +302,53 @@ def enterprise_router(service: EnterpriseRiskService | None = None) -> APIRouter
             asdict(event)
             for event in service.repository.list_events(actor.organization_id)
         ]
+
+    @router.post("/entities/{entity_id}/risk-snapshots")
+    def save_risk_snapshot(
+        entity_id: str,
+        req: RiskSnapshotRequest,
+        actor: Principal = principal_dependency,
+    ):
+        try:
+            item = RiskSnapshot(entity_id=entity_id, **req.model_dump())
+            return asdict(service.save_risk_snapshot(actor, item))
+        except (KeyError, PermissionError, ValueError) as exc:
+            raise HTTPException(422, str(exc)) from exc
+
+    @router.get("/entities/{entity_id}/risk-timeline")
+    def risk_timeline(entity_id: str, actor: Principal = principal_dependency):
+        try:
+            timeline = service.risk_timeline(actor, entity_id)
+        except (KeyError, PermissionError) as exc:
+            raise HTTPException(404, "entity not found") from exc
+        output = []
+        for index, item in enumerate(timeline):
+            row = asdict(item)
+            row["delta"] = (
+                compare_risk_snapshots(timeline[index - 1], item).to_dict()
+                if index
+                else None
+            )
+            output.append(row)
+        return output
+
+    @router.post("/applicability")
+    def applicability(
+        req: ApplicabilityRequest, actor: Principal = principal_dependency
+    ):
+        return applicability_report(req.industry, req.facts)
+
+    @router.post("/selective-decision")
+    def apply_selective_policy(
+        req: SelectiveDecisionRequest, actor: Principal = principal_dependency
+    ):
+        return selective_decision(
+            req.proposed_decision,
+            req.coverage,
+            req.reliability,
+            req.disagreement,
+            req.policy,
+        )
 
     @router.post("/fusion")
     def fuse(req: FusionRequest, actor: Principal = principal_dependency):

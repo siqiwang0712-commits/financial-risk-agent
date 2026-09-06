@@ -6,6 +6,7 @@ header{display:flex;justify-content:space-between;align-items:center;gap:20px;bo
 .eyebrow,.kicker{font:700 11px monospace;letter-spacing:.16em;color:var(--rust)}
 h1{margin:4px 0;font:800 25px Georgia}h1 span{color:var(--rust)}
 .status{font-size:13px;color:#396555}
+.portfolio{padding:54px 0 8px}.portfolio h2{font:600 clamp(34px,5vw,54px)/1 Georgia;margin:8px 0}.portfolioTable{border:1px solid #b8b4a9;margin-top:24px;overflow-x:auto}.portfolioRow{display:grid;grid-template-columns:1.6fr repeat(5,minmax(90px,1fr)) 1.2fr;min-width:950px;border-top:1px solid #d0cbc0;align-items:center}.portfolioRow:first-child{border-top:0}.portfolioRow>*{padding:15px 13px;font-size:12px}.portfolioHead{background:var(--ink);color:white;font:700 10px monospace;text-transform:uppercase;letter-spacing:.08em}.riskPill{font:700 10px monospace;padding:5px 8px;border-radius:12px;background:#e2ded3}.riskPill.review{color:#9b3d26;background:#f4d9cf}.riskPill.pass{color:#245c49;background:#d8e9e1}.up{color:#ad432b;font-weight:700}.down{color:#2f725b;font-weight:700}.uncalibrated{font:700 9px monospace;color:#7d5b4c}.portfolioNote{font-size:11px;color:#6b716e;max-width:850px}
 .hero{display:grid;grid-template-columns:minmax(0,2fr) minmax(250px,1fr);gap:60px;padding:80px 0}
 .hero h2{font:600 clamp(42px,6vw,68px)/1.02 Georgia;margin:10px 0;max-width:760px;overflow-wrap:anywhere}
 .hero>div>p{max-width:630px;line-height:1.7}
@@ -24,3 +25,4 @@ footer{margin-top:50px;padding:25px 0;border-top:1px solid #b8b4a9;font-size:12p
 @media(max-width:800px){.hero{grid-template-columns:1fr;padding:50px 0}.grid{grid-template-columns:1fr 1fr}.sectionTitle{display:block}}
 @media(max-width:800px){header nav{display:none}.timeline,.detailGrid,.workbench{grid-template-columns:1fr}.decisionStrip{grid-template-columns:repeat(2,1fr)}.conclusion{grid-template-columns:1fr}}
 @media(max-width:480px){.grid{grid-template-columns:1fr}.upload{width:100%}}
+.riskPill.abstain{color:#9b3d26;background:#f4d9cf}

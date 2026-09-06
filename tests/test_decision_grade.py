@@ -8,6 +8,7 @@ from finrisk.benchmark_protocol import (
     calibration_curve,
     fit_decision_stump,
     fit_logistic_baseline,
+    inter_rater_agreement,
     predict_logistic,
     selective_metrics,
     validate_company_year_manifest,
@@ -60,6 +61,11 @@ def test_migration_contains_decision_grade_and_immutable_audit_controls():
     ):
         assert f"{table}" in sql
     assert "audit_events_immutable" in sql and "reject_audit_mutation" in sql
+    temporal_sql = (ROOT / "migrations" / "002_temporal_intelligence.sql").read_text(
+        encoding="utf-8"
+    )
+    assert "risk_snapshots" in temporal_sql and "decision_bundles" in temporal_sql
+    assert "temporal_evidence_edges" in temporal_sql
 
 
 def test_decision_trace_snapshot_replay_and_tenant_isolation():
@@ -229,6 +235,9 @@ def test_benchmark_protocol_dual_review_splits_and_classical_baselines():
     assert fit_decision_stump([[0], [1], [2]], [0, 0, 1])["feature"] == 0
     assert selective_metrics([0, 1], [0.2, None])["coverage"] == 0.5
     assert calibration_curve([0, 1], [0.1, 0.9], 2)[0]["count"] == 1
+    agreement = inter_rater_agreement([0, 1, 1, None], [0, 1, 0, 1])
+    assert agreement["n"] == 3 and agreement["cohen_kappa"] == 0.4
+    assert inter_rater_agreement([None], [None])["cohen_kappa"] is None
 
 
 def test_structured_observability_redacts_sensitive_fields(caplog):

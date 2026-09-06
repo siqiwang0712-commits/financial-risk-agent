@@ -2,6 +2,18 @@
 
 ## [Unreleased]
 
+### Added
+
+- Temporal `EntityRiskState`, snapshots, evidence deltas and traceable risk-change attribution.
+- Temporal evidence graph with seven explicit cross-period relationship types.
+- Independent model Applicability Router for industry, assumptions and missing evidence.
+- Calibration metrics, risk–coverage curve and policy-driven selective automation.
+- Structured Analyst–Critic–Deterministic Verifier review and immutable DecisionBundle.
+- Risk Case mitigation actions, resolution-evidence gate, monitoring and reopen workflow.
+- Ticker-to-CIK/latest 10-K or 10-Q filing metadata path with SEC provenance.
+- Failure Lab, Human–AI study pipeline, maturity matrix and Intel failure case study.
+- Tenant-scoped temporal persistence schema and authenticated timeline API.
+
 ### Fixed
 
 - Enforced API-key authentication and rate limiting on enterprise fusion and scenario endpoints.

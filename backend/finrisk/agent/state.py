@@ -70,6 +70,8 @@ class AgentState:
     fusion: dict[str, Any] = field(default_factory=dict)
     decision_trace: dict[str, Any] = field(default_factory=dict)
     analysis_snapshot: dict[str, Any] = field(default_factory=dict)
+    decision_bundle: dict[str, Any] = field(default_factory=dict)
+    role_review: dict[str, Any] = field(default_factory=dict)
 
     def transition(self, target: AgentStatus) -> None:
         terminal = {

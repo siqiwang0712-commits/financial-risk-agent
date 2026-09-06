@@ -102,6 +102,46 @@ class SecClient:
         normalized = str(cik).zfill(10)
         return self.get_json(f"{SEC_BASE}/api/xbrl/companyfacts/CIK{normalized}.json", f"companyfacts-{normalized}")
 
+    def ticker_to_cik(self, ticker: str) -> str:
+        payload = self.get_json(
+            "https://www.sec.gov/files/company_tickers.json", "company-tickers"
+        )
+        target = ticker.upper().strip()
+        for company in payload.values():
+            if company.get("ticker", "").upper() == target:
+                return str(company["cik_str"]).zfill(10)
+        raise KeyError(f"unknown SEC ticker: {ticker}")
+
+    def submissions(self, cik: str) -> dict[str, Any]:
+        normalized = str(cik).zfill(10)
+        return self.get_json(
+            f"{SEC_BASE}/submissions/CIK{normalized}.json",
+            f"submissions-{normalized}",
+        )
+
+    def latest_filing(self, ticker: str, forms: tuple[str, ...] = ("10-K", "10-Q")) -> dict[str, Any]:
+        cik = self.ticker_to_cik(ticker)
+        payload = self.submissions(cik)
+        recent = payload.get("filings", {}).get("recent", {})
+        for index, form in enumerate(recent.get("form", [])):
+            if form not in forms:
+                continue
+            accession = recent["accessionNumber"][index]
+            primary_document = recent["primaryDocument"][index]
+            accession_path = accession.replace("-", "")
+            return {
+                "ticker": ticker.upper(),
+                "cik": cik,
+                "form": form,
+                "accession": accession,
+                "filing_date": recent["filingDate"][index],
+                "report_date": recent["reportDate"][index],
+                "primary_document": primary_document,
+                "filing_url": f"{SEC_ARCHIVES}/{int(cik)}/{accession_path}/{primary_document}",
+                "companyfacts_url": f"{SEC_BASE}/api/xbrl/companyfacts/CIK{cik}.json",
+            }
+        raise LookupError(f"no supported filing found for {ticker}")
+
 
 def _annual_candidates(entries: list[dict[str, Any]], fiscal_year: int, instant: bool) -> list[dict[str, Any]]:
     result = []
@@ -132,22 +172,29 @@ def parse_companyfacts(payload: dict[str, Any], fiscal_years: list[int] | None =
     output: list[FinancialValue] = []
     for year in years:
         for line_item, aliases in CONCEPTS.items():
-            selected: tuple[str, str, dict[str, Any], list[dict[str, Any]]] | None = None
+            selected: tuple[str, str, str, dict[str, Any], list[dict[str, Any]]] | None = None
+            selected_key: tuple[bool, str, str] | None = None
             for taxonomy in taxonomies:
                 for concept_name in aliases:
                     concept = facts[taxonomy].get(concept_name)
                     if not concept:
                         continue
-                    for entries in concept.get("units", {}).values():
+                    for unit_name, entries in concept.get("units", {}).items():
                         candidates = _annual_candidates(entries, year, line_item in INSTANT_ITEMS)
                         if candidates:
                             candidates.sort(key=lambda x: (x.get("filed", ""), x.get("accn", "")))
                             candidate = candidates[-1]
-                            if selected is None or (candidate.get("filed", ""), candidate.get("accn", "")) > (selected[2].get("filed", ""), selected[2].get("accn", "")):
-                                selected = taxonomy, concept_name, candidate, candidates
+                            candidate_key = (
+                                unit_name == "USD",
+                                candidate.get("filed", ""),
+                                candidate.get("accn", ""),
+                            )
+                            if selected_key is None or candidate_key > selected_key:
+                                selected = taxonomy, concept_name, unit_name, candidate, candidates
+                                selected_key = candidate_key
             if selected is None:
                 continue
-            taxonomy, concept_name, item, candidates = selected
+            taxonomy, concept_name, unit_name, item, candidates = selected
             values = {candidate.get("val") for candidate in candidates}
             accession = item.get("accn", "")
             cik = str(payload.get("cik", "")).lstrip("0")
@@ -155,14 +202,14 @@ def parse_companyfacts(payload: dict[str, Any], fiscal_years: list[int] | None =
             filing_url = f"{SEC_ARCHIVES}/{cik}/{accession_path}/" if accession else None
             output.append(FinancialValue(
                 line_item=line_item, value=float(item["val"]), fiscal_year=year,
-                statement="xbrl", unit="currency" if item.get("unit", "USD") not in {"shares"} else "shares",
-                currency=item.get("unit", "USD") if len(item.get("unit", "USD")) == 3 else "USD",
+                statement="xbrl", unit="currency" if unit_name != "shares" else "shares",
+                currency=unit_name if len(unit_name) == 3 else "USD",
                 document=f"SEC {item.get('form', 'filing')} {accession}", page=0,
-                source_text=f"{taxonomy}:{concept_name}={item['val']} {item.get('unit', '')}", confidence=0.99,
+                source_text=f"{taxonomy}:{concept_name}={item['val']} {unit_name}", confidence=0.99,
                 restated=len(values) > 1, source_type="sec_xbrl", taxonomy=taxonomy,
                 concept=concept_name, accession=accession, filed_at=item.get("filed"),
                 period_start=item.get("start"), period_end=item.get("end"),
-                original_unit=item.get("unit"), provenance_url=filing_url,
+                original_unit=unit_name, provenance_url=filing_url,
             ))
     return output
 
@@ -195,3 +242,17 @@ def reconcile_sources(xbrl: list[FinancialValue], document: list[FinancialValue]
 def write_snapshot(values: list[FinancialValue], path: Path) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(json.dumps([asdict(v) for v in values], indent=2), encoding="utf-8")
+
+
+def acquire_latest_filing(client: SecClient, ticker: str) -> dict[str, Any]:
+    """Fail-closed SEC acquisition boundary for product and worker callers."""
+    try:
+        return {"status": "READY", "filing": client.latest_filing(ticker), "decision": None}
+    except (OSError, RuntimeError, KeyError, LookupError, urllib.error.URLError) as exc:
+        return {
+            "status": "SOURCE_UNAVAILABLE",
+            "filing": None,
+            "decision": "ABSTAIN",
+            "coverage_impact": "authoritative SEC filing metadata unavailable",
+            "error_type": type(exc).__name__,
+        }

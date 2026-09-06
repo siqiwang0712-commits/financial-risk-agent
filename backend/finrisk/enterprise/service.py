@@ -12,7 +12,14 @@ from .domain import (
     new_id,
 )
 from .repository import InMemoryEnterpriseRepository
-from .workflow import record_override, transition_case
+from .temporal import RiskSnapshot
+from .workflow import (
+    add_mitigation_action,
+    record_override,
+    record_resolution_evidence,
+    reopen_case,
+    transition_case,
+)
 
 
 class EnterpriseRiskService:
@@ -104,6 +111,8 @@ class EnterpriseRiskService:
             raise ValueError(
                 "a verified decision trace is required for a material final state"
             )
+        if target is RiskCaseStatus.RESOLVED and not case.resolution_evidence:
+            raise ValueError("resolution evidence is required")
         previous, current = transition_case(case, target)
         saved = self.repository.save(case)
         self._audit(
@@ -115,6 +124,51 @@ class EnterpriseRiskService:
             {"from": previous, "to": current},
         )
         return saved
+
+    def add_action(self, principal: Principal, case_id: str, description: str, owner_id: str, due_date: str) -> RiskCase:
+        case = self.repository.get_case(principal.organization_id, case_id)
+        authorize(principal, "write", case.organization_id)
+        payload = add_mitigation_action(case, principal.user_id, description, owner_id, due_date)
+        saved = self.repository.save(case)
+        self._audit(case.organization_id, principal.user_id, "risk_case.action_added", "risk_case", case.id, payload)
+        return saved
+
+    def add_resolution_evidence(self, principal: Principal, case_id: str, evidence_id: str) -> RiskCase:
+        case = self.repository.get_case(principal.organization_id, case_id)
+        authorize(principal, "review", case.organization_id)
+        record_resolution_evidence(case, evidence_id)
+        saved = self.repository.save(case)
+        self._audit(case.organization_id, principal.user_id, "risk_case.resolution_evidence_added", "risk_case", case.id, {"evidence_id": evidence_id})
+        return saved
+
+    def reopen(self, principal: Principal, case_id: str, reason: str) -> RiskCase:
+        case = self.repository.get_case(principal.organization_id, case_id)
+        authorize(principal, "review", case.organization_id)
+        payload = reopen_case(case, principal.user_id, reason)
+        saved = self.repository.save(case)
+        self._audit(case.organization_id, principal.user_id, "risk_case.reopened", "risk_case", case.id, payload)
+        return saved
+
+    def save_risk_snapshot(
+        self, principal: Principal, snapshot: RiskSnapshot
+    ) -> RiskSnapshot:
+        authorize(principal, "write", principal.organization_id)
+        self.repository.get_entity(principal.organization_id, snapshot.entity_id)
+        saved = self.repository.save_risk_snapshot(principal.organization_id, snapshot)
+        self._audit(
+            principal.organization_id,
+            principal.user_id,
+            "risk_snapshot.created",
+            "risk_snapshot",
+            f"{snapshot.entity_id}:{snapshot.period}",
+            {"filing_id": snapshot.filing_id, "decision": snapshot.decision},
+        )
+        return saved
+
+    def risk_timeline(self, principal: Principal, entity_id: str) -> list[RiskSnapshot]:
+        authorize(principal, "read", principal.organization_id)
+        self.repository.get_entity(principal.organization_id, entity_id)
+        return self.repository.list_risk_snapshots(principal.organization_id, entity_id)
 
     def save_snapshot(self, principal: Principal, snapshot):
         authorize(principal, "write", snapshot.organization_id)

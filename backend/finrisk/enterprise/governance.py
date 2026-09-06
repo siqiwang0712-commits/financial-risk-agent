@@ -104,3 +104,31 @@ def drift_report(
         "mean_shift": round(shift, 4),
         "coverage_drift": round(current_coverage - reference_coverage, 4),
     }
+
+
+def compare_system_versions(champion: dict[str, float], challenger: dict[str, float], policy: dict[str, float] | None = None) -> dict:
+    """Evidence-based promotion gate; a recommendation never deploys a system."""
+    required = {
+        "f1", "balanced_accuracy", "false_negative_rate", "calibration_error",
+        "coverage", "abstention_rate", "evidence_verification_error", "latency_ms", "cost_usd",
+    }
+    if required - champion.keys() or required - challenger.keys():
+        raise ValueError(f"both versions require metrics: {sorted(required)}")
+    limits = {
+        "maximum_fnr_increase": 0.0,
+        "maximum_evidence_error": 0.02,
+        "maximum_calibration_error": 0.15,
+        "minimum_coverage": 0.5,
+    } | (policy or {})
+    blockers = []
+    if challenger["false_negative_rate"] > champion["false_negative_rate"] + limits["maximum_fnr_increase"]:
+        blockers.append("FALSE_NEGATIVE_REGRESSION")
+    if challenger["evidence_verification_error"] > limits["maximum_evidence_error"]:
+        blockers.append("EVIDENCE_ERROR_LIMIT")
+    if challenger["calibration_error"] > limits["maximum_calibration_error"]:
+        blockers.append("CALIBRATION_LIMIT")
+    if challenger["coverage"] < limits["minimum_coverage"]:
+        blockers.append("COVERAGE_LIMIT")
+    improves = challenger["f1"] > champion["f1"] and challenger["balanced_accuracy"] >= champion["balanced_accuracy"]
+    recommendation = "DO_NOT_PROMOTE" if blockers else "PROMOTE" if improves else "PROMOTE_WITH_CONDITIONS"
+    return {"recommendation": recommendation, "blockers": blockers, "automatic_promotion": False, "metric_delta": {key: round(challenger[key] - champion[key], 6) for key in sorted(required)}}

@@ -82,7 +82,7 @@
       {
         "name": "Altman Z-Score",
         "output": null,
-        "applicability": "Applicable to public manufacturers only",
+        "applicability": "LIMITED: missing 1 required component(s)",
         "missing": [
           "market_value_equity"
         ]
@@ -90,7 +90,7 @@
       {
         "name": "Beneish M-Score",
         "output": null,
-        "applicability": "Screening signal, not proof of manipulation",
+        "applicability": "LIMITED: missing 3 required component(s)",
         "missing": [
           "depreciation",
           "ppe",
@@ -100,7 +100,7 @@
       {
         "name": "Piotroski F-Score",
         "output": null,
-        "applicability": "Originally designed for value stocks",
+        "applicability": "LIMITED: missing 1 required component(s)",
         "missing": [
           "shares_outstanding"
         ]
@@ -108,11 +108,11 @@
       {
         "name": "Ohlson O-Score",
         "output": null,
-        "applicability": "Industrial firms; coefficient-era and input limitations apply",
+        "applicability": "LIMITED: missing 3 required component(s)",
         "missing": [
           "funds_from_operations",
-          "prior_net_income",
-          "gnp_price_index"
+          "gnp_price_index",
+          "prior_net_income"
         ]
       }
     ],
@@ -312,7 +312,7 @@
       {
         "name": "Altman Z-Score",
         "output": null,
-        "applicability": "Applicable to public manufacturers only",
+        "applicability": "LIMITED: missing 1 required component(s)",
         "missing": [
           "market_value_equity"
         ]
@@ -320,7 +320,7 @@
       {
         "name": "Beneish M-Score",
         "output": null,
-        "applicability": "Screening signal, not proof of manipulation",
+        "applicability": "LIMITED: missing 3 required component(s)",
         "missing": [
           "depreciation",
           "ppe",
@@ -330,7 +330,7 @@
       {
         "name": "Piotroski F-Score",
         "output": null,
-        "applicability": "Originally designed for value stocks",
+        "applicability": "LIMITED: missing 1 required component(s)",
         "missing": [
           "shares_outstanding"
         ]
@@ -338,11 +338,11 @@
       {
         "name": "Ohlson O-Score",
         "output": null,
-        "applicability": "Industrial firms; coefficient-era and input limitations apply",
+        "applicability": "LIMITED: missing 3 required component(s)",
         "missing": [
           "funds_from_operations",
-          "prior_net_income",
-          "gnp_price_index"
+          "gnp_price_index",
+          "prior_net_income"
         ]
       }
     ],
@@ -524,7 +524,7 @@
       {
         "name": "Altman Z-Score",
         "output": null,
-        "applicability": "Applicable to public manufacturers only",
+        "applicability": "LIMITED: missing 1 required component(s)",
         "missing": [
           "market_value_equity"
         ]
@@ -532,7 +532,7 @@
       {
         "name": "Beneish M-Score",
         "output": null,
-        "applicability": "Screening signal, not proof of manipulation",
+        "applicability": "LIMITED: missing 3 required component(s)",
         "missing": [
           "depreciation",
           "ppe",
@@ -542,7 +542,7 @@
       {
         "name": "Piotroski F-Score",
         "output": null,
-        "applicability": "Originally designed for value stocks",
+        "applicability": "LIMITED: missing 1 required component(s)",
         "missing": [
           "shares_outstanding"
         ]
@@ -550,11 +550,11 @@
       {
         "name": "Ohlson O-Score",
         "output": null,
-        "applicability": "Industrial firms; coefficient-era and input limitations apply",
+        "applicability": "LIMITED: missing 3 required component(s)",
         "missing": [
           "funds_from_operations",
-          "prior_net_income",
-          "gnp_price_index"
+          "gnp_price_index",
+          "prior_net_income"
         ]
       }
     ],

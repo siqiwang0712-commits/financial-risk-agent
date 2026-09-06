@@ -10,8 +10,8 @@
 [![Python 3.11+](https://img.shields.io/badge/Python-3.11%2B-3776AB?logo=python&logoColor=white)](https://www.python.org/)
 [![FastAPI](https://img.shields.io/badge/API-FastAPI-009688?logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com/)
 [![Next.js](https://img.shields.io/badge/UI-Next.js-111111?logo=next.js&logoColor=white)](https://nextjs.org/)
-[![Tests](https://img.shields.io/badge/tests-66%20passed-2f855a)](#verification)
-[![Coverage](https://img.shields.io/badge/coverage-93.16%25-2f855a)](#verification)
+[![Tests](https://img.shields.io/badge/tests-80%20passed-2f855a)](#verification)
+[![Coverage](https://img.shields.io/badge/coverage-92.93%25-2f855a)](#verification)
 [![License](https://img.shields.io/badge/license-MIT-d45b3e)](LICENSE)
 
 **An evidence-grounded financial risk platform where an LLM plans and interprets, deterministic financial tools execute, and every material conclusion must trace back to verified evidence.**
@@ -55,6 +55,10 @@ The core research proposition is simple:
 - Convert findings into tenant-scoped risk cases, actions, reviews and immutable audit events.
 - Replay an assessment from frozen inputs and versions, then show any output drift.
 - Apply deterministic stress scenarios and compare baseline versus stressed decisions.
+- Update `R(t-1) → R(t)` with traceable risk, metric and evidence-change attribution.
+- Route traditional models through explicit `APPLICABLE / LIMITED / NOT_APPLICABLE` decisions.
+- Gate automation on evidence coverage, calibrated reliability and disagreement.
+- Preserve a complete immutable DecisionBundle and governed mitigation lifecycle.
 
 ## Architecture
 
@@ -93,6 +97,8 @@ The typed registry exposes:
 | Evidence | retrieval, quote verification, provenance graph construction |
 | Consistency | narrative–numeric support, tension and contradiction classification |
 | Decision | signal calculation, policy resolution, fusion, snapshot and replay |
+| Temporal | entity risk state, evidence delta, attribution and filing timeline |
+| Governance | applicability, selective automation, critic/verifier and DecisionBundle |
 
 Unknown tools, malformed arguments and missing required inputs fail closed.
 
@@ -128,6 +134,12 @@ This makes questions such as these answerable:
 - Which decision path changed, and why?
 
 See [Decision-grade controls](docs/decision_grade_controls.md).
+
+### Risk is an evolving state
+
+FinRisk now models a filing as an update from `R(t-1)` to `R(t)`, not an isolated score. `RiskDelta` separates dimension, metric and evidence changes and attaches each attribution driver to evidence-path identifiers. The temporal graph adds `SUPPORTS`, `CONTRADICTS`, `SUPERSEDES`, `DERIVED_FROM`, `CONFIRMS`, `WEAKENS` and `INVALIDATES` relationships.
+
+This capability is code-complete and fixture-tested. The current public pilot has one period per company, so real multi-period attribution quality remains **NOT VALIDATED**.
 
 ## Analyst Workbench
 
@@ -186,8 +198,8 @@ Current evidence is diagnostic only: RQ3 is not supported by the pilot, RQ2 has 
 
 | Status | What it means here |
 |---|---|
-| **VALIDATED — limited local scope** | 66 automated tests; 93.16% line coverage; Ruff, TypeScript and production frontend build; deterministic finance fixtures; frozen three-company pilot reproduction |
-| **IMPLEMENTED, NOT EXTERNALLY VALIDATED** | XBRL/PDF reconciliation, constrained provider adapter, evidence graph, decision trace, snapshots/replay, risk cases, RBAC/API keys, PostgreSQL migration, policy/fusion, governance/drift and Workbench |
+| **VALIDATED — limited local scope** | Automated tests and ≥90% coverage gate; Ruff, TypeScript and production frontend build; deterministic finance fixtures; frozen three-company pilot reproduction |
+| **IMPLEMENTED, NOT EXTERNALLY VALIDATED** | XBRL/PDF reconciliation, temporal state/attribution, applicability routing, selective automation, constrained provider, critic/verifier, DecisionBundle, risk-case mitigation workflow, RBAC/API keys, PostgreSQL migrations and Workbench |
 | **PLANNED / NOT RUN** | Independently dual-reviewed ~90 company-year benchmark, paid-LLM evaluation, calibrated risk model, production identity/object storage/worker/telemetry deployment |
 
 FinRisk is a research and enterprise-architecture prototype. It does not claim production deployment, regulatory approval, SOC 2, ISO 27001, external model validation or real enterprise customers.
@@ -308,6 +320,8 @@ Model mappings are configured in [config/model_scoring.json](config/model_scorin
 
 Missing evidence, low coverage, conflicting evidence, stale data, parser failure, unavailable LLMs, applicability failures and rule/model disagreement are first-class states. Depending on pinned policy, they reduce confidence, increase review requirements or force abstention—never fabricated certainty.
 
+The incident-style [Failure Lab](failure_lab/README.md) maps each injected failure to its impact, expected fail-closed response and regression test.
+
 ## Verification
 
 Run the same gates used locally:
@@ -323,7 +337,7 @@ npm run typecheck
 npm run build
 ```
 
-Recorded local status: **66 tests passed**, **93.16% line coverage**, Ruff passed, TypeScript passed, and the Next.js production build passed. GitHub Actions additionally declares a PostgreSQL service integration path and benchmark smoke test.
+Recorded local status: **80 tests passed**, **92.93% line coverage**, Ruff passed, TypeScript passed, and the Next.js production build passed. GitHub Actions additionally declares PostgreSQL migration validation and a benchmark reproducibility gate.
 
 ## Repository map
 
@@ -379,6 +393,11 @@ For a precise implemented/partial/not-implemented inventory, see [FINAL_PROJECT_
 | Results and negative findings | [Results](research/results.md) |
 | Error analysis | [Error analysis](research/error_analysis.md) |
 | Research limitations | [Limitations](research/limitations.md) |
+| Temporal risk design | [Temporal risk intelligence](docs/temporal_risk_intelligence.md) |
+| Capability truth table | [Capability maturity matrix](docs/capability_maturity_matrix.md) |
+| Flagship real-data walkthrough | [Case Study 001 — Intel FY2024](docs/case_study_001.md) |
+| Human–AI study | [Study protocol](research/human_ai_study_protocol.md) |
+| Risk Case lifecycle | [Enterprise workflow](docs/risk_case_workflow.md) |
 
 ## Contributing
 
