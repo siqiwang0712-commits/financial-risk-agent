@@ -11,7 +11,7 @@ Fully implemented locally:
 - Material conclusions use `Claim → Evidence → Tool/Rule/Model → Rationale → Confidence`.
 - Risk score, confidence and evidence coverage are separate output fields.
 
-Decision-grade upgrade verification: 64 tests pass at 93.15% line coverage. Final Ruff, benchmark and frontend checks are listed below. Docker Compose runtime validation was NOT RUN because Docker is unavailable on this machine.
+Decision-grade upgrade verification: 66 tests pass at 93.16% line coverage. Final Ruff, benchmark and frontend checks are listed below. Docker Compose runtime validation was NOT RUN because Docker is unavailable on this machine.
 
 Status date: 2026-09-05. This is an honest research-prototype status, not a production or performance claim.
 
@@ -54,8 +54,8 @@ Status date: 2026-09-05. This is an honest research-prototype status, not a prod
 
 ## Tests Passed
 
-- 43 Python tests passed.
-- Total line coverage: 93.15%; CI threshold remains 90%.
+- 66 Python tests passed.
+- Total line coverage: 93.16%; CI threshold remains 90%.
 - Public pilot and ablation artifacts regenerated successfully.
 - Previous Ruff, TypeScript and Next.js build checks remain CI-defined; final local QA should be read with the current command logs.
 

@@ -266,3 +266,22 @@ def test_agent_emits_versioned_proof_and_snapshot():
     )
     assert replayed["status"] == "REPLAYED"
     assert replayed["diff"]["match"] is True
+
+
+def test_snapshot_requires_entity_in_callers_tenant():
+    service = EnterpriseRiskService()
+    first = service.create_organization("First", "admin-a")
+    second = service.create_organization("Second", "admin-b")
+    first_actor = Principal("analyst-a", first.id, Role.ANALYST)
+    second_actor = Principal("analyst-b", second.id, Role.ANALYST)
+    entity = service.create_entity(first_actor, "First Entity")
+    foreign_snapshot = create_snapshot(
+        second.id,
+        entity.id,
+        {"cash": 1},
+        {"decision": "REVIEW"},
+        {"10-K": "hash"},
+        {"rules": "v1"},
+    )
+    with pytest.raises(KeyError):
+        service.save_snapshot(second_actor, foreign_snapshot)

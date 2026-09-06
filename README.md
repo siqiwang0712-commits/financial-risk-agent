@@ -10,8 +10,8 @@
 [![Python 3.11+](https://img.shields.io/badge/Python-3.11%2B-3776AB?logo=python&logoColor=white)](https://www.python.org/)
 [![FastAPI](https://img.shields.io/badge/API-FastAPI-009688?logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com/)
 [![Next.js](https://img.shields.io/badge/UI-Next.js-111111?logo=next.js&logoColor=white)](https://nextjs.org/)
-[![Tests](https://img.shields.io/badge/tests-64%20passed-2f855a)](#verification)
-[![Coverage](https://img.shields.io/badge/coverage-93.15%25-2f855a)](#verification)
+[![Tests](https://img.shields.io/badge/tests-66%20passed-2f855a)](#verification)
+[![Coverage](https://img.shields.io/badge/coverage-93.16%25-2f855a)](#verification)
 [![License](https://img.shields.io/badge/license-MIT-d45b3e)](LICENSE)
 
 **An evidence-grounded financial risk platform where an LLM plans and interprets, deterministic financial tools execute, and every material conclusion must trace back to verified evidence.**
@@ -186,7 +186,7 @@ Current evidence is diagnostic only: RQ3 is not supported by the pilot, RQ2 has 
 
 | Status | What it means here |
 |---|---|
-| **VALIDATED — limited local scope** | 64 automated tests; 93.15% line coverage; Ruff, TypeScript and production frontend build; deterministic finance fixtures; frozen three-company pilot reproduction |
+| **VALIDATED — limited local scope** | 66 automated tests; 93.16% line coverage; Ruff, TypeScript and production frontend build; deterministic finance fixtures; frozen three-company pilot reproduction |
 | **IMPLEMENTED, NOT EXTERNALLY VALIDATED** | XBRL/PDF reconciliation, constrained provider adapter, evidence graph, decision trace, snapshots/replay, risk cases, RBAC/API keys, PostgreSQL migration, policy/fusion, governance/drift and Workbench |
 | **PLANNED / NOT RUN** | Independently dual-reviewed ~90 company-year benchmark, paid-LLM evaluation, calibrated risk model, production identity/object storage/worker/telemetry deployment |
 
@@ -323,7 +323,7 @@ npm run typecheck
 npm run build
 ```
 
-Recorded local status: **64 tests passed**, **93.15% line coverage**, Ruff passed, TypeScript passed, and the Next.js production build passed. GitHub Actions additionally declares a PostgreSQL service integration path and benchmark smoke test.
+Recorded local status: **66 tests passed**, **93.16% line coverage**, Ruff passed, TypeScript passed, and the Next.js production build passed. GitHub Actions additionally declares a PostgreSQL service integration path and benchmark smoke test.
 
 ## Repository map
 

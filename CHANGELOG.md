@@ -1,5 +1,13 @@
 # Changelog
 
+## [Unreleased]
+
+### Fixed
+
+- Enforced API-key authentication and rate limiting on enterprise fusion and scenario endpoints.
+- Rejected analysis snapshots whose entity does not belong to the caller's organization.
+- Replaced mutable Pydantic collection defaults with explicit factories.
+
 ## [0.2.0] - 2026-09-05
 
 ### Added

@@ -30,7 +30,7 @@ if FastAPI:
         fiscal_year: int
         current: dict[str, float | bool | str | None]
         previous: dict[str, float | bool | str | None] | None = None
-        pages: dict[int, str] = {}
+        pages: dict[int, str] = Field(default_factory=dict)
         document: str = "Annual Report"
         entity_type: str = "industrial"
 

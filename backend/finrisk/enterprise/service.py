@@ -118,6 +118,7 @@ class EnterpriseRiskService:
 
     def save_snapshot(self, principal: Principal, snapshot):
         authorize(principal, "write", snapshot.organization_id)
+        self.repository.get_entity(snapshot.organization_id, snapshot.entity_id)
         saved = self.repository.save(snapshot)
         self._audit(
             snapshot.organization_id,

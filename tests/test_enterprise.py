@@ -311,6 +311,7 @@ def test_enterprise_api_case_lifecycle_and_scenario():
     assert replay.json()["match"] is True
     fusion = client.post(
         "/api/v1/enterprise/fusion",
+        headers=headers,
         json={
             "method": "max_severity",
             "scores": {"liquidity": 80},
@@ -321,6 +322,7 @@ def test_enterprise_api_case_lifecycle_and_scenario():
     assert fusion.json()["decision"] == "FLAG"
     scenario = client.post(
         "/api/v1/enterprise/scenarios",
+        headers=headers,
         json={
             "year": 2025,
             "baseline": {"revenue": 100.0},
@@ -328,3 +330,26 @@ def test_enterprise_api_case_lifecycle_and_scenario():
         },
     )
     assert scenario.json()["stressed_values"]["revenue"] == 80
+
+
+def test_enterprise_compute_endpoints_require_authentication():
+    client = TestClient(app)
+    fusion = client.post(
+        "/api/v1/enterprise/fusion",
+        json={
+            "method": "max_severity",
+            "scores": {"liquidity": 80},
+            "coverage": 0.9,
+            "confidence": 0.8,
+        },
+    )
+    scenario = client.post(
+        "/api/v1/enterprise/scenarios",
+        json={
+            "year": 2025,
+            "baseline": {"revenue": 100.0},
+            "shocks": {"revenue_pct": -0.2},
+        },
+    )
+    assert fusion.status_code == 401
+    assert scenario.status_code == 401

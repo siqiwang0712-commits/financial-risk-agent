@@ -35,9 +35,9 @@ class CaseCreate(BaseModel):
     confidence: float = Field(ge=0, le=1)
     evidence_coverage: float = Field(ge=0, le=1)
     rationale: str
-    evidence_ids: list[str] = []
-    reason_codes: list[str] = []
-    decision_trace: dict = {}
+    evidence_ids: list[str] = Field(default_factory=list)
+    reason_codes: list[str] = Field(default_factory=list)
+    decision_trace: dict = Field(default_factory=dict)
     snapshot_id: str | None = None
     fusion_version: str | None = None
 
@@ -55,10 +55,10 @@ class OverrideRequest(BaseModel):
 class FusionRequest(BaseModel):
     method: str
     scores: dict[str, float | None]
-    weights: dict[str, float] = {}
+    weights: dict[str, float] = Field(default_factory=dict)
     coverage: float = Field(ge=0, le=1)
     confidence: float = Field(ge=0, le=1)
-    decision_policy: dict[str, float] = {}
+    decision_policy: dict[str, float] = Field(default_factory=dict)
 
 
 class ScenarioRequest(BaseModel):
@@ -92,8 +92,10 @@ def enterprise_router(service: EnterpriseRiskService | None = None) -> APIRouter
     limiter = SlidingWindowRateLimiter()
 
     def principal(
-        api_key: Annotated[str, Header(alias="X-API-Key")],
+        api_key: Annotated[str | None, Header(alias="X-API-Key")] = None,
     ) -> Principal:
+        if not api_key:
+            raise HTTPException(401, "missing API key")
         try:
             actor = credentials.authenticate(api_key)
         except PermissionError as exc:
@@ -219,7 +221,7 @@ def enterprise_router(service: EnterpriseRiskService | None = None) -> APIRouter
         ]
 
     @router.post("/fusion")
-    def fuse(req: FusionRequest):
+    def fuse(req: FusionRequest, actor: Principal = principal_dependency):
         method = FUSION_METHODS.get(req.method)
         if method is None:
             raise HTTPException(422, "unknown fusion method")
@@ -231,7 +233,7 @@ def enterprise_router(service: EnterpriseRiskService | None = None) -> APIRouter
         return asdict(method(*kwargs))
 
     @router.post("/scenarios")
-    def scenario(req: ScenarioRequest):
+    def scenario(req: ScenarioRequest, actor: Principal = principal_dependency):
         allowed = set(Scenario.__dataclass_fields__) - {"name"}
         unknown = set(req.shocks) - allowed
         if unknown:
