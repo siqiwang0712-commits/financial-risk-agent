@@ -19,12 +19,13 @@ from finrisk.numeric_benchmark import (
     temporal_risk_score,
     temporal_trajectories,
 )
+from finrisk.reproducibility import prospective_experiment_metadata
 from finrisk.rules import RuleEngine
 
 ROOT = Path(__file__).resolve().parents[1]
 DATA = ROOT / "research/empirical_v1"
-OUTPUT = ROOT / "research/results/v0.3.1/empirical_numeric"
-FREEZE = DATA / "experiment_manifest.numeric_v031.E3.json"
+OUTPUT = ROOT / "research/results/v0.3.2/empirical_numeric"
+FREEZE = OUTPUT / "experiment_manifest.json"
 
 
 def file_hash(path: Path) -> str:
@@ -33,7 +34,7 @@ def file_hash(path: Path) -> str:
 
 def freeze_numeric_experiment(observations: list[dict], labels: list[dict]) -> dict:
     configuration = {
-        "experiment_id": "v0.3.1-E3",
+        "experiment_id": "v0.3.2-numeric-prospective",
         "dataset_hash": canonical_hash(observations),
         "feature_source_hash": canonical_hash(sorted({row["source_hash"] for row in observations})),
         "outcome_source_hash": canonical_hash(sorted({
@@ -42,7 +43,7 @@ def freeze_numeric_experiment(observations: list[dict], labels: list[dict]) -> d
         "split_hash": canonical_hash(sorted((row["ticker"], row["split"]) for row in observations)),
         "rule_version": file_hash(ROOT / "rules/rules.json"),
         "model_config": {
-            "B0": "ratio_risk_score_v1",
+            "B0": "ratio_risk_score_v2_missing_abstains",
             "B1": "logistic_lr0.1_iter800_train_only_preprocessing",
             "B2": "rules_score_delta_div100",
             "B6": "temporal_risk_score_v1",
@@ -57,18 +58,19 @@ def freeze_numeric_experiment(observations: list[dict], labels: list[dict]) -> d
         "fusion_config": "NOT_USED_NUMERIC_BASELINES",
         "prompt_version": "NOT_USED",
         "llm_model": "NOT_USED",
-        "label_schema_hash": file_hash(ROOT / "research/label_schema.json"),
+        "label_schema_hash": file_hash(ROOT / "research/label_schema_v2.json"),
         "label_data_hash": canonical_hash(labels),
         "random_seed": 31,
         "git_commit": subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=ROOT, text=True).strip(),
-        "working_tree_state": "DIRTY_LOCAL_V031_NO_COMMIT_BY_USER_REQUEST",
+        **prospective_experiment_metadata(ROOT),
     }
     frozen = freeze_experiment(configuration)
     if FREEZE.exists():
         existing = json.loads(FREEZE.read_text(encoding="utf-8"))
-        if not verify_experiment_freeze(existing) or existing["experiment_hash"] != frozen["experiment_hash"]:
-            raise RuntimeError("frozen numeric experiment configuration drift detected")
-        return existing
+        if not verify_experiment_freeze(existing):
+            raise RuntimeError("frozen numeric experiment manifest failed integrity verification")
+        raise RuntimeError("prospective experiment already frozen; choose a new experiment version")
+    FREEZE.parent.mkdir(parents=True, exist_ok=True)
     FREEZE.write_text(json.dumps(frozen, indent=2, sort_keys=True), encoding="utf-8")
     return frozen
 

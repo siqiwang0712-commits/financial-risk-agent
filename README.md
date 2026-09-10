@@ -10,8 +10,8 @@
 [![Python 3.11+](https://img.shields.io/badge/Python-3.11%2B-3776AB?logo=python&logoColor=white)](https://www.python.org/)
 [![FastAPI](https://img.shields.io/badge/API-FastAPI-009688?logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com/)
 [![Next.js](https://img.shields.io/badge/UI-Next.js-111111?logo=next.js&logoColor=white)](https://nextjs.org/)
-[![Tests](https://img.shields.io/badge/tests-123%20passed-2f855a)](#verification)
-[![Coverage](https://img.shields.io/badge/coverage-90.76%25-2f855a)](#verification)
+[![Tests](https://img.shields.io/badge/tests-134%20passed-2f855a)](#verification)
+[![Coverage](https://img.shields.io/badge/coverage-90.49%25-2f855a)](#verification)
 [![License](https://img.shields.io/badge/license-MIT-d45b3e)](LICENSE)
 
 **An evidence-grounded financial risk platform where an LLM plans and interprets, deterministic financial tools execute, and every material conclusion must trace back to verified evidence.**
@@ -23,7 +23,35 @@
 > [!IMPORTANT]
 > **Risk severity ≠ evidence coverage ≠ evidence quality ≠ model disagreement ≠ reliability ≠ probability.** FinRisk's 0–100 risk index is an expert-designed heuristic, not a bankruptcy probability, credit rating, fraud finding, or investment recommendation. Reliability is `UNCALIBRATED` unless a pinned held-out calibration run establishes otherwise.
 
-## v0.3.1 — Decision Integrity & Research Readiness
+## v0.3.2 — Reproducibility & Runtime Integrity (in development)
+
+v0.3.2 is a prospective hardening release. It does not regenerate E1/E2/E3 or
+reinterpret their results. It separates read-only frozen replay from new experiment
+creation, records the actual Git commit and dirty state for future experiments, adds a
+v2-compatible label schema and standalone-period FCF methodology, wires `DATABASE_URL`
+to durable PostgreSQL repositories and credentials, derives risk cases from server-held
+snapshots, and hardens authenticated analysis endpoints and deployment defaults.
+
+```bash
+python scripts/replay_frozen_experiment.py v0.3.1-E1-diagnostic
+python scripts/replay_frozen_experiment.py v0.3.1-E2
+python scripts/replay_frozen_experiment.py v0.3.1-E3
+```
+
+Frozen replay verifies existing manifest and artifact bytes and reports both the
+original generation commit and current replay commit. It performs no writes. A replay
+is not regeneration: current code is not used to recreate historical outputs.
+The E1/E2/E3 manifests record original generation commit
+`1486cf8e2e86115bff27f3f0c8940e2237efaf10`; this provenance is preserved even though
+the working tree and released code have advanced.
+
+The current runtime uses PostgreSQL whenever `DATABASE_URL` is set; in-memory storage is
+an explicit test/lightweight-development mode. Production mode rejects missing/default
+database credentials and disables organization/snapshot bootstrap endpoints. See
+[`docs/reproducibility_runtime_integrity.md`](docs/reproducibility_runtime_integrity.md)
+for replay, persistence, trust-boundary and deployment maturity details.
+
+## v0.3.1 — Decision Integrity & Research Readiness (released, frozen)
 
 This local hardening release makes the existing architecture stricter without adding new product domains:
 
@@ -67,10 +95,15 @@ SEC acquisition now has three explicit routes: official `companyfacts.zip` or Fi
 # Place companyfacts.zip OR quarterly SEC Financial Statement Data Set ZIPs here.
 New-Item -ItemType Directory -Force data/sec-bulk
 python scripts/import_sec_bulk.py
-python scripts/run_numeric_benchmarks.py
+python scripts/replay_frozen_experiment.py v0.3.1-E3
 ```
 
-The importer records ZIP/member SHA-256 provenance, preserves missing values, selects original 10-K filings rather than silently substituting amendments, and generates only the frozen forward numerical deterioration endpoint. Corpus acquisition via the live API remains separately explicit and requires an SEC-compliant identifying user agent:
+`run_numeric_benchmarks.py` is reserved for prospective experiments and refuses to
+regenerate frozen E3 from a different HEAD. The importer records ZIP/member SHA-256
+provenance, preserves missing values, selects original 10-K filings rather than silently
+substituting amendments, and generates only a versioned forward numerical endpoint.
+Corpus acquisition via the live API remains separately explicit and requires an
+SEC-compliant identifying user agent:
 
 ```bash
 SEC_USER_AGENT="Researcher Name researcher@example.edu" python scripts/acquire_empirical_corpus.py
@@ -409,7 +442,7 @@ financial-risk-agent/
 ├── scripts/               # demo, benchmark and data-build entry points
 ├── portfolio/             # technical narrative and interview materials
 ├── docker-compose.yml
-└── FINAL_PROJECT_STATUS.md
+└── PROJECT_STATUS.md
 ```
 
 ## Security and governance
@@ -435,7 +468,7 @@ These are implemented controls in a prototype, not certification claims. Review 
 - Evidence matching proves provenance, not the truth or completeness of corporate disclosure.
 - PostgreSQL, Docker, identity, object storage, worker and telemetry configurations have not been validated in a production environment.
 
-For a precise implemented/partial/not-implemented inventory, see [FINAL_PROJECT_STATUS.md](FINAL_PROJECT_STATUS.md).
+For a precise implemented/partial/not-implemented inventory, see [PROJECT_STATUS.md](PROJECT_STATUS.md).
 
 ## Documentation
 

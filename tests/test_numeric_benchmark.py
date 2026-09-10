@@ -7,7 +7,7 @@ from finrisk.numeric_benchmark import (
 
 
 def test_numeric_scores_are_missing_aware_and_temporal():
-    assert ratio_risk_score({}) == 0.5
+    assert ratio_risk_score({}) is None
     safe = {"current_ratio": 2.0, "debt_to_assets": 0.2, "net_margin": 0.2, "cfo_to_net_income": 1.1, "fcf_margin": 0.1}
     adverse = {**safe, "revenue_growth": -0.2, "operating_cash_flow_growth": -0.4, "total_debt_growth": 0.3}
     assert ratio_risk_score(safe) == 0

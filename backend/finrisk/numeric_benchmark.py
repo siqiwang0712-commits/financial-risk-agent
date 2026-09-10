@@ -7,7 +7,7 @@ from typing import Any
 FEATURES = ("current_ratio", "debt_to_assets", "net_margin", "cfo_to_net_income", "fcf_margin", "revenue_growth", "total_debt_growth")
 
 
-def ratio_risk_score(metrics: dict[str, float | None]) -> float:
+def ratio_risk_score(metrics: dict[str, float | None]) -> float | None:
     checks = [
         ("current_ratio", lambda value: value < 1.0),
         ("debt_to_assets", lambda value: value > 0.60),
@@ -15,11 +15,19 @@ def ratio_risk_score(metrics: dict[str, float | None]) -> float:
         ("cfo_to_net_income", lambda value: value < 0.8),
         ("fcf_margin", lambda value: value < 0),
     ]
-    observed = [float(test(metrics[name])) for name, test in checks if metrics.get(name) is not None]
-    return sum(observed) / len(observed) if observed else 0.5
+    observed = []
+    for name, test in checks:
+        value = metrics.get(name)
+        if value is None:
+            continue
+        net_income = metrics.get("net_income")
+        if name == "cfo_to_net_income" and net_income is not None and net_income <= 0:
+            continue
+        observed.append(float(test(value)))
+    return sum(observed) / len(observed) if observed else None
 
 
-def temporal_risk_score(metrics: dict[str, float | None]) -> float:
+def temporal_risk_score(metrics: dict[str, float | None]) -> float | None:
     base = ratio_risk_score(metrics)
     adverse = 0
     observed = 0
@@ -33,6 +41,8 @@ def temporal_risk_score(metrics: dict[str, float | None]) -> float:
         if value is not None:
             observed += 1
             adverse += int(test(value))
+    if base is None:
+        return adverse / observed if observed else None
     return base if not observed else min(1.0, 0.75 * base + 0.25 * adverse / observed)
 
 

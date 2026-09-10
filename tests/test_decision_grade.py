@@ -176,7 +176,7 @@ def test_failure_policy_sensitivity_and_final_case_proof_gate():
         )
     service.transition(reviewer, case.id, RiskCaseStatus.OPEN)
     service.transition(reviewer, case.id, RiskCaseStatus.UNDER_REVIEW)
-    with pytest.raises(ValueError, match="verified decision trace"):
+    with pytest.raises(ValueError, match="server-side analysis snapshot"):
         service.transition(reviewer, case.id, RiskCaseStatus.ACCEPTED)
 
 

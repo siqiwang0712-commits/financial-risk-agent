@@ -1,0 +1,14 @@
+# Direct runtime and validation dependencies pinned for v0.3.2 reproducibility.
+# Install with: python -m pip install -r requirements.lock
+fastapi==0.141.1
+uvicorn[standard]==0.52.4
+pydantic==2.13.4
+PyYAML==6.0.3
+PyMuPDF==1.28.2
+python-multipart==0.0.32
+reportlab==5.0.1
+psycopg[binary]==3.3.5
+pytest==9.1.1
+pytest-cov==7.1.0
+httpx==0.28.1
+ruff==0.16.6

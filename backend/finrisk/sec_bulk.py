@@ -404,6 +404,54 @@ def build_reported_fcf_periods(
     return records
 
 
+def build_reported_fcf_periods_v2(
+    submissions: list[dict[str, str]], numbers: list[dict[str, str]]
+) -> list[dict[str, Any]]:
+    """Prospective standalone-period FCF semantics; never used to rewrite E3.
+
+    SEC Q2/Q3 duration facts are frequently year-to-date. This method subtracts
+    the preceding YTD value for the same issuer and fiscal year. Q1 and annual
+    values remain standalone. Ambiguous sequences are unavailable rather than
+    silently treated as quarters.
+    """
+    records = build_reported_fcf_periods(submissions, numbers)
+    grouped: dict[tuple[str, str], list[dict[str, Any]]] = defaultdict(list)
+    for record in records:
+        year = record["period_end"][:4]
+        grouped[(record["ticker"], year)].append(record)
+    output: list[dict[str, Any]] = []
+    for rows in grouped.values():
+        rows.sort(key=lambda item: item["period_end"])
+        previous_ytd: dict[str, float] = {}
+        for row in rows:
+            copy = dict(row)
+            provenance = row.get("fact_provenance", {})
+            qtrs = {
+                field: int((provenance.get(field) or {}).get("qtrs", "0"))
+                for field in ("operating_cash_flow", "capital_expenditure")
+            }
+            standalone: dict[str, float | None] = {}
+            for field in ("operating_cash_flow", "capital_expenditure"):
+                value = row.get(field)
+                duration = qtrs[field]
+                if value is None:
+                    standalone[field] = None
+                elif duration in {1, 4}:
+                    standalone[field] = float(value)
+                elif duration in {2, 3} and field in previous_ytd:
+                    standalone[field] = float(value) - previous_ytd[field]
+                else:
+                    standalone[field] = None
+                if value is not None and duration in {1, 2, 3}:
+                    previous_ytd[field] = float(value)
+            copy.update(standalone)
+            ocf, capex = standalone["operating_cash_flow"], standalone["capital_expenditure"]
+            copy["free_cash_flow"] = ocf - capex if ocf is not None and capex is not None else None
+            copy["methodology_version"] = "standalone-fcf-v2"
+            output.append(copy)
+    return sorted(output, key=lambda item: (item["ticker"], item["period_end"]))
+
+
 def _select_reported_duration_fact(
     rows: list[dict[str, str]], field: str, period: str
 ) -> tuple[float | None, dict[str, Any] | None]:

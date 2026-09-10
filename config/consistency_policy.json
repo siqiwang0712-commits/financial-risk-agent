@@ -1,0 +1,29 @@
+{
+  "version": "narrative-numeric-consistency-v3",
+  "status": "expert-designed; not statistically calibrated",
+  "material_opposition_count": 2,
+  "thresholds": {
+    "cash_growth": {"operator": "<", "value": -0.10},
+    "operating_cash_flow_growth": {"operator": "<", "value": -0.10},
+    "cash_flow_operating_cash_flow_growth": {"operator": "<", "value": -0.15},
+    "short_term_debt_growth": {"operator": ">", "value": 0.20},
+    "current_ratio": {"operator": "<", "value": 1.0},
+    "debt_to_assets": {"operator": ">", "value": 0.60},
+    "liabilities_to_assets": {"operator": ">", "value": 0.80},
+    "interest_coverage": {"operator": "<", "value": 1.5},
+    "total_debt_growth": {"operator": ">", "value": 0.20},
+    "revenue_growth": {"operator": "<", "value": -0.05},
+    "net_income_growth": {"operator": "<", "value": -0.15},
+    "operating_margin_change": {"operator": "<", "value": -0.02},
+    "net_margin": {"operator": "<", "value": 0.0},
+    "free_cash_flow": {"operator": "<", "value": 0.0},
+    "fcf_growth": {"operator": "<", "value": -0.20},
+    "cfo_to_net_income": {"operator": "<", "value": 0.8},
+    "accounts_receivable_growth_gap": {"operator": ">", "value": 0.15},
+    "inventory_growth_gap": {"operator": ">", "value": 0.15},
+    "working_capital": {"operator": "<", "value": 0.0},
+    "operating_cash_flow": {"operator": "<", "value": 0.0},
+    "net_income": {"operator": "<", "value": 0.0},
+    "going_concern_doubt": {"operator": "truthy"}
+  }
+}

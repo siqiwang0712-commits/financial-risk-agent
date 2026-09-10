@@ -4,7 +4,7 @@ from dataclasses import asdict
 from typing import Annotated
 
 from fastapi import APIRouter, Depends, Header, HTTPException
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 
 from .applicability import applicability_report
 from .calibration import selective_decision
@@ -23,7 +23,13 @@ from .integrity import CalibrationStatus
 from .policy import evaluate_kri
 from .portfolio import portfolio_overview
 from .scenario import Scenario, compare_scenario
-from .security import CredentialStore, SlidingWindowRateLimiter, issue_api_key
+from .security import (
+    CredentialStore,
+    DurableCredentialStore,
+    RateLimiter,
+    SlidingWindowRateLimiter,
+    issue_api_key,
+)
 from .service import EnterpriseRiskService
 from .temporal import RiskSnapshot, compare_risk_snapshots
 
@@ -40,18 +46,11 @@ class EntityCreate(BaseModel):
 
 
 class CaseCreate(BaseModel):
+    model_config = ConfigDict(extra="forbid")
     entity_id: str
     domain: RiskDomain
-    severity: str
-    trajectory: str = "insufficient_history"
-    confidence: float = Field(ge=0, le=1)
-    evidence_coverage: float = Field(ge=0, le=1)
-    rationale: str
-    evidence_ids: list[str] = Field(default_factory=list)
-    reason_codes: list[str] = Field(default_factory=list)
-    decision_trace: dict = Field(default_factory=dict)
-    snapshot_id: str | None = None
-    fusion_version: str | None = None
+    snapshot_id: str
+    rationale: str = ""
 
 
 class TransitionRequest(BaseModel):
@@ -138,11 +137,16 @@ class SelectiveDecisionRequest(BaseModel):
     calibration_status: CalibrationStatus = CalibrationStatus.UNCALIBRATED
 
 
-def enterprise_router(service: EnterpriseRiskService | None = None) -> APIRouter:
+def enterprise_router(
+    service: EnterpriseRiskService | None = None,
+    credentials: DurableCredentialStore | None = None,
+    limiter: RateLimiter | None = None,
+    bootstrap_enabled: bool = True,
+) -> APIRouter:
     service = service or EnterpriseRiskService()
     router = APIRouter(prefix="/api/v1/enterprise", tags=["enterprise"])
-    credentials = CredentialStore()
-    limiter = SlidingWindowRateLimiter()
+    credentials = credentials or CredentialStore()
+    limiter = limiter or SlidingWindowRateLimiter()
 
     def principal(
         api_key: Annotated[str | None, Header(alias="X-API-Key")] = None,
@@ -161,6 +165,8 @@ def enterprise_router(service: EnterpriseRiskService | None = None) -> APIRouter
 
     @router.post("/organizations")
     def create_organization(req: OrganizationCreate):
+        if not bootstrap_enabled:
+            raise HTTPException(403, "organization bootstrap is disabled")
         organization = service.create_organization(req.name, req.actor_id)
         raw, credential = issue_api_key(organization.id, req.actor_id, Role.ADMIN)
         credentials.register(credential)
@@ -172,21 +178,38 @@ def enterprise_router(service: EnterpriseRiskService | None = None) -> APIRouter
 
     @router.post("/risk-cases")
     def create_case(req: CaseCreate, actor: Principal = principal_dependency):
+        try:
+            snapshot = service.repository.get_snapshot(actor.organization_id, req.snapshot_id)
+        except KeyError as exc:
+            raise HTTPException(422, "server-side analysis snapshot not found") from exc
+        output = snapshot.frozen_output
+        agent_output = output.get("agent", {})
+        trace = agent_output.get("decision_trace", {})
+        verified_paths = [
+            path for path in trace.get("paths", [])
+            if path.get("evidence_path_status") == "VERIFIED"
+            and path.get("source_evidence")
+        ]
         case = RiskCase(
             new_id("case"),
             actor.organization_id,
             req.entity_id,
             req.domain,
-            req.severity,
-            req.trajectory,
-            req.confidence,
-            req.evidence_coverage,
+            str(agent_output.get("risk_severity", output.get("risk_level", "unknown"))),
+            str(agent_output.get("risk_trajectory", "insufficient_history")),
+            float(agent_output.get("epistemics", {}).get("evidence_quality", 0.0)),
+            float(agent_output.get("evidence_coverage", 0.0)),
             rationale=req.rationale,
-            evidence_ids=req.evidence_ids,
-            reason_codes=req.reason_codes,
-            decision_trace=req.decision_trace,
-            snapshot_id=req.snapshot_id,
-            fusion_version=req.fusion_version,
+            evidence_ids=sorted({
+                str(evidence.get("source"))
+                for path in verified_paths
+                for evidence in path.get("source_evidence", [])
+                if evidence.get("source")
+            }),
+            reason_codes=sorted({str(path.get("reason_code")) for path in verified_paths}),
+            decision_trace={**trace, "verified_path_count": len(verified_paths)},
+            snapshot_id=snapshot.id,
+            fusion_version=snapshot.component_versions.get("fusion"),
         )
         return service.create_case(actor, case).to_dict()
 
@@ -206,7 +229,7 @@ def enterprise_router(service: EnterpriseRiskService | None = None) -> APIRouter
         try:
             return service.transition(actor, case_id, req.target).to_dict()
         except (KeyError, PermissionError, ValueError) as exc:
-            raise HTTPException(422, str(exc)) from exc
+            raise HTTPException(422, "risk-case transition rejected") from exc
 
     @router.post("/risk-cases/{case_id}/override")
     def override(
@@ -219,7 +242,7 @@ def enterprise_router(service: EnterpriseRiskService | None = None) -> APIRouter
                 actor, case_id, req.original, req.override, req.reason
             ).to_dict()
         except (KeyError, PermissionError, ValueError) as exc:
-            raise HTTPException(422, str(exc)) from exc
+            raise HTTPException(422, "risk-case override rejected") from exc
 
     @router.post("/risk-cases/{case_id}/actions")
     def add_action(
@@ -230,7 +253,7 @@ def enterprise_router(service: EnterpriseRiskService | None = None) -> APIRouter
                 actor, case_id, req.description, req.owner_id, req.due_date
             ).to_dict()
         except (KeyError, PermissionError, ValueError) as exc:
-            raise HTTPException(422, str(exc)) from exc
+            raise HTTPException(422, "risk-case action rejected") from exc
 
     @router.post("/risk-cases/{case_id}/resolution-evidence")
     def add_resolution_evidence(
@@ -243,7 +266,7 @@ def enterprise_router(service: EnterpriseRiskService | None = None) -> APIRouter
                 actor, case_id, req.evidence_id
             ).to_dict()
         except (KeyError, PermissionError, ValueError) as exc:
-            raise HTTPException(422, str(exc)) from exc
+            raise HTTPException(422, "resolution evidence rejected") from exc
 
     @router.post("/risk-cases/{case_id}/reopen")
     def reopen(
@@ -252,7 +275,7 @@ def enterprise_router(service: EnterpriseRiskService | None = None) -> APIRouter
         try:
             return service.reopen(actor, case_id, req.reason).to_dict()
         except (KeyError, PermissionError, ValueError) as exc:
-            raise HTTPException(422, str(exc)) from exc
+            raise HTTPException(422, "risk-case reopen rejected") from exc
 
     @router.get("/overview")
     def overview(actor: Principal = principal_dependency):
@@ -270,13 +293,16 @@ def enterprise_router(service: EnterpriseRiskService | None = None) -> APIRouter
         metrics: dict[str, float | None],
         actor: Principal = principal_dependency,
     ):
-        policy = service.repository.policies.get(policy_id)
-        if policy is None or policy.organization_id != actor.organization_id:
+        try:
+            policy = service.repository.get_policy(actor.organization_id, policy_id)
+        except KeyError:
             raise HTTPException(404, "policy not found")
         return evaluate_kri(policy, metrics)
 
     @router.post("/snapshots")
     def save_snapshot(req: SnapshotCreate, actor: Principal = principal_dependency):
+        if not bootstrap_enabled:
+            raise HTTPException(403, "snapshot import is disabled; use the server analysis workflow")
         snapshot = create_snapshot(
             actor.organization_id,
             req.entity_id,
@@ -319,7 +345,7 @@ def enterprise_router(service: EnterpriseRiskService | None = None) -> APIRouter
             item = RiskSnapshot(entity_id=entity_id, **payload)
             return asdict(service.save_risk_snapshot(actor, item))
         except (KeyError, PermissionError, ValueError) as exc:
-            raise HTTPException(422, str(exc)) from exc
+            raise HTTPException(422, "risk snapshot rejected") from exc
 
     @router.get("/entities/{entity_id}/risk-timeline")
     def risk_timeline(entity_id: str, actor: Principal = principal_dependency):

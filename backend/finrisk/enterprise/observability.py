@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 import logging
+import re
 import time
 from contextlib import contextmanager
 from contextvars import ContextVar
@@ -11,7 +12,8 @@ correlation_id: ContextVar[str] = ContextVar("correlation_id", default="")
 
 
 def bind_correlation_id(value: str | None = None) -> str:
-    identifier = value or uuid4().hex
+    candidate = (value or "").strip()
+    identifier = candidate if re.fullmatch(r"[A-Za-z0-9._-]{1,64}", candidate) else uuid4().hex
     correlation_id.set(identifier)
     return identifier
 

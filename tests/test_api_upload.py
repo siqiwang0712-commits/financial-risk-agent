@@ -3,7 +3,18 @@ from fastapi.testclient import TestClient
 from finrisk.api import app
 
 
+def authenticated_client() -> tuple[TestClient, dict[str, str]]:
+    client = TestClient(app)
+    response = client.post(
+        "/api/v1/enterprise/organizations",
+        json={"name": "API test tenant", "actor_id": "test-admin"},
+    )
+    assert response.status_code == 200
+    return client, {"X-API-Key": response.json()["api_key"]}
+
+
 def test_pdf_upload_reaches_assessment_pipeline():
+    client, headers = authenticated_client()
     doc = fitz.open()
     page = doc.new_page()
     page.insert_text(
@@ -11,10 +22,11 @@ def test_pdf_upload_reaches_assessment_pipeline():
     )
     pdf = doc.tobytes()
     doc.close()
-    response = TestClient(app).post(
+    response = client.post(
         "/api/v1/documents/analyze",
         data={"company": "Synthetic API Co", "fiscal_year": "2025"},
         files={"file": ("synthetic.pdf", pdf, "application/pdf")},
+        headers=headers,
     )
     assert response.status_code == 200
     body = response.json()
@@ -36,15 +48,18 @@ def test_pdf_upload_reaches_assessment_pipeline():
 
 
 def test_upload_rejects_non_pdf():
-    response = TestClient(app).post(
+    client, headers = authenticated_client()
+    response = client.post(
         "/api/v1/documents/analyze",
         data={"company": "X", "fiscal_year": "2025"},
         files={"file": ("x.pdf", b"not-pdf", "application/pdf")},
+        headers=headers,
     )
     assert response.status_code == 415
 
 
 def test_conflicting_candidates_are_not_silently_selected():
+    client, headers = authenticated_client()
     doc = fitz.open()
     page = doc.new_page()
     page.insert_text(
@@ -53,10 +68,11 @@ def test_conflicting_candidates_are_not_silently_selected():
     )
     pdf = doc.tobytes()
     doc.close()
-    response = TestClient(app).post(
+    response = client.post(
         "/api/v1/documents/analyze",
         data={"company": "X", "fiscal_year": "2025"},
         files={"file": ("x.pdf", pdf, "application/pdf")},
+        headers=headers,
     )
     assert response.status_code == 200
     issues = response.json()["extraction"]["review_issues"]
@@ -64,6 +80,7 @@ def test_conflicting_candidates_are_not_silently_selected():
 
 
 def test_pdf_upload_preserves_prior_year_for_trends():
+    client, headers = authenticated_client()
     doc = fitz.open()
     page = doc.new_page()
     page.insert_text(
@@ -72,10 +89,11 @@ def test_pdf_upload_preserves_prior_year_for_trends():
     )
     pdf = doc.tobytes()
     doc.close()
-    response = TestClient(app).post(
+    response = client.post(
         "/api/v1/documents/analyze",
         data={"company": "X", "fiscal_year": "2025"},
         files={"file": ("x.pdf", pdf, "application/pdf")},
+        headers=headers,
     )
     assert response.status_code == 200
     assert response.json()["extraction"]["prior_year"] == 2024

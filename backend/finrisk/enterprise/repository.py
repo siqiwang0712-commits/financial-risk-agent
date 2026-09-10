@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from copy import deepcopy
+from typing import Protocol, TypeVar
 
 from .domain import (
     AnalysisSnapshot,
@@ -12,6 +13,23 @@ from .domain import (
     RiskCase,
 )
 from .temporal import RiskSnapshot
+
+T = TypeVar("T")
+
+
+class EnterpriseRepository(Protocol):
+    """Tenant-scoped persistence contract shared by memory and PostgreSQL."""
+
+    def save(self, item: T) -> T: ...
+    def get_case(self, organization_id: str, case_id: str) -> RiskCase: ...
+    def get_entity(self, organization_id: str, entity_id: str) -> Entity: ...
+    def list_cases(self, organization_id: str) -> list[RiskCase]: ...
+    def append_event(self, event: AuditEvent) -> None: ...
+    def list_events(self, organization_id: str) -> list[AuditEvent]: ...
+    def get_snapshot(self, organization_id: str, snapshot_id: str) -> AnalysisSnapshot: ...
+    def save_risk_snapshot(self, organization_id: str, snapshot: RiskSnapshot) -> RiskSnapshot: ...
+    def list_risk_snapshots(self, organization_id: str, entity_id: str) -> list[RiskSnapshot]: ...
+    def get_policy(self, organization_id: str, policy_id: str) -> PolicyVersion: ...
 
 
 class InMemoryEnterpriseRepository:
@@ -62,6 +80,12 @@ class InMemoryEnterpriseRepository:
             for item in self.cases.values()
             if item.organization_id == organization_id
         ]
+
+    def get_policy(self, organization_id: str, policy_id: str) -> PolicyVersion:
+        item = self.policies.get(policy_id)
+        if item is None or item.organization_id != organization_id:
+            raise KeyError(policy_id)
+        return deepcopy(item)
 
     def append_event(self, event: AuditEvent) -> None:
         self._events.append(deepcopy(event))

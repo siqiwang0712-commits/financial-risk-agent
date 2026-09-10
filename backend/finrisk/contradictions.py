@@ -1,9 +1,27 @@
 from __future__ import annotations
 
+import hashlib
+import json
 from collections.abc import Callable
 from dataclasses import asdict, dataclass
+from pathlib import Path
 
 from .domain import Contradiction, NarrativeClaim
+
+_POLICY_PATH = Path(__file__).resolve().parents[2] / "config" / "consistency_policy.json"
+CONSISTENCY_POLICY = json.loads(_POLICY_PATH.read_text(encoding="utf-8"))
+CONSISTENCY_POLICY_HASH = hashlib.sha256(_POLICY_PATH.read_bytes()).hexdigest()
+
+
+def _configured(metric: str) -> Callable[[float], bool]:
+    rule = CONSISTENCY_POLICY["thresholds"][metric]
+    operator = rule["operator"]
+    threshold = rule.get("value")
+    if operator == "<":
+        return lambda value: value < threshold
+    if operator == ">":
+        return lambda value: value > threshold
+    return lambda value: bool(value)
 
 
 @dataclass(frozen=True)
@@ -25,6 +43,8 @@ class ClaimConsistencyEvaluation:
     opposing_evidence: tuple[str, ...]
     classification: str
     reason_code: str
+    policy_version: str = CONSISTENCY_POLICY["version"]
+    policy_hash: str = CONSISTENCY_POLICY_HASH
 
     def to_dict(self) -> dict:
         return asdict(self)
@@ -32,40 +52,44 @@ class ClaimConsistencyEvaluation:
 
 CHECKS: dict[str, tuple[NumericCheck, ...]] = {
     "liquidity": (
-        NumericCheck("cash_growth", "Cash declined by more than 10%", lambda x: x < -0.10),
-        NumericCheck("operating_cash_flow_growth", "Operating cash flow declined by more than 10%", lambda x: x < -0.10),
-        NumericCheck("short_term_debt_growth", "Short-term debt increased by more than 20%", lambda x: x > 0.20),
-        NumericCheck("current_ratio", "Current ratio is below 1.0", lambda x: x < 1.0),
+        NumericCheck("cash_growth", "Cash declined by more than 10%", _configured("cash_growth")),
+        NumericCheck("operating_cash_flow_growth", "Operating cash flow declined by more than 10%", _configured("operating_cash_flow_growth")),
+        NumericCheck("short_term_debt_growth", "Short-term debt increased by more than 20%", _configured("short_term_debt_growth")),
+        NumericCheck("current_ratio", "Current ratio is below 1.0", _configured("current_ratio")),
     ),
     "solvency_leverage": (
-        NumericCheck("debt_to_assets", "Debt-to-assets exceeds 60%", lambda x: x > 0.60),
-        NumericCheck("liabilities_to_assets", "Liabilities-to-assets exceeds 80%", lambda x: x > 0.80),
-        NumericCheck("interest_coverage", "Interest coverage is below 1.5x", lambda x: x < 1.5),
-        NumericCheck("total_debt_growth", "Total debt increased by more than 20%", lambda x: x > 0.20),
+        NumericCheck("debt_to_assets", "Debt-to-assets exceeds 60%", _configured("debt_to_assets")),
+        NumericCheck("liabilities_to_assets", "Liabilities-to-assets exceeds 80%", _configured("liabilities_to_assets")),
+        NumericCheck("interest_coverage", "Interest coverage is below 1.5x", _configured("interest_coverage")),
+        NumericCheck("total_debt_growth", "Total debt increased by more than 20%", _configured("total_debt_growth")),
     ),
     "profitability": (
-        NumericCheck("revenue_growth", "Revenue declined by more than 5%", lambda x: x < -0.05),
-        NumericCheck("net_income_growth", "Net income declined by more than 15%", lambda x: x < -0.15),
-        NumericCheck("operating_margin_change", "Operating margin deteriorated by more than 2 percentage points", lambda x: x < -0.02),
-        NumericCheck("net_margin", "Net margin is negative", lambda x: x < 0),
+        NumericCheck("revenue_growth", "Revenue declined by more than 5%", _configured("revenue_growth")),
+        NumericCheck("net_income_growth", "Net income declined by more than 15%", _configured("net_income_growth")),
+        NumericCheck("operating_margin_change", "Operating margin deteriorated by more than 2 percentage points", _configured("operating_margin_change")),
+        NumericCheck("net_margin", "Net margin is negative", _configured("net_margin")),
     ),
     "cash_flow": (
-        NumericCheck("operating_cash_flow_growth", "Operating cash flow declined by more than 15%", lambda x: x < -0.15),
-        NumericCheck("free_cash_flow", "Free cash flow is negative", lambda x: x < 0),
-        NumericCheck("fcf_growth", "Free cash flow declined by more than 20%", lambda x: x < -0.20),
-        NumericCheck("cfo_to_net_income", "Cash conversion is below 0.8x", lambda x: x < 0.8),
+        NumericCheck(
+            "operating_cash_flow_growth",
+            "Operating cash flow declined",
+            _configured("cash_flow_operating_cash_flow_growth"),
+        ),
+        NumericCheck("free_cash_flow", "Free cash flow is negative", _configured("free_cash_flow")),
+        NumericCheck("fcf_growth", "Free cash flow declined by more than 20%", _configured("fcf_growth")),
+        NumericCheck("cfo_to_net_income", "Cash conversion is below 0.8x", _configured("cfo_to_net_income")),
     ),
     "earnings_quality": (
-        NumericCheck("cfo_to_net_income", "Operating cash flow is below 80% of net income", lambda x: x < 0.8),
-        NumericCheck("accounts_receivable_growth_gap", "Receivables growth exceeds revenue growth by 15 percentage points", lambda x: x > 0.15),
-        NumericCheck("inventory_growth_gap", "Inventory growth exceeds revenue growth by 15 percentage points", lambda x: x > 0.15),
-        NumericCheck("free_cash_flow", "Free cash flow is negative", lambda x: x < 0),
+        NumericCheck("cfo_to_net_income", "Operating cash flow is below 80% of net income", _configured("cfo_to_net_income")),
+        NumericCheck("accounts_receivable_growth_gap", "Receivables growth exceeds revenue growth by 15 percentage points", _configured("accounts_receivable_growth_gap")),
+        NumericCheck("inventory_growth_gap", "Inventory growth exceeds revenue growth by 15 percentage points", _configured("inventory_growth_gap")),
+        NumericCheck("free_cash_flow", "Free cash flow is negative", _configured("free_cash_flow")),
     ),
     "business_going_concern": (
-        NumericCheck("working_capital", "Working capital is negative", lambda x: x < 0),
-        NumericCheck("operating_cash_flow", "Operating cash flow is negative", lambda x: x < 0),
-        NumericCheck("net_income", "Net income is negative", lambda x: x < 0),
-        NumericCheck("going_concern_doubt", "Auditor/management disclosed substantial doubt", lambda x: bool(x)),
+        NumericCheck("working_capital", "Working capital is negative", _configured("working_capital")),
+        NumericCheck("operating_cash_flow", "Operating cash flow is negative", _configured("operating_cash_flow")),
+        NumericCheck("net_income", "Net income is negative", _configured("net_income")),
+        NumericCheck("going_concern_doubt", "Auditor/management disclosed substantial doubt", _configured("going_concern_doubt")),
     ),
 }
 
@@ -132,6 +156,12 @@ def evaluate_claim_consistency(
         if enriched.get(check.metric) is not None
         and check.predicate(enriched[check.metric])
     )
+    supporting = tuple(
+        f"No adverse threshold breach for {check.metric} [{check.metric}={enriched[check.metric]:.4g}]"
+        for check in CHECKS.get(claim.risk_category, ())
+        if enriched.get(check.metric) is not None
+        and not check.predicate(enriched[check.metric])
+    )
     verified = claim.evidence.verification_status == "verified"
     if not verified:
         classification, reason = "INSUFFICIENT_EVIDENCE", "INSUFFICIENT_EVIDENCE"
@@ -139,7 +169,7 @@ def evaluate_claim_consistency(
         classification, reason = "INCOMPLETE_CONTEXT", "CLAIM_CONTEXT_INCOMPLETE"
     elif claim.polarity != "positive" and claim.direction != "positive":
         classification, reason = "NOT_APPLICABLE", "CLAIM_NOT_OPTIMISTIC"
-    elif len(opposing) >= 2:
+    elif len(opposing) >= int(CONSISTENCY_POLICY["material_opposition_count"]):
         classification, reason = "MATERIAL_CONTRADICTION", "SEVERE_VERIFIED_SIGNAL"
     elif opposing:
         classification, reason = "TENSION", "PARTIAL_NUMERIC_TENSION"
@@ -152,7 +182,7 @@ def evaluate_claim_consistency(
         tuple(required),
         available,
         missing,
-        (),
+        supporting,
         opposing,
         classification,
         reason,

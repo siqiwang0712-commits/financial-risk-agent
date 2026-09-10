@@ -11,7 +11,7 @@ from .domain import (
     RiskCaseStatus,
     new_id,
 )
-from .repository import InMemoryEnterpriseRepository
+from .repository import EnterpriseRepository, InMemoryEnterpriseRepository
 from .temporal import RiskSnapshot
 from .workflow import (
     add_mitigation_action,
@@ -23,7 +23,7 @@ from .workflow import (
 
 
 class EnterpriseRiskService:
-    def __init__(self, repository: InMemoryEnterpriseRepository | None = None):
+    def __init__(self, repository: EnterpriseRepository | None = None):
         self.repository = repository or InMemoryEnterpriseRepository()
 
     def create_organization(self, name: str, actor_id: str) -> Organization:
@@ -104,13 +104,18 @@ class EnterpriseRiskService:
     ) -> RiskCase:
         case = self.repository.get_case(principal.organization_id, case_id)
         authorize(principal, "review", case.organization_id)
-        if (
-            target in {RiskCaseStatus.ACCEPTED, RiskCaseStatus.RESOLVED}
-            and case.decision_trace.get("verified_path_count", 0) < 1
-        ):
-            raise ValueError(
-                "a verified decision trace is required for a material final state"
-            )
+        if target in {RiskCaseStatus.ACCEPTED, RiskCaseStatus.RESOLVED}:
+            if not case.snapshot_id:
+                raise ValueError("a server-side analysis snapshot is required")
+            snapshot = self.repository.get_snapshot(case.organization_id, case.snapshot_id)
+            trace = snapshot.frozen_output.get("agent", {}).get("decision_trace", {})
+            verified = [
+                path for path in trace.get("paths", [])
+                if path.get("evidence_path_status") == "VERIFIED"
+                and path.get("source_evidence")
+            ]
+            if not verified:
+                raise ValueError("a verified server-side evidence path is required")
         if target is RiskCaseStatus.RESOLVED and not case.resolution_evidence:
             raise ValueError("resolution evidence is required")
         previous, current = transition_case(case, target)

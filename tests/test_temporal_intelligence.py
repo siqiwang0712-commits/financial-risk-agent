@@ -18,6 +18,7 @@ from finrisk.enterprise.calibration import (
     risk_coverage_curve,
     selective_decision,
 )
+from finrisk.enterprise.decision import create_snapshot
 from finrisk.enterprise.decision_bundle import (
     build_decision_bundle,
     verify_decision_bundle,
@@ -156,7 +157,16 @@ def test_full_case_mitigation_resolution_and_reopen_loop():
     analyst = Principal("analyst", org.id, Role.ANALYST)
     reviewer = Principal("reviewer", org.id, Role.REVIEWER)
     entity = service.create_entity(analyst, "Issuer")
-    case = RiskCase(new_id("case"), org.id, entity.id, RiskDomain.LIQUIDITY, "high", "deteriorating", 0.8, 0.9, decision_trace={"verified_path_count": 1})
+    snapshot = create_snapshot(
+        org.id,
+        entity.id,
+        {"document_hash": "abc"},
+        {"agent": {"decision_trace": {"paths": [{"evidence_path_status": "VERIFIED", "source_evidence": [{"source": "SEC"}]}]}}},
+        {"10-K": "abc"},
+        {"fusion": "v2"},
+    )
+    service.save_snapshot(analyst, snapshot)
+    case = RiskCase(new_id("case"), org.id, entity.id, RiskDomain.LIQUIDITY, "high", "deteriorating", 0.8, 0.9, snapshot_id=snapshot.id)
     service.create_case(analyst, case)
     service.add_action(analyst, case.id, "Extend maturity", "treasurer", "2027-01-01")
     service.transition(reviewer, case.id, RiskCaseStatus.OPEN)

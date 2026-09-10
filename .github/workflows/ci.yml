@@ -4,6 +4,10 @@ on:
   pull_request:
 jobs:
   backend:
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.11", "3.12"]
     runs-on: ubuntu-latest
     services:
       postgres:
@@ -21,7 +25,7 @@ jobs:
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-python@v7
-        with: {python-version: "3.12"}
+        with: {python-version: "${{ matrix.python-version }}"}
       - run: python -m pip install -e ".[dev,postgres]"
       - run: ruff check backend tests scripts
       - run: python scripts/validate_postgres_migration.py
@@ -30,6 +34,9 @@ jobs:
         run: python scripts/run_empirical_validation.py --allow-not-available
       - name: Reproduce v0.3.1 pilot without rewriting frozen v0.3.0 results
         run: |
+          python scripts/replay_frozen_experiment.py v0.3.1-E1-diagnostic
+          python scripts/replay_frozen_experiment.py v0.3.1-E2
+          python scripts/replay_frozen_experiment.py v0.3.1-E3
           python scripts/run_v031_replay.py
           git diff --exit-code -- research/results/public_v1 research/results/v0.3.1
   frontend:
@@ -43,4 +50,5 @@ jobs:
         with: {node-version: "22", cache: npm, cache-dependency-path: frontend/package-lock.json}
       - run: npm ci
       - run: npm run typecheck
+      - run: npm test
       - run: npm run build

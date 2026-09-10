@@ -237,15 +237,34 @@ def test_enterprise_api_case_lifecycle_and_scenario():
     entity = client.post(
         "/api/v1/enterprise/entities", headers=headers, json={"name": "Acme Holdings"}
     ).json()
+    snapshot = client.post(
+        "/api/v1/enterprise/snapshots",
+        headers=headers,
+        json={
+            "entity_id": entity["id"],
+            "frozen_input": {"cash": 1},
+            "frozen_output": {
+                "risk_level": "high",
+                "agent": {
+                    "risk_severity": "high",
+                    "risk_trajectory": "stable",
+                    "evidence_coverage": 0.7,
+                    "epistemics": {"evidence_quality": 0.8},
+                    "decision_trace": {"paths": []},
+                },
+            },
+            "document_versions": {"10-K": "hash"},
+            "component_versions": {"rules": "r1", "fusion": "f1"},
+        },
+    )
+    assert snapshot.status_code == 200
     created = client.post(
         "/api/v1/enterprise/risk-cases",
         headers=headers,
         json={
             "entity_id": entity["id"],
             "domain": "liquidity",
-            "severity": "high",
-            "confidence": 0.8,
-            "evidence_coverage": 0.7,
+            "snapshot_id": snapshot.json()["id"],
             "rationale": "KRI breach",
         },
     )
@@ -291,22 +310,10 @@ def test_enterprise_api_case_lifecycle_and_scenario():
         ).status_code
         == 404
     )
-    snapshot = client.post(
-        "/api/v1/enterprise/snapshots",
-        headers=headers,
-        json={
-            "entity_id": entity["id"],
-            "frozen_input": {"cash": 1},
-            "frozen_output": {"decision": "FLAG"},
-            "document_versions": {"10-K": "hash"},
-            "component_versions": {"rules": "r1"},
-        },
-    )
-    assert snapshot.status_code == 200
     replay = client.post(
         f"/api/v1/enterprise/snapshots/{snapshot.json()['id']}/replay-diff",
         headers=headers,
-        json={"replayed_output": {"decision": "FLAG"}},
+        json={"replayed_output": snapshot.json()["frozen_output"]},
     )
     assert replay.json()["match"] is True
     fusion = client.post(

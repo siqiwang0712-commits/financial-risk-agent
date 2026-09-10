@@ -143,10 +143,29 @@ def validate_dataset_integrity(rows: list[dict[str, Any]]) -> dict[str, Any]:
             errors.append({"row": index, "code": "INVALID_OR_FUTURE_AVAILABILITY"})
         expected_period = str(row.get("period_end", "")).replace("-", "")
         expected_accession = str(row.get("accession", ""))
+        provenance_map = row.get("fact_provenance") or {}
+        for field, value in (row.get("facts") or {}).items():
+            if value is not None and field not in provenance_map:
+                errors.append({"row": index, "code": "FACT_PROVENANCE_MISSING", "detail": field})
         for field, provenance in (row.get("fact_provenance") or {}).items():
             if not provenance or "source_row" not in provenance:
+                if (row.get("facts") or {}).get(field) is not None:
+                    errors.append({"row": index, "code": "FACT_PROVENANCE_INCOMPLETE", "detail": field})
                 continue
             source_row = provenance["source_row"] or {}
+            required_provenance = {
+                "adsh": source_row.get("adsh"),
+                "tag": source_row.get("tag"),
+                "ddate": source_row.get("ddate"),
+                "uom": source_row.get("uom"),
+                "source_hash": row.get("source_hash"),
+                "source_available_time": row.get("source_available_time"),
+            }
+            missing_provenance = sorted(
+                key for key, value in required_provenance.items() if value in (None, "")
+            )
+            if missing_provenance:
+                errors.append({"row": index, "code": "FACT_PROVENANCE_INCOMPLETE", "detail": {field: missing_provenance}})
             if source_row.get("adsh") != expected_accession:
                 errors.append({"row": index, "code": "FACT_ACCESSION_MISMATCH", "detail": field})
             if source_row.get("ddate") != expected_period:
@@ -273,6 +292,16 @@ def empirical_binary_metrics(rows: list[dict[str, Any]]) -> dict[str, Any]:
     false_negatives = sum(label == 1 and prediction == 0 for label, prediction in zip(labels, predictions))
     positives = sum(labels)
     decided = [row for row in rows if not row.get("abstained", False)]
+    decided_metrics = None
+    if decided:
+        decided_labels = [int(row["label"]) for row in decided]
+        decided_predictions = [int(row.get("prediction", float(row["score"]) >= 0.5)) for row in decided]
+        measured = classification_metrics(decided_labels, decided_predictions)
+        decided_metrics = {
+            "f1": measured.f1,
+            "recall": measured.recall,
+            "balanced_accuracy": balanced_accuracy(decided_labels, decided_predictions),
+        }
     return {
         "auroc": roc_auc(labels, scores),
         "pr_auc": average_precision(labels, scores),
@@ -282,6 +311,16 @@ def empirical_binary_metrics(rows: list[dict[str, Any]]) -> dict[str, Any]:
         "false_negative_rate": false_negatives / positives if positives else None,
         "coverage": len(decided) / len(rows),
         "abstention_rate": 1 - len(decided) / len(rows),
+        "overall_performance": {
+            "f1": classification.f1,
+            "recall": classification.recall,
+            "balanced_accuracy": balanced_accuracy(labels, predictions),
+        },
+        "decided_only_performance": decided_metrics,
+        "risk_coverage": [
+            {"coverage": round((index + 1) / len(rows), 6), "score": row["score"]}
+            for index, row in enumerate(sorted(decided, key=lambda item: float(item["score"]), reverse=True))
+        ],
     }
 
 

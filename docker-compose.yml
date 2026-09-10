@@ -17,6 +17,8 @@ services:
     environment:
       FINRISK_LLM_PROVIDER: mock
       DATABASE_URL: postgresql://finrisk:${POSTGRES_PASSWORD:-local-development-only}@postgres:5432/finrisk
+      FINRISK_ENV: development
+      FINRISK_AUTO_MIGRATE: "1"
     depends_on:
       postgres:
         condition: service_healthy
@@ -24,5 +26,7 @@ services:
     build: {context: frontend}
     ports: ["3000:3000"]
     depends_on: [api]
+    environment:
+      FINRISK_API_UPSTREAM: http://api:8000
 volumes:
   finrisk-postgres:

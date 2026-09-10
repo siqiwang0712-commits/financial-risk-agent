@@ -40,6 +40,7 @@ def _final(
     drivers: list[str],
     rationale: str,
     policy: dict[str, float] | None = None,
+    critical_dimension: bool = False,
 ) -> FusionResult:
     policy = DEFAULT_DECISION_POLICY | (policy or {})
     reason_codes: list[str] = []
@@ -55,8 +56,10 @@ def _final(
         decision = Decision.REVIEW
     else:
         decision = Decision.PASS
-    if score is not None and score >= policy.get("critical_dimension_score", 80):
+    if critical_dimension:
         reason_codes.append(DecisionReasonCode.CRITICAL_DIMENSION_ESCALATION.value)
+    elif score is not None and score >= policy.get("critical_dimension_score", 80):
+        reason_codes.append(DecisionReasonCode.AGGREGATE_CRITICAL_SCORE.value)
     reason_codes.append(DecisionReasonCode.UNVALIDATED_RELIABILITY.value)
     return FusionResult(
         method,
@@ -124,6 +127,13 @@ def max_severity(
         [key for key, value in active.items() if value == score],
         "Highest supported dimension prevents concentrated-risk dilution",
         policy,
+        bool(
+            score is not None
+            and score
+            >= (DEFAULT_DECISION_POLICY | (policy or {})).get(
+                "critical_dimension_score", 80
+            )
+        ),
     )
 
 
@@ -165,6 +175,11 @@ def hierarchical_escalation(
         severe or elevated,
         "Coverage-aware non-compensatory fusion; the highest supported dimension is a monotonic floor and missing dimensions are excluded",
         policy,
+        bool(
+            active
+            and max(active.values())
+            >= effective.get("critical_dimension_score", 80)
+        ),
     )
 
 
@@ -224,15 +239,16 @@ class RiskContribution:
     score: float
     evidence_id: str
     verified: bool = True
+    evidence_group: str | None = None
 
 
 def deduplicate_contributions(
     contributions: list[RiskContribution],
 ) -> tuple[list[RiskContribution], int]:
-    """One evidence item contributes at most once per dimension."""
-    unique: dict[tuple[str, str], RiskContribution] = {}
+    """Globally cap a correlated evidence group to its strongest contribution."""
+    unique: dict[str, RiskContribution] = {}
     for item in contributions:
-        key = (item.dimension, item.evidence_id)
+        key = item.evidence_group or item.evidence_id
         if key not in unique or item.score > unique[key].score:
             unique[key] = item
     return list(unique.values()), len(contributions) - len(unique)

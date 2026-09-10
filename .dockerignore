@@ -1,0 +1,15 @@
+.git
+.github
+.env
+**/.env
+**/__pycache__
+**/.pytest_cache
+**/.mypy_cache
+**/.ruff_cache
+frontend/node_modules
+frontend/.next
+data/sec-cache
+data/sec-bulk
+logs
+*.pdf
+!examples/intel_2024_sample_report.pdf

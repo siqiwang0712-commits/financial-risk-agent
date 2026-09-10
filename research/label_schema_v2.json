@@ -1,0 +1,23 @@
+{
+  "version": "finrisk-forward-label-v2.0.0",
+  "status": "PROSPECTIVE_DEFINITION_NOT_USED_BY_E1_E2_E3",
+  "dataset_status": "PARTIAL_LABELS_HUMAN_ADJUDICATION_PENDING",
+  "supersedes": "finrisk-forward-label-v1.0.0",
+  "compatibility": "v1 reviewer_1/reviewer_2 fields migrate to reviewer_a/reviewer_b; frozen v1 artifacts remain unchanged",
+  "outcome_window": "source availability strictly after cutoff through cutoff plus 12 months",
+  "endpoints": ["hard_distress_12m", "financial_deterioration_12m"],
+  "fcf_methodology": "standalone-fcf-v2: Q2/Q3 YTD duration facts are differenced against the preceding YTD filing before consecutive-period evaluation",
+  "review_fields": [
+    "reviewer_a_label",
+    "reviewer_a_reason",
+    "reviewer_a_source",
+    "reviewer_b_label",
+    "reviewer_b_reason",
+    "reviewer_b_source",
+    "adjudicated_label",
+    "adjudicator_reason",
+    "adjudicator_source",
+    "review_status"
+  ],
+  "human_adjudication_status": "NOT_COMPLETED"
+}

@@ -1,0 +1,9 @@
+services:
+  postgres:
+    environment:
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD is required}
+  api:
+    environment:
+      FINRISK_ENV: production
+      FINRISK_ENABLE_ORG_BOOTSTRAP: "0"
+      DATABASE_URL: postgresql://finrisk:${POSTGRES_PASSWORD:?POSTGRES_PASSWORD is required}@postgres:5432/finrisk

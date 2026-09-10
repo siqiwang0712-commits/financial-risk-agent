@@ -6,6 +6,8 @@ import secrets
 import time
 from collections import defaultdict, deque
 from dataclasses import dataclass
+from datetime import UTC, datetime
+from typing import Protocol
 
 from .domain import Principal, Role
 
@@ -24,10 +26,12 @@ class ApiCredential:
 def issue_api_key(
     organization_id: str, user_id: str = "service", role: Role = Role.ANALYST
 ) -> tuple[str, ApiCredential]:
-    raw = f"frk_{secrets.token_urlsafe(32)}"
+    credential_id = secrets.token_hex(16)
+    prefix = f"frk_{credential_id}"
+    raw = f"{prefix}_{secrets.token_urlsafe(32)}"
     digest = hashlib.sha256(raw.encode()).hexdigest()
     return raw, ApiCredential(
-        secrets.token_hex(8), organization_id, digest, raw[:8], user_id, role
+        credential_id, organization_id, digest, prefix, user_id, role
     )
 
 
@@ -45,7 +49,8 @@ class CredentialStore:
         self._credentials[credential.prefix] = credential
 
     def authenticate(self, raw: str) -> Principal:
-        credential = self._credentials.get(raw[:8])
+        prefix = "_".join(raw.split("_", 2)[:2])
+        credential = self._credentials.get(prefix)
         if credential is None or not verify_api_key(raw, credential):
             raise PermissionError("invalid API key")
         return Principal(
@@ -69,8 +74,69 @@ class CredentialStore:
         return raw, replacement
 
 
+class DurableCredentialStore(Protocol):
+    def register(self, credential: ApiCredential) -> None: ...
+    def authenticate(self, raw: str) -> Principal: ...
+    def rotate(self, credential_id: str) -> tuple[str, ApiCredential]: ...
+
+
+class PostgresCredentialStore:
+    """Durable credentials; only hashes and non-secret identifiers are persisted."""
+
+    def __init__(self, connection):
+        self.connection = connection
+
+    def register(self, credential: ApiCredential) -> None:
+        with self.connection.cursor() as cursor:
+            cursor.execute(
+                """INSERT INTO api_credentials
+                (id,credential_prefix,organization_id,user_id,role,secret_hash,active)
+                VALUES (%s,%s,%s,%s,%s,%s,%s)""",
+                (credential.id, credential.prefix, credential.organization_id,
+                 credential.user_id, credential.role.value, credential.key_hash,
+                 credential.active),
+            )
+        self.connection.commit()
+
+    def authenticate(self, raw: str) -> Principal:
+        prefix = "_".join(raw.split("_", 2)[:2])
+        with self.connection.cursor() as cursor:
+            cursor.execute(
+                "SELECT id,organization_id,secret_hash,user_id,role,active FROM api_credentials WHERE credential_prefix=%s",
+                (prefix,),
+            )
+            row = cursor.fetchone()
+        if row is None:
+            raise PermissionError("invalid API key")
+        credential = ApiCredential(row[0], row[1], row[2], prefix, row[3], Role(row[4]), row[5])
+        if not verify_api_key(raw, credential):
+            raise PermissionError("invalid API key")
+        return Principal(credential.user_id, credential.organization_id, credential.role)
+
+    def rotate(self, credential_id: str) -> tuple[str, ApiCredential]:
+        with self.connection.cursor() as cursor:
+            cursor.execute(
+                "SELECT organization_id,user_id,role FROM api_credentials WHERE id=%s AND active=true FOR UPDATE",
+                (credential_id,),
+            )
+            row = cursor.fetchone()
+            if row is None:
+                raise KeyError(credential_id)
+            cursor.execute(
+                "UPDATE api_credentials SET active=false,revoked_at=%s WHERE id=%s",
+                (datetime.now(UTC), credential_id),
+            )
+        raw, replacement = issue_api_key(row[0], row[1], Role(row[2]))
+        self.register(replacement)
+        return raw, replacement
+
+
+class RateLimiter(Protocol):
+    def allow(self, key: str, now: float | None = None) -> bool: ...
+
+
 class SlidingWindowRateLimiter:
-    """Process-local limiter for the prototype API; replace with shared storage at scale."""
+    """Development fallback implementing the shared-store-ready limiter contract."""
 
     def __init__(self, limit: int = 60, window_seconds: int = 60):
         self.limit = limit

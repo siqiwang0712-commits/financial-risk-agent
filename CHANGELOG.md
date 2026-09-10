@@ -2,7 +2,16 @@
 
 ## [Unreleased]
 
-### v0.3.1 local hardening (not released)
+### v0.3.2 reproducibility and runtime integrity
+
+- Added read-only E1/E2/E3 frozen replay and dynamic Git clean/dirty provenance for future experiments; frozen v0.3.1 artifacts remain byte-for-byte unchanged.
+- Added prospective label schema v2 compatibility and standalone-period FCF v2 semantics without modifying E3.
+- Wired `DATABASE_URL` to PostgreSQL runtime persistence and durable long-ID credential storage; hardened tenant-scoped risk-case derivation and final-state evidence gates.
+- Protected expensive analysis endpoints, bounded PDF resources, sanitized correlation IDs/errors, and split liveness/readiness health checks.
+- Added provenance completeness checks, explicit missing-baseline abstention, selective-performance semantics, correlated-evidence caps and distinct aggregate-critical reason codes.
+- Removed frontend localhost coupling, loaded the frozen pilot from its artifact-backed API, added semantic UI tests, and hardened container defaults.
+
+### v0.3.1 — released
 
 - Froze immutable `v0.3.1-E3` after separating the 90 feature observations from a label-only annual outcome pool. The E3 PIT gate reports 0 company overlap and 0 future leakage; deterministic replay matches all frozen benchmark artifacts.
 - Audited right-censoring: 42 labels are verified (34 negative, 8 positive), 6 require review, 17 have no next annual filing inside the frozen 12-month window, and 25 remain right-censored at the available 2024Q4 archive horizon. SEC 2025 bulk downloads were attempted through official URLs but returned 403; no outcomes were fabricated.
