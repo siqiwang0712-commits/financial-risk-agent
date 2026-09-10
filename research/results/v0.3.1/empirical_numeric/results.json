@@ -1,0 +1,88 @@
+{
+  "B0": {
+    "status": "EMPIRICALLY_RUN",
+    "metrics": {
+      "auroc": 0.1,
+      "pr_auc": 0.2,
+      "f1": 0,
+      "recall": 0.0,
+      "balanced_accuracy": 0.5,
+      "false_negative_rate": 1.0,
+      "coverage": 1.0,
+      "abstention_rate": 0.0
+    },
+    "n": 6,
+    "positive_count": 1,
+    "negative_count": 5,
+    "power_status": "INSUFFICIENT_POWER",
+    "interpretation": "SUPERIORITY NOT ESTABLISHED"
+  },
+  "B1": {
+    "status": "EMPIRICALLY_RUN",
+    "metrics": {
+      "auroc": 0.2,
+      "pr_auc": 0.2,
+      "f1": 0,
+      "recall": 0.0,
+      "balanced_accuracy": 0.4,
+      "false_negative_rate": 1.0,
+      "coverage": 1.0,
+      "abstention_rate": 0.0
+    },
+    "n": 6,
+    "positive_count": 1,
+    "negative_count": 5,
+    "power_status": "INSUFFICIENT_POWER",
+    "interpretation": "SUPERIORITY NOT ESTABLISHED"
+  },
+  "B2": {
+    "status": "EMPIRICALLY_RUN",
+    "metrics": {
+      "auroc": 0.1,
+      "pr_auc": 0.2,
+      "f1": 0,
+      "recall": 0.0,
+      "balanced_accuracy": 0.1,
+      "false_negative_rate": 1.0,
+      "coverage": 1.0,
+      "abstention_rate": 0.0
+    },
+    "n": 6,
+    "positive_count": 1,
+    "negative_count": 5,
+    "power_status": "INSUFFICIENT_POWER",
+    "interpretation": "SUPERIORITY NOT ESTABLISHED"
+  },
+  "B6": {
+    "status": "EMPIRICALLY_RUN",
+    "metrics": {
+      "auroc": 0.1,
+      "pr_auc": 0.2,
+      "f1": 0,
+      "recall": 0.0,
+      "balanced_accuracy": 0.5,
+      "false_negative_rate": 1.0,
+      "coverage": 1.0,
+      "abstention_rate": 0.0
+    },
+    "n": 6,
+    "positive_count": 1,
+    "negative_count": 5,
+    "power_status": "INSUFFICIENT_POWER",
+    "interpretation": "SUPERIORITY NOT ESTABLISHED"
+  },
+  "B6_MINUS_B0_BOOTSTRAP": {
+    "status": "CI_NOT_ESTIMABLE",
+    "reason": "INSUFFICIENT_POWER",
+    "delta": 0.0,
+    "ci_low": null,
+    "ci_high": null,
+    "valid_replicates": 691,
+    "invalid_replicates": 309,
+    "cluster_count": 5,
+    "positive_cluster_count": 1,
+    "negative_cluster_count": 4,
+    "superiority_established": false
+  },
+  "experiment_hash": "522aada4f12f1656e308f8907c87075402c25d20e7d752bde47b81f0fd1e98c4"
+}

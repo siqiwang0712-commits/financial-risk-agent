@@ -1,0 +1,60 @@
+{
+  "label_semantics": "1 = future financial deterioration",
+  "score_semantics": "higher = greater deterioration risk",
+  "evaluation_inversion_found": false,
+  "class_column_bug_found": false,
+  "baseline_findings": {
+    "B0": {
+      "semantics": "higher score = higher future deterioration risk",
+      "positive_observation": "nue-2022",
+      "positive_score": 0.0,
+      "positive_prediction": 0,
+      "positive_rank": {
+        "best_rank": 5,
+        "worst_rank": 6,
+        "tie_count": 2
+      },
+      "polarity_verified": true
+    },
+    "B1": {
+      "semantics": "higher score = higher future deterioration risk",
+      "positive_observation": "nue-2022",
+      "positive_score": 0.0013132159168234984,
+      "positive_prediction": 0,
+      "positive_rank": {
+        "best_rank": 6,
+        "worst_rank": 6,
+        "tie_count": 1
+      },
+      "polarity_verified": true
+    },
+    "B2": {
+      "semantics": "higher score = higher future deterioration risk",
+      "positive_observation": "nue-2022",
+      "positive_score": 0.0,
+      "positive_prediction": 0,
+      "positive_rank": {
+        "best_rank": 6,
+        "worst_rank": 6,
+        "tie_count": 1
+      },
+      "polarity_verified": true
+    },
+    "B6": {
+      "semantics": "higher score = higher future deterioration risk",
+      "positive_observation": "nue-2022",
+      "positive_score": 0.0,
+      "positive_prediction": 0,
+      "positive_rank": {
+        "best_rank": 6,
+        "worst_rank": 6,
+        "tie_count": 1
+      },
+      "polarity_verified": true
+    }
+  },
+  "failure_case": {
+    "observation_id": "nue-2022",
+    "explanation": "NUE had strong contemporaneous liquidity, margins, cash flow and leverage at T. The frozen positive is caused by future FY2023 revenue and OCF declines, which are not available to PIT-safe T features. Low ranks are therefore a genuine sudden-deterioration false negative, not score inversion."
+  }
+}

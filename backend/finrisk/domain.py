@@ -109,6 +109,12 @@ class NarrativeClaim:
     risk_category: str
     evidence: Evidence
     polarity: str = "neutral"
+    claim_target: str = "category_general"
+    direction: str = "neutral"
+    time_horizon: str = "unspecified"
+    basis: str = "management_statement"
+    qualifiers: tuple[str, ...] = ()
+    required_evidence_types: tuple[str, ...] = ()
 
 
 @dataclass
@@ -135,6 +141,8 @@ class Assessment:
     missing_information: list[str]
     confidence_components: dict[str, float] = field(default_factory=dict)
     evidence_graph: dict[str, Any] = field(default_factory=dict)
+    evidence_quality: float = 0.0
+    reliability_status: str = "UNCALIBRATED"
     disclaimer: str = "Risk scores are heuristic assessment scores, not bankruptcy probabilities or investment advice."
 
     def to_dict(self) -> dict[str, Any]:

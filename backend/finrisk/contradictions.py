@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from collections.abc import Callable
-from dataclasses import dataclass
+from dataclasses import asdict, dataclass
 
 from .domain import Contradiction, NarrativeClaim
 
@@ -11,6 +11,23 @@ class NumericCheck:
     metric: str
     label: str
     predicate: Callable[[float], bool]
+
+
+@dataclass(frozen=True)
+class ClaimConsistencyEvaluation:
+    claim: str
+    risk_dimension: str
+    claim_target: str
+    required_evidence_types: tuple[str, ...]
+    available_evidence_types: tuple[str, ...]
+    missing_evidence_types: tuple[str, ...]
+    supporting_evidence: tuple[str, ...]
+    opposing_evidence: tuple[str, ...]
+    classification: str
+    reason_code: str
+
+    def to_dict(self) -> dict:
+        return asdict(self)
 
 
 CHECKS: dict[str, tuple[NumericCheck, ...]] = {
@@ -53,13 +70,104 @@ CHECKS: dict[str, tuple[NumericCheck, ...]] = {
 }
 
 
+EVIDENCE_CONSTRUCTS: dict[str, dict[str, tuple[str, ...]]] = {
+    "liquidity": {
+        "liquidity_position": ("current_ratio", "working_capital"),
+        "cash_generation": ("cash_growth", "operating_cash_flow_growth"),
+        "funding_pressure": ("short_term_debt_growth", "total_debt_growth"),
+        "liquid_investments": ("marketable_securities", "short_term_investments"),
+        "funding_access": ("committed_credit_capacity", "debt_market_access"),
+    },
+    "solvency_leverage": {
+        "capital_structure": ("debt_to_assets", "liabilities_to_assets"),
+        "debt_service": ("interest_coverage",),
+        "debt_trajectory": ("total_debt_growth",),
+    },
+    "profitability": {
+        "profit_level": ("net_margin", "operating_margin"),
+        "profit_trajectory": ("net_income_growth", "operating_margin_change"),
+        "demand_trajectory": ("revenue_growth",),
+    },
+    "cash_flow": {
+        "cash_generation": ("operating_cash_flow", "operating_cash_flow_growth"),
+        "free_cash_flow": ("free_cash_flow", "fcf_growth"),
+        "cash_conversion": ("cfo_to_net_income",),
+    },
+    "earnings_quality": {
+        "cash_conversion": ("cfo_to_net_income", "free_cash_flow"),
+        "working_capital_quality": (
+            "accounts_receivable_growth_gap",
+            "inventory_growth_gap",
+        ),
+    },
+    "business_going_concern": {
+        "operating_viability": ("net_income", "operating_cash_flow"),
+        "near_term_liquidity": ("working_capital",),
+        "explicit_disclosure": ("going_concern_doubt",),
+    },
+}
+
+DEFAULT_REQUIRED_CONSTRUCTS = {
+    "liquidity": ("liquidity_position", "cash_generation", "funding_pressure"),
+}
+
+
+def evaluate_claim_consistency(
+    claim: NarrativeClaim, facts: dict[str, float | None]
+) -> ClaimConsistencyEvaluation:
+    enriched = consistency_facts(facts, facts)
+    constructs = EVIDENCE_CONSTRUCTS.get(claim.risk_category, {})
+    required = claim.required_evidence_types or DEFAULT_REQUIRED_CONSTRUCTS.get(
+        claim.risk_category, tuple(constructs)
+    )
+    available = tuple(
+        construct
+        for construct in required
+        if any(enriched.get(metric) is not None for metric in constructs.get(construct, ()))
+    )
+    missing = tuple(item for item in required if item not in available)
+    opposing = tuple(
+        f"{check.label} [{check.metric}={enriched[check.metric]:.4g}]"
+        for check in CHECKS.get(claim.risk_category, ())
+        if enriched.get(check.metric) is not None
+        and check.predicate(enriched[check.metric])
+    )
+    verified = claim.evidence.verification_status == "verified"
+    if not verified:
+        classification, reason = "INSUFFICIENT_EVIDENCE", "INSUFFICIENT_EVIDENCE"
+    elif missing:
+        classification, reason = "INCOMPLETE_CONTEXT", "CLAIM_CONTEXT_INCOMPLETE"
+    elif claim.polarity != "positive" and claim.direction != "positive":
+        classification, reason = "NOT_APPLICABLE", "CLAIM_NOT_OPTIMISTIC"
+    elif len(opposing) >= 2:
+        classification, reason = "MATERIAL_CONTRADICTION", "SEVERE_VERIFIED_SIGNAL"
+    elif opposing:
+        classification, reason = "TENSION", "PARTIAL_NUMERIC_TENSION"
+    else:
+        classification, reason = "NO_CONTRADICTION", "NO_ADVERSE_CONFLICT"
+    return ClaimConsistencyEvaluation(
+        claim.claim,
+        claim.risk_category,
+        claim.claim_target,
+        tuple(required),
+        available,
+        missing,
+        (),
+        opposing,
+        classification,
+        reason,
+    )
+
+
 def consistency_facts(metrics: dict[str, float | None], raw: dict[str, float | None]) -> dict[str, float | None]:
     facts = dict(raw) | dict(metrics)
     revenue_growth = facts.get("revenue_growth")
     receivables_growth = facts.get("accounts_receivable_growth")
     inventory_growth = facts.get("inventory_growth")
-    facts["accounts_receivable_growth_gap"] = None if revenue_growth is None or receivables_growth is None else receivables_growth - revenue_growth
-    facts["inventory_growth_gap"] = None if revenue_growth is None or inventory_growth is None else inventory_growth - revenue_growth
+    if facts.get("accounts_receivable_growth_gap") is None:
+        facts["accounts_receivable_growth_gap"] = None if revenue_growth is None or receivables_growth is None else receivables_growth - revenue_growth
+    if facts.get("inventory_growth_gap") is None:
+        facts["inventory_growth_gap"] = None if revenue_growth is None or inventory_growth is None else inventory_growth - revenue_growth
     return facts
 
 
@@ -70,19 +178,11 @@ def detect_contradictions(claims: list[NarrativeClaim], facts: dict[str, float |
     positives. This is an inconsistency signal and never an allegation of fraud.
     """
     out = []
-    enriched = consistency_facts(facts, facts)
     for claim in claims:
-        if claim.polarity != "positive" or claim.risk_category not in CHECKS:
-            continue
-        conflicts = []
-        for check in CHECKS[claim.risk_category]:
-            value = enriched.get(check.metric)
-            if value is not None and check.predicate(value):
-                conflicts.append(f"{check.label} [{check.metric}={value:.4g}]")
-        minimum = 1 if claim.risk_category == "business_going_concern" and enriched.get("going_concern_doubt") else 2
-        if len(conflicts) >= minimum:
+        evaluation = evaluate_claim_consistency(claim, facts)
+        if evaluation.classification == "MATERIAL_CONTRADICTION":
             out.append(Contradiction(
-                claim.risk_category, claim.claim, conflicts,
+                claim.risk_category, claim.claim, list(evaluation.opposing_evidence),
                 "The narrative is more optimistic than the available indicators. This is a traceable consistency signal, not evidence of fraud or misstatement.",
                 claim.evidence,
             ))

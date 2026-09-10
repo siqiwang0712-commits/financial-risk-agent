@@ -1,0 +1,107 @@
+[
+  {
+    "example_id": "aapl-2024",
+    "ablation": "full_hybrid",
+    "risk_probability": null,
+    "risk_prediction": null,
+    "risk_label": 0
+  },
+  {
+    "example_id": "aapl-2024",
+    "ablation": "without_narrative",
+    "risk_probability": 0.7625,
+    "risk_prediction": 1,
+    "risk_label": 0
+  },
+  {
+    "example_id": "aapl-2024",
+    "ablation": "without_rules",
+    "risk_probability": 0.375,
+    "risk_prediction": 0,
+    "risk_label": 0
+  },
+  {
+    "example_id": "aapl-2024",
+    "ablation": "without_models",
+    "risk_probability": 0.50625,
+    "risk_prediction": 1,
+    "risk_label": 0
+  },
+  {
+    "example_id": "aapl-2024",
+    "ablation": "without_trends",
+    "risk_probability": null,
+    "risk_prediction": null,
+    "risk_label": 0
+  },
+  {
+    "example_id": "msft-2024",
+    "ablation": "full_hybrid",
+    "risk_probability": 0.24,
+    "risk_prediction": 0,
+    "risk_label": 0
+  },
+  {
+    "example_id": "msft-2024",
+    "ablation": "without_narrative",
+    "risk_probability": 0.35,
+    "risk_prediction": 0,
+    "risk_label": 0
+  },
+  {
+    "example_id": "msft-2024",
+    "ablation": "without_rules",
+    "risk_probability": 0.25,
+    "risk_prediction": 0,
+    "risk_label": 0
+  },
+  {
+    "example_id": "msft-2024",
+    "ablation": "without_models",
+    "risk_probability": 0.175,
+    "risk_prediction": 0,
+    "risk_label": 0
+  },
+  {
+    "example_id": "msft-2024",
+    "ablation": "without_trends",
+    "risk_probability": null,
+    "risk_prediction": null,
+    "risk_label": 0
+  },
+  {
+    "example_id": "intc-2024",
+    "ablation": "full_hybrid",
+    "risk_probability": 0.427,
+    "risk_prediction": 0,
+    "risk_label": 1
+  },
+  {
+    "example_id": "intc-2024",
+    "ablation": "without_narrative",
+    "risk_probability": 1.0,
+    "risk_prediction": 1,
+    "risk_label": 1
+  },
+  {
+    "example_id": "intc-2024",
+    "ablation": "without_rules",
+    "risk_probability": 0.5,
+    "risk_prediction": 1,
+    "risk_label": 1
+  },
+  {
+    "example_id": "intc-2024",
+    "ablation": "without_models",
+    "risk_probability": 0.75,
+    "risk_prediction": 1,
+    "risk_label": 1
+  },
+  {
+    "example_id": "intc-2024",
+    "ablation": "without_trends",
+    "risk_probability": 0.34,
+    "risk_prediction": 0,
+    "risk_label": 1
+  }
+]

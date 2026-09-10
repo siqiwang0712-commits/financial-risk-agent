@@ -7,8 +7,8 @@ from .domain import Assessment
 
 
 def render_text_report(a:Assessment)->str:
-    lines=[f"FINRISK ASSESSMENT — {a.company}",f"Reporting period: {a.reporting_period}",f"Overall Risk: {a.overall_score}/100 ({a.risk_level})",f"Confidence: {a.confidence:.2f}",a.disclaimer,"","EIGHT RISK DIMENSIONS"]
-    lines.append("Confidence is an uncalibrated evidence-coverage score: "+", ".join(f"{k}={v:.2f}" for k,v in a.confidence_components.items()))
+    lines=[f"FINRISK ASSESSMENT — {a.company}",f"Reporting period: {a.reporting_period}",f"Overall Risk: {a.overall_score}/100 ({a.risk_level})",f"Evidence quality index: {a.confidence:.2f} (UNCALIBRATED; not a probability)",a.disclaimer,"","EIGHT RISK DIMENSIONS"]
+    lines.append("Evidence-quality components: "+", ".join(f"{k}={v:.2f}" for k,v in a.confidence_components.items()))
     for name,d in a.dimensions.items():
         display="N/A" if d["score"] is None else f'{d["score"]}/100'
         lines.append(f"- {name}: {display} ({d['level']}); drivers: {', '.join(d['key_drivers']) or 'none triggered'}")

@@ -1,0 +1,27 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "finrisk-machine-review-v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["review_run_id", "role", "observation_id", "task", "packet_hash", "prompt_version", "input_hash", "output_hash", "run_timestamp", "model_metadata", "schema_valid", "evidence_valid", "status", "result"],
+  "properties": {
+    "review_run_id": {"type": "string", "minLength": 1},
+    "role": {"enum": ["REVIEWER_A", "REVIEWER_B", "ADJUDICATOR", "EXTRACTION_REVIEWER"]},
+    "observation_id": {"type": "string", "minLength": 1},
+    "task": {"enum": ["OUTCOME_LABEL", "EXTRACTION_REFERENCE", "TENSION_LABEL"]},
+    "packet_hash": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "prompt_version": {"type": "string"},
+    "input_hash": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "output_hash": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "run_timestamp": {"type": "string", "format": "date-time"},
+    "model_metadata": {"type": ["object", "string"], "description": "Use UNAVAILABLE when the internal agent does not expose model metadata."},
+    "tokens": {"type": ["integer", "null"]},
+    "cost_usd": {"type": ["number", "null"]},
+    "latency_ms": {"type": ["integer", "null"]},
+    "schema_valid": {"type": "boolean"},
+    "evidence_valid": {"type": "boolean"},
+    "status": {"enum": ["MACHINE_REVIEW", "REVIEW_REQUIRED", "FAILED"]},
+    "parent_run_ids": {"type": "array", "items": {"type": "string"}},
+    "result": {"type": "object"}
+  }
+}

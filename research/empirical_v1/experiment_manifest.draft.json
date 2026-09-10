@@ -1,0 +1,26 @@
+{
+  "experiment_version": "empirical-v1-draft",
+  "status": "BLOCKED_NOT_FROZEN",
+  "immutable": false,
+  "dataset_hash": "NOT_AVAILABLE",
+  "split_hash": "4f2d1fcd470bfa3f8bb0f53d7e106713ff724f42de325dfa5896c32eaf73a01e",
+  "rule_version": "a8de4b4d7e73a3e23940240e9ee54ae4a997f4f93c6b80fa71b0e7cd9f1d41a3",
+  "model_config": {
+    "traditional_ml": "logistic_regression",
+    "fitted": false
+  },
+  "fusion_config": {
+    "source": "config/decision_policy.json",
+    "hash": "4bb7d9d3ac1cd00fd4f1f0eec0f2fdc4f4172863d46ee03ccdd35af964df71c1"
+  },
+  "prompt_version": "narrative-v1.1.0-claim-conditioned",
+  "llm_model": "NOT_CONFIGURED",
+  "label_schema_hash": "272933b97207486d9edc1bef73175b6d27f983f0e9c0f4424af8b1aa3ffac72f",
+  "random_seed": 20260907,
+  "git_commit": "1486cf8e2e86115bff27f3f0c8940e2237efaf10",
+  "blocking_reasons": [
+    "SEC_USER_AGENT not configured",
+    "independent reviewers not available"
+  ],
+  "note": "A true immutable experiment hash is created only after corpus and independent labels pass integrity gates."
+}

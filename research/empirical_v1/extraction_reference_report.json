@@ -1,0 +1,43 @@
+{
+  "agreement_count": 1164,
+  "agreement_rate": 0.9991416309012876,
+  "comparable_fields": 1165,
+  "field_rows": 1620,
+  "independent_human_gold_status": "NOT_ADJUDICATED",
+  "machine_agreement_fields": 1164,
+  "manual_review_required_fields": 456,
+  "metric_name": "machine_reconciliation_agreement",
+  "observation_count": 90,
+  "reconciled_fields": 1165,
+  "reference_hash": "f02674adf1071f01be9e7b2d9e8de1876a8077c896a8210515b661a3ab9b577e",
+  "reference_status_counts": {
+    "MISSING_NUMBER": 9,
+    "MISSING_PRESENTATION": 446,
+    "RECONCILED_UNAMBIGUOUS": 1165
+  },
+  "source_hashes": [
+    "6a776a9fa3d974476101efa9a4bfc531b7cdc2763abd45a6f70dd240a223843b",
+    "528b91432896eba74661c20481edb327809f3a0bf00e01d81821fe8e6078bc33",
+    "0fae2ceb149c0fe7e83b35b19157f910c864dee7e25d5ecf8b93dc42ee261b99",
+    "30d21449c0488e71dfb88ba8f85644a0e72194864e95111b3c1c120b3514c594",
+    "2ebeef77727a383f878bc28ff22498fd292a8dbab04216877b4b130ca00c1520",
+    "8939a4cafeabf7c94bde48be0e8c444f6332e4a9663698a89242eddd1036d27e",
+    "4bbfdc953177acf1a430a9f0a624dd8244bc81292d42872107d0446d06167c26",
+    "83bdc7a9545479eb64d118688c888ba8e7554ebc774f3ab8a8b0cc1decb87f28",
+    "479638c1be4088fa2ae42d2947468913eaff5ad0f093c412ba4340af8a8f791e",
+    "f028f1e8d24313e7619aa87c7c683a459452e7e81a8e5ba72d7ce39ddf62bda9",
+    "f075d721dde4393dabd49c1746578294ada4665ec29c85c2b3184f44f6f09187",
+    "ad23c5505e59b7305e16bfebb8bb839476689330b85a3e1ce216f809b18d1521",
+    "94c7894b00903f8ff7186c4250ba1c1daa1bde8b3a0b26fae68f72608b2ffc9b",
+    "698796e9f0946501d3dc74e7696a6c8c71cf32b66026e053722a784236b37761",
+    "b1823f2d65189f0d5ecbb1968d683c59df762129ae1b23bda0394093a69e0da9",
+    "9a2cbbaf39c94aa642b33d512f4def92b198d3bfd12d2267bcd27abe55b9902d"
+  ],
+  "status": "MACHINE_REFERENCE_CONSTRUCTED",
+  "validation_status_counts": {
+    "MACHINE_AGREEMENT": 1164,
+    "MANUAL_REVIEW_REQUIRED": 456
+  },
+  "verified_reference_fields": 0,
+  "warning": "Presentation-to-number reconciliation is a machine reference, not independent human-adjudicated gold."
+}

@@ -1,0 +1,1290 @@
+[
+  {
+    "available_components": 5,
+    "fcf_two_subsequent_periods": "INSUFFICIENT_DATA",
+    "financial_deterioration_12m": 0,
+    "label_generated_by": "deterministic_forward_outcome_rule_v1",
+    "label_status": "VERIFIED",
+    "observation_id": "aapl-2021",
+    "outcome_available_at": "2022-10-28T23:59:59Z",
+    "outcome_source_hash": "83bdc7a9545479eb64d118688c888ba8e7554ebc774f3ab8a8b0cc1decb87f28",
+    "outcome_source_observation": "aapl-2022",
+    "reason": [],
+    "required_components": 5,
+    "ticker": "AAPL"
+  },
+  {
+    "financial_deterioration_12m": null,
+    "label_generated_by": "deterministic_forward_outcome_rule_v1",
+    "label_status": "INSUFFICIENT_DATA",
+    "observation_id": "aapl-2022",
+    "reason": [
+      {
+        "code": "NO_ELIGIBLE_FORWARD_ANNUAL_OUTCOME_WITHIN_12_MONTHS"
+      }
+    ],
+    "ticker": "AAPL"
+  },
+  {
+    "financial_deterioration_12m": null,
+    "label_generated_by": "deterministic_forward_outcome_rule_v1",
+    "label_status": "INSUFFICIENT_DATA",
+    "observation_id": "aapl-2023",
+    "reason": [
+      {
+        "code": "NO_ELIGIBLE_FORWARD_ANNUAL_OUTCOME_WITHIN_12_MONTHS"
+      }
+    ],
+    "ticker": "AAPL"
+  },
+  {
+    "available_components": 5,
+    "fcf_two_subsequent_periods": "INSUFFICIENT_DATA",
+    "financial_deterioration_12m": 0,
+    "label_generated_by": "deterministic_forward_outcome_rule_v1",
+    "label_status": "VERIFIED",
+    "observation_id": "aep-2021",
+    "outcome_available_at": "2023-02-23T23:59:59Z",
+    "outcome_source_hash": "479638c1be4088fa2ae42d2947468913eaff5ad0f093c412ba4340af8a8f791e",
+    "outcome_source_observation": "aep-2022",
+    "reason": [],
+    "required_components": 5,
+    "ticker": "AEP"
+  },
+  {
+    "financial_deterioration_12m": null,
+    "label_generated_by": "deterministic_forward_outcome_rule_v1",
+    "label_status": "INSUFFICIENT_DATA",
+    "observation_id": "aep-2022",
+    "reason": [
+      {
+        "code": "NO_ELIGIBLE_FORWARD_ANNUAL_OUTCOME_WITHIN_12_MONTHS"
+      }
+    ],
+    "ticker": "AEP"
+  },
+  {
+    "financial_deterioration_12m": null,
+    "label_generated_by": "deterministic_forward_outcome_rule_v1",
+    "label_status": "INSUFFICIENT_DATA",
+    "observation_id": "aep-2023",
+    "reason": [
+      {
+        "code": "NO_ELIGIBLE_FORWARD_ANNUAL_OUTCOME_WITHIN_12_MONTHS"
+      }
+    ],
+    "ticker": "AEP"
+  },
+  {
+    "available_components": 5,
+    "fcf_two_subsequent_periods": "INSUFFICIENT_DATA",
+    "financial_deterioration_12m": 0,
+    "label_generated_by": "deterministic_forward_outcome_rule_v1",
+    "label_status": "VERIFIED",
+    "observation_id": "amt-2021",
+    "outcome_available_at": "2023-02-23T23:59:59Z",
+    "outcome_source_hash": "479638c1be4088fa2ae42d2947468913eaff5ad0f093c412ba4340af8a8f791e",
+    "outcome_source_observation": "amt-2022",
+    "reason": [],
+    "required_components": 5,
+    "ticker": "AMT"
+  },
+  {
+    "financial_deterioration_12m": null,
+    "label_generated_by": "deterministic_forward_outcome_rule_v1",
+    "label_status": "INSUFFICIENT_DATA",
+    "observation_id": "amt-2022",
+    "reason": [
+      {
+        "code": "NO_ELIGIBLE_FORWARD_ANNUAL_OUTCOME_WITHIN_12_MONTHS"
+      }
+    ],
+    "ticker": "AMT"
+  },
+  {
+    "financial_deterioration_12m": null,
+    "label_generated_by": "deterministic_forward_outcome_rule_v1",
+    "label_status": "INSUFFICIENT_DATA",
+    "observation_id": "amt-2023",
+    "reason": [
+      {
+        "code": "NO_ELIGIBLE_FORWARD_ANNUAL_OUTCOME_WITHIN_12_MONTHS"
+      }
+    ],
+    "ticker": "AMT"
+  },
+  {
+    "available_components": 5,
+    "fcf_two_subsequent_periods": "INSUFFICIENT_DATA",
+    "financial_deterioration_12m": 0,
+    "label_generated_by": "deterministic_forward_outcome_rule_v1",
+    "label_status": "VERIFIED",
+    "observation_id": "ba-2021",
+    "outcome_available_at": "2023-01-27T23:59:59Z",
+    "outcome_source_hash": "479638c1be4088fa2ae42d2947468913eaff5ad0f093c412ba4340af8a8f791e",
+    "outcome_source_observation": "ba-2022",
+    "reason": [],
+    "required_components": 5,
+    "ticker": "BA"
+  },
+  {
+    "financial_deterioration_12m": null,
+    "label_generated_by": "deterministic_forward_outcome_rule_v1",
+    "label_status": "INSUFFICIENT_DATA",
+    "observation_id": "ba-2022",
+    "reason": [
+      {
+        "code": "NO_ELIGIBLE_FORWARD_ANNUAL_OUTCOME_WITHIN_12_MONTHS"
+      }
+    ],
+    "ticker": "BA"
+  },
+  {
+    "financial_deterioration_12m": null,
+    "label_generated_by": "deterministic_forward_outcome_rule_v1",
+    "label_status": "INSUFFICIENT_DATA",
+    "observation_id": "ba-2023",
+    "reason": [
+      {
+        "code": "NO_ELIGIBLE_FORWARD_ANNUAL_OUTCOME_WITHIN_12_MONTHS"
+      }
+    ],
+    "ticker": "BA"
+  },
+  {
+    "available_components": 5,
+    "fcf_two_subsequent_periods": "INSUFFICIENT_DATA",
+    "financial_deterioration_12m": 0,
+    "label_generated_by": "deterministic_forward_outcome_rule_v1",
+    "label_status": "VERIFIED",
+    "observation_id": "cat-2021",
+    "outcome_available_at": "2023-02-15T23:59:59Z",
+    "outcome_source_hash": "479638c1be4088fa2ae42d2947468913eaff5ad0f093c412ba4340af8a8f791e",
+    "outcome_source_observation": "cat-2022",
+    "reason": [],
+    "required_components": 5,
+    "ticker": "CAT"
+  },
+  {
+    "financial_deterioration_12m": null,
+    "label_generated_by": "deterministic_forward_outcome_rule_v1",
+    "label_status": "INSUFFICIENT_DATA",
+    "observation_id": "cat-2022",
+    "reason": [
+      {
+        "code": "NO_ELIGIBLE_FORWARD_ANNUAL_OUTCOME_WITHIN_12_MONTHS"
+      }
+    ],
+    "ticker": "CAT"
+  },
+  {
+    "financial_deterioration_12m": null,
+    "label_generated_by": "deterministic_forward_outcome_rule_v1",
+    "label_status": "INSUFFICIENT_DATA",
+    "observation_id": "cat-2023",
+    "reason": [
+      {
+        "code": "NO_ELIGIBLE_FORWARD_ANNUAL_OUTCOME_WITHIN_12_MONTHS"
+      }
+    ],
+    "ticker": "CAT"
+  },
+  {
+    "available_components": 5,
+    "fcf_two_subsequent_periods": "INSUFFICIENT_DATA",
+    "financial_deterioration_12m": 0,
+    "label_generated_by": "deterministic_forward_outcome_rule_v1",
+    "label_status": "VERIFIED",
+    "observation_id": "cvx-2021",
+    "outcome_available_at": "2023-02-23T23:59:59Z",
+    "outcome_source_hash": "479638c1be4088fa2ae42d2947468913eaff5ad0f093c412ba4340af8a8f791e",
+    "outcome_source_observation": "cvx-2022",
+    "reason": [],
+    "required_components": 5,
+    "ticker": "CVX"
+  },
+  {
+    "financial_deterioration_12m": null,
+    "label_generated_by": "deterministic_forward_outcome_rule_v1",
+    "label_status": "INSUFFICIENT_DATA",
+    "observation_id": "cvx-2022",
+    "reason": [
+      {
+        "code": "NO_ELIGIBLE_FORWARD_ANNUAL_OUTCOME_WITHIN_12_MONTHS"
+      }
+    ],
+    "ticker": "CVX"
+  },
+  {
+    "financial_deterioration_12m": null,
+    "label_generated_by": "deterministic_forward_outcome_rule_v1",
+    "label_status": "INSUFFICIENT_DATA",
+    "observation_id": "cvx-2023",
+    "reason": [
+      {
+        "code": "NO_ELIGIBLE_FORWARD_ANNUAL_OUTCOME_WITHIN_12_MONTHS"
+      }
+    ],
+    "ticker": "CVX"
+  },
+  {
+    "available_components": 4,
+    "fcf_two_subsequent_periods": "INSUFFICIENT_DATA",
+    "financial_deterioration_12m": 0,
+    "label_generated_by": "deterministic_forward_outcome_rule_v1",
+    "label_status": "VERIFIED",
+    "observation_id": "dal-2021",
+    "outcome_available_at": "2023-02-10T23:59:59Z",
+    "outcome_source_hash": "479638c1be4088fa2ae42d2947468913eaff5ad0f093c412ba4340af8a8f791e",
+    "outcome_source_observation": "dal-2022",
+    "reason": [],
+    "required_components": 5,
+    "ticker": "DAL"
+  },
+  {
+    "financial_deterioration_12m": null,
+    "label_generated_by": "deterministic_forward_outcome_rule_v1",
+    "label_status": "INSUFFICIENT_DATA",
+    "observation_id": "dal-2022",
+    "reason": [
+      {
+        "code": "NO_ELIGIBLE_FORWARD_ANNUAL_OUTCOME_WITHIN_12_MONTHS"
+      }
+    ],
+    "ticker": "DAL"
+  },
+  {
+    "financial_deterioration_12m": null,
+    "label_generated_by": "deterministic_forward_outcome_rule_v1",
+    "label_status": "INSUFFICIENT_DATA",
+    "observation_id": "dal-2023",
+    "reason": [
+      {
+        "code": "NO_ELIGIBLE_FORWARD_ANNUAL_OUTCOME_WITHIN_12_MONTHS"
+      }
+    ],
+    "ticker": "DAL"
+  },
+  {
+    "financial_deterioration_12m": null,
+    "label_generated_by": "deterministic_forward_outcome_rule_v1",
+    "label_status": "INSUFFICIENT_DATA",
+    "observation_id": "dis-2021",
+    "reason": [
+      {
+        "code": "NO_ELIGIBLE_FORWARD_ANNUAL_OUTCOME_WITHIN_12_MONTHS"
+      }
+    ],
+    "ticker": "DIS"
+  },
+  {
+    "available_components": 4,
+    "fcf_two_subsequent_periods": "INSUFFICIENT_DATA",
+    "financial_deterioration_12m": 0,
+    "label_generated_by": "deterministic_forward_outcome_rule_v1",
+    "label_status": "VERIFIED",
+    "observation_id": "dis-2022",
+    "outcome_available_at": "2023-11-21T23:59:59Z",
+    "outcome_source_hash": "ad23c5505e59b7305e16bfebb8bb839476689330b85a3e1ce216f809b18d1521",
+    "outcome_source_observation": "dis-2023",
+    "reason": [],
+    "required_components": 5,
+    "ticker": "DIS"
+  },
+  {
+    "financial_deterioration_12m": null,
+    "label_generated_by": "deterministic_forward_outcome_rule_v1",
+    "label_status": "INSUFFICIENT_DATA",
+    "observation_id": "dis-2023",
+    "reason": [
+      {
+        "code": "NO_ELIGIBLE_FORWARD_ANNUAL_OUTCOME_WITHIN_12_MONTHS"
+      }
+    ],
+    "ticker": "DIS"
+  },
+  {
+    "available_components": 4,
+    "fcf_two_subsequent_periods": "INSUFFICIENT_DATA",
+    "financial_deterioration_12m": 1,
+    "label_generated_by": "deterministic_forward_outcome_rule_v1",
+    "label_status": "VERIFIED",
+    "observation_id": "f-2021",
+    "outcome_available_at": "2023-02-03T23:59:59Z",
+    "outcome_source_hash": "479638c1be4088fa2ae42d2947468913eaff5ad0f093c412ba4340af8a8f791e",
+    "outcome_source_observation": "f-2022",
+    "reason": [
+      {
+        "code": "POSITIVE_INCOME_TO_LOSS",
+        "value_t": 17910000000.0,
+        "value_t1": -2152000000.0
+      },
+      {
+        "code": "OCF_DECLINE_OR_NEGATIVE",
+        "value_t": 15787000000.0,
+        "value_t1": 6853000000.0
+      }
+    ],
+    "required_components": 5,
+    "ticker": "F"
+  },
+  {
+    "financial_deterioration_12m": null,
+    "label_generated_by": "deterministic_forward_outcome_rule_v1",
+    "label_status": "INSUFFICIENT_DATA",
+    "observation_id": "f-2022",
+    "reason": [
+      {
+        "code": "NO_ELIGIBLE_FORWARD_ANNUAL_OUTCOME_WITHIN_12_MONTHS"
+      }
+    ],
+    "ticker": "F"
+  },
+  {
+    "financial_deterioration_12m": null,
+    "label_generated_by": "deterministic_forward_outcome_rule_v1",
+    "label_status": "INSUFFICIENT_DATA",
+    "observation_id": "f-2023",
+    "reason": [
+      {
+        "code": "NO_ELIGIBLE_FORWARD_ANNUAL_OUTCOME_WITHIN_12_MONTHS"
+      }
+    ],
+    "ticker": "F"
+  },
+  {
+    "available_components": 5,
+    "fcf_two_subsequent_periods": "INSUFFICIENT_DATA",
+    "financial_deterioration_12m": null,
+    "label_generated_by": "deterministic_forward_outcome_rule_v1",
+    "label_status": "REQUIRES_HUMAN_REVIEW",
+    "observation_id": "fcx-2021",
+    "outcome_available_at": "2023-02-15T23:59:59Z",
+    "outcome_source_hash": "479638c1be4088fa2ae42d2947468913eaff5ad0f093c412ba4340af8a8f791e",
+    "outcome_source_observation": "fcx-2022",
+    "reason": [
+      {
+        "code": "OCF_DECLINE_OR_NEGATIVE",
+        "value_t": 7715000000.0,
+        "value_t1": 5139000000.0
+      }
+    ],
+    "required_components": 5,
+    "ticker": "FCX"
+  },
+  {
+    "financial_deterioration_12m": null,
+    "label_generated_by": "deterministic_forward_outcome_rule_v1",
+    "label_status": "INSUFFICIENT_DATA",
+    "observation_id": "fcx-2022",
+    "reason": [
+      {
+        "code": "NO_ELIGIBLE_FORWARD_ANNUAL_OUTCOME_WITHIN_12_MONTHS"
+      }
+    ],
+    "ticker": "FCX"
+  },
+  {
+    "financial_deterioration_12m": null,
+    "label_generated_by": "deterministic_forward_outcome_rule_v1",
+    "label_status": "INSUFFICIENT_DATA",
+    "observation_id": "fcx-2023",
+    "reason": [
+      {
+        "code": "NO_ELIGIBLE_FORWARD_ANNUAL_OUTCOME_WITHIN_12_MONTHS"
+      }
+    ],
+    "ticker": "FCX"
+  },
+  {
+    "available_components": 4,
+    "fcf_two_subsequent_periods": "INSUFFICIENT_DATA",
+    "financial_deterioration_12m": 0,
+    "label_generated_by": "deterministic_forward_outcome_rule_v1",
+    "label_status": "VERIFIED",
+    "observation_id": "fdx-2021",
+    "outcome_available_at": "2022-07-18T23:59:59Z",
+    "outcome_source_hash": "4bbfdc953177acf1a430a9f0a624dd8244bc81292d42872107d0446d06167c26",
+    "outcome_source_observation": "fdx-2022",
+    "reason": [],
+    "required_components": 5,
+    "ticker": "FDX"
+  },
+  {
+    "available_components": 4,
+    "fcf_two_subsequent_periods": "INSUFFICIENT_DATA",
+    "financial_deterioration_12m": 0,
+    "label_generated_by": "deterministic_forward_outcome_rule_v1",
+    "label_status": "VERIFIED",
+    "observation_id": "fdx-2022",
+    "outcome_available_at": "2023-07-17T23:59:59Z",
+    "outcome_source_hash": "f075d721dde4393dabd49c1746578294ada4665ec29c85c2b3184f44f6f09187",
+    "outcome_source_observation": "fdx-2023",
+    "reason": [],
+    "required_components": 5,
+    "ticker": "FDX"
+  },
+  {
+    "financial_deterioration_12m": null,
+    "label_generated_by": "deterministic_forward_outcome_rule_v1",
+    "label_status": "INSUFFICIENT_DATA",
+    "observation_id": "fdx-2023",
+    "reason": [
+      {
+        "code": "NO_ELIGIBLE_FORWARD_ANNUAL_OUTCOME_WITHIN_12_MONTHS"
+      }
+    ],
+    "ticker": "FDX"
+  },
+  {
+    "available_components": 4,
+    "fcf_two_subsequent_periods": "INSUFFICIENT_DATA",
+    "financial_deterioration_12m": 0,
+    "label_generated_by": "deterministic_forward_outcome_rule_v1",
+    "label_status": "VERIFIED",
+    "observation_id": "gm-2021",
+    "outcome_available_at": "2023-01-31T23:59:59Z",
+    "outcome_source_hash": "479638c1be4088fa2ae42d2947468913eaff5ad0f093c412ba4340af8a8f791e",
+    "outcome_source_observation": "gm-2022",
+    "reason": [],
+    "required_components": 5,
+    "ticker": "GM"
+  },
+  {
+    "available_components": 4,
+    "fcf_two_subsequent_periods": "INSUFFICIENT_DATA",
+    "financial_deterioration_12m": 0,
+    "label_generated_by": "deterministic_forward_outcome_rule_v1",
+    "label_status": "VERIFIED",
+    "observation_id": "gm-2022",
+    "outcome_available_at": "2024-01-30T23:59:59Z",
+    "outcome_source_hash": "94c7894b00903f8ff7186c4250ba1c1daa1bde8b3a0b26fae68f72608b2ffc9b",
+    "outcome_source_observation": "gm-2023",
+    "reason": [],
+    "required_components": 5,
+    "ticker": "GM"
+  },
+  {
+    "financial_deterioration_12m": null,
+    "label_generated_by": "deterministic_forward_outcome_rule_v1",
+    "label_status": "INSUFFICIENT_DATA",
+    "observation_id": "gm-2023",
+    "reason": [
+      {
+        "code": "NO_ELIGIBLE_FORWARD_ANNUAL_OUTCOME_WITHIN_12_MONTHS"
+      }
+    ],
+    "ticker": "GM"
+  },
+  {
+    "available_components": 5,
+    "fcf_two_subsequent_periods": "INSUFFICIENT_DATA",
+    "financial_deterioration_12m": 1,
+    "label_generated_by": "deterministic_forward_outcome_rule_v1",
+    "label_status": "VERIFIED",
+    "observation_id": "intc-2021",
+    "outcome_available_at": "2023-01-27T23:59:59Z",
+    "outcome_source_hash": "479638c1be4088fa2ae42d2947468913eaff5ad0f093c412ba4340af8a8f791e",
+    "outcome_source_observation": "intc-2022",
+    "reason": [
+      {
+        "code": "REVENUE_DECLINE_10PCT",
+        "value_t": 79024000000.0,
+        "value_t1": 63054000000.0
+      },
+      {
+        "code": "OCF_DECLINE_OR_NEGATIVE",
+        "value_t": 29991000000.0,
+        "value_t1": 15433000000.0
+      }
+    ],
+    "required_components": 5,
+    "ticker": "INTC"
+  },
+  {
+    "available_components": 5,
+    "fcf_two_subsequent_periods": "INSUFFICIENT_DATA",
+    "financial_deterioration_12m": 1,
+    "label_generated_by": "deterministic_forward_outcome_rule_v1",
+    "label_status": "VERIFIED",
+    "observation_id": "intc-2022",
+    "outcome_available_at": "2024-01-26T23:59:59Z",
+    "outcome_source_hash": "94c7894b00903f8ff7186c4250ba1c1daa1bde8b3a0b26fae68f72608b2ffc9b",
+    "outcome_source_observation": "intc-2023",
+    "reason": [
+      {
+        "code": "REVENUE_DECLINE_10PCT",
+        "value_t": 63054000000.0,
+        "value_t1": 54228000000.0
+      },
+      {
+        "code": "OCF_DECLINE_OR_NEGATIVE",
+        "value_t": 15433000000.0,
+        "value_t1": 11471000000.0
+      }
+    ],
+    "required_components": 5,
+    "ticker": "INTC"
+  },
+  {
+    "financial_deterioration_12m": null,
+    "label_generated_by": "deterministic_forward_outcome_rule_v1",
+    "label_status": "INSUFFICIENT_DATA",
+    "observation_id": "intc-2023",
+    "reason": [
+      {
+        "code": "NO_ELIGIBLE_FORWARD_ANNUAL_OUTCOME_WITHIN_12_MONTHS"
+      }
+    ],
+    "ticker": "INTC"
+  },
+  {
+    "available_components": 5,
+    "fcf_two_subsequent_periods": "INSUFFICIENT_DATA",
+    "financial_deterioration_12m": 0,
+    "label_generated_by": "deterministic_forward_outcome_rule_v1",
+    "label_status": "VERIFIED",
+    "observation_id": "jnj-2021",
+    "outcome_available_at": "2023-02-16T23:59:59Z",
+    "outcome_source_hash": "479638c1be4088fa2ae42d2947468913eaff5ad0f093c412ba4340af8a8f791e",
+    "outcome_source_observation": "jnj-2022",
+    "reason": [],
+    "required_components": 5,
+    "ticker": "JNJ"
+  },
+  {
+    "available_components": 5,
+    "fcf_two_subsequent_periods": "INSUFFICIENT_DATA",
+    "financial_deterioration_12m": null,
+    "label_generated_by": "deterministic_forward_outcome_rule_v1",
+    "label_status": "REQUIRES_HUMAN_REVIEW",
+    "observation_id": "jnj-2022",
+    "outcome_available_at": "2024-02-16T23:59:59Z",
+    "outcome_source_hash": "94c7894b00903f8ff7186c4250ba1c1daa1bde8b3a0b26fae68f72608b2ffc9b",
+    "outcome_source_observation": "jnj-2023",
+    "reason": [
+      {
+        "code": "REVENUE_DECLINE_10PCT",
+        "value_t": 94943000000.0,
+        "value_t1": 85159000000.0
+      }
+    ],
+    "required_components": 5,
+    "ticker": "JNJ"
+  },
+  {
+    "financial_deterioration_12m": null,
+    "label_generated_by": "deterministic_forward_outcome_rule_v1",
+    "label_status": "INSUFFICIENT_DATA",
+    "observation_id": "jnj-2023",
+    "reason": [
+      {
+        "code": "NO_ELIGIBLE_FORWARD_ANNUAL_OUTCOME_WITHIN_12_MONTHS"
+      }
+    ],
+    "ticker": "JNJ"
+  },
+  {
+    "available_components": 4,
+    "fcf_two_subsequent_periods": "INSUFFICIENT_DATA",
+    "financial_deterioration_12m": null,
+    "label_generated_by": "deterministic_forward_outcome_rule_v1",
+    "label_status": "REQUIRES_HUMAN_REVIEW",
+    "observation_id": "khc-2021",
+    "outcome_available_at": "2023-02-16T23:59:59Z",
+    "outcome_source_hash": "479638c1be4088fa2ae42d2947468913eaff5ad0f093c412ba4340af8a8f791e",
+    "outcome_source_observation": "khc-2022",
+    "reason": [
+      {
+        "code": "OCF_DECLINE_OR_NEGATIVE",
+        "value_t": 5364000000.0,
+        "value_t1": 2469000000.0
+      }
+    ],
+    "required_components": 5,
+    "ticker": "KHC"
+  },
+  {
+    "available_components": 4,
+    "fcf_two_subsequent_periods": "INSUFFICIENT_DATA",
+    "financial_deterioration_12m": 0,
+    "label_generated_by": "deterministic_forward_outcome_rule_v1",
+    "label_status": "VERIFIED",
+    "observation_id": "khc-2022",
+    "outcome_available_at": "2024-02-15T23:59:59Z",
+    "outcome_source_hash": "94c7894b00903f8ff7186c4250ba1c1daa1bde8b3a0b26fae68f72608b2ffc9b",
+    "outcome_source_observation": "khc-2023",
+    "reason": [],
+    "required_components": 5,
+    "ticker": "KHC"
+  },
+  {
+    "financial_deterioration_12m": null,
+    "label_generated_by": "deterministic_forward_outcome_rule_v1",
+    "label_status": "INSUFFICIENT_DATA",
+    "observation_id": "khc-2023",
+    "reason": [
+      {
+        "code": "NO_ELIGIBLE_FORWARD_ANNUAL_OUTCOME_WITHIN_12_MONTHS"
+      }
+    ],
+    "ticker": "KHC"
+  },
+  {
+    "available_components": 5,
+    "fcf_two_subsequent_periods": "INSUFFICIENT_DATA",
+    "financial_deterioration_12m": 0,
+    "label_generated_by": "deterministic_forward_outcome_rule_v1",
+    "label_status": "VERIFIED",
+    "observation_id": "ko-2021",
+    "outcome_available_at": "2023-02-21T23:59:59Z",
+    "outcome_source_hash": "479638c1be4088fa2ae42d2947468913eaff5ad0f093c412ba4340af8a8f791e",
+    "outcome_source_observation": "ko-2022",
+    "reason": [],
+    "required_components": 5,
+    "ticker": "KO"
+  },
+  {
+    "available_components": 5,
+    "fcf_two_subsequent_periods": "INSUFFICIENT_DATA",
+    "financial_deterioration_12m": 0,
+    "label_generated_by": "deterministic_forward_outcome_rule_v1",
+    "label_status": "VERIFIED",
+    "observation_id": "ko-2022",
+    "outcome_available_at": "2024-02-20T23:59:59Z",
+    "outcome_source_hash": "94c7894b00903f8ff7186c4250ba1c1daa1bde8b3a0b26fae68f72608b2ffc9b",
+    "outcome_source_observation": "ko-2023",
+    "reason": [],
+    "required_components": 5,
+    "ticker": "KO"
+  },
+  {
+    "financial_deterioration_12m": null,
+    "label_generated_by": "deterministic_forward_outcome_rule_v1",
+    "label_status": "INSUFFICIENT_DATA",
+    "observation_id": "ko-2023",
+    "reason": [
+      {
+        "code": "NO_ELIGIBLE_FORWARD_ANNUAL_OUTCOME_WITHIN_12_MONTHS"
+      }
+    ],
+    "ticker": "KO"
+  },
+  {
+    "available_components": 4,
+    "fcf_two_subsequent_periods": "INSUFFICIENT_DATA",
+    "financial_deterioration_12m": 0,
+    "label_generated_by": "deterministic_forward_outcome_rule_v1",
+    "label_status": "VERIFIED",
+    "observation_id": "luv-2021",
+    "outcome_available_at": "2023-02-07T23:59:59Z",
+    "outcome_source_hash": "479638c1be4088fa2ae42d2947468913eaff5ad0f093c412ba4340af8a8f791e",
+    "outcome_source_observation": "luv-2022",
+    "reason": [],
+    "required_components": 5,
+    "ticker": "LUV"
+  },
+  {
+    "available_components": 4,
+    "fcf_two_subsequent_periods": "INSUFFICIENT_DATA",
+    "financial_deterioration_12m": 0,
+    "label_generated_by": "deterministic_forward_outcome_rule_v1",
+    "label_status": "VERIFIED",
+    "observation_id": "luv-2022",
+    "outcome_available_at": "2024-02-06T23:59:59Z",
+    "outcome_source_hash": "94c7894b00903f8ff7186c4250ba1c1daa1bde8b3a0b26fae68f72608b2ffc9b",
+    "outcome_source_observation": "luv-2023",
+    "reason": [],
+    "required_components": 5,
+    "ticker": "LUV"
+  },
+  {
+    "financial_deterioration_12m": null,
+    "label_generated_by": "deterministic_forward_outcome_rule_v1",
+    "label_status": "INSUFFICIENT_DATA",
+    "observation_id": "luv-2023",
+    "reason": [
+      {
+        "code": "NO_ELIGIBLE_FORWARD_ANNUAL_OUTCOME_WITHIN_12_MONTHS"
+      }
+    ],
+    "ticker": "LUV"
+  },
+  {
+    "available_components": 5,
+    "fcf_two_subsequent_periods": "INSUFFICIENT_DATA",
+    "financial_deterioration_12m": 0,
+    "label_generated_by": "deterministic_forward_outcome_rule_v1",
+    "label_status": "VERIFIED",
+    "observation_id": "msft-2021",
+    "outcome_available_at": "2022-07-28T23:59:59Z",
+    "outcome_source_hash": "4bbfdc953177acf1a430a9f0a624dd8244bc81292d42872107d0446d06167c26",
+    "outcome_source_observation": "msft-2022",
+    "reason": [],
+    "required_components": 5,
+    "ticker": "MSFT"
+  },
+  {
+    "available_components": 5,
+    "fcf_two_subsequent_periods": "INSUFFICIENT_DATA",
+    "financial_deterioration_12m": 0,
+    "label_generated_by": "deterministic_forward_outcome_rule_v1",
+    "label_status": "VERIFIED",
+    "observation_id": "msft-2022",
+    "outcome_available_at": "2023-07-27T23:59:59Z",
+    "outcome_source_hash": "f075d721dde4393dabd49c1746578294ada4665ec29c85c2b3184f44f6f09187",
+    "outcome_source_observation": "msft-2023",
+    "reason": [],
+    "required_components": 5,
+    "ticker": "MSFT"
+  },
+  {
+    "financial_deterioration_12m": null,
+    "label_generated_by": "deterministic_forward_outcome_rule_v1",
+    "label_status": "INSUFFICIENT_DATA",
+    "observation_id": "msft-2023",
+    "reason": [
+      {
+        "code": "NO_ELIGIBLE_FORWARD_ANNUAL_OUTCOME_WITHIN_12_MONTHS"
+      }
+    ],
+    "ticker": "MSFT"
+  },
+  {
+    "available_components": 4,
+    "fcf_two_subsequent_periods": "INSUFFICIENT_DATA",
+    "financial_deterioration_12m": 0,
+    "label_generated_by": "deterministic_forward_outcome_rule_v1",
+    "label_status": "VERIFIED",
+    "observation_id": "nee-2021",
+    "outcome_available_at": "2023-02-17T23:59:59Z",
+    "outcome_source_hash": "479638c1be4088fa2ae42d2947468913eaff5ad0f093c412ba4340af8a8f791e",
+    "outcome_source_observation": "nee-2022",
+    "reason": [],
+    "required_components": 5,
+    "ticker": "NEE"
+  },
+  {
+    "available_components": 4,
+    "fcf_two_subsequent_periods": "INSUFFICIENT_DATA",
+    "financial_deterioration_12m": 0,
+    "label_generated_by": "deterministic_forward_outcome_rule_v1",
+    "label_status": "VERIFIED",
+    "observation_id": "nee-2022",
+    "outcome_available_at": "2024-02-16T23:59:59Z",
+    "outcome_source_hash": "94c7894b00903f8ff7186c4250ba1c1daa1bde8b3a0b26fae68f72608b2ffc9b",
+    "outcome_source_observation": "nee-2023",
+    "reason": [],
+    "required_components": 5,
+    "ticker": "NEE"
+  },
+  {
+    "financial_deterioration_12m": null,
+    "label_generated_by": "deterministic_forward_outcome_rule_v1",
+    "label_status": "INSUFFICIENT_DATA",
+    "observation_id": "nee-2023",
+    "reason": [
+      {
+        "code": "NO_ELIGIBLE_FORWARD_ANNUAL_OUTCOME_WITHIN_12_MONTHS"
+      }
+    ],
+    "ticker": "NEE"
+  },
+  {
+    "available_components": 5,
+    "fcf_two_subsequent_periods": "INSUFFICIENT_DATA",
+    "financial_deterioration_12m": 0,
+    "label_generated_by": "deterministic_forward_outcome_rule_v1",
+    "label_status": "VERIFIED",
+    "observation_id": "nflx-2021",
+    "outcome_available_at": "2023-01-26T23:59:59Z",
+    "outcome_source_hash": "479638c1be4088fa2ae42d2947468913eaff5ad0f093c412ba4340af8a8f791e",
+    "outcome_source_observation": "nflx-2022",
+    "reason": [],
+    "required_components": 5,
+    "ticker": "NFLX"
+  },
+  {
+    "available_components": 5,
+    "fcf_two_subsequent_periods": "INSUFFICIENT_DATA",
+    "financial_deterioration_12m": 0,
+    "label_generated_by": "deterministic_forward_outcome_rule_v1",
+    "label_status": "VERIFIED",
+    "observation_id": "nflx-2022",
+    "outcome_available_at": "2024-01-26T23:59:59Z",
+    "outcome_source_hash": "94c7894b00903f8ff7186c4250ba1c1daa1bde8b3a0b26fae68f72608b2ffc9b",
+    "outcome_source_observation": "nflx-2023",
+    "reason": [],
+    "required_components": 5,
+    "ticker": "NFLX"
+  },
+  {
+    "financial_deterioration_12m": null,
+    "label_generated_by": "deterministic_forward_outcome_rule_v1",
+    "label_status": "INSUFFICIENT_DATA",
+    "observation_id": "nflx-2023",
+    "reason": [
+      {
+        "code": "NO_ELIGIBLE_FORWARD_ANNUAL_OUTCOME_WITHIN_12_MONTHS"
+      }
+    ],
+    "ticker": "NFLX"
+  },
+  {
+    "financial_deterioration_12m": null,
+    "label_generated_by": "deterministic_forward_outcome_rule_v1",
+    "label_status": "INSUFFICIENT_DATA",
+    "observation_id": "nue-2021",
+    "reason": [
+      {
+        "code": "NO_ELIGIBLE_FORWARD_ANNUAL_OUTCOME_WITHIN_12_MONTHS"
+      }
+    ],
+    "ticker": "NUE"
+  },
+  {
+    "available_components": 5,
+    "fcf_two_subsequent_periods": "INSUFFICIENT_DATA",
+    "financial_deterioration_12m": 1,
+    "label_generated_by": "deterministic_forward_outcome_rule_v1",
+    "label_status": "VERIFIED",
+    "observation_id": "nue-2022",
+    "outcome_available_at": "2024-02-27T23:59:59Z",
+    "outcome_source_hash": "94c7894b00903f8ff7186c4250ba1c1daa1bde8b3a0b26fae68f72608b2ffc9b",
+    "outcome_source_observation": "nue-2023",
+    "reason": [
+      {
+        "code": "REVENUE_DECLINE_10PCT",
+        "value_t": 41512467000.0,
+        "value_t1": 34713501000.0
+      },
+      {
+        "code": "OCF_DECLINE_OR_NEGATIVE",
+        "value_t": 10072054000.0,
+        "value_t1": 7111931000.0
+      }
+    ],
+    "required_components": 5,
+    "ticker": "NUE"
+  },
+  {
+    "financial_deterioration_12m": null,
+    "label_generated_by": "deterministic_forward_outcome_rule_v1",
+    "label_status": "INSUFFICIENT_DATA",
+    "observation_id": "nue-2023",
+    "reason": [
+      {
+        "code": "NO_ELIGIBLE_FORWARD_ANNUAL_OUTCOME_WITHIN_12_MONTHS"
+      }
+    ],
+    "ticker": "NUE"
+  },
+  {
+    "financial_deterioration_12m": null,
+    "label_generated_by": "deterministic_forward_outcome_rule_v1",
+    "label_status": "INSUFFICIENT_DATA",
+    "observation_id": "oxy-2021",
+    "reason": [
+      {
+        "code": "NO_ELIGIBLE_FORWARD_ANNUAL_OUTCOME_WITHIN_12_MONTHS"
+      }
+    ],
+    "ticker": "OXY"
+  },
+  {
+    "available_components": 4,
+    "fcf_two_subsequent_periods": "INSUFFICIENT_DATA",
+    "financial_deterioration_12m": 1,
+    "label_generated_by": "deterministic_forward_outcome_rule_v1",
+    "label_status": "VERIFIED",
+    "observation_id": "oxy-2022",
+    "outcome_available_at": "2024-02-14T23:59:59Z",
+    "outcome_source_hash": "94c7894b00903f8ff7186c4250ba1c1daa1bde8b3a0b26fae68f72608b2ffc9b",
+    "outcome_source_observation": "oxy-2023",
+    "reason": [
+      {
+        "code": "REVENUE_DECLINE_10PCT",
+        "value_t": 36634000000.0,
+        "value_t1": 28257000000.0
+      },
+      {
+        "code": "OCF_DECLINE_OR_NEGATIVE",
+        "value_t": 16810000000.0,
+        "value_t1": 12308000000.0
+      }
+    ],
+    "required_components": 5,
+    "ticker": "OXY"
+  },
+  {
+    "financial_deterioration_12m": null,
+    "label_generated_by": "deterministic_forward_outcome_rule_v1",
+    "label_status": "INSUFFICIENT_DATA",
+    "observation_id": "oxy-2023",
+    "reason": [
+      {
+        "code": "NO_ELIGIBLE_FORWARD_ANNUAL_OUTCOME_WITHIN_12_MONTHS"
+      }
+    ],
+    "ticker": "OXY"
+  },
+  {
+    "available_components": 5,
+    "fcf_two_subsequent_periods": "INSUFFICIENT_DATA",
+    "financial_deterioration_12m": 0,
+    "label_generated_by": "deterministic_forward_outcome_rule_v1",
+    "label_status": "VERIFIED",
+    "observation_id": "pfe-2021",
+    "outcome_available_at": "2023-02-23T23:59:59Z",
+    "outcome_source_hash": "479638c1be4088fa2ae42d2947468913eaff5ad0f093c412ba4340af8a8f791e",
+    "outcome_source_observation": "pfe-2022",
+    "reason": [],
+    "required_components": 5,
+    "ticker": "PFE"
+  },
+  {
+    "available_components": 5,
+    "fcf_two_subsequent_periods": "INSUFFICIENT_DATA",
+    "financial_deterioration_12m": 1,
+    "label_generated_by": "deterministic_forward_outcome_rule_v1",
+    "label_status": "VERIFIED",
+    "observation_id": "pfe-2022",
+    "outcome_available_at": "2024-02-22T23:59:59Z",
+    "outcome_source_hash": "94c7894b00903f8ff7186c4250ba1c1daa1bde8b3a0b26fae68f72608b2ffc9b",
+    "outcome_source_observation": "pfe-2023",
+    "reason": [
+      {
+        "code": "REVENUE_DECLINE_10PCT",
+        "value_t": 100330000000.0,
+        "value_t1": 50914000000.0
+      },
+      {
+        "code": "OCF_DECLINE_OR_NEGATIVE",
+        "value_t": 29267000000.0,
+        "value_t1": 8700000000.0
+      },
+      {
+        "code": "DEBT_TO_ASSETS_INCREASE_10PP",
+        "value_t": 0.17973175122334625,
+        "value_t1": 0.2816411406572156
+      }
+    ],
+    "required_components": 5,
+    "ticker": "PFE"
+  },
+  {
+    "financial_deterioration_12m": null,
+    "label_generated_by": "deterministic_forward_outcome_rule_v1",
+    "label_status": "INSUFFICIENT_DATA",
+    "observation_id": "pfe-2023",
+    "reason": [
+      {
+        "code": "NO_ELIGIBLE_FORWARD_ANNUAL_OUTCOME_WITHIN_12_MONTHS"
+      }
+    ],
+    "ticker": "PFE"
+  },
+  {
+    "financial_deterioration_12m": null,
+    "label_generated_by": "deterministic_forward_outcome_rule_v1",
+    "label_status": "INSUFFICIENT_DATA",
+    "observation_id": "pld-2021",
+    "reason": [
+      {
+        "code": "NO_ELIGIBLE_FORWARD_ANNUAL_OUTCOME_WITHIN_12_MONTHS"
+      }
+    ],
+    "ticker": "PLD"
+  },
+  {
+    "available_components": 4,
+    "fcf_two_subsequent_periods": "INSUFFICIENT_DATA",
+    "financial_deterioration_12m": 0,
+    "label_generated_by": "deterministic_forward_outcome_rule_v1",
+    "label_status": "VERIFIED",
+    "observation_id": "pld-2022",
+    "outcome_available_at": "2024-02-13T23:59:59Z",
+    "outcome_source_hash": "94c7894b00903f8ff7186c4250ba1c1daa1bde8b3a0b26fae68f72608b2ffc9b",
+    "outcome_source_observation": "pld-2023",
+    "reason": [],
+    "required_components": 5,
+    "ticker": "PLD"
+  },
+  {
+    "financial_deterioration_12m": null,
+    "label_generated_by": "deterministic_forward_outcome_rule_v1",
+    "label_status": "INSUFFICIENT_DATA",
+    "observation_id": "pld-2023",
+    "reason": [
+      {
+        "code": "NO_ELIGIBLE_FORWARD_ANNUAL_OUTCOME_WITHIN_12_MONTHS"
+      }
+    ],
+    "ticker": "PLD"
+  },
+  {
+    "available_components": 3,
+    "fcf_two_subsequent_periods": "INSUFFICIENT_DATA",
+    "financial_deterioration_12m": null,
+    "label_generated_by": "deterministic_forward_outcome_rule_v1",
+    "label_status": "REQUIRES_HUMAN_REVIEW",
+    "observation_id": "tgt-2021",
+    "outcome_available_at": "2023-03-08T23:59:59Z",
+    "outcome_source_hash": "479638c1be4088fa2ae42d2947468913eaff5ad0f093c412ba4340af8a8f791e",
+    "outcome_source_observation": "tgt-2022",
+    "reason": [
+      {
+        "code": "OCF_DECLINE_OR_NEGATIVE",
+        "value_t": 8625000000.0,
+        "value_t1": 4018000000.0
+      }
+    ],
+    "required_components": 5,
+    "ticker": "TGT"
+  },
+  {
+    "financial_deterioration_12m": null,
+    "label_generated_by": "deterministic_forward_outcome_rule_v1",
+    "label_status": "INSUFFICIENT_DATA",
+    "observation_id": "tgt-2022",
+    "reason": [
+      {
+        "code": "NO_ELIGIBLE_FORWARD_ANNUAL_OUTCOME_WITHIN_12_MONTHS"
+      }
+    ],
+    "ticker": "TGT"
+  },
+  {
+    "financial_deterioration_12m": null,
+    "label_generated_by": "deterministic_forward_outcome_rule_v1",
+    "label_status": "INSUFFICIENT_DATA",
+    "observation_id": "tgt-2023",
+    "reason": [
+      {
+        "code": "NO_ELIGIBLE_FORWARD_ANNUAL_OUTCOME_WITHIN_12_MONTHS"
+      }
+    ],
+    "ticker": "TGT"
+  },
+  {
+    "financial_deterioration_12m": null,
+    "label_generated_by": "deterministic_forward_outcome_rule_v1",
+    "label_status": "INSUFFICIENT_DATA",
+    "observation_id": "tmus-2021",
+    "reason": [
+      {
+        "code": "NO_ELIGIBLE_FORWARD_ANNUAL_OUTCOME_WITHIN_12_MONTHS"
+      }
+    ],
+    "ticker": "TMUS"
+  },
+  {
+    "available_components": 5,
+    "fcf_two_subsequent_periods": "INSUFFICIENT_DATA",
+    "financial_deterioration_12m": 0,
+    "label_generated_by": "deterministic_forward_outcome_rule_v1",
+    "label_status": "VERIFIED",
+    "observation_id": "tmus-2022",
+    "outcome_available_at": "2024-02-02T23:59:59Z",
+    "outcome_source_hash": "94c7894b00903f8ff7186c4250ba1c1daa1bde8b3a0b26fae68f72608b2ffc9b",
+    "outcome_source_observation": "tmus-2023",
+    "reason": [],
+    "required_components": 5,
+    "ticker": "TMUS"
+  },
+  {
+    "financial_deterioration_12m": null,
+    "label_generated_by": "deterministic_forward_outcome_rule_v1",
+    "label_status": "INSUFFICIENT_DATA",
+    "observation_id": "tmus-2023",
+    "reason": [
+      {
+        "code": "NO_ELIGIBLE_FORWARD_ANNUAL_OUTCOME_WITHIN_12_MONTHS"
+      }
+    ],
+    "ticker": "TMUS"
+  },
+  {
+    "available_components": 5,
+    "fcf_two_subsequent_periods": "INSUFFICIENT_DATA",
+    "financial_deterioration_12m": 0,
+    "label_generated_by": "deterministic_forward_outcome_rule_v1",
+    "label_status": "VERIFIED",
+    "observation_id": "ups-2021",
+    "outcome_available_at": "2023-02-21T23:59:59Z",
+    "outcome_source_hash": "479638c1be4088fa2ae42d2947468913eaff5ad0f093c412ba4340af8a8f791e",
+    "outcome_source_observation": "ups-2022",
+    "reason": [],
+    "required_components": 5,
+    "ticker": "UPS"
+  },
+  {
+    "available_components": 5,
+    "fcf_two_subsequent_periods": "INSUFFICIENT_DATA",
+    "financial_deterioration_12m": null,
+    "label_generated_by": "deterministic_forward_outcome_rule_v1",
+    "label_status": "REQUIRES_HUMAN_REVIEW",
+    "observation_id": "ups-2022",
+    "outcome_available_at": "2024-02-20T23:59:59Z",
+    "outcome_source_hash": "94c7894b00903f8ff7186c4250ba1c1daa1bde8b3a0b26fae68f72608b2ffc9b",
+    "outcome_source_observation": "ups-2023",
+    "reason": [
+      {
+        "code": "OCF_DECLINE_OR_NEGATIVE",
+        "value_t": 14104000000.0,
+        "value_t1": 10238000000.0
+      }
+    ],
+    "required_components": 5,
+    "ticker": "UPS"
+  },
+  {
+    "financial_deterioration_12m": null,
+    "label_generated_by": "deterministic_forward_outcome_rule_v1",
+    "label_status": "INSUFFICIENT_DATA",
+    "observation_id": "ups-2023",
+    "reason": [
+      {
+        "code": "NO_ELIGIBLE_FORWARD_ANNUAL_OUTCOME_WITHIN_12_MONTHS"
+      }
+    ],
+    "ticker": "UPS"
+  },
+  {
+    "available_components": 5,
+    "fcf_two_subsequent_periods": "INSUFFICIENT_DATA",
+    "financial_deterioration_12m": 0,
+    "label_generated_by": "deterministic_forward_outcome_rule_v1",
+    "label_status": "VERIFIED",
+    "observation_id": "vz-2021",
+    "outcome_available_at": "2023-02-10T23:59:59Z",
+    "outcome_source_hash": "479638c1be4088fa2ae42d2947468913eaff5ad0f093c412ba4340af8a8f791e",
+    "outcome_source_observation": "vz-2022",
+    "reason": [],
+    "required_components": 5,
+    "ticker": "VZ"
+  },
+  {
+    "available_components": 5,
+    "fcf_two_subsequent_periods": "INSUFFICIENT_DATA",
+    "financial_deterioration_12m": 0,
+    "label_generated_by": "deterministic_forward_outcome_rule_v1",
+    "label_status": "VERIFIED",
+    "observation_id": "vz-2022",
+    "outcome_available_at": "2024-02-09T23:59:59Z",
+    "outcome_source_hash": "94c7894b00903f8ff7186c4250ba1c1daa1bde8b3a0b26fae68f72608b2ffc9b",
+    "outcome_source_observation": "vz-2023",
+    "reason": [],
+    "required_components": 5,
+    "ticker": "VZ"
+  },
+  {
+    "financial_deterioration_12m": null,
+    "label_generated_by": "deterministic_forward_outcome_rule_v1",
+    "label_status": "INSUFFICIENT_DATA",
+    "observation_id": "vz-2023",
+    "reason": [
+      {
+        "code": "NO_ELIGIBLE_FORWARD_ANNUAL_OUTCOME_WITHIN_12_MONTHS"
+      }
+    ],
+    "ticker": "VZ"
+  },
+  {
+    "available_components": 5,
+    "fcf_two_subsequent_periods": "INSUFFICIENT_DATA",
+    "financial_deterioration_12m": null,
+    "label_generated_by": "deterministic_forward_outcome_rule_v1",
+    "label_status": "REQUIRES_HUMAN_REVIEW",
+    "observation_id": "wba-2021",
+    "outcome_available_at": "2022-10-13T23:59:59Z",
+    "outcome_source_hash": "83bdc7a9545479eb64d118688c888ba8e7554ebc774f3ab8a8b0cc1decb87f28",
+    "outcome_source_observation": "wba-2022",
+    "reason": [
+      {
+        "code": "OCF_DECLINE_OR_NEGATIVE",
+        "value_t": 5555000000.0,
+        "value_t1": 3899000000.0
+      }
+    ],
+    "required_components": 5,
+    "ticker": "WBA"
+  },
+  {
+    "available_components": 5,
+    "fcf_two_subsequent_periods": "INSUFFICIENT_DATA",
+    "financial_deterioration_12m": 1,
+    "label_generated_by": "deterministic_forward_outcome_rule_v1",
+    "label_status": "VERIFIED",
+    "observation_id": "wba-2022",
+    "outcome_available_at": "2023-10-12T23:59:59Z",
+    "outcome_source_hash": "ad23c5505e59b7305e16bfebb8bb839476689330b85a3e1ce216f809b18d1521",
+    "outcome_source_observation": "wba-2023",
+    "reason": [
+      {
+        "code": "POSITIVE_INCOME_TO_LOSS",
+        "value_t": 4337000000.0,
+        "value_t1": -3080000000.0
+      },
+      {
+        "code": "OCF_DECLINE_OR_NEGATIVE",
+        "value_t": 3899000000.0,
+        "value_t1": 2258000000.0
+      }
+    ],
+    "required_components": 5,
+    "ticker": "WBA"
+  },
+  {
+    "financial_deterioration_12m": null,
+    "label_generated_by": "deterministic_forward_outcome_rule_v1",
+    "label_status": "INSUFFICIENT_DATA",
+    "observation_id": "wba-2023",
+    "reason": [
+      {
+        "code": "NO_ELIGIBLE_FORWARD_ANNUAL_OUTCOME_WITHIN_12_MONTHS"
+      }
+    ],
+    "ticker": "WBA"
+  },
+  {
+    "available_components": 5,
+    "fcf_two_subsequent_periods": "INSUFFICIENT_DATA",
+    "financial_deterioration_12m": 0,
+    "label_generated_by": "deterministic_forward_outcome_rule_v1",
+    "label_status": "VERIFIED",
+    "observation_id": "wmt-2021",
+    "outcome_available_at": "2023-03-17T23:59:59Z",
+    "outcome_source_hash": "479638c1be4088fa2ae42d2947468913eaff5ad0f093c412ba4340af8a8f791e",
+    "outcome_source_observation": "wmt-2022",
+    "reason": [],
+    "required_components": 5,
+    "ticker": "WMT"
+  },
+  {
+    "available_components": 5,
+    "fcf_two_subsequent_periods": "INSUFFICIENT_DATA",
+    "financial_deterioration_12m": 0,
+    "label_generated_by": "deterministic_forward_outcome_rule_v1",
+    "label_status": "VERIFIED",
+    "observation_id": "wmt-2022",
+    "outcome_available_at": "2024-03-15T23:59:59Z",
+    "outcome_source_hash": "94c7894b00903f8ff7186c4250ba1c1daa1bde8b3a0b26fae68f72608b2ffc9b",
+    "outcome_source_observation": "wmt-2023",
+    "reason": [],
+    "required_components": 5,
+    "ticker": "WMT"
+  },
+  {
+    "financial_deterioration_12m": null,
+    "label_generated_by": "deterministic_forward_outcome_rule_v1",
+    "label_status": "INSUFFICIENT_DATA",
+    "observation_id": "wmt-2023",
+    "reason": [
+      {
+        "code": "NO_ELIGIBLE_FORWARD_ANNUAL_OUTCOME_WITHIN_12_MONTHS"
+      }
+    ],
+    "ticker": "WMT"
+  }
+]

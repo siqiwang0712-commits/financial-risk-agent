@@ -1,0 +1,16 @@
+{
+  "status": "NOT RUN",
+  "common_information_set": "PIT-admitted filing evidence available at each observation cutoff",
+  "configurations": [
+    "B0_RATIOS_ONLY",
+    "B1_LOGISTIC_REGRESSION",
+    "B2_RULES_ONLY",
+    "B3_LLM_AGENT_ONLY",
+    "B4_EXISTING_HYBRID",
+    "B5_EVIDENCE_VERIFICATION",
+    "B6_TEMPORAL_RISK",
+    "B7_SELECTIVE_PREDICTION",
+    "B8_CRITIC_VERIFIER"
+  ],
+  "fairness_constraint": "same observation, cutoff and available filing information"
+}

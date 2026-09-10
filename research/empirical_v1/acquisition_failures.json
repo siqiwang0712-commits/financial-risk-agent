@@ -1,0 +1,452 @@
+[
+  {
+    "observation_id": "aapl-2021",
+    "error_type": "RuntimeError",
+    "detail": "SEC rejected this network with HTTP 403; do not bypass Fair Access controls"
+  },
+  {
+    "observation_id": "aapl-2022",
+    "error_type": "RuntimeError",
+    "detail": "SEC rejected this network with HTTP 403; do not bypass Fair Access controls"
+  },
+  {
+    "observation_id": "aapl-2023",
+    "error_type": "RuntimeError",
+    "detail": "SEC rejected this network with HTTP 403; do not bypass Fair Access controls"
+  },
+  {
+    "observation_id": "msft-2021",
+    "error_type": "RuntimeError",
+    "detail": "SEC rejected this network with HTTP 403; do not bypass Fair Access controls"
+  },
+  {
+    "observation_id": "msft-2022",
+    "error_type": "RuntimeError",
+    "detail": "SEC rejected this network with HTTP 403; do not bypass Fair Access controls"
+  },
+  {
+    "observation_id": "msft-2023",
+    "error_type": "RuntimeError",
+    "detail": "SEC rejected this network with HTTP 403; do not bypass Fair Access controls"
+  },
+  {
+    "observation_id": "intc-2021",
+    "error_type": "RuntimeError",
+    "detail": "SEC rejected this network with HTTP 403; do not bypass Fair Access controls"
+  },
+  {
+    "observation_id": "intc-2022",
+    "error_type": "RuntimeError",
+    "detail": "SEC rejected this network with HTTP 403; do not bypass Fair Access controls"
+  },
+  {
+    "observation_id": "intc-2023",
+    "error_type": "RuntimeError",
+    "detail": "SEC rejected this network with HTTP 403; do not bypass Fair Access controls"
+  },
+  {
+    "observation_id": "f-2021",
+    "error_type": "RuntimeError",
+    "detail": "SEC rejected this network with HTTP 403; do not bypass Fair Access controls"
+  },
+  {
+    "observation_id": "f-2022",
+    "error_type": "RuntimeError",
+    "detail": "SEC rejected this network with HTTP 403; do not bypass Fair Access controls"
+  },
+  {
+    "observation_id": "f-2023",
+    "error_type": "RuntimeError",
+    "detail": "SEC rejected this network with HTTP 403; do not bypass Fair Access controls"
+  },
+  {
+    "observation_id": "gm-2021",
+    "error_type": "RuntimeError",
+    "detail": "SEC rejected this network with HTTP 403; do not bypass Fair Access controls"
+  },
+  {
+    "observation_id": "gm-2022",
+    "error_type": "RuntimeError",
+    "detail": "SEC rejected this network with HTTP 403; do not bypass Fair Access controls"
+  },
+  {
+    "observation_id": "gm-2023",
+    "error_type": "RuntimeError",
+    "detail": "SEC rejected this network with HTTP 403; do not bypass Fair Access controls"
+  },
+  {
+    "observation_id": "dal-2021",
+    "error_type": "RuntimeError",
+    "detail": "SEC rejected this network with HTTP 403; do not bypass Fair Access controls"
+  },
+  {
+    "observation_id": "dal-2022",
+    "error_type": "RuntimeError",
+    "detail": "SEC rejected this network with HTTP 403; do not bypass Fair Access controls"
+  },
+  {
+    "observation_id": "dal-2023",
+    "error_type": "RuntimeError",
+    "detail": "SEC rejected this network with HTTP 403; do not bypass Fair Access controls"
+  },
+  {
+    "observation_id": "luv-2021",
+    "error_type": "RuntimeError",
+    "detail": "SEC rejected this network with HTTP 403; do not bypass Fair Access controls"
+  },
+  {
+    "observation_id": "luv-2022",
+    "error_type": "RuntimeError",
+    "detail": "SEC rejected this network with HTTP 403; do not bypass Fair Access controls"
+  },
+  {
+    "observation_id": "luv-2023",
+    "error_type": "RuntimeError",
+    "detail": "SEC rejected this network with HTTP 403; do not bypass Fair Access controls"
+  },
+  {
+    "observation_id": "wmt-2021",
+    "error_type": "RuntimeError",
+    "detail": "SEC rejected this network with HTTP 403; do not bypass Fair Access controls"
+  },
+  {
+    "observation_id": "wmt-2022",
+    "error_type": "RuntimeError",
+    "detail": "SEC rejected this network with HTTP 403; do not bypass Fair Access controls"
+  },
+  {
+    "observation_id": "wmt-2023",
+    "error_type": "RuntimeError",
+    "detail": "SEC rejected this network with HTTP 403; do not bypass Fair Access controls"
+  },
+  {
+    "observation_id": "tgt-2021",
+    "error_type": "RuntimeError",
+    "detail": "SEC rejected this network with HTTP 403; do not bypass Fair Access controls"
+  },
+  {
+    "observation_id": "tgt-2022",
+    "error_type": "RuntimeError",
+    "detail": "SEC rejected this network with HTTP 403; do not bypass Fair Access controls"
+  },
+  {
+    "observation_id": "tgt-2023",
+    "error_type": "RuntimeError",
+    "detail": "SEC rejected this network with HTTP 403; do not bypass Fair Access controls"
+  },
+  {
+    "observation_id": "wba-2021",
+    "error_type": "RuntimeError",
+    "detail": "SEC rejected this network with HTTP 403; do not bypass Fair Access controls"
+  },
+  {
+    "observation_id": "wba-2022",
+    "error_type": "RuntimeError",
+    "detail": "SEC rejected this network with HTTP 403; do not bypass Fair Access controls"
+  },
+  {
+    "observation_id": "wba-2023",
+    "error_type": "RuntimeError",
+    "detail": "SEC rejected this network with HTTP 403; do not bypass Fair Access controls"
+  },
+  {
+    "observation_id": "pfe-2021",
+    "error_type": "RuntimeError",
+    "detail": "SEC rejected this network with HTTP 403; do not bypass Fair Access controls"
+  },
+  {
+    "observation_id": "pfe-2022",
+    "error_type": "RuntimeError",
+    "detail": "SEC rejected this network with HTTP 403; do not bypass Fair Access controls"
+  },
+  {
+    "observation_id": "pfe-2023",
+    "error_type": "RuntimeError",
+    "detail": "SEC rejected this network with HTTP 403; do not bypass Fair Access controls"
+  },
+  {
+    "observation_id": "jnj-2021",
+    "error_type": "RuntimeError",
+    "detail": "SEC rejected this network with HTTP 403; do not bypass Fair Access controls"
+  },
+  {
+    "observation_id": "jnj-2022",
+    "error_type": "RuntimeError",
+    "detail": "SEC rejected this network with HTTP 403; do not bypass Fair Access controls"
+  },
+  {
+    "observation_id": "jnj-2023",
+    "error_type": "RuntimeError",
+    "detail": "SEC rejected this network with HTTP 403; do not bypass Fair Access controls"
+  },
+  {
+    "observation_id": "cvx-2021",
+    "error_type": "RuntimeError",
+    "detail": "SEC rejected this network with HTTP 403; do not bypass Fair Access controls"
+  },
+  {
+    "observation_id": "cvx-2022",
+    "error_type": "RuntimeError",
+    "detail": "SEC rejected this network with HTTP 403; do not bypass Fair Access controls"
+  },
+  {
+    "observation_id": "cvx-2023",
+    "error_type": "RuntimeError",
+    "detail": "SEC rejected this network with HTTP 403; do not bypass Fair Access controls"
+  },
+  {
+    "observation_id": "oxy-2021",
+    "error_type": "RuntimeError",
+    "detail": "SEC rejected this network with HTTP 403; do not bypass Fair Access controls"
+  },
+  {
+    "observation_id": "oxy-2022",
+    "error_type": "RuntimeError",
+    "detail": "SEC rejected this network with HTTP 403; do not bypass Fair Access controls"
+  },
+  {
+    "observation_id": "oxy-2023",
+    "error_type": "RuntimeError",
+    "detail": "SEC rejected this network with HTTP 403; do not bypass Fair Access controls"
+  },
+  {
+    "observation_id": "nee-2021",
+    "error_type": "RuntimeError",
+    "detail": "SEC rejected this network with HTTP 403; do not bypass Fair Access controls"
+  },
+  {
+    "observation_id": "nee-2022",
+    "error_type": "RuntimeError",
+    "detail": "SEC rejected this network with HTTP 403; do not bypass Fair Access controls"
+  },
+  {
+    "observation_id": "nee-2023",
+    "error_type": "RuntimeError",
+    "detail": "SEC rejected this network with HTTP 403; do not bypass Fair Access controls"
+  },
+  {
+    "observation_id": "aep-2021",
+    "error_type": "RuntimeError",
+    "detail": "SEC rejected this network with HTTP 403; do not bypass Fair Access controls"
+  },
+  {
+    "observation_id": "aep-2022",
+    "error_type": "RuntimeError",
+    "detail": "SEC rejected this network with HTTP 403; do not bypass Fair Access controls"
+  },
+  {
+    "observation_id": "aep-2023",
+    "error_type": "RuntimeError",
+    "detail": "SEC rejected this network with HTTP 403; do not bypass Fair Access controls"
+  },
+  {
+    "observation_id": "cat-2021",
+    "error_type": "RuntimeError",
+    "detail": "SEC rejected this network with HTTP 403; do not bypass Fair Access controls"
+  },
+  {
+    "observation_id": "cat-2022",
+    "error_type": "RuntimeError",
+    "detail": "SEC rejected this network with HTTP 403; do not bypass Fair Access controls"
+  },
+  {
+    "observation_id": "cat-2023",
+    "error_type": "RuntimeError",
+    "detail": "SEC rejected this network with HTTP 403; do not bypass Fair Access controls"
+  },
+  {
+    "observation_id": "ba-2021",
+    "error_type": "RuntimeError",
+    "detail": "SEC rejected this network with HTTP 403; do not bypass Fair Access controls"
+  },
+  {
+    "observation_id": "ba-2022",
+    "error_type": "RuntimeError",
+    "detail": "SEC rejected this network with HTTP 403; do not bypass Fair Access controls"
+  },
+  {
+    "observation_id": "ba-2023",
+    "error_type": "RuntimeError",
+    "detail": "SEC rejected this network with HTTP 403; do not bypass Fair Access controls"
+  },
+  {
+    "observation_id": "ups-2021",
+    "error_type": "RuntimeError",
+    "detail": "SEC rejected this network with HTTP 403; do not bypass Fair Access controls"
+  },
+  {
+    "observation_id": "ups-2022",
+    "error_type": "RuntimeError",
+    "detail": "SEC rejected this network with HTTP 403; do not bypass Fair Access controls"
+  },
+  {
+    "observation_id": "ups-2023",
+    "error_type": "RuntimeError",
+    "detail": "SEC rejected this network with HTTP 403; do not bypass Fair Access controls"
+  },
+  {
+    "observation_id": "fdx-2021",
+    "error_type": "RuntimeError",
+    "detail": "SEC rejected this network with HTTP 403; do not bypass Fair Access controls"
+  },
+  {
+    "observation_id": "fdx-2022",
+    "error_type": "RuntimeError",
+    "detail": "SEC rejected this network with HTTP 403; do not bypass Fair Access controls"
+  },
+  {
+    "observation_id": "fdx-2023",
+    "error_type": "RuntimeError",
+    "detail": "SEC rejected this network with HTTP 403; do not bypass Fair Access controls"
+  },
+  {
+    "observation_id": "ko-2021",
+    "error_type": "RuntimeError",
+    "detail": "SEC rejected this network with HTTP 403; do not bypass Fair Access controls"
+  },
+  {
+    "observation_id": "ko-2022",
+    "error_type": "RuntimeError",
+    "detail": "SEC rejected this network with HTTP 403; do not bypass Fair Access controls"
+  },
+  {
+    "observation_id": "ko-2023",
+    "error_type": "RuntimeError",
+    "detail": "SEC rejected this network with HTTP 403; do not bypass Fair Access controls"
+  },
+  {
+    "observation_id": "khc-2021",
+    "error_type": "RuntimeError",
+    "detail": "SEC rejected this network with HTTP 403; do not bypass Fair Access controls"
+  },
+  {
+    "observation_id": "khc-2022",
+    "error_type": "RuntimeError",
+    "detail": "SEC rejected this network with HTTP 403; do not bypass Fair Access controls"
+  },
+  {
+    "observation_id": "khc-2023",
+    "error_type": "RuntimeError",
+    "detail": "SEC rejected this network with HTTP 403; do not bypass Fair Access controls"
+  },
+  {
+    "observation_id": "dis-2021",
+    "error_type": "RuntimeError",
+    "detail": "SEC rejected this network with HTTP 403; do not bypass Fair Access controls"
+  },
+  {
+    "observation_id": "dis-2022",
+    "error_type": "RuntimeError",
+    "detail": "SEC rejected this network with HTTP 403; do not bypass Fair Access controls"
+  },
+  {
+    "observation_id": "dis-2023",
+    "error_type": "RuntimeError",
+    "detail": "SEC rejected this network with HTTP 403; do not bypass Fair Access controls"
+  },
+  {
+    "observation_id": "nflx-2021",
+    "error_type": "RuntimeError",
+    "detail": "SEC rejected this network with HTTP 403; do not bypass Fair Access controls"
+  },
+  {
+    "observation_id": "nflx-2022",
+    "error_type": "RuntimeError",
+    "detail": "SEC rejected this network with HTTP 403; do not bypass Fair Access controls"
+  },
+  {
+    "observation_id": "nflx-2023",
+    "error_type": "RuntimeError",
+    "detail": "SEC rejected this network with HTTP 403; do not bypass Fair Access controls"
+  },
+  {
+    "observation_id": "vz-2021",
+    "error_type": "RuntimeError",
+    "detail": "SEC rejected this network with HTTP 403; do not bypass Fair Access controls"
+  },
+  {
+    "observation_id": "vz-2022",
+    "error_type": "RuntimeError",
+    "detail": "SEC rejected this network with HTTP 403; do not bypass Fair Access controls"
+  },
+  {
+    "observation_id": "vz-2023",
+    "error_type": "RuntimeError",
+    "detail": "SEC rejected this network with HTTP 403; do not bypass Fair Access controls"
+  },
+  {
+    "observation_id": "tmus-2021",
+    "error_type": "RuntimeError",
+    "detail": "SEC rejected this network with HTTP 403; do not bypass Fair Access controls"
+  },
+  {
+    "observation_id": "tmus-2022",
+    "error_type": "RuntimeError",
+    "detail": "SEC rejected this network with HTTP 403; do not bypass Fair Access controls"
+  },
+  {
+    "observation_id": "tmus-2023",
+    "error_type": "RuntimeError",
+    "detail": "SEC rejected this network with HTTP 403; do not bypass Fair Access controls"
+  },
+  {
+    "observation_id": "amt-2021",
+    "error_type": "RuntimeError",
+    "detail": "SEC rejected this network with HTTP 403; do not bypass Fair Access controls"
+  },
+  {
+    "observation_id": "amt-2022",
+    "error_type": "RuntimeError",
+    "detail": "SEC rejected this network with HTTP 403; do not bypass Fair Access controls"
+  },
+  {
+    "observation_id": "amt-2023",
+    "error_type": "RuntimeError",
+    "detail": "SEC rejected this network with HTTP 403; do not bypass Fair Access controls"
+  },
+  {
+    "observation_id": "pld-2021",
+    "error_type": "RuntimeError",
+    "detail": "SEC rejected this network with HTTP 403; do not bypass Fair Access controls"
+  },
+  {
+    "observation_id": "pld-2022",
+    "error_type": "RuntimeError",
+    "detail": "SEC rejected this network with HTTP 403; do not bypass Fair Access controls"
+  },
+  {
+    "observation_id": "pld-2023",
+    "error_type": "RuntimeError",
+    "detail": "SEC rejected this network with HTTP 403; do not bypass Fair Access controls"
+  },
+  {
+    "observation_id": "nue-2021",
+    "error_type": "RuntimeError",
+    "detail": "SEC rejected this network with HTTP 403; do not bypass Fair Access controls"
+  },
+  {
+    "observation_id": "nue-2022",
+    "error_type": "RuntimeError",
+    "detail": "SEC rejected this network with HTTP 403; do not bypass Fair Access controls"
+  },
+  {
+    "observation_id": "nue-2023",
+    "error_type": "RuntimeError",
+    "detail": "SEC rejected this network with HTTP 403; do not bypass Fair Access controls"
+  },
+  {
+    "observation_id": "fcx-2021",
+    "error_type": "RuntimeError",
+    "detail": "SEC rejected this network with HTTP 403; do not bypass Fair Access controls"
+  },
+  {
+    "observation_id": "fcx-2022",
+    "error_type": "RuntimeError",
+    "detail": "SEC rejected this network with HTTP 403; do not bypass Fair Access controls"
+  },
+  {
+    "observation_id": "fcx-2023",
+    "error_type": "RuntimeError",
+    "detail": "SEC rejected this network with HTTP 403; do not bypass Fair Access controls"
+  }
+]

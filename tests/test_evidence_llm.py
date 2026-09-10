@@ -1,5 +1,5 @@
 from finrisk.contradictions import detect_contradictions
-from finrisk.domain import Evidence
+from finrisk.domain import Evidence, NarrativeClaim
 from finrisk.evidence import EvidenceVerifier
 from finrisk.llm import MockNarrativeProvider
 
@@ -26,7 +26,20 @@ def test_evidence_verification_rejects_hallucination():
 def test_mock_claim_and_contradiction():
     pages = {4: "Liquidity remains strong."}
     claims = MockNarrativeProvider().extract(pages, "x", 2025)
-    out = detect_contradictions(claims, {"cash_growth": -0.3, "current_ratio": 0.8})
+    claim = NarrativeClaim(
+        claims[0].claim,
+        claims[0].risk_category,
+        Evidence("x", 4, claims[0].claim, 2025, verification_status="verified"),
+        "positive",
+    )
+    out = detect_contradictions(
+        [claim],
+        {
+            "cash_growth": -0.3,
+            "current_ratio": 0.8,
+            "short_term_debt_growth": 0.3,
+        },
+    )
     assert len(out) == 1 and "not evidence of fraud" in out[0].interpretation
 
 

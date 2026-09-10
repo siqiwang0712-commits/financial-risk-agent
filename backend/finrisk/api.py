@@ -36,7 +36,7 @@ if FastAPI:
 
     app = FastAPI(
         title="FinRisk-Agent API",
-        version="0.2.0",
+        version="0.3.1",
         description="Three-layer evidence-grounded financial risk agent",
     )
     app.add_middleware(

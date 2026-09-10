@@ -1,0 +1,42 @@
+{
+  "experiment_id": "v0.3.1-E3",
+  "deterministic_replay": "PASS",
+  "artifacts": [
+    {
+      "artifact": "results.json",
+      "snapshot_hash": "2c6441b439f7213ddc7d78e4e2b8ac761828f45a286da997f8410266c8f4af22",
+      "replay_hash": "2c6441b439f7213ddc7d78e4e2b8ac761828f45a286da997f8410266c8f4af22",
+      "match": true
+    },
+    {
+      "artifact": "b0_predictions.json",
+      "snapshot_hash": "94aacfb7af5ab46fb2ad40e6fff2429116880ca1a4de9e86b31abbb00c95fca1",
+      "replay_hash": "94aacfb7af5ab46fb2ad40e6fff2429116880ca1a4de9e86b31abbb00c95fca1",
+      "match": true
+    },
+    {
+      "artifact": "b1_predictions.json",
+      "snapshot_hash": "a6abd8a5fd7410723763df0420d0b63f4272e98bfebbb54a0686945c483b8a3a",
+      "replay_hash": "a6abd8a5fd7410723763df0420d0b63f4272e98bfebbb54a0686945c483b8a3a",
+      "match": true
+    },
+    {
+      "artifact": "b2_predictions.json",
+      "snapshot_hash": "890c8e222d5bbb4c9bf0dfa3ef88b2bd35f2d9fd4669d9188b2f778a89fc5e26",
+      "replay_hash": "890c8e222d5bbb4c9bf0dfa3ef88b2bd35f2d9fd4669d9188b2f778a89fc5e26",
+      "match": true
+    },
+    {
+      "artifact": "b6_predictions.json",
+      "snapshot_hash": "fe3deb9f22f3430fdd66ed2785acd3d203a0a018166081ad3aed60f59b4b72f8",
+      "replay_hash": "fe3deb9f22f3430fdd66ed2785acd3d203a0a018166081ad3aed60f59b4b72f8",
+      "match": true
+    },
+    {
+      "artifact": "temporal_trajectories.json",
+      "snapshot_hash": "5b37dd52762687dbcc63cc5b07fe987307504b1e463e863d42ce55304de3bc31",
+      "replay_hash": "5b37dd52762687dbcc63cc5b07fe987307504b1e463e863d42ce55304de3bc31",
+      "match": true
+    }
+  ]
+}

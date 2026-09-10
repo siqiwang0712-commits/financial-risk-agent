@@ -93,6 +93,7 @@ def build_decision_trace(
     valid = sum(path["evidence_path_status"] == "VERIFIED" for path in paths)
     return {
         "decision": fusion.get("decision"),
+        "decision_reason_codes": fusion.get("reason_codes", []),
         "paths": paths,
         "verified_path_count": valid,
         "material_path_count": len(paths),

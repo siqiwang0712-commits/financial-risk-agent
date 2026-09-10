@@ -1,0 +1,91 @@
+observation_id,ticker,sector,fiscal_year,split,acquisition_status,annotation_status,included_in_benchmark
+aapl-2021,AAPL,Technology,2021,train,NOT AVAILABLE,pending,false
+aapl-2022,AAPL,Technology,2022,train,NOT AVAILABLE,pending,false
+aapl-2023,AAPL,Technology,2023,train,NOT AVAILABLE,pending,false
+msft-2021,MSFT,Technology,2021,train,NOT AVAILABLE,pending,false
+msft-2022,MSFT,Technology,2022,train,NOT AVAILABLE,pending,false
+msft-2023,MSFT,Technology,2023,train,NOT AVAILABLE,pending,false
+intc-2021,INTC,Semiconductors,2021,train,NOT AVAILABLE,pending,false
+intc-2022,INTC,Semiconductors,2022,train,NOT AVAILABLE,pending,false
+intc-2023,INTC,Semiconductors,2023,train,NOT AVAILABLE,pending,false
+f-2021,F,Automotive,2021,train,NOT AVAILABLE,pending,false
+f-2022,F,Automotive,2022,train,NOT AVAILABLE,pending,false
+f-2023,F,Automotive,2023,train,NOT AVAILABLE,pending,false
+gm-2021,GM,Automotive,2021,train,NOT AVAILABLE,pending,false
+gm-2022,GM,Automotive,2022,train,NOT AVAILABLE,pending,false
+gm-2023,GM,Automotive,2023,train,NOT AVAILABLE,pending,false
+dal-2021,DAL,Airlines,2021,train,NOT AVAILABLE,pending,false
+dal-2022,DAL,Airlines,2022,train,NOT AVAILABLE,pending,false
+dal-2023,DAL,Airlines,2023,train,NOT AVAILABLE,pending,false
+luv-2021,LUV,Airlines,2021,train,NOT AVAILABLE,pending,false
+luv-2022,LUV,Airlines,2022,train,NOT AVAILABLE,pending,false
+luv-2023,LUV,Airlines,2023,train,NOT AVAILABLE,pending,false
+wmt-2021,WMT,Retail,2021,train,NOT AVAILABLE,pending,false
+wmt-2022,WMT,Retail,2022,train,NOT AVAILABLE,pending,false
+wmt-2023,WMT,Retail,2023,train,NOT AVAILABLE,pending,false
+tgt-2021,TGT,Retail,2021,train,NOT AVAILABLE,pending,false
+tgt-2022,TGT,Retail,2022,train,NOT AVAILABLE,pending,false
+tgt-2023,TGT,Retail,2023,train,NOT AVAILABLE,pending,false
+wba-2021,WBA,Retail Pharmacy,2021,train,NOT AVAILABLE,pending,false
+wba-2022,WBA,Retail Pharmacy,2022,train,NOT AVAILABLE,pending,false
+wba-2023,WBA,Retail Pharmacy,2023,train,NOT AVAILABLE,pending,false
+pfe-2021,PFE,Pharmaceuticals,2021,train,NOT AVAILABLE,pending,false
+pfe-2022,PFE,Pharmaceuticals,2022,train,NOT AVAILABLE,pending,false
+pfe-2023,PFE,Pharmaceuticals,2023,train,NOT AVAILABLE,pending,false
+jnj-2021,JNJ,Pharmaceuticals,2021,train,NOT AVAILABLE,pending,false
+jnj-2022,JNJ,Pharmaceuticals,2022,train,NOT AVAILABLE,pending,false
+jnj-2023,JNJ,Pharmaceuticals,2023,train,NOT AVAILABLE,pending,false
+cvx-2021,CVX,Energy,2021,train,NOT AVAILABLE,pending,false
+cvx-2022,CVX,Energy,2022,train,NOT AVAILABLE,pending,false
+cvx-2023,CVX,Energy,2023,train,NOT AVAILABLE,pending,false
+oxy-2021,OXY,Energy,2021,train,NOT AVAILABLE,pending,false
+oxy-2022,OXY,Energy,2022,train,NOT AVAILABLE,pending,false
+oxy-2023,OXY,Energy,2023,train,NOT AVAILABLE,pending,false
+nee-2021,NEE,Utilities,2021,train,NOT AVAILABLE,pending,false
+nee-2022,NEE,Utilities,2022,train,NOT AVAILABLE,pending,false
+nee-2023,NEE,Utilities,2023,train,NOT AVAILABLE,pending,false
+aep-2021,AEP,Utilities,2021,train,NOT AVAILABLE,pending,false
+aep-2022,AEP,Utilities,2022,train,NOT AVAILABLE,pending,false
+aep-2023,AEP,Utilities,2023,train,NOT AVAILABLE,pending,false
+cat-2021,CAT,Industrials,2021,train,NOT AVAILABLE,pending,false
+cat-2022,CAT,Industrials,2022,train,NOT AVAILABLE,pending,false
+cat-2023,CAT,Industrials,2023,train,NOT AVAILABLE,pending,false
+ba-2021,BA,Aerospace,2021,train,NOT AVAILABLE,pending,false
+ba-2022,BA,Aerospace,2022,train,NOT AVAILABLE,pending,false
+ba-2023,BA,Aerospace,2023,train,NOT AVAILABLE,pending,false
+ups-2021,UPS,Logistics,2021,validation,NOT AVAILABLE,pending,false
+ups-2022,UPS,Logistics,2022,validation,NOT AVAILABLE,pending,false
+ups-2023,UPS,Logistics,2023,validation,NOT AVAILABLE,pending,false
+fdx-2021,FDX,Logistics,2021,validation,NOT AVAILABLE,pending,false
+fdx-2022,FDX,Logistics,2022,validation,NOT AVAILABLE,pending,false
+fdx-2023,FDX,Logistics,2023,validation,NOT AVAILABLE,pending,false
+ko-2021,KO,Consumer Staples,2021,validation,NOT AVAILABLE,pending,false
+ko-2022,KO,Consumer Staples,2022,validation,NOT AVAILABLE,pending,false
+ko-2023,KO,Consumer Staples,2023,validation,NOT AVAILABLE,pending,false
+khc-2021,KHC,Consumer Staples,2021,validation,NOT AVAILABLE,pending,false
+khc-2022,KHC,Consumer Staples,2022,validation,NOT AVAILABLE,pending,false
+khc-2023,KHC,Consumer Staples,2023,validation,NOT AVAILABLE,pending,false
+dis-2021,DIS,Media,2021,validation,NOT AVAILABLE,pending,false
+dis-2022,DIS,Media,2022,validation,NOT AVAILABLE,pending,false
+dis-2023,DIS,Media,2023,validation,NOT AVAILABLE,pending,false
+nflx-2021,NFLX,Media,2021,validation,NOT AVAILABLE,pending,false
+nflx-2022,NFLX,Media,2022,validation,NOT AVAILABLE,pending,false
+nflx-2023,NFLX,Media,2023,validation,NOT AVAILABLE,pending,false
+vz-2021,VZ,Telecommunications,2021,test,NOT AVAILABLE,pending,false
+vz-2022,VZ,Telecommunications,2022,test,NOT AVAILABLE,pending,false
+vz-2023,VZ,Telecommunications,2023,test,NOT AVAILABLE,pending,false
+tmus-2021,TMUS,Telecommunications,2021,test,NOT AVAILABLE,pending,false
+tmus-2022,TMUS,Telecommunications,2022,test,NOT AVAILABLE,pending,false
+tmus-2023,TMUS,Telecommunications,2023,test,NOT AVAILABLE,pending,false
+amt-2021,AMT,Real Estate,2021,test,NOT AVAILABLE,pending,false
+amt-2022,AMT,Real Estate,2022,test,NOT AVAILABLE,pending,false
+amt-2023,AMT,Real Estate,2023,test,NOT AVAILABLE,pending,false
+pld-2021,PLD,Real Estate,2021,test,NOT AVAILABLE,pending,false
+pld-2022,PLD,Real Estate,2022,test,NOT AVAILABLE,pending,false
+pld-2023,PLD,Real Estate,2023,test,NOT AVAILABLE,pending,false
+nue-2021,NUE,Materials,2021,test,NOT AVAILABLE,pending,false
+nue-2022,NUE,Materials,2022,test,NOT AVAILABLE,pending,false
+nue-2023,NUE,Materials,2023,test,NOT AVAILABLE,pending,false
+fcx-2021,FCX,Materials,2021,test,NOT AVAILABLE,pending,false
+fcx-2022,FCX,Materials,2022,test,NOT AVAILABLE,pending,false
+fcx-2023,FCX,Materials,2023,test,NOT AVAILABLE,pending,false

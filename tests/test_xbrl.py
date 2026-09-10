@@ -45,6 +45,18 @@ def test_sec_cache_is_hash_verified(tmp_path):
     with pytest.raises(ValueError,match="hash mismatch"):client.get_json("https://example.invalid","sample")
 
 
+def test_sec_binary_cache_is_hash_verified(tmp_path):
+    raw = b"<html>inline xbrl</html>"
+    cache = tmp_path / "filing.bin"
+    cache.write_bytes(raw)
+    cache.with_suffix(".sha256").write_text(hashlib.sha256(raw).hexdigest(), encoding="ascii")
+    client = SecClient("FinRisk test@example.com", tmp_path)
+    assert client.get_bytes("https://example.invalid", "filing") == raw
+    cache.write_bytes(b"changed")
+    with pytest.raises(ValueError, match="hash mismatch"):
+        client.get_bytes("https://example.invalid", "filing")
+
+
 def test_companyfacts_preserves_and_prefers_authoritative_unit():
     payload = fixture()
     payload["facts"]["us-gaap"]["Assets"]["units"]["EUR"] = [

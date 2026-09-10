@@ -100,6 +100,10 @@ class FusionResult:
     disagreement: float
     drivers: list[str]
     rationale: str
+    evidence_quality: float = 0.0
+    reliability: float | None = None
+    reliability_status: str = "UNCALIBRATED"
+    reason_codes: list[str] = field(default_factory=list)
 
 
 @dataclass

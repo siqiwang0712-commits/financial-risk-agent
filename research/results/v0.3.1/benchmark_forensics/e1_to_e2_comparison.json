@@ -1,0 +1,113 @@
+{
+  "e1": {
+    "experiment_id": "v0.3.1-E1-diagnostic",
+    "labels": {
+      "verified": 39,
+      "positive": 7,
+      "negative": 32,
+      "review_required": 6,
+      "insufficient_data": 45
+    }
+  },
+  "e2": {
+    "experiment_id": "v0.3.1-E2",
+    "labels": {
+      "verified": 39,
+      "positive": 8,
+      "negative": 31,
+      "review_required": 6,
+      "insufficient_data": 45
+    }
+  },
+  "metric_changes": [
+    {
+      "baseline": "B0",
+      "e1_auroc": 0.1,
+      "e2_auroc": 0.1,
+      "delta_auroc": 0.0,
+      "e1_pr_auc": 0.2,
+      "e2_pr_auc": 0.2,
+      "e1_recall": 0.0,
+      "e2_recall": 0.0,
+      "e1_balanced_accuracy": 0.5,
+      "e2_balanced_accuracy": 0.5,
+      "e1_fnr": 1.0,
+      "e2_fnr": 1.0
+    },
+    {
+      "baseline": "B1",
+      "e1_auroc": 0.0,
+      "e2_auroc": 0.2,
+      "delta_auroc": 0.2,
+      "e1_pr_auc": 0.16666666666666666,
+      "e2_pr_auc": 0.2,
+      "e1_recall": 0.0,
+      "e2_recall": 0.0,
+      "e1_balanced_accuracy": 0.3,
+      "e2_balanced_accuracy": 0.4,
+      "e1_fnr": 1.0,
+      "e2_fnr": 1.0
+    },
+    {
+      "baseline": "B2",
+      "e1_auroc": 0.0,
+      "e2_auroc": 0.1,
+      "delta_auroc": 0.1,
+      "e1_pr_auc": 0.16666666666666666,
+      "e2_pr_auc": 0.2,
+      "e1_recall": 0.0,
+      "e2_recall": 0.0,
+      "e1_balanced_accuracy": 0.1,
+      "e2_balanced_accuracy": 0.1,
+      "e1_fnr": 1.0,
+      "e2_fnr": 1.0
+    },
+    {
+      "baseline": "B6",
+      "e1_auroc": 0.0,
+      "e2_auroc": 0.1,
+      "delta_auroc": 0.1,
+      "e1_pr_auc": 0.16666666666666666,
+      "e2_pr_auc": 0.2,
+      "e1_recall": 0.0,
+      "e2_recall": 0.0,
+      "e1_balanced_accuracy": 0.5,
+      "e2_balanced_accuracy": 0.5,
+      "e1_fnr": 1.0,
+      "e2_fnr": 1.0
+    }
+  ],
+  "e2_positive_ranks": {
+    "B0": {
+      "score": 0.0,
+      "best_rank": 5,
+      "worst_rank": 6
+    },
+    "B1": {
+      "score": 0.000540226762261147,
+      "best_rank": 5,
+      "worst_rank": 5
+    },
+    "B2": {
+      "score": 0.0,
+      "best_rank": 5,
+      "worst_rank": 6
+    },
+    "B6": {
+      "score": 0.0,
+      "best_rank": 5,
+      "worst_rank": 6
+    }
+  },
+  "change_attribution": [
+    "Added SEC taxonomy-equivalent PaymentsToAcquireProductiveAssets for CapEx.",
+    "Resolved the frozen two-subsequent-reported-period FCF condition from PIT-safe 10-Q/10-K rows.",
+    "Replaced field-count sufficiency with per-condition TRUE/FALSE/UNKNOWN logic.",
+    "Excluded single-class bootstrap replicates and suppresses CI under inadequate cluster/class power."
+  ],
+  "performance_optimization": false,
+  "thresholds_changed": false,
+  "cohort_changed": false,
+  "conclusion": "Correctness changed label composition and some rankings; recall remains zero and superiority is not established.",
+  "comparison_hash": "fc66e6fed23d14e4c01ce004c6733b509ce2164604939b80e38cfbac3da1959a"
+}

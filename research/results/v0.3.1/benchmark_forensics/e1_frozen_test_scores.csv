@@ -1,0 +1,25 @@
+baseline,ordinal,best_rank,worst_rank,tie_count,observation_id,company_id,label,split,score,prediction,triggered_rules
+B0,1,1,2,2,vz-2021,VZ,0,test,0.25,0,
+B0,2,1,2,2,vz-2022,VZ,0,test,0.25,0,
+B0,3,3,4,2,amt-2021,AMT,0,test,0.2,0,
+B0,4,3,4,2,tmus-2022,TMUS,0,test,0.2,0,
+B0,5,5,6,2,nue-2022,NUE,1,test,0.0,0,
+B0,6,5,6,2,pld-2022,PLD,0,test,0.0,0,
+B1,1,1,1,1,pld-2022,PLD,0,test,0.9979972243663924,1,
+B1,2,2,2,1,vz-2022,VZ,0,test,0.8675899296282625,1,
+B1,3,3,3,1,vz-2021,VZ,0,test,0.3642801553297002,0,
+B1,4,4,4,1,amt-2021,AMT,0,test,0.21615984853450138,0,
+B1,5,5,5,1,tmus-2022,TMUS,0,test,0.0023229722751009004,0,
+B1,6,6,6,1,nue-2022,NUE,1,test,0.0013132159168234984,0,
+B2,1,1,1,1,vz-2022,VZ,0,test,0.75,1,"['LIQ_001', 'LIQ_002', 'LIQ_003', 'LIQ_004', 'LIQ_005', 'SOL_007']"
+B2,2,2,2,1,tmus-2022,TMUS,0,test,0.67,1,"['LIQ_001', 'LIQ_002', 'LIQ_003', 'LIQ_005', 'LIQ_006']"
+B2,3,3,3,1,vz-2021,VZ,0,test,0.65,1,"['LIQ_001', 'LIQ_002', 'LIQ_003', 'LIQ_004', 'LIQ_005']"
+B2,4,4,4,1,amt-2021,AMT,0,test,0.59,1,"['LIQ_001', 'LIQ_002', 'LIQ_005', 'SOL_003']"
+B2,5,5,5,1,pld-2022,PLD,0,test,0.1,0,['LIQ_006']
+B2,6,6,6,1,nue-2022,NUE,1,test,0.0,0,[]
+B6,1,1,2,2,vz-2021,VZ,0,test,0.25,0,
+B6,2,1,2,2,vz-2022,VZ,0,test,0.25,0,
+B6,3,3,3,1,tmus-2022,TMUS,0,test,0.21250000000000002,0,
+B6,4,4,4,1,amt-2021,AMT,0,test,0.2,0,
+B6,5,5,5,1,pld-2022,PLD,0,test,0.08333333333333333,0,
+B6,6,6,6,1,nue-2022,NUE,1,test,0.0,0,

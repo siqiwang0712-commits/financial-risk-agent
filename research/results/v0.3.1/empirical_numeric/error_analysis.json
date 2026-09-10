@@ -1,0 +1,73 @@
+{
+  "B0": [
+    {
+      "observation_id": "nue-2022",
+      "error_type": "FN",
+      "category": "NUMERIC_OVERWEIGHT",
+      "evidence_ids": [],
+      "review_status": "machine_generated_pending_review"
+    }
+  ],
+  "B1": [
+    {
+      "observation_id": "nue-2022",
+      "error_type": "FN",
+      "category": "NUMERIC_OVERWEIGHT",
+      "evidence_ids": [],
+      "review_status": "machine_generated_pending_review"
+    },
+    {
+      "observation_id": "vz-2022",
+      "error_type": "FP",
+      "category": "NUMERIC_OVERWEIGHT",
+      "evidence_ids": [],
+      "review_status": "machine_generated_pending_review"
+    }
+  ],
+  "B2": [
+    {
+      "observation_id": "amt-2021",
+      "error_type": "FP",
+      "category": "RULE_THRESHOLD",
+      "evidence_ids": [],
+      "review_status": "machine_generated_pending_review"
+    },
+    {
+      "observation_id": "nue-2022",
+      "error_type": "FN",
+      "category": "RULE_THRESHOLD",
+      "evidence_ids": [],
+      "review_status": "machine_generated_pending_review"
+    },
+    {
+      "observation_id": "tmus-2022",
+      "error_type": "FP",
+      "category": "RULE_THRESHOLD",
+      "evidence_ids": [],
+      "review_status": "machine_generated_pending_review"
+    },
+    {
+      "observation_id": "vz-2021",
+      "error_type": "FP",
+      "category": "RULE_THRESHOLD",
+      "evidence_ids": [],
+      "review_status": "machine_generated_pending_review"
+    },
+    {
+      "observation_id": "vz-2022",
+      "error_type": "FP",
+      "category": "RULE_THRESHOLD",
+      "evidence_ids": [],
+      "review_status": "machine_generated_pending_review"
+    }
+  ],
+  "B6": [
+    {
+      "observation_id": "nue-2022",
+      "error_type": "FN",
+      "category": "TEMPORAL_ERROR",
+      "evidence_ids": [],
+      "review_status": "machine_generated_pending_review"
+    }
+  ]
+}

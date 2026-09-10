@@ -62,7 +62,7 @@ def test_fusion_is_failure_aware_and_not_probability():
         weighted_average(scores, {"liquidity": 1, "cash_flow": 1}, 0.8, 0.9).score == 55
     )
     assert max_severity(scores, 0.8, 0.9).score == 85
-    assert hierarchical_escalation(scores, 0.8, 0.9).decision == "FLAG"
+    assert hierarchical_escalation(scores, 0.8, 0.9).decision == "REVIEW"
     assert (
         interaction_aware({"liquidity": 70, "solvency_leverage": 60}, 0.8, 0.9).score
         == 73

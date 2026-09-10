@@ -1,0 +1,314 @@
+[
+  {
+    "observation_id": "aapl-2021",
+    "company_id": "AAPL",
+    "label": 0,
+    "split": "train",
+    "score": 0.0,
+    "prediction": 0
+  },
+  {
+    "observation_id": "aep-2021",
+    "company_id": "AEP",
+    "label": 0,
+    "split": "train",
+    "score": 0.25,
+    "prediction": 0
+  },
+  {
+    "observation_id": "amt-2021",
+    "company_id": "AMT",
+    "label": 0,
+    "split": "test",
+    "score": 0.2,
+    "prediction": 0
+  },
+  {
+    "observation_id": "ba-2021",
+    "company_id": "BA",
+    "label": 0,
+    "split": "train",
+    "score": 0.4,
+    "prediction": 0
+  },
+  {
+    "observation_id": "cat-2021",
+    "company_id": "CAT",
+    "label": 0,
+    "split": "train",
+    "score": 0.0,
+    "prediction": 0
+  },
+  {
+    "observation_id": "cvx-2021",
+    "company_id": "CVX",
+    "label": 0,
+    "split": "train",
+    "score": 0.0,
+    "prediction": 0
+  },
+  {
+    "observation_id": "dal-2021",
+    "company_id": "DAL",
+    "label": 0,
+    "split": "train",
+    "score": 0.3333333333333333,
+    "prediction": 0
+  },
+  {
+    "observation_id": "dis-2022",
+    "company_id": "DIS",
+    "label": 0,
+    "split": "validation",
+    "score": 0.0,
+    "prediction": 0
+  },
+  {
+    "observation_id": "f-2021",
+    "company_id": "F",
+    "label": 1,
+    "split": "train",
+    "score": 0.0,
+    "prediction": 0
+  },
+  {
+    "observation_id": "fdx-2021",
+    "company_id": "FDX",
+    "label": 0,
+    "split": "validation",
+    "score": 0.0,
+    "prediction": 0
+  },
+  {
+    "observation_id": "fdx-2022",
+    "company_id": "FDX",
+    "label": 0,
+    "split": "validation",
+    "score": 0.0,
+    "prediction": 0
+  },
+  {
+    "observation_id": "gm-2021",
+    "company_id": "GM",
+    "label": 0,
+    "split": "train",
+    "score": 0.0,
+    "prediction": 0
+  },
+  {
+    "observation_id": "gm-2022",
+    "company_id": "GM",
+    "label": 0,
+    "split": "train",
+    "score": 0.0,
+    "prediction": 0
+  },
+  {
+    "observation_id": "intc-2021",
+    "company_id": "INTC",
+    "label": 1,
+    "split": "train",
+    "score": 0.0,
+    "prediction": 0
+  },
+  {
+    "observation_id": "intc-2022",
+    "company_id": "INTC",
+    "label": 1,
+    "split": "train",
+    "score": 0.2,
+    "prediction": 0
+  },
+  {
+    "observation_id": "jnj-2021",
+    "company_id": "JNJ",
+    "label": 0,
+    "split": "train",
+    "score": 0.0,
+    "prediction": 0
+  },
+  {
+    "observation_id": "khc-2022",
+    "company_id": "KHC",
+    "label": 0,
+    "split": "validation",
+    "score": 0.3333333333333333,
+    "prediction": 0
+  },
+  {
+    "observation_id": "ko-2021",
+    "company_id": "KO",
+    "label": 0,
+    "split": "validation",
+    "score": 0.0,
+    "prediction": 0
+  },
+  {
+    "observation_id": "ko-2022",
+    "company_id": "KO",
+    "label": 0,
+    "split": "validation",
+    "score": 0.0,
+    "prediction": 0
+  },
+  {
+    "observation_id": "luv-2021",
+    "company_id": "LUV",
+    "label": 0,
+    "split": "train",
+    "score": 0.0,
+    "prediction": 0
+  },
+  {
+    "observation_id": "luv-2022",
+    "company_id": "LUV",
+    "label": 0,
+    "split": "train",
+    "score": 0.0,
+    "prediction": 0
+  },
+  {
+    "observation_id": "msft-2021",
+    "company_id": "MSFT",
+    "label": 0,
+    "split": "train",
+    "score": 0.0,
+    "prediction": 0
+  },
+  {
+    "observation_id": "msft-2022",
+    "company_id": "MSFT",
+    "label": 0,
+    "split": "train",
+    "score": 0.0,
+    "prediction": 0
+  },
+  {
+    "observation_id": "nee-2021",
+    "company_id": "NEE",
+    "label": 0,
+    "split": "train",
+    "score": 0.3333333333333333,
+    "prediction": 0
+  },
+  {
+    "observation_id": "nee-2022",
+    "company_id": "NEE",
+    "label": 0,
+    "split": "train",
+    "score": 0.3333333333333333,
+    "prediction": 0
+  },
+  {
+    "observation_id": "nflx-2021",
+    "company_id": "NFLX",
+    "label": 0,
+    "split": "validation",
+    "score": 0.6,
+    "prediction": 1
+  },
+  {
+    "observation_id": "nflx-2022",
+    "company_id": "NFLX",
+    "label": 0,
+    "split": "validation",
+    "score": 0.2,
+    "prediction": 0
+  },
+  {
+    "observation_id": "nue-2022",
+    "company_id": "NUE",
+    "label": 1,
+    "split": "test",
+    "score": 0.0,
+    "prediction": 0
+  },
+  {
+    "observation_id": "oxy-2022",
+    "company_id": "OXY",
+    "label": 1,
+    "split": "train",
+    "score": 0.0,
+    "prediction": 0
+  },
+  {
+    "observation_id": "pfe-2021",
+    "company_id": "PFE",
+    "label": 0,
+    "split": "train",
+    "score": 0.0,
+    "prediction": 0
+  },
+  {
+    "observation_id": "pfe-2022",
+    "company_id": "PFE",
+    "label": 1,
+    "split": "train",
+    "score": 0.0,
+    "prediction": 0
+  },
+  {
+    "observation_id": "pld-2022",
+    "company_id": "PLD",
+    "label": 0,
+    "split": "test",
+    "score": 0.0,
+    "prediction": 0
+  },
+  {
+    "observation_id": "tmus-2022",
+    "company_id": "TMUS",
+    "label": 0,
+    "split": "test",
+    "score": 0.2,
+    "prediction": 0
+  },
+  {
+    "observation_id": "ups-2021",
+    "company_id": "UPS",
+    "label": 0,
+    "split": "validation",
+    "score": 0.0,
+    "prediction": 0
+  },
+  {
+    "observation_id": "vz-2021",
+    "company_id": "VZ",
+    "label": 0,
+    "split": "test",
+    "score": 0.25,
+    "prediction": 0
+  },
+  {
+    "observation_id": "vz-2022",
+    "company_id": "VZ",
+    "label": 0,
+    "split": "test",
+    "score": 0.25,
+    "prediction": 0
+  },
+  {
+    "observation_id": "wba-2022",
+    "company_id": "WBA",
+    "label": 1,
+    "split": "train",
+    "score": 0.2,
+    "prediction": 0
+  },
+  {
+    "observation_id": "wmt-2021",
+    "company_id": "WMT",
+    "label": 0,
+    "split": "train",
+    "score": 0.2,
+    "prediction": 0
+  },
+  {
+    "observation_id": "wmt-2022",
+    "company_id": "WMT",
+    "label": 0,
+    "split": "train",
+    "score": 0.2,
+    "prediction": 0
+  }
+]

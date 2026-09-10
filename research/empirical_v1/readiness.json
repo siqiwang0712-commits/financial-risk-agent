@@ -1,0 +1,11 @@
+{
+  "AGENT_READY": "BLOCKED_EXTERNAL_DEPENDENCY",
+  "DOCUMENT_READY": "INSUFFICIENT_DATA",
+  "EVIDENCE_READY": "INSUFFICIENT_DATA",
+  "LABEL_READY": "VERIFIED",
+  "NUMERIC_READY": "VERIFIED",
+  "TEMPORAL_READY": "VERIFIED",
+  "labelled_observations": 42,
+  "numeric_observations": 90,
+  "temporal_companies": 30
+}

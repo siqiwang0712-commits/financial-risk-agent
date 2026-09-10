@@ -26,6 +26,14 @@ The next locked protocol targets approximately 30 companies × 3 fiscal years. I
 Four experiment families are pre-registered: component reliability; risk-fusion comparison with false-negative/risk-dilution analysis; counterfactual robustness to rhetoric, numeric fundamentals, company masking, units/years, missing and conflicting evidence; and selective prediction performance-versus-coverage. Code-only, LLM-only, LLM+Tools and Full Agent must receive the same available data and deterministic tools. Latency, tokens, cost, schema failure and unsupported claims are reported alongside predictive metrics. No result is claimed until artifacts are executed and checked in.
 ## FinRisk Evaluation Corpus v1 target
 
+The executable foundation is under `research/empirical_v1`. Its fixed configuration comparison is B0 Ratios Only, B1 Logistic Regression, B2 Rules Only, B3 LLM Only, B4 Existing Hybrid, B5 + Evidence Verification, B6 + Temporal Risk, B7 + Selective Prediction and B8 + Critic/Verifier. Every configuration receives the same observation and PIT-admitted information set.
+
+Before any benchmark, the mandatory gate checks schema completeness, SHA-256 provenance, unique observations/accessions, company-disjoint splits, evidence/filing/restatement availability, outcome leakage and label independence. A failure stops execution; missing inputs never become zeros or synthetic substitutes.
+
+Primary reporting will include AUROC, PR-AUC, F1, recall, balanced accuracy, false-negative rate, coverage/abstention, risk-coverage curves, evidence precision/coverage, unsupported claims, tension performance, latency, tokens and cost. Differences use company-clustered bootstrap confidence intervals. Superiority is reported only when the interval supports it. Brier/ECE probability interpretation is disabled for case-control or outcome-balanced sampling.
+
+Current execution status: **NOT RUN**. The local status report is reproducible with `python scripts/run_empirical_validation.py --allow-not-available`; that flag records the blocker and exits successfully but does not run models.
+
 The registered target remains approximately 30 non-financial US public companies × 3 reporting periods. Each company stays in exactly one split. Every period records filing availability time, source hashes and label availability so no future filing, outcome or restatement leaks into prediction time.
 
 Labels require reviewer A, reviewer B, disagreement state and adjudication. Report inter-rater agreement before adjudication and use company-clustered bootstrap intervals. Until dual review and public-source acquisition are complete, corpus-scale results remain `NOT RUN`.

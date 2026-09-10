@@ -36,6 +36,7 @@ from finrisk.enterprise.evidence_graph import (
     TemporalEvidenceGraph,
 )
 from finrisk.enterprise.governance import compare_system_versions
+from finrisk.enterprise.integrity import CalibrationStatus
 from finrisk.enterprise.service import EnterpriseRiskService
 from finrisk.enterprise.temporal import (
     EntityRiskState,
@@ -124,8 +125,8 @@ def test_calibration_and_selective_automation():
     curve = risk_coverage_curve(labels, probabilities, [0.5, 0.9])
     assert curve[-1]["coverage"] == 0.5
     assert selective_decision("PASS", 0.2, 0.9, 0.1, {})["decision"] == "ABSTAIN"
-    assert selective_decision("PASS", 0.9, 0.5, 0.1, {})["decision"] == "REVIEW"
-    assert selective_decision("PASS", 0.9, 0.9, 0.1, {})["automation_allowed"]
+    assert selective_decision("PASS", 0.9, 0.5, 0.1, {}, CalibrationStatus.CALIBRATED_INTERNAL)["decision"] == "REVIEW"
+    assert selective_decision("PASS", 0.9, 0.9, 0.1, {}, CalibrationStatus.CALIBRATED_INTERNAL)["automation_allowed"]
     with pytest.raises(ValueError):
         brier_score([], [])
 
@@ -240,6 +241,8 @@ def test_temporal_applicability_and_selective_api_flow():
         f"/api/v1/enterprise/entities/{entity['id']}/risk-timeline", headers=headers
     ).json()
     assert timeline[1]["delta"]["score_change"] == 15
+    assert timeline[0]["reliability"] is None
+    assert timeline[0]["calibration_status"] == "UNCALIBRATED"
     applicability = client.post(
         "/api/v1/enterprise/applicability",
         headers=headers,

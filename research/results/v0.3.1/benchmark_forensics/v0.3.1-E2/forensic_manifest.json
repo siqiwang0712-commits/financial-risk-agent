@@ -1,0 +1,25 @@
+{
+  "artifact_hashes": {
+    "b0_predictions.json": "4a149400d0b2566fa9f0859f9267e3032f6c5756e598fe7ef700649519734e06",
+    "b1_predictions.json": "e8dc3829428b3fdf096cb2747bc1c70f9582888967fdbf50102a6c4c56123f14",
+    "b2_predictions.json": "f6b82a23a1426c999e4df008110b434dd08f1febbfd8dd7e9522f4bcfbfec923",
+    "b6_predictions.json": "85969f666db701e7f4f125e1fe68c973e0dc9a9f2ac3ee787bed1d6bde971529",
+    "corpus_manifest.json": "a07429f0559be6fbdc318014dec0f3abd7819ffd448e75074ed80f796467ca7a",
+    "deterioration_labels.json": "bfdbb7ce1e5eff51b020bba869f0afe0074cfc8bf1df88793c41489a7c5bde6b",
+    "experiment_manifest.json": "851b1ef0839b7e2319acf02aaccc495bcb85a8cdaf054adbbf23e43aadcb0a86",
+    "integrity_report.json": "cc1c4b77afe5eec3199b429b13d279ed6782109e2bc1ea494ee78b5194adafc4",
+    "results.json": "caf6ac6665627b80150b36b8e3060ff2b0b8ae448d6adceaf5021a75f11b30dd",
+    "temporal_trajectories.json": "5b37dd52762687dbcc63cc5b07fe987307504b1e463e863d42ce55304de3bc31"
+  },
+  "configuration_hashes": {
+    "label_schema": "272933b97207486d9edc1bef73175b6d27f983f0e9c0f4424af8b1aa3ffac72f",
+    "numeric_model_code": "289f3475417bec6244c5a41b8e37261d2c2164c6b81dd1983dc9b9b9debf1e79",
+    "rules": "a8de4b4d7e73a3e23940240e9ee54ae4a997f4f93c6b80fa71b0e7cd9f1d41a3",
+    "runner_code": "e0c70e0ed2a95d0884bf0239216363c156d3baeeb6d619759a4543a2677863c8"
+  },
+  "created_at": "2026-09-09T15:27:13.376840Z",
+  "experiment_id": "v0.3.1-E2",
+  "immutable": true,
+  "manifest_hash": "52675cb828f05d857fb3677bbc02c48ce79ae1bba1d3b872fd8562ebae21de93",
+  "overwrite_policy": "FAIL_IF_EXISTS"
+}

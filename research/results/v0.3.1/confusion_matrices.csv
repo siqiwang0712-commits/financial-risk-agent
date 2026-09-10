@@ -1,0 +1,6 @@
+baseline,tn,fp,fn,tp
+llm_only,2,0,1,0
+ratios_only,2,0,0,1
+rule_engine,1,1,0,1
+traditional_models,0,2,0,1
+full_hybrid,1,0,1,0

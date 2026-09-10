@@ -10,8 +10,8 @@
 [![Python 3.11+](https://img.shields.io/badge/Python-3.11%2B-3776AB?logo=python&logoColor=white)](https://www.python.org/)
 [![FastAPI](https://img.shields.io/badge/API-FastAPI-009688?logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com/)
 [![Next.js](https://img.shields.io/badge/UI-Next.js-111111?logo=next.js&logoColor=white)](https://nextjs.org/)
-[![Tests](https://img.shields.io/badge/tests-80%20passed-2f855a)](#verification)
-[![Coverage](https://img.shields.io/badge/coverage-92.93%25-2f855a)](#verification)
+[![Tests](https://img.shields.io/badge/tests-123%20passed-2f855a)](#verification)
+[![Coverage](https://img.shields.io/badge/coverage-90.76%25-2f855a)](#verification)
 [![License](https://img.shields.io/badge/license-MIT-d45b3e)](LICENSE)
 
 **An evidence-grounded financial risk platform where an LLM plans and interprets, deterministic financial tools execute, and every material conclusion must trace back to verified evidence.**
@@ -21,7 +21,60 @@
 </div>
 
 > [!IMPORTANT]
-> **Risk ≠ confidence ≠ evidence coverage ≠ disagreement.** FinRisk's 0–100 risk index is an expert-designed heuristic, not a bankruptcy probability, credit rating, fraud finding, or investment recommendation.
+> **Risk severity ≠ evidence coverage ≠ evidence quality ≠ model disagreement ≠ reliability ≠ probability.** FinRisk's 0–100 risk index is an expert-designed heuristic, not a bankruptcy probability, credit rating, fraud finding, or investment recommendation. Reliability is `UNCALIBRATED` unless a pinned held-out calibration run establishes otherwise.
+
+## v0.3.1 — Decision Integrity & Research Readiness
+
+This local hardening release makes the existing architecture stricter without adding new product domains:
+
+- non-compensatory, coverage-aware fusion prevents severe supported dimensions from being averaged away;
+- missing dimensions remain unknown rather than entering fusion as zero;
+- evidence IDs are de-duplicated before contributing and adverse-evidence monotonicity is regression-tested;
+- narrative checks are claim-conditioned: target, direction, horizon, basis, qualifiers and required evidence constructs are validated before contradiction classification;
+- API, Workbench and DecisionBundle expose calibration maturity and never present the evidence-quality index as a correctness probability;
+- XBRL, rules, models, narrative, Critic, Verifier and fusion record observed component deltas for replay—a telemetry foundation, not a Value-of-Information estimator.
+
+Machine-readable reason codes include `SEVERE_VERIFIED_SIGNAL`, `INSUFFICIENT_EVIDENCE`, `CLAIM_CONTEXT_INCOMPLETE`, `HIGH_MODEL_DISAGREEMENT`, `UNVALIDATED_RELIABILITY` and `CRITICAL_DIMENSION_ESCALATION`.
+
+The independently written replay artifacts live under [`research/results/v0.3.1`](research/results/v0.3.1). The frozen `public_v1` directory is not overwritten. **v0.3.1 improves decision integrity and research readiness, but does not establish real-world predictive superiority.**
+
+### Empirical Validation Foundation (local numeric run)
+
+The pre-registered 30-company registry is expanded into a deterministic 30 × 3 plan with an 18/6/6 company-disjoint train/validation/frozen-test split. Sixteen official SEC 2021Q1–2024Q4 Financial Statement Data Set ZIPs produce all 90 filing-level feature observations. E3 separates future annual filings into a label-only outcome pool: outcome facts are admitted only after each observation cutoff and never enter features. The PIT gate passes with zero company overlap and zero detected future leakage. The frozen calendar-12-month endpoint yields 42 verified labels (34 negative, 8 positive), 6 review-required cases and 42 insufficient observations: 17 next annual filings are genuinely outside the fixed window and 25 are explicitly right-censored by the available archive horizon. Missing outcomes are never imputed.
+
+The immutable E3 numeric experiment evaluated six labelled test observations from five held-out companies, with one positive endpoint. AUROC was 0.100 for B0, 0.200 for B1, 0.100 for B2 and 0.100 for B6. Every baseline missed the positive case at its frozen threshold (FNR 1.0). Of 1,000 company-clustered bootstrap replicates, 691 retained both classes and 309 were invalid; the CI is deliberately reported `CI_NOT_ESTIMABLE` because class/cluster power is inadequate. This is a negative, underpowered result—not evidence of predictive superiority or probability calibration. E1 and E2 remain immutable audit artifacts; E3 deterministic replay matches all six frozen result/prediction artifacts byte-for-byte.
+
+The implementation nevertheless makes the eventual run auditable and fail-closed:
+
+- `PointInTimeGuard` rejects evidence made public after an observation cutoff, including later restatements.
+- Dataset integrity stops on company overlap, future leakage, duplicate filings, invalid hashes, schema errors or system-generated labels.
+- Forward labels are frozen independently of FinRisk output: objective 12-month distress and a secondary rule-defined deterioration endpoint.
+- Experiment manifests pin dataset/split/rules/models/fusion/prompt/labels/seed/git revision; incomplete inputs cannot create an immutable freeze.
+- Statistical tooling includes ranking/classification metrics, selective coverage and company-clustered bootstrap deltas. Case-control samples are explicitly `RANKING_ONLY`, not population PD calibration.
+
+After installing the package locally, the single validation gate is:
+
+```bash
+python scripts/prepare_empirical_foundation.py
+python scripts/run_empirical_validation.py
+```
+
+The second command exits non-zero until the relevant corpus integrity gate passes. `--allow-not-available` is only for CI/status reporting; it never runs a benchmark. Readiness is capability-scoped: missing documents/LLM access cannot block numeric B0/B1/B2/B6 once numeric observations and forward labels exist.
+
+SEC acquisition now has three explicit routes: official `companyfacts.zip` or Financial Statement Data Set ZIPs, a local/offline cache, and the rate-limited live API fallback. Raw bulk files are intentionally Git-ignored. To import official bulk data and run the numeric baselines:
+
+```powershell
+# Place companyfacts.zip OR quarterly SEC Financial Statement Data Set ZIPs here.
+New-Item -ItemType Directory -Force data/sec-bulk
+python scripts/import_sec_bulk.py
+python scripts/run_numeric_benchmarks.py
+```
+
+The importer records ZIP/member SHA-256 provenance, preserves missing values, selects original 10-K filings rather than silently substituting amendments, and generates only the frozen forward numerical deterioration endpoint. Corpus acquisition via the live API remains separately explicit and requires an SEC-compliant identifying user agent:
+
+```bash
+SEC_USER_AGENT="Researcher Name researcher@example.edu" python scripts/acquire_empirical_corpus.py
+```
 
 ## Why FinRisk exists
 
@@ -198,7 +251,7 @@ Current evidence is diagnostic only: RQ3 is not supported by the pilot, RQ2 has 
 
 | Status | What it means here |
 |---|---|
-| **VALIDATED — limited local scope** | Automated tests and ≥90% coverage gate; Ruff, TypeScript and production frontend build; deterministic finance fixtures; frozen three-company pilot reproduction |
+| **VALIDATED — limited local scope** | Automated tests and ≥90% coverage gate; Ruff, TypeScript and production frontend build; deterministic finance fixtures; 90-observation SEC numeric ingestion and PIT integrity; corrected B0/B1/B2/B6 execution |
 | **IMPLEMENTED, NOT EXTERNALLY VALIDATED** | XBRL/PDF reconciliation, temporal state/attribution, applicability routing, selective automation, constrained provider, critic/verifier, DecisionBundle, risk-case mitigation workflow, RBAC/API keys, PostgreSQL migrations and Workbench |
 | **PLANNED / NOT RUN** | Independently dual-reviewed ~90 company-year benchmark, paid-LLM evaluation, calibrated risk model, production identity/object storage/worker/telemetry deployment |
 
@@ -318,7 +371,7 @@ Model mappings are configured in [config/model_scoring.json](config/model_scorin
 
 ### Failure-aware decisions
 
-Missing evidence, low coverage, conflicting evidence, stale data, parser failure, unavailable LLMs, applicability failures and rule/model disagreement are first-class states. Depending on pinned policy, they reduce confidence, increase review requirements or force abstention—never fabricated certainty.
+Missing evidence, low coverage, conflicting evidence, stale data, parser failure, unavailable LLMs, applicability failures and rule/model disagreement are first-class states. Depending on pinned policy, they reduce evidence sufficiency, increase review requirements or force abstention—never fabricated certainty.
 
 The incident-style [Failure Lab](failure_lab/README.md) maps each injected failure to its impact, expected fail-closed response and regression test.
 
@@ -337,7 +390,7 @@ npm run typecheck
 npm run build
 ```
 
-Recorded local status: **80 tests passed**, **92.93% line coverage**, Ruff passed, TypeScript passed, and the Next.js production build passed. GitHub Actions additionally declares PostgreSQL migration validation and a benchmark reproducibility gate.
+Recorded local status: **105 tests passed**, **92.36% line coverage**. Ruff, TypeScript, the Next.js production build and deterministic replay pass. This working tree has not been committed, tagged or pushed.
 
 ## Repository map
 
@@ -375,6 +428,7 @@ These are implemented controls in a prototype, not certification claims. Review 
 - Live SEC Company Facts retrieval was blocked by HTTP 403 in the recorded environment, although offline ingestion tests pass.
 - The consistency engine covers six domains; breadth and contextual precision require independent annotation.
 - Rules, weights, fusion thresholds and evidence-coverage confidence are not externally calibrated.
+- Component telemetry records observed deltas and cost/latency metadata; it is not causal attribution or a Value-of-Information algorithm.
 - Traditional financial models have population and sector limitations, especially for financial institutions.
 - Evidence matching proves provenance, not the truth or completeness of corporate disclosure.
 - PostgreSQL, Docker, identity, object storage, worker and telemetry configurations have not been validated in a production environment.

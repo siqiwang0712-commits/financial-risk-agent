@@ -1,0 +1,159 @@
+{
+  "total_observations": 90,
+  "verified": 42,
+  "review_required": 6,
+  "insufficient_data": 42,
+  "summaries": {
+    "label_status": {
+      "INSUFFICIENT_DATA": 42,
+      "REQUIRES_HUMAN_REVIEW": 6,
+      "VERIFIED": 42
+    },
+    "attrition_category": {
+      "RIGHT_CENSORED_DATA_HORIZON": 25,
+      "TRUE_NO_ELIGIBLE_OUTCOME": 17,
+      "UNRESOLVED_LABEL_CONDITIONS": 6,
+      "VERIFIED": 42
+    },
+    "fiscal_year": {
+      "2021": 30,
+      "2022": 30,
+      "2023": 30
+    },
+    "sector": {
+      "Aerospace": 3,
+      "Airlines": 6,
+      "Automotive": 6,
+      "Consumer Staples": 6,
+      "Energy": 6,
+      "Industrials": 3,
+      "Logistics": 6,
+      "Materials": 6,
+      "Media": 6,
+      "Pharmaceuticals": 6,
+      "Real Estate": 6,
+      "Retail": 6,
+      "Retail Pharmacy": 3,
+      "Semiconductors": 3,
+      "Technology": 6,
+      "Telecommunications": 6,
+      "Utilities": 6
+    },
+    "split": {
+      "test": 18,
+      "train": 54,
+      "validation": 18
+    }
+  },
+  "status_breakdowns": {
+    "VERIFIED": {
+      "fiscal_year": {
+        "2021": 22,
+        "2022": 17,
+        "2023": 3
+      },
+      "sector": {
+        "Aerospace": 1,
+        "Airlines": 2,
+        "Automotive": 3,
+        "Consumer Staples": 3,
+        "Energy": 2,
+        "Industrials": 1,
+        "Logistics": 5,
+        "Materials": 2,
+        "Media": 3,
+        "Pharmaceuticals": 4,
+        "Real Estate": 1,
+        "Retail": 3,
+        "Retail Pharmacy": 2,
+        "Semiconductors": 2,
+        "Technology": 4,
+        "Telecommunications": 3,
+        "Utilities": 1
+      },
+      "split": {
+        "test": 6,
+        "train": 25,
+        "validation": 11
+      },
+      "missing_concept": {
+        "debt_to_assets_increase": 9,
+        "debt_to_assets_increase;income_to_loss": 1,
+        "none": 27,
+        "ocf_deterioration": 1,
+        "revenue_decline": 1,
+        "two_period_negative_fcf": 3
+      },
+      "attrition_category": {
+        "VERIFIED": 42
+      }
+    },
+    "REQUIRES_HUMAN_REVIEW": {
+      "fiscal_year": {
+        "2021": 3,
+        "2022": 3
+      },
+      "sector": {
+        "Airlines": 1,
+        "Consumer Staples": 1,
+        "Media": 1,
+        "Real Estate": 1,
+        "Utilities": 2
+      },
+      "split": {
+        "test": 1,
+        "train": 3,
+        "validation": 2
+      },
+      "missing_concept": {
+        "debt_to_assets_increase;two_period_negative_fcf": 2,
+        "ocf_deterioration;two_period_negative_fcf": 1,
+        "revenue_decline": 1,
+        "revenue_decline;two_period_negative_fcf": 2
+      },
+      "attrition_category": {
+        "UNRESOLVED_LABEL_CONDITIONS": 6
+      }
+    },
+    "INSUFFICIENT_DATA": {
+      "fiscal_year": {
+        "2021": 5,
+        "2022": 10,
+        "2023": 27
+      },
+      "sector": {
+        "Aerospace": 2,
+        "Airlines": 3,
+        "Automotive": 3,
+        "Consumer Staples": 2,
+        "Energy": 4,
+        "Industrials": 2,
+        "Logistics": 1,
+        "Materials": 4,
+        "Media": 2,
+        "Pharmaceuticals": 2,
+        "Real Estate": 4,
+        "Retail": 3,
+        "Retail Pharmacy": 1,
+        "Semiconductors": 1,
+        "Technology": 2,
+        "Telecommunications": 3,
+        "Utilities": 3
+      },
+      "split": {
+        "test": 11,
+        "train": 26,
+        "validation": 5
+      },
+      "missing_concept": {
+        "none": 42
+      },
+      "attrition_category": {
+        "RIGHT_CENSORED_DATA_HORIZON": 25,
+        "TRUE_NO_ELIGIBLE_OUTCOME": 17
+      }
+    }
+  },
+  "selection_bias_warning": "Attrition remains systematic by fiscal year and filing cadence. RIGHT_CENSORED_DATA_HORIZON is distinct from a next filing that truly falls outside the frozen 12-month window.",
+  "report_hash": "280ba94b0192157c7adc5dab89806b0738a23b29e168a80435b2e97571b17a00"
+}

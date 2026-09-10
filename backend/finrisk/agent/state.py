@@ -37,6 +37,7 @@ class ToolCallTrace:
     summary: str
     evidence_ids: list[str] = field(default_factory=list)
     error: str | None = None
+    latency_ms: int = 0
 
 
 @dataclass
@@ -62,6 +63,7 @@ class AgentState:
     assessment: dict[str, Any] | None = None
     risk_score: float | None = None
     confidence: float = 0.0
+    confidence_semantics: str = "LEGACY_EVIDENCE_QUALITY_INDEX_NOT_PROBABILITY"
     evidence_coverage: float = 0.0
     risk_severity: str = "unknown"
     risk_trajectory: str = "insufficient_history"
@@ -72,6 +74,8 @@ class AgentState:
     analysis_snapshot: dict[str, Any] = field(default_factory=dict)
     decision_bundle: dict[str, Any] = field(default_factory=dict)
     role_review: dict[str, Any] = field(default_factory=dict)
+    epistemics: dict[str, Any] = field(default_factory=dict)
+    component_telemetry: list[dict[str, Any]] = field(default_factory=list)
 
     def transition(self, target: AgentStatus) -> None:
         terminal = {

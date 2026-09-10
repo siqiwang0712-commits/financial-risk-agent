@@ -17,6 +17,7 @@ class RiskSnapshot:
     decision: str
     coverage: float
     reliability: float | None = None
+    calibration_status: str = "UNCALIBRATED"
 
 
 @dataclass(frozen=True)

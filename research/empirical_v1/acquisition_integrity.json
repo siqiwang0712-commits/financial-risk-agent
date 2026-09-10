@@ -1,0 +1,19 @@
+{
+  "valid": false,
+  "gate": "STOP",
+  "observation_count": 0,
+  "company_count": 0,
+  "company_overlap_count": 0,
+  "future_leakage_count": 0,
+  "split_company_counts": {
+    "validation": 0,
+    "train": 0,
+    "test": 0
+  },
+  "errors": [
+    {
+      "row": null,
+      "code": "EMPTY_DATASET"
+    }
+  ]
+}

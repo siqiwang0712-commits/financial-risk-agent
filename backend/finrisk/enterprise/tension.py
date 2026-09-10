@@ -14,16 +14,25 @@ class DisclosureTension:
     classification: str
     confidence: float
     source: Evidence
+    reason_code: str = "UNVALIDATED_RELIABILITY"
+    evidence_sufficiency: str = "unknown"
 
     def to_dict(self):
         return asdict(self)
 
 
 def classify_tension(
-    claim: NarrativeClaim, supporting: list[str], opposing: list[str], context: str = ""
+    claim: NarrativeClaim,
+    supporting: list[str],
+    opposing: list[str],
+    context: str = "",
+    evidence_sufficiency: str = "complete",
+    reason_code: str = "UNVALIDATED_RELIABILITY",
 ) -> DisclosureTension:
     verified = claim.evidence.verification_status == "verified"
-    if not verified:
+    if evidence_sufficiency != "complete":
+        classification, confidence = "Insufficient Evidence", 0.0
+    elif not verified:
         classification, confidence = "Insufficient Evidence", 0.1
     elif len(opposing) >= 2 and not supporting:
         classification, confidence = "Material Contradiction", 0.9
@@ -45,4 +54,6 @@ def classify_tension(
         classification,
         confidence,
         claim.evidence,
+        reason_code,
+        evidence_sufficiency,
     )

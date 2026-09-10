@@ -19,6 +19,7 @@ from .domain import (
     new_id,
 )
 from .fusion import FUSION_METHODS
+from .integrity import CalibrationStatus
 from .policy import evaluate_kri
 from .portfolio import portfolio_overview
 from .scenario import Scenario, compare_scenario
@@ -120,6 +121,7 @@ class RiskSnapshotRequest(BaseModel):
     decision: Decision
     coverage: float = Field(ge=0, le=1)
     reliability: float | None = Field(default=None, ge=0, le=1)
+    calibration_status: CalibrationStatus = CalibrationStatus.UNCALIBRATED
 
 
 class ApplicabilityRequest(BaseModel):
@@ -133,6 +135,7 @@ class SelectiveDecisionRequest(BaseModel):
     reliability: float | None = Field(default=None, ge=0, le=1)
     disagreement: float = Field(ge=0, le=1)
     policy: dict[str, float] = Field(default_factory=dict)
+    calibration_status: CalibrationStatus = CalibrationStatus.UNCALIBRATED
 
 
 def enterprise_router(service: EnterpriseRiskService | None = None) -> APIRouter:
@@ -310,7 +313,10 @@ def enterprise_router(service: EnterpriseRiskService | None = None) -> APIRouter
         actor: Principal = principal_dependency,
     ):
         try:
-            item = RiskSnapshot(entity_id=entity_id, **req.model_dump())
+            payload = req.model_dump()
+            if req.calibration_status is CalibrationStatus.UNCALIBRATED:
+                payload["reliability"] = None
+            item = RiskSnapshot(entity_id=entity_id, **payload)
             return asdict(service.save_risk_snapshot(actor, item))
         except (KeyError, PermissionError, ValueError) as exc:
             raise HTTPException(422, str(exc)) from exc
@@ -348,6 +354,7 @@ def enterprise_router(service: EnterpriseRiskService | None = None) -> APIRouter
             req.reliability,
             req.disagreement,
             req.policy,
+            req.calibration_status,
         )
 
     @router.post("/fusion")

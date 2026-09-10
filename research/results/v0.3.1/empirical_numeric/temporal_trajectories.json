@@ -1,0 +1,542 @@
+[
+  {
+    "ticker": "AAPL",
+    "points": [
+      {
+        "fiscal_year": 2021,
+        "risk": 0.0
+      },
+      {
+        "fiscal_year": 2022,
+        "risk": 0.21250000000000002
+      },
+      {
+        "fiscal_year": 2023,
+        "risk": 0.15000000000000002
+      }
+    ],
+    "delta": 0.15000000000000002
+  },
+  {
+    "ticker": "AEP",
+    "points": [
+      {
+        "fiscal_year": 2021,
+        "risk": 0.25
+      },
+      {
+        "fiscal_year": 2022,
+        "risk": 0.1875
+      },
+      {
+        "fiscal_year": 2023,
+        "risk": 0.25
+      }
+    ],
+    "delta": 0.0
+  },
+  {
+    "ticker": "AMT",
+    "points": [
+      {
+        "fiscal_year": 2021,
+        "risk": 0.2
+      },
+      {
+        "fiscal_year": 2022,
+        "risk": 0.15000000000000002
+      },
+      {
+        "fiscal_year": 2023,
+        "risk": 0.15000000000000002
+      }
+    ],
+    "delta": -0.04999999999999999
+  },
+  {
+    "ticker": "BA",
+    "points": [
+      {
+        "fiscal_year": 2021,
+        "risk": 0.4
+      },
+      {
+        "fiscal_year": 2022,
+        "risk": 0.36250000000000004
+      },
+      {
+        "fiscal_year": 2023,
+        "risk": 0.30000000000000004
+      }
+    ],
+    "delta": -0.09999999999999998
+  },
+  {
+    "ticker": "CAT",
+    "points": [
+      {
+        "fiscal_year": 2021,
+        "risk": 0.0
+      },
+      {
+        "fiscal_year": 2022,
+        "risk": 0.0625
+      },
+      {
+        "fiscal_year": 2023,
+        "risk": 0.0
+      }
+    ],
+    "delta": 0.0
+  },
+  {
+    "ticker": "CVX",
+    "points": [
+      {
+        "fiscal_year": 2021,
+        "risk": 0.0
+      },
+      {
+        "fiscal_year": 2022,
+        "risk": 0.0625
+      },
+      {
+        "fiscal_year": 2023,
+        "risk": 0.1875
+      }
+    ],
+    "delta": 0.1875
+  },
+  {
+    "ticker": "DAL",
+    "points": [
+      {
+        "fiscal_year": 2021,
+        "risk": 0.3333333333333333
+      },
+      {
+        "fiscal_year": 2022,
+        "risk": 0.3333333333333333
+      },
+      {
+        "fiscal_year": 2023,
+        "risk": 0.25
+      }
+    ],
+    "delta": -0.08333333333333331
+  },
+  {
+    "ticker": "DIS",
+    "points": [
+      {
+        "fiscal_year": 2021,
+        "risk": 0.0
+      },
+      {
+        "fiscal_year": 2022,
+        "risk": 0.08333333333333333
+      },
+      {
+        "fiscal_year": 2023,
+        "risk": 0.0
+      }
+    ],
+    "delta": 0.0
+  },
+  {
+    "ticker": "F",
+    "points": [
+      {
+        "fiscal_year": 2021,
+        "risk": 0.0
+      },
+      {
+        "fiscal_year": 2022,
+        "risk": 0.6458333333333334
+      },
+      {
+        "fiscal_year": 2023,
+        "risk": 0.0
+      }
+    ],
+    "delta": 0.0
+  },
+  {
+    "ticker": "FCX",
+    "points": [
+      {
+        "fiscal_year": 2021,
+        "risk": 0.0
+      },
+      {
+        "fiscal_year": 2022,
+        "risk": 0.0625
+      },
+      {
+        "fiscal_year": 2023,
+        "risk": 0.0625
+      }
+    ],
+    "delta": 0.0625
+  },
+  {
+    "ticker": "FDX",
+    "points": [
+      {
+        "fiscal_year": 2021,
+        "risk": 0.0
+      },
+      {
+        "fiscal_year": 2022,
+        "risk": 0.0
+      },
+      {
+        "fiscal_year": 2023,
+        "risk": 0.0
+      }
+    ],
+    "delta": 0.0
+  },
+  {
+    "ticker": "GM",
+    "points": [
+      {
+        "fiscal_year": 2021,
+        "risk": 0.0
+      },
+      {
+        "fiscal_year": 2022,
+        "risk": 0.0
+      },
+      {
+        "fiscal_year": 2023,
+        "risk": 0.0
+      }
+    ],
+    "delta": 0.0
+  },
+  {
+    "ticker": "INTC",
+    "points": [
+      {
+        "fiscal_year": 2021,
+        "risk": 0.0
+      },
+      {
+        "fiscal_year": 2022,
+        "risk": 0.275
+      },
+      {
+        "fiscal_year": 2023,
+        "risk": 0.3375
+      }
+    ],
+    "delta": 0.3375
+  },
+  {
+    "ticker": "JNJ",
+    "points": [
+      {
+        "fiscal_year": 2021,
+        "risk": 0.0
+      },
+      {
+        "fiscal_year": 2022,
+        "risk": 0.15000000000000002
+      },
+      {
+        "fiscal_year": 2023,
+        "risk": 0.21250000000000002
+      }
+    ],
+    "delta": 0.21250000000000002
+  },
+  {
+    "ticker": "KHC",
+    "points": [
+      {
+        "fiscal_year": 2021,
+        "risk": 0.3333333333333333
+      },
+      {
+        "fiscal_year": 2022,
+        "risk": 0.41666666666666663
+      },
+      {
+        "fiscal_year": 2023,
+        "risk": 0.25
+      }
+    ],
+    "delta": -0.08333333333333331
+  },
+  {
+    "ticker": "KO",
+    "points": [
+      {
+        "fiscal_year": 2021,
+        "risk": 0.0
+      },
+      {
+        "fiscal_year": 2022,
+        "risk": 0.0
+      },
+      {
+        "fiscal_year": 2023,
+        "risk": 0.0
+      }
+    ],
+    "delta": 0.0
+  },
+  {
+    "ticker": "LUV",
+    "points": [
+      {
+        "fiscal_year": 2021,
+        "risk": 0.0
+      },
+      {
+        "fiscal_year": 2022,
+        "risk": 0.2708333333333333
+      },
+      {
+        "fiscal_year": 2023,
+        "risk": 0.1875
+      }
+    ],
+    "delta": 0.1875
+  },
+  {
+    "ticker": "MSFT",
+    "points": [
+      {
+        "fiscal_year": 2021,
+        "risk": 0.0
+      },
+      {
+        "fiscal_year": 2022,
+        "risk": 0.0
+      },
+      {
+        "fiscal_year": 2023,
+        "risk": 0.0
+      }
+    ],
+    "delta": 0.0
+  },
+  {
+    "ticker": "NEE",
+    "points": [
+      {
+        "fiscal_year": 2021,
+        "risk": 0.3333333333333333
+      },
+      {
+        "fiscal_year": 2022,
+        "risk": 0.25
+      },
+      {
+        "fiscal_year": 2023,
+        "risk": 0.25
+      }
+    ],
+    "delta": -0.08333333333333331
+  },
+  {
+    "ticker": "NFLX",
+    "points": [
+      {
+        "fiscal_year": 2021,
+        "risk": 0.6
+      },
+      {
+        "fiscal_year": 2022,
+        "risk": 0.15000000000000002
+      },
+      {
+        "fiscal_year": 2023,
+        "risk": 0.0
+      }
+    ],
+    "delta": -0.6
+  },
+  {
+    "ticker": "NUE",
+    "points": [
+      {
+        "fiscal_year": 2021,
+        "risk": 0.0
+      },
+      {
+        "fiscal_year": 2022,
+        "risk": 0.0
+      },
+      {
+        "fiscal_year": 2023,
+        "risk": 0.1875
+      }
+    ],
+    "delta": 0.1875
+  },
+  {
+    "ticker": "OXY",
+    "points": [
+      {
+        "fiscal_year": 2021,
+        "risk": 0.0
+      },
+      {
+        "fiscal_year": 2022,
+        "risk": 0.08333333333333333
+      },
+      {
+        "fiscal_year": 2023,
+        "risk": 0.35416666666666663
+      }
+    ],
+    "delta": 0.35416666666666663
+  },
+  {
+    "ticker": "PFE",
+    "points": [
+      {
+        "fiscal_year": 2021,
+        "risk": 0.0
+      },
+      {
+        "fiscal_year": 2022,
+        "risk": 0.0625
+      },
+      {
+        "fiscal_year": 2023,
+        "risk": 0.3375
+      }
+    ],
+    "delta": 0.3375
+  },
+  {
+    "ticker": "PLD",
+    "points": [
+      {
+        "fiscal_year": 2021,
+        "risk": 0.0
+      },
+      {
+        "fiscal_year": 2022,
+        "risk": 0.08333333333333333
+      },
+      {
+        "fiscal_year": 2023,
+        "risk": 0.0
+      }
+    ],
+    "delta": 0.0
+  },
+  {
+    "ticker": "TGT",
+    "points": [
+      {
+        "fiscal_year": 2021,
+        "risk": 0.5
+      },
+      {
+        "fiscal_year": 2022,
+        "risk": 0.5416666666666666
+      },
+      {
+        "fiscal_year": 2023,
+        "risk": 0.1875
+      }
+    ],
+    "delta": -0.3125
+  },
+  {
+    "ticker": "TMUS",
+    "points": [
+      {
+        "fiscal_year": 2021,
+        "risk": 0.2
+      },
+      {
+        "fiscal_year": 2022,
+        "risk": 0.21250000000000002
+      },
+      {
+        "fiscal_year": 2023,
+        "risk": 0.15000000000000002
+      }
+    ],
+    "delta": -0.04999999999999999
+  },
+  {
+    "ticker": "UPS",
+    "points": [
+      {
+        "fiscal_year": 2021,
+        "risk": 0.0
+      },
+      {
+        "fiscal_year": 2022,
+        "risk": 0.0625
+      },
+      {
+        "fiscal_year": 2023,
+        "risk": 0.125
+      }
+    ],
+    "delta": 0.125
+  },
+  {
+    "ticker": "VZ",
+    "points": [
+      {
+        "fiscal_year": 2021,
+        "risk": 0.25
+      },
+      {
+        "fiscal_year": 2022,
+        "risk": 0.25
+      },
+      {
+        "fiscal_year": 2023,
+        "risk": 0.3125
+      }
+    ],
+    "delta": 0.0625
+  },
+  {
+    "ticker": "WBA",
+    "points": [
+      {
+        "fiscal_year": 2021,
+        "risk": 0.2
+      },
+      {
+        "fiscal_year": 2022,
+        "risk": 0.275
+      },
+      {
+        "fiscal_year": 2023,
+        "risk": 0.575
+      }
+    ],
+    "delta": 0.37499999999999994
+  },
+  {
+    "ticker": "WMT",
+    "points": [
+      {
+        "fiscal_year": 2021,
+        "risk": 0.2
+      },
+      {
+        "fiscal_year": 2022,
+        "risk": 0.21250000000000002
+      },
+      {
+        "fiscal_year": 2023,
+        "risk": 0.15000000000000002
+      }
+    ],
+    "delta": -0.04999999999999999
+  }
+]

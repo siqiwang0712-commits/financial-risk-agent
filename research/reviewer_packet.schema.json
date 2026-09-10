@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "finrisk-blinded-reviewer-packet-v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["observation_id", "task", "information_cutoff", "outcome_window_end", "sources", "packet_hash", "blinded_fields_excluded"],
+  "properties": {
+    "observation_id": {"type": "string"},
+    "task": {"enum": ["OUTCOME_LABEL", "EXTRACTION_REFERENCE", "TENSION_LABEL"]},
+    "information_cutoff": {"type": "string", "format": "date-time"},
+    "outcome_window_end": {"type": "string", "format": "date"},
+    "sources": {"type": "array", "items": {"type": "object"}, "minItems": 1},
+    "packet_hash": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "blinded_fields_excluded": {"type": "array", "contains": {"const": "system_predictions"}},
+    "split": false,
+    "system_predictions": false,
+    "peer_review": false
+  }
+}

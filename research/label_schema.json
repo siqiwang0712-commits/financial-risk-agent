@@ -1,12 +1,23 @@
 {
-  "version": "decision-grade-v1-draft",
-  "status": "NOT VALIDATED",
+  "version": "finrisk-forward-label-v1.0.0",
+  "status": "DEFINITION_FROZEN; LABELS NOT AVAILABLE",
+  "frozen_at": "2026-09-07",
   "evidence_level": ["fact", "quote", "page", "evidence_relationship", "tension_label"],
   "outcome_level": {
-    "window": "T+12 months",
-    "positive": "publicly verifiable material deterioration event",
+    "window": "filing availability T through T+12 months",
+    "primary_endpoint": {
+      "name": "hard_distress_12m",
+      "positive": "bankruptcy filing, court-supervised restructuring, explicit going-concern opinion/substantial-doubt disclosure, or publicly documented material covenant default within the outcome window",
+      "negative": "none of the frozen primary events found after dual review of allowed sources"
+    },
+    "secondary_endpoint": {
+      "name": "financial_deterioration_12m",
+      "positive": "at least two of: revenue decline >=10%; transition from positive net income to net loss; operating cash flow decline >=25% or turns negative; free cash flow negative in both subsequent reported periods; debt-to-assets increases >=10 percentage points",
+      "negative": "fewer than two frozen deterioration conditions",
+      "independence": "calculated from forward public facts only; FinRisk scores, rules and predictions are prohibited inputs"
+    },
     "allowed_sources": ["SEC filing", "auditor report", "court/regulator record", "issuer announcement"],
-    "prohibited": ["system-generated label", "post-window information", "unreviewed inference"]
+    "prohibited": ["FinRisk score", "system prediction", "post-window information", "unreviewed inference", "future restatement outside the outcome window"]
   },
   "review_fields": ["reviewer_1_label", "reviewer_1_reason", "reviewer_2_label", "reviewer_2_reason", "adjudicated_label", "adjudicator_reason", "review_status"]
 }

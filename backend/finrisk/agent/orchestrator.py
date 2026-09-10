@@ -1,9 +1,11 @@
 from __future__ import annotations
 
 import json
+import time
 from pathlib import Path
 from typing import Any
 
+from ..contradictions import evaluate_claim_consistency
 from ..domain import Evidence
 from ..enterprise.applicability import applicability_report
 from ..enterprise.decision import (
@@ -19,9 +21,12 @@ from ..enterprise.fusion import (
     hierarchical_escalation,
     sensitivity_analysis,
 )
+from ..enterprise.integrity import CalibrationStatus, epistemic_summary
+from ..enterprise.telemetry import component_delta
 from ..enterprise.temporal import classify_trajectory
 from ..enterprise.tension import classify_tension
 from ..llm import NarrativeProvider, provider_from_env
+from ..scoring import aggregate
 from ..tools import build_tool_registry
 from .planner import AgentPlanner
 from .reflection import reflect
@@ -152,7 +157,10 @@ class FinancialRiskAgent:
             state.model_disagreement = fusion.disagreement
             state.risk_trajectory = classify_trajectory([])
             tensions = []
+            claim_evaluations = []
             for claim in claims:
+                evaluation = evaluate_claim_consistency(claim, facts)
+                claim_evaluations.append(evaluation.to_dict())
                 matched = [
                     item
                     for item in contradictions
@@ -167,9 +175,14 @@ class FinancialRiskAgent:
                         [],
                         opposing,
                         "Compared with all available normalized evidence for the claim category.",
+                        "complete"
+                        if not evaluation.missing_evidence_types
+                        else "incomplete_context",
+                        evaluation.reason_code,
                     ).to_dict()
                 )
             state.assessment["disclosure_tensions"] = tensions
+            state.assessment["claim_consistency_evaluations"] = claim_evaluations
             state.assessment["enterprise_fusion"] = state.fusion
             versions = self.component_versions()
             state.decision_trace = build_decision_trace(
@@ -240,8 +253,119 @@ class FinancialRiskAgent:
                 {item["model"]: item["status"] for item in applicability},
             )
             state.assessment["agent_role_review"] = state.role_review
+            decision_before_review = state.decision
             if state.role_review["recommended_decision"] == "REVIEW":
                 state.decision = "REVIEW"
+            state.epistemics = epistemic_summary(
+                evidence_coverage=state.evidence_coverage,
+                evidence_quality=state.confidence,
+                disagreement=state.model_disagreement,
+                calibration_status=CalibrationStatus.UNCALIBRATED,
+            )
+            state.assessment["epistemics"] = state.epistemics
+            state.assessment["evidence_quality"] = state.confidence
+            state.assessment["reliability_status"] = "UNCALIBRATED"
+            scoring_config = json.loads(
+                (self.root / "config" / "scoring.json").read_text(encoding="utf-8")
+            )
+            non_model_signals = [
+                item
+                for item in assessment.triggered_rules
+                if not item.rule_id.startswith("MODEL_")
+            ]
+            rule_score = aggregate(non_model_signals, [], scoring_config)[0]
+            model_score = aggregate(assessment.triggered_rules, [], scoring_config)[0]
+            narrative_score = assessment.overall_score
+            latency = {
+                name: sum(t.latency_ms for t in state.trace if t.tool == name)
+                for name in (
+                    "financial_metrics",
+                    "risk_rules",
+                    "traditional_models",
+                    "narrative_evidence",
+                    "claim_verification",
+                )
+            }
+            llm_logs = getattr(self.provider, "call_logs", [])
+            llm_cost = sum(item.estimated_cost_usd for item in llm_logs)
+            numeric_evidence_count = sum(len(values) for values in source_map.values())
+            xbrl_executed = any(
+                "xbrl" in str(item.source).lower()
+                for values in source_map.values()
+                for item in values
+            )
+            telemetry = [
+                component_delta(
+                    "XBRL",
+                    risk_before=0.0,
+                    risk_after=0.0,
+                    coverage_before=0.0,
+                    coverage_after=components.get("numeric_provenance_coverage", 0.0),
+                    new_evidence=numeric_evidence_count,
+                    latency_ms=0,
+                    status="executed" if xbrl_executed else "not_executed",
+                ),
+                component_delta(
+                    "rules",
+                    risk_before=0.0,
+                    risk_after=rule_score,
+                    coverage_before=components.get("numeric_provenance_coverage", 0.0),
+                    coverage_after=components.get("numeric_provenance_coverage", 0.0),
+                    new_evidence=len(non_model_signals),
+                    latency_ms=latency.get("risk_rules", 0),
+                ),
+                component_delta(
+                    "traditional_models",
+                    risk_before=rule_score,
+                    risk_after=model_score,
+                    coverage_before=components.get("numeric_provenance_coverage", 0.0),
+                    coverage_after=components.get("numeric_provenance_coverage", 0.0),
+                    new_evidence=sum(item.output is not None for item in assessment.models),
+                    latency_ms=latency.get("traditional_models", 0),
+                ),
+                component_delta(
+                    "LLM_narrative",
+                    risk_before=model_score,
+                    risk_after=narrative_score,
+                    coverage_before=components.get("numeric_provenance_coverage", 0.0),
+                    coverage_after=state.evidence_coverage,
+                    new_evidence=len(claims),
+                    latency_ms=latency.get("narrative_evidence", 0),
+                    estimated_cost_usd=llm_cost,
+                    status="failed" if semantic_failed else "executed" if pages else "not_executed",
+                ),
+                component_delta(
+                    "Critic",
+                    risk_before=narrative_score,
+                    risk_after=narrative_score,
+                    coverage_before=state.evidence_coverage,
+                    coverage_after=state.evidence_coverage,
+                    decision_changed=decision_before_review != state.decision,
+                    new_evidence=len(state.role_review.get("challenges", [])),
+                ),
+                component_delta(
+                    "Verifier",
+                    risk_before=narrative_score,
+                    risk_after=narrative_score,
+                    coverage_before=state.evidence_coverage,
+                    coverage_after=state.evidence_coverage,
+                    new_evidence=sum(len(item.evidence) for item in state.conclusions),
+                    latency_ms=latency.get("claim_verification", 0),
+                ),
+                component_delta(
+                    "fusion",
+                    risk_before=narrative_score,
+                    risk_after=state.risk_score,
+                    coverage_before=state.evidence_coverage,
+                    coverage_after=state.evidence_coverage,
+                    disagreement_before=0.0,
+                    disagreement_after=state.model_disagreement,
+                    decision_changed=state.decision != decision_before_review,
+                    new_evidence=len(state.decision_trace.get("paths", [])),
+                ),
+            ]
+            state.component_telemetry = [item.to_dict() for item in telemetry]
+            state.assessment["component_telemetry"] = state.component_telemetry
             snapshot = create_snapshot(
                 "local",
                 company,
@@ -273,6 +397,8 @@ class FinancialRiskAgent:
                 [trace.__dict__ for trace in state.trace],
                 versions,
                 state.decision,
+                epistemics=state.epistemics,
+                component_telemetry=state.component_telemetry,
             )
             state.decision_bundle = bundle.to_dict()
             state.transition(AgentStatus.REFLECTING)
@@ -307,9 +433,9 @@ class FinancialRiskAgent:
                 (self.root / "config" / "scoring.json").read_text(encoding="utf-8")
             ),
             "decision_policy": canonical_hash(decision_policy),
-            "fusion": "hierarchical_escalation:v1",
+            "fusion": "hierarchical_escalation:v2-monotonic",
             "applicability": "applicability-router:v1",
-            "calibration": "selective-policy:v1-uncalibrated",
+            "calibration": "UNCALIBRATED:v1",
             "evidence_verifier": "exact-page-quote:v1",
             "agent_review": "analyst-critic-verifier:v1",
             "prompt": getattr(self.provider, "prompt_version", "mock-or-unversioned"),
@@ -367,6 +493,7 @@ class FinancialRiskAgent:
 
     def _call(self, state: AgentState, step_id: str, **tool_input: dict[str, Any]):
         tool_name, kwargs = next(iter(tool_input.items()))
+        started = time.perf_counter()
         try:
             result = self.tools.call(tool_name, **kwargs)
             size = len(result) if hasattr(result, "__len__") else 1
@@ -377,6 +504,7 @@ class FinancialRiskAgent:
                     tool_name,
                     "success",
                     f"Produced {size} structured result(s)",
+                    latency_ms=int((time.perf_counter() - started) * 1000),
                 )
             )
             return result
@@ -389,6 +517,7 @@ class FinancialRiskAgent:
                     "failed",
                     "Tool call rejected",
                     error=str(exc),
+                    latency_ms=int((time.perf_counter() - started) * 1000),
                 )
             )
             raise

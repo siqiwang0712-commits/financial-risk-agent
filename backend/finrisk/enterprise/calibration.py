@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from .integrity import CalibrationStatus, DecisionReasonCode
+
 
 def brier_score(labels: list[int], probabilities: list[float]) -> float:
     _validate(labels, probabilities)
@@ -35,18 +37,21 @@ def risk_coverage_curve(labels: list[int], probabilities: list[float], reliabili
     return output
 
 
-def selective_decision(proposed: str, coverage: float, reliability: float | None, disagreement: float, policy: dict[str, float]) -> dict:
+def selective_decision(proposed: str, coverage: float, reliability: float | None, disagreement: float, policy: dict[str, float], calibration_status: CalibrationStatus = CalibrationStatus.UNCALIBRATED) -> dict:
     failures = []
     if coverage < policy.get("minimum_coverage", 0.5):
         failures.append("LOW_COVERAGE")
-    if reliability is None:
-        failures.append("UNCALIBRATED_RELIABILITY")
+    if calibration_status is CalibrationStatus.UNCALIBRATED:
+        reliability = None
+        failures.append(DecisionReasonCode.UNVALIDATED_RELIABILITY.value)
+    elif reliability is None:
+        failures.append("MISSING_CALIBRATED_RELIABILITY")
     elif reliability < policy.get("minimum_reliability", 0.6):
         failures.append("LOW_RELIABILITY")
     if disagreement >= policy.get("maximum_disagreement", 0.45):
-        failures.append("HIGH_DISAGREEMENT")
-    decision = "ABSTAIN" if {"LOW_COVERAGE", "UNCALIBRATED_RELIABILITY"} & set(failures) else "REVIEW" if failures else proposed
-    return {"decision": decision, "proposed_decision": proposed, "failure_reasons": failures, "automation_allowed": not failures}
+        failures.append(DecisionReasonCode.HIGH_MODEL_DISAGREEMENT.value)
+    decision = "ABSTAIN" if {"LOW_COVERAGE", DecisionReasonCode.UNVALIDATED_RELIABILITY.value, "MISSING_CALIBRATED_RELIABILITY"} & set(failures) else "REVIEW" if failures else proposed
+    return {"decision": decision, "proposed_decision": proposed, "failure_reasons": failures, "automation_allowed": not failures, "reliability": reliability, "calibration_status": calibration_status.value}
 
 
 def _validate(labels: list[int], probabilities: list[float]) -> None:

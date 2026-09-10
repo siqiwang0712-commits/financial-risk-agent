@@ -1,9 +1,11 @@
 from __future__ import annotations
 
 from collections.abc import Callable
-from statistics import mean, pstdev
+from dataclasses import dataclass
+from statistics import pstdev
 
 from .domain import Decision, FusionResult
+from .integrity import DecisionReasonCode
 
 DEFAULT_DECISION_POLICY = {
     "minimum_coverage": 0.4,
@@ -40,16 +42,22 @@ def _final(
     policy: dict[str, float] | None = None,
 ) -> FusionResult:
     policy = DEFAULT_DECISION_POLICY | (policy or {})
+    reason_codes: list[str] = []
     if score is None or coverage < policy["minimum_coverage"]:
         decision = Decision.ABSTAIN
+        reason_codes.append(DecisionReasonCode.INSUFFICIENT_EVIDENCE.value)
     elif disagreement >= policy["maximum_disagreement"]:
         decision = Decision.REVIEW
+        reason_codes.append(DecisionReasonCode.HIGH_MODEL_DISAGREEMENT.value)
     elif score >= policy["flag_score"]:
         decision = Decision.FLAG
     elif score >= policy["review_score"]:
         decision = Decision.REVIEW
     else:
         decision = Decision.PASS
+    if score is not None and score >= policy.get("critical_dimension_score", 80):
+        reason_codes.append(DecisionReasonCode.CRITICAL_DIMENSION_ESCALATION.value)
+    reason_codes.append(DecisionReasonCode.UNVALIDATED_RELIABILITY.value)
     return FusionResult(
         method,
         _severity(score),
@@ -60,6 +68,10 @@ def _final(
         round(disagreement, 3),
         drivers,
         rationale,
+        evidence_quality=round(confidence, 3),
+        reliability=None,
+        reliability_status="UNCALIBRATED",
+        reason_codes=reason_codes,
     )
 
 
@@ -133,21 +145,25 @@ def hierarchical_escalation(
         for key, value in active.items()
         if value >= effective.get("elevated_dimension_score", 50)
     ]
-    score = (
-        max(active.values())
-        if severe
-        else mean(active.values()) + min(15, 5 * len(elevated))
-        if active
-        else None
-    )
+    # Non-compensatory floor: a supported adverse dimension cannot be averaged
+    # away by ordinary dimensions. Adding another adverse score therefore cannot
+    # lower the aggregate. Missing dimensions are excluded, never treated as safe.
+    score = None
+    disagreement = 0.0
+    if active:
+        maximum = max(active.values())
+        interaction_uplift = min(15, 5 * max(0, len(elevated) - 1))
+        score = maximum + interaction_uplift
+        values = list(active.values())
+        disagreement = min(1.0, pstdev(values) / 50) if len(values) > 1 else 0.0
     return _final(
         "hierarchical_escalation",
         min(100, score) if score is not None else None,
         coverage,
         confidence,
-        0.0,
+        disagreement,
         severe or elevated,
-        "Severe dimensions escalate before portfolio averaging",
+        "Coverage-aware non-compensatory fusion; the highest supported dimension is a monotonic floor and missing dimensions are excluded",
         policy,
     )
 
@@ -200,6 +216,56 @@ FUSION_METHODS: dict[str, Callable] = {
     "hierarchical_escalation": hierarchical_escalation,
     "interaction_aware": interaction_aware,
 }
+
+
+@dataclass(frozen=True)
+class RiskContribution:
+    dimension: str
+    score: float
+    evidence_id: str
+    verified: bool = True
+
+
+def deduplicate_contributions(
+    contributions: list[RiskContribution],
+) -> tuple[list[RiskContribution], int]:
+    """One evidence item contributes at most once per dimension."""
+    unique: dict[tuple[str, str], RiskContribution] = {}
+    for item in contributions:
+        key = (item.dimension, item.evidence_id)
+        if key not in unique or item.score > unique[key].score:
+            unique[key] = item
+    return list(unique.values()), len(contributions) - len(unique)
+
+
+def fuse_verified_contributions(
+    contributions: list[RiskContribution],
+    coverage: float,
+    evidence_quality: float,
+    policy: dict[str, float] | None = None,
+) -> FusionResult:
+    unique, duplicate_count = deduplicate_contributions(contributions)
+    verified = [item for item in unique if item.verified]
+    by_dimension: dict[str, float] = {}
+    for item in verified:
+        by_dimension[item.dimension] = max(
+            item.score, by_dimension.get(item.dimension, 0.0)
+        )
+    result = hierarchical_escalation(
+        by_dimension, coverage, evidence_quality, policy
+    )
+    if any(
+        item.score >= (DEFAULT_DECISION_POLICY | (policy or {})).get(
+            "severe_dimension_score", 70
+        )
+        for item in verified
+    ):
+        result.reason_codes.append(DecisionReasonCode.SEVERE_VERIFIED_SIGNAL.value)
+    if duplicate_count:
+        result.reason_codes.append(
+            DecisionReasonCode.DUPLICATE_EVIDENCE_SUPPRESSED.value
+        )
+    return result
 
 
 def failure_aware_decision(

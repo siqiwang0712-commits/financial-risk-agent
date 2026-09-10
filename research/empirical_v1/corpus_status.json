@@ -1,0 +1,11 @@
+{
+  "dataset": "FinRisk Evaluation Corpus v1",
+  "target_observations": 90,
+  "numeric_observations_acquired": 90,
+  "document_observations_acquired": 0,
+  "failed_numeric_observations": 0,
+  "status": "NUMERIC_READY_DOCUMENT_INCOMPLETE",
+  "integrity_gate": "PASS",
+  "source": "SEC Financial Statement Data Sets 2021Q1-2024Q4",
+  "synthetic_data_used": false
+}

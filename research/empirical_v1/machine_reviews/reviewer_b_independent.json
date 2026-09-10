@@ -1,0 +1,2974 @@
+{
+  "candidate_labels_seen": false,
+  "input_packet_file_hash": "ffb7a706b5589415a64a1bcb3074cfa54fba8617a697d7da46f44bd1c9cf5fcb",
+  "model_predictions_seen": false,
+  "other_reviewer_outputs_seen": false,
+  "output_hash": "fd6f1f23c0a1a9ee8530b94f40d42c2e0eb813d1f498f5af02650a297d0e8dba",
+  "record_count": 90,
+  "records": [
+    {
+      "cost_usd": null,
+      "evidence_valid": true,
+      "input_hash": "d23c64d788f1117313561f6af482281a138f8295f4e9d4424c2a5548535b29bd",
+      "latency_ms": null,
+      "model_metadata": "UNAVAILABLE",
+      "observation_id": "aapl-2021",
+      "output_hash": "6350e8a16c730e9d695df8505e2db724f03fb4c9664676a3f4aedf7fae3335e3",
+      "packet_hash": "bd464f7f220712362389c051911383f3791055eb3514e9704fdf9d90d6f22107",
+      "prompt_version": "v031_numeric_label_review_b_independent_v2",
+      "result": {
+        "condition_statuses": {
+          "debt_to_assets_increase": "FALSE",
+          "income_to_loss": "FALSE",
+          "ocf_deterioration": "FALSE",
+          "revenue_decline": "FALSE",
+          "two_period_negative_fcf": "FALSE"
+        },
+        "evidence_locators": [
+          "0000320193-21-000105",
+          "0000320193-22-000108",
+          "0000320193-22-000007",
+          "0000320193-22-000059"
+        ],
+        "fcf_context": "VERIFIED",
+        "label": 0,
+        "reasons": [],
+        "status": "VERIFIED",
+        "unknown_conditions": []
+      },
+      "review_run_id": "reviewer-b-aapl-2021",
+      "role": "REVIEWER_B",
+      "run_timestamp": "2026-09-09T15:27:00.365742Z",
+      "schema_valid": true,
+      "status": "MACHINE_REVIEW",
+      "task": "OUTCOME_LABEL",
+      "tokens": null
+    },
+    {
+      "cost_usd": null,
+      "evidence_valid": true,
+      "input_hash": "2b6e3156ad19269a82dce698688c9b281d7a1722f3ffa940a5e3c511f28b0de8",
+      "latency_ms": null,
+      "model_metadata": "UNAVAILABLE",
+      "observation_id": "aapl-2022",
+      "output_hash": "c690fe57b890c2c7cd4d76d9cf3a4e4ba0a41377a23cccdcf51310119f137956",
+      "packet_hash": "1d0f43db794d34c1b704c621b7b6797f006af20daa07a345edb8950ef7631fd1",
+      "prompt_version": "v031_numeric_label_review_b_independent_v2",
+      "result": {
+        "evidence_locators": [],
+        "label": null,
+        "reasons": [
+          "NO_ELIGIBLE_FORWARD_ANNUAL_OUTCOME_WITHIN_12_MONTHS"
+        ],
+        "status": "INSUFFICIENT_DATA"
+      },
+      "review_run_id": "reviewer-b-aapl-2022",
+      "role": "REVIEWER_B",
+      "run_timestamp": "2026-09-09T15:27:00.366580Z",
+      "schema_valid": true,
+      "status": "MACHINE_REVIEW",
+      "task": "OUTCOME_LABEL",
+      "tokens": null
+    },
+    {
+      "cost_usd": null,
+      "evidence_valid": true,
+      "input_hash": "8c877708a4b9f51f8e362360e0bd7c27f411d901d068ca3678966a2c639d5562",
+      "latency_ms": null,
+      "model_metadata": "UNAVAILABLE",
+      "observation_id": "aapl-2023",
+      "output_hash": "5cca3ce681dda14dc84eb02c82abf138c49bfac0df40de10e26a0733581c853a",
+      "packet_hash": "0398c1d0ea6c5e95abbcb95514cb8a2b1ce5ac406ff7c1e4e9185e9f62ff1cdc",
+      "prompt_version": "v031_numeric_label_review_b_independent_v2",
+      "result": {
+        "evidence_locators": [],
+        "label": null,
+        "reasons": [
+          "NO_ELIGIBLE_FORWARD_ANNUAL_OUTCOME_WITHIN_12_MONTHS"
+        ],
+        "status": "INSUFFICIENT_DATA"
+      },
+      "review_run_id": "reviewer-b-aapl-2023",
+      "role": "REVIEWER_B",
+      "run_timestamp": "2026-09-09T15:27:00.366780Z",
+      "schema_valid": true,
+      "status": "MACHINE_REVIEW",
+      "task": "OUTCOME_LABEL",
+      "tokens": null
+    },
+    {
+      "cost_usd": null,
+      "evidence_valid": true,
+      "input_hash": "8229670b9e12da2b42a521207a8ecb172acc9a78e4e3bb36b6808d6331b5f246",
+      "latency_ms": null,
+      "model_metadata": "UNAVAILABLE",
+      "observation_id": "aep-2021",
+      "output_hash": "a15c72b997862cbfc352ff50979730bf8236e72ea1dfc2ccceb8183503f4da43",
+      "packet_hash": "eb7b22b3b8e987b72144eebf7560038d1cddcddc0e21331054b48a47710725e2",
+      "prompt_version": "v031_numeric_label_review_b_independent_v2",
+      "result": {
+        "condition_statuses": {
+          "debt_to_assets_increase": "FALSE",
+          "income_to_loss": "FALSE",
+          "ocf_deterioration": "FALSE",
+          "revenue_decline": "FALSE",
+          "two_period_negative_fcf": "UNKNOWN"
+        },
+        "evidence_locators": [
+          "0000004904-22-000024",
+          "0000004904-23-000011",
+          "0000004904-22-000053",
+          "0000004904-22-000074"
+        ],
+        "fcf_context": "INSUFFICIENT_DATA",
+        "label": 0,
+        "reasons": [],
+        "status": "VERIFIED",
+        "unknown_conditions": [
+          "two_period_negative_fcf"
+        ]
+      },
+      "review_run_id": "reviewer-b-aep-2021",
+      "role": "REVIEWER_B",
+      "run_timestamp": "2026-09-09T15:27:00.366980Z",
+      "schema_valid": true,
+      "status": "MACHINE_REVIEW",
+      "task": "OUTCOME_LABEL",
+      "tokens": null
+    },
+    {
+      "cost_usd": null,
+      "evidence_valid": true,
+      "input_hash": "e91fd4c7d32d25e217ef5748b55003a46a2a6f5a9672e39024f586fcf3ac64af",
+      "latency_ms": null,
+      "model_metadata": "UNAVAILABLE",
+      "observation_id": "aep-2022",
+      "output_hash": "7c45e2787e6874a200c392f7a239e9ebad1cac1dd17f8d09a7713346582616db",
+      "packet_hash": "8bbe673b948bdb9ae24d9f63c2ba4485d7edf1bd8494b04ab1dfcd64df918ae0",
+      "prompt_version": "v031_numeric_label_review_b_independent_v2",
+      "result": {
+        "evidence_locators": [],
+        "label": null,
+        "reasons": [
+          "NO_ELIGIBLE_FORWARD_ANNUAL_OUTCOME_WITHIN_12_MONTHS"
+        ],
+        "status": "INSUFFICIENT_DATA"
+      },
+      "review_run_id": "reviewer-b-aep-2022",
+      "role": "REVIEWER_B",
+      "run_timestamp": "2026-09-09T15:27:00.367152Z",
+      "schema_valid": true,
+      "status": "MACHINE_REVIEW",
+      "task": "OUTCOME_LABEL",
+      "tokens": null
+    },
+    {
+      "cost_usd": null,
+      "evidence_valid": true,
+      "input_hash": "2068d6fd4b59e159eeb188efdef1af48329d9e4bf6f45f07edbf4c4243b4b14e",
+      "latency_ms": null,
+      "model_metadata": "UNAVAILABLE",
+      "observation_id": "aep-2023",
+      "output_hash": "c4337b24336c303738e382abdb3188a09f0275c894e62a41e3c0b04ae59eff59",
+      "packet_hash": "a3b14d24be87e7246447a3373c44d47c63fd498d289c247291b09b0b726c5076",
+      "prompt_version": "v031_numeric_label_review_b_independent_v2",
+      "result": {
+        "evidence_locators": [],
+        "label": null,
+        "reasons": [
+          "NO_ELIGIBLE_FORWARD_ANNUAL_OUTCOME_WITHIN_12_MONTHS"
+        ],
+        "status": "INSUFFICIENT_DATA"
+      },
+      "review_run_id": "reviewer-b-aep-2023",
+      "role": "REVIEWER_B",
+      "run_timestamp": "2026-09-09T15:27:00.367280Z",
+      "schema_valid": true,
+      "status": "MACHINE_REVIEW",
+      "task": "OUTCOME_LABEL",
+      "tokens": null
+    },
+    {
+      "cost_usd": null,
+      "evidence_valid": true,
+      "input_hash": "5d7f0a651c7aac8741f7ba0279b180724434bd3574c8d1742ab4c93d7ff257f3",
+      "latency_ms": null,
+      "model_metadata": "UNAVAILABLE",
+      "observation_id": "amt-2021",
+      "output_hash": "2d1f9ff9d1a270baea33dbda4734197978007a6feca3809da22e44a2628e24ed",
+      "packet_hash": "5c4297b538da9ccecff19a2c077d7e1a78679fd769bc83ea39709407cb82d1c6",
+      "prompt_version": "v031_numeric_label_review_b_independent_v2",
+      "result": {
+        "condition_statuses": {
+          "debt_to_assets_increase": "FALSE",
+          "income_to_loss": "FALSE",
+          "ocf_deterioration": "FALSE",
+          "revenue_decline": "FALSE",
+          "two_period_negative_fcf": "FALSE"
+        },
+        "evidence_locators": [
+          "0001053507-22-000017",
+          "0001053507-23-000023",
+          "0001053507-22-000068",
+          "0001053507-22-000099"
+        ],
+        "fcf_context": "VERIFIED",
+        "label": 0,
+        "reasons": [],
+        "status": "VERIFIED",
+        "unknown_conditions": []
+      },
+      "review_run_id": "reviewer-b-amt-2021",
+      "role": "REVIEWER_B",
+      "run_timestamp": "2026-09-09T15:27:00.367485Z",
+      "schema_valid": true,
+      "status": "MACHINE_REVIEW",
+      "task": "OUTCOME_LABEL",
+      "tokens": null
+    },
+    {
+      "cost_usd": null,
+      "evidence_valid": true,
+      "input_hash": "e299443f2906dce2b1344bc6db776882be2f20d9e7ea8d2dc77721dc96048851",
+      "latency_ms": null,
+      "model_metadata": "UNAVAILABLE",
+      "observation_id": "amt-2022",
+      "output_hash": "44ee1254e49288ffc941f42642c97fdfb00534522509cacfa821521701aabe16",
+      "packet_hash": "a6960bdc362aae25aa78384bb7bd2c264d36d6ad5f0784d86bf3b162d635385a",
+      "prompt_version": "v031_numeric_label_review_b_independent_v2",
+      "result": {
+        "evidence_locators": [],
+        "label": null,
+        "reasons": [
+          "NO_ELIGIBLE_FORWARD_ANNUAL_OUTCOME_WITHIN_12_MONTHS"
+        ],
+        "status": "INSUFFICIENT_DATA"
+      },
+      "review_run_id": "reviewer-b-amt-2022",
+      "role": "REVIEWER_B",
+      "run_timestamp": "2026-09-09T15:27:00.367676Z",
+      "schema_valid": true,
+      "status": "MACHINE_REVIEW",
+      "task": "OUTCOME_LABEL",
+      "tokens": null
+    },
+    {
+      "cost_usd": null,
+      "evidence_valid": true,
+      "input_hash": "2a5ec4f6818567d75fbf772ca0328d698fc5ccf723efe680908f4e7103172e3e",
+      "latency_ms": null,
+      "model_metadata": "UNAVAILABLE",
+      "observation_id": "amt-2023",
+      "output_hash": "a29d2ac3824551cc9032ceb233569e27d7878ac24596f019c3400ea8d4afccba",
+      "packet_hash": "ab3eba5f08e21071417572fd92bc7ba3259a264628f028160dd1ef0a1cc53cb1",
+      "prompt_version": "v031_numeric_label_review_b_independent_v2",
+      "result": {
+        "evidence_locators": [],
+        "label": null,
+        "reasons": [
+          "NO_ELIGIBLE_FORWARD_ANNUAL_OUTCOME_WITHIN_12_MONTHS"
+        ],
+        "status": "INSUFFICIENT_DATA"
+      },
+      "review_run_id": "reviewer-b-amt-2023",
+      "role": "REVIEWER_B",
+      "run_timestamp": "2026-09-09T15:27:00.367852Z",
+      "schema_valid": true,
+      "status": "MACHINE_REVIEW",
+      "task": "OUTCOME_LABEL",
+      "tokens": null
+    },
+    {
+      "cost_usd": null,
+      "evidence_valid": true,
+      "input_hash": "7f067d6510fb3b6966620519bc721068e0989440902265586caca7a0065d430f",
+      "latency_ms": null,
+      "model_metadata": "UNAVAILABLE",
+      "observation_id": "ba-2021",
+      "output_hash": "2d7fd47dbb76bb56ac89f06744815c813a8acc85a7a677f39e19861f0bbf2223",
+      "packet_hash": "3cd7994c62c2aaef1b7a7aeacb1b8d5858117dc92046f074e75aa41e5d771885",
+      "prompt_version": "v031_numeric_label_review_b_independent_v2",
+      "result": {
+        "condition_statuses": {
+          "debt_to_assets_increase": "FALSE",
+          "income_to_loss": "FALSE",
+          "ocf_deterioration": "FALSE",
+          "revenue_decline": "FALSE",
+          "two_period_negative_fcf": "TRUE"
+        },
+        "evidence_locators": [
+          "0000012927-22-000010",
+          "0000012927-23-000007",
+          "0000012927-22-000022",
+          "0000012927-22-000058"
+        ],
+        "fcf_context": "VERIFIED",
+        "label": 0,
+        "reasons": [
+          "FCF_NEGATIVE_TWO_SUBSEQUENT_PERIODS"
+        ],
+        "status": "VERIFIED",
+        "unknown_conditions": []
+      },
+      "review_run_id": "reviewer-b-ba-2021",
+      "role": "REVIEWER_B",
+      "run_timestamp": "2026-09-09T15:27:00.368082Z",
+      "schema_valid": true,
+      "status": "MACHINE_REVIEW",
+      "task": "OUTCOME_LABEL",
+      "tokens": null
+    },
+    {
+      "cost_usd": null,
+      "evidence_valid": true,
+      "input_hash": "64e971f1ff1023e948eb5dc5c2db0a3fcb537549a00168095cc6dea6bd3834d1",
+      "latency_ms": null,
+      "model_metadata": "UNAVAILABLE",
+      "observation_id": "ba-2022",
+      "output_hash": "f367b1977564a259d376bca777a62467c1e564b5d1c4fda68b65b66881476f89",
+      "packet_hash": "6b9b3587074232b3ea94f74093d79f99f2be82f0f88185fd48e81e9d9a8410a8",
+      "prompt_version": "v031_numeric_label_review_b_independent_v2",
+      "result": {
+        "evidence_locators": [],
+        "label": null,
+        "reasons": [
+          "NO_ELIGIBLE_FORWARD_ANNUAL_OUTCOME_WITHIN_12_MONTHS"
+        ],
+        "status": "INSUFFICIENT_DATA"
+      },
+      "review_run_id": "reviewer-b-ba-2022",
+      "role": "REVIEWER_B",
+      "run_timestamp": "2026-09-09T15:27:00.368287Z",
+      "schema_valid": true,
+      "status": "MACHINE_REVIEW",
+      "task": "OUTCOME_LABEL",
+      "tokens": null
+    },
+    {
+      "cost_usd": null,
+      "evidence_valid": true,
+      "input_hash": "2bf7283003702c65bec53fb2dbd9e87e467269c3b32b8f58e15e2244a033c73a",
+      "latency_ms": null,
+      "model_metadata": "UNAVAILABLE",
+      "observation_id": "ba-2023",
+      "output_hash": "228dcfb2bf893ed3bf19e0adedfba6dcbc1c1e23a7e058535b99691d7e09eea8",
+      "packet_hash": "c5cbc2ebd58cf77c20526d246ac30e4012678427d3487614d3db268ed0a2d54c",
+      "prompt_version": "v031_numeric_label_review_b_independent_v2",
+      "result": {
+        "evidence_locators": [],
+        "label": null,
+        "reasons": [
+          "NO_ELIGIBLE_FORWARD_ANNUAL_OUTCOME_WITHIN_12_MONTHS"
+        ],
+        "status": "INSUFFICIENT_DATA"
+      },
+      "review_run_id": "reviewer-b-ba-2023",
+      "role": "REVIEWER_B",
+      "run_timestamp": "2026-09-09T15:27:00.368440Z",
+      "schema_valid": true,
+      "status": "MACHINE_REVIEW",
+      "task": "OUTCOME_LABEL",
+      "tokens": null
+    },
+    {
+      "cost_usd": null,
+      "evidence_valid": true,
+      "input_hash": "3fea9672d5c214e9b555041f0afaf4d312a2c983c6c7fb7aa65680b7bdf9d8e6",
+      "latency_ms": null,
+      "model_metadata": "UNAVAILABLE",
+      "observation_id": "cat-2021",
+      "output_hash": "5f96e410b74a382ec34f9ce18e3b36a4825f7b06013c2b6645a2b05e7575b63c",
+      "packet_hash": "49ce4dba7599434b079ba5f60c41845d3bbdd5e47819fbc9f46c94c8236e6e28",
+      "prompt_version": "v031_numeric_label_review_b_independent_v2",
+      "result": {
+        "condition_statuses": {
+          "debt_to_assets_increase": "FALSE",
+          "income_to_loss": "FALSE",
+          "ocf_deterioration": "FALSE",
+          "revenue_decline": "FALSE",
+          "two_period_negative_fcf": "FALSE"
+        },
+        "evidence_locators": [
+          "0000018230-22-000050",
+          "0000018230-23-000011",
+          "0000018230-22-000112",
+          "0000018230-22-000183"
+        ],
+        "fcf_context": "VERIFIED",
+        "label": 0,
+        "reasons": [],
+        "status": "VERIFIED",
+        "unknown_conditions": []
+      },
+      "review_run_id": "reviewer-b-cat-2021",
+      "role": "REVIEWER_B",
+      "run_timestamp": "2026-09-09T15:27:00.368650Z",
+      "schema_valid": true,
+      "status": "MACHINE_REVIEW",
+      "task": "OUTCOME_LABEL",
+      "tokens": null
+    },
+    {
+      "cost_usd": null,
+      "evidence_valid": true,
+      "input_hash": "0af4a0aa0d2152195b66d328f388e6aa98c34a6575f9c8d2004bc93045fec8e6",
+      "latency_ms": null,
+      "model_metadata": "UNAVAILABLE",
+      "observation_id": "cat-2022",
+      "output_hash": "cad622ea18e21a5b04b856acad2964da3b01bb4a4b8980d67cbb77db91b21f72",
+      "packet_hash": "1019c12e353f844122b02456964119dd6ebcd4d597a631157041408f184b12fe",
+      "prompt_version": "v031_numeric_label_review_b_independent_v2",
+      "result": {
+        "evidence_locators": [],
+        "label": null,
+        "reasons": [
+          "NO_ELIGIBLE_FORWARD_ANNUAL_OUTCOME_WITHIN_12_MONTHS"
+        ],
+        "status": "INSUFFICIENT_DATA"
+      },
+      "review_run_id": "reviewer-b-cat-2022",
+      "role": "REVIEWER_B",
+      "run_timestamp": "2026-09-09T15:27:00.368892Z",
+      "schema_valid": true,
+      "status": "MACHINE_REVIEW",
+      "task": "OUTCOME_LABEL",
+      "tokens": null
+    },
+    {
+      "cost_usd": null,
+      "evidence_valid": true,
+      "input_hash": "7e147097536bfdc09df3e83d771044b3409912f2ecbb3efa02a8d1ef6ba85f1a",
+      "latency_ms": null,
+      "model_metadata": "UNAVAILABLE",
+      "observation_id": "cat-2023",
+      "output_hash": "29669e970e34184ce8b4e40fe6f997ad007c0718086de9bde0b18f0a9f0c05d6",
+      "packet_hash": "5658866760694bda15b0efcd7f034d0e680d092bf4bc58cd86fc7256c584c7b3",
+      "prompt_version": "v031_numeric_label_review_b_independent_v2",
+      "result": {
+        "evidence_locators": [],
+        "label": null,
+        "reasons": [
+          "NO_ELIGIBLE_FORWARD_ANNUAL_OUTCOME_WITHIN_12_MONTHS"
+        ],
+        "status": "INSUFFICIENT_DATA"
+      },
+      "review_run_id": "reviewer-b-cat-2023",
+      "role": "REVIEWER_B",
+      "run_timestamp": "2026-09-09T15:27:00.369044Z",
+      "schema_valid": true,
+      "status": "MACHINE_REVIEW",
+      "task": "OUTCOME_LABEL",
+      "tokens": null
+    },
+    {
+      "cost_usd": null,
+      "evidence_valid": true,
+      "input_hash": "516bd9ee725f87f2d22680c26e45ca80204ba09534c9b19eaec04187c36291b7",
+      "latency_ms": null,
+      "model_metadata": "UNAVAILABLE",
+      "observation_id": "cvx-2021",
+      "output_hash": "4e93d0f135b156f45bdbe7fefb41f1db583560e9ff7b532ac365886c2da96164",
+      "packet_hash": "42aad2721f4bd28a5e998b8560f0c1d9f68c76d50f3ee273cbaee19a4be060d9",
+      "prompt_version": "v031_numeric_label_review_b_independent_v2",
+      "result": {
+        "condition_statuses": {
+          "debt_to_assets_increase": "FALSE",
+          "income_to_loss": "FALSE",
+          "ocf_deterioration": "FALSE",
+          "revenue_decline": "FALSE",
+          "two_period_negative_fcf": "FALSE"
+        },
+        "evidence_locators": [
+          "0000093410-22-000019",
+          "0000093410-23-000009",
+          "0000093410-22-000026",
+          "0000093410-22-000066"
+        ],
+        "fcf_context": "VERIFIED",
+        "label": 0,
+        "reasons": [],
+        "status": "VERIFIED",
+        "unknown_conditions": []
+      },
+      "review_run_id": "reviewer-b-cvx-2021",
+      "role": "REVIEWER_B",
+      "run_timestamp": "2026-09-09T15:27:00.369292Z",
+      "schema_valid": true,
+      "status": "MACHINE_REVIEW",
+      "task": "OUTCOME_LABEL",
+      "tokens": null
+    },
+    {
+      "cost_usd": null,
+      "evidence_valid": true,
+      "input_hash": "e9d369a5d4717266df18f9a0f8843a8ce0e81d089c074ea1208e48ee4eabe4d9",
+      "latency_ms": null,
+      "model_metadata": "UNAVAILABLE",
+      "observation_id": "cvx-2022",
+      "output_hash": "250a7cc56e698dd38f4ac9a5c2ce6cef16e3904cddfc28f9d8073c19134f28b7",
+      "packet_hash": "1769e8c7fe0be9ea6db79f2253230c773ecb9311b67992452ec0c30f77a4969f",
+      "prompt_version": "v031_numeric_label_review_b_independent_v2",
+      "result": {
+        "evidence_locators": [],
+        "label": null,
+        "reasons": [
+          "NO_ELIGIBLE_FORWARD_ANNUAL_OUTCOME_WITHIN_12_MONTHS"
+        ],
+        "status": "INSUFFICIENT_DATA"
+      },
+      "review_run_id": "reviewer-b-cvx-2022",
+      "role": "REVIEWER_B",
+      "run_timestamp": "2026-09-09T15:27:00.369481Z",
+      "schema_valid": true,
+      "status": "MACHINE_REVIEW",
+      "task": "OUTCOME_LABEL",
+      "tokens": null
+    },
+    {
+      "cost_usd": null,
+      "evidence_valid": true,
+      "input_hash": "bf74593dc724e9274c7ea97e6c23ecfdc9f99a2a7468d73996f759745a7e3b10",
+      "latency_ms": null,
+      "model_metadata": "UNAVAILABLE",
+      "observation_id": "cvx-2023",
+      "output_hash": "9f00bf65685325383e881affe24277bf409d084bbae8443a4a90b3864f52ac01",
+      "packet_hash": "04dfc9d9c8a0acc015d3f1b7299ea637251843452627242653152b0381c64ad6",
+      "prompt_version": "v031_numeric_label_review_b_independent_v2",
+      "result": {
+        "evidence_locators": [],
+        "label": null,
+        "reasons": [
+          "NO_ELIGIBLE_FORWARD_ANNUAL_OUTCOME_WITHIN_12_MONTHS"
+        ],
+        "status": "INSUFFICIENT_DATA"
+      },
+      "review_run_id": "reviewer-b-cvx-2023",
+      "role": "REVIEWER_B",
+      "run_timestamp": "2026-09-09T15:27:00.369631Z",
+      "schema_valid": true,
+      "status": "MACHINE_REVIEW",
+      "task": "OUTCOME_LABEL",
+      "tokens": null
+    },
+    {
+      "cost_usd": null,
+      "evidence_valid": true,
+      "input_hash": "c3dc24ffe81489e0b46c34f082e2f818cc4b0711686353e3e4486f4d7c93e5ab",
+      "latency_ms": null,
+      "model_metadata": "UNAVAILABLE",
+      "observation_id": "dal-2021",
+      "output_hash": "fe3e108e87abaf48219678dfa8160ede1efd8e9b0bfe648804b414c69485bd9c",
+      "packet_hash": "a87f904ba4043162959a9dd94365fa5d7393b8bd677274a90ba771fe6f9fe3ea",
+      "prompt_version": "v031_numeric_label_review_b_independent_v2",
+      "result": {
+        "condition_statuses": {
+          "debt_to_assets_increase": "UNKNOWN",
+          "income_to_loss": "FALSE",
+          "ocf_deterioration": "FALSE",
+          "revenue_decline": "FALSE",
+          "two_period_negative_fcf": "UNKNOWN"
+        },
+        "evidence_locators": [
+          "0000027904-22-000003",
+          "0000027904-23-000003",
+          "0000027904-22-000006",
+          "0000027904-22-000010"
+        ],
+        "fcf_context": "INSUFFICIENT_DATA",
+        "label": null,
+        "reasons": [],
+        "status": "REQUIRES_HUMAN_REVIEW",
+        "unknown_conditions": [
+          "debt_to_assets_increase",
+          "two_period_negative_fcf"
+        ]
+      },
+      "review_run_id": "reviewer-b-dal-2021",
+      "role": "REVIEWER_B",
+      "run_timestamp": "2026-09-09T15:27:00.369793Z",
+      "schema_valid": true,
+      "status": "MACHINE_REVIEW",
+      "task": "OUTCOME_LABEL",
+      "tokens": null
+    },
+    {
+      "cost_usd": null,
+      "evidence_valid": true,
+      "input_hash": "15d311a87a3ad2980946615e86451b58373b70f8576b3a751010ddd57042149c",
+      "latency_ms": null,
+      "model_metadata": "UNAVAILABLE",
+      "observation_id": "dal-2022",
+      "output_hash": "4c2d18438a911c6a5085954c81b23073c75bb1765bf950a5301c279f36af4076",
+      "packet_hash": "01e3abc5a0d91a21bc167fc300018a4ce66571d1d277e814b9dd59ddcee1ff8d",
+      "prompt_version": "v031_numeric_label_review_b_independent_v2",
+      "result": {
+        "evidence_locators": [],
+        "label": null,
+        "reasons": [
+          "NO_ELIGIBLE_FORWARD_ANNUAL_OUTCOME_WITHIN_12_MONTHS"
+        ],
+        "status": "INSUFFICIENT_DATA"
+      },
+      "review_run_id": "reviewer-b-dal-2022",
+      "role": "REVIEWER_B",
+      "run_timestamp": "2026-09-09T15:27:00.370117Z",
+      "schema_valid": true,
+      "status": "MACHINE_REVIEW",
+      "task": "OUTCOME_LABEL",
+      "tokens": null
+    },
+    {
+      "cost_usd": null,
+      "evidence_valid": true,
+      "input_hash": "d19715d5714b9e65a7df70e810ecf7ac5e5f02f25a66e8f4e12adfb26643b796",
+      "latency_ms": null,
+      "model_metadata": "UNAVAILABLE",
+      "observation_id": "dal-2023",
+      "output_hash": "7e2e846562427ce0736a6c81cf446822b67be2183ca1e78cb0cf6ab6c393ee95",
+      "packet_hash": "6479b529ddb9f566e78daad001bf44ef4d4b435f9cfb2ea460aaf03efc649c66",
+      "prompt_version": "v031_numeric_label_review_b_independent_v2",
+      "result": {
+        "evidence_locators": [],
+        "label": null,
+        "reasons": [
+          "NO_ELIGIBLE_FORWARD_ANNUAL_OUTCOME_WITHIN_12_MONTHS"
+        ],
+        "status": "INSUFFICIENT_DATA"
+      },
+      "review_run_id": "reviewer-b-dal-2023",
+      "role": "REVIEWER_B",
+      "run_timestamp": "2026-09-09T15:27:00.370277Z",
+      "schema_valid": true,
+      "status": "MACHINE_REVIEW",
+      "task": "OUTCOME_LABEL",
+      "tokens": null
+    },
+    {
+      "cost_usd": null,
+      "evidence_valid": true,
+      "input_hash": "41201dd8a814830b1d8316159d987879066c9fefc82ff487877d7e8dffa6e383",
+      "latency_ms": null,
+      "model_metadata": "UNAVAILABLE",
+      "observation_id": "dis-2021",
+      "output_hash": "9da5922b3371945bb26c64d417bd67f706492c64296cbfcbeac5dccca0eb19b3",
+      "packet_hash": "b315b42a9d7dc97934cd2cc82989714ea9c769198db6a5be25d03626c362b9bd",
+      "prompt_version": "v031_numeric_label_review_b_independent_v2",
+      "result": {
+        "evidence_locators": [],
+        "label": null,
+        "reasons": [
+          "NO_ELIGIBLE_FORWARD_ANNUAL_OUTCOME_WITHIN_12_MONTHS"
+        ],
+        "status": "INSUFFICIENT_DATA"
+      },
+      "review_run_id": "reviewer-b-dis-2021",
+      "role": "REVIEWER_B",
+      "run_timestamp": "2026-09-09T15:27:00.370462Z",
+      "schema_valid": true,
+      "status": "MACHINE_REVIEW",
+      "task": "OUTCOME_LABEL",
+      "tokens": null
+    },
+    {
+      "cost_usd": null,
+      "evidence_valid": true,
+      "input_hash": "d36157c87dfe2e2abd4d53e81cc18b92460f24dca3485b2dd05c9596c4f27eeb",
+      "latency_ms": null,
+      "model_metadata": "UNAVAILABLE",
+      "observation_id": "dis-2022",
+      "output_hash": "6088627946b964c5685835980f632864f10e29d96e57adf0f3233bafc7e6bdbd",
+      "packet_hash": "9ea106ef00122451b951c7bd2deb060524e3efcf84ae449eb7dababa29949462",
+      "prompt_version": "v031_numeric_label_review_b_independent_v2",
+      "result": {
+        "condition_statuses": {
+          "debt_to_assets_increase": "FALSE",
+          "income_to_loss": "FALSE",
+          "ocf_deterioration": "UNKNOWN",
+          "revenue_decline": "FALSE",
+          "two_period_negative_fcf": "UNKNOWN"
+        },
+        "evidence_locators": [
+          "0001744489-22-000213",
+          "0001744489-23-000216",
+          "0001744489-23-000049",
+          "0001744489-23-000099"
+        ],
+        "fcf_context": "INSUFFICIENT_DATA",
+        "label": null,
+        "reasons": [],
+        "status": "REQUIRES_HUMAN_REVIEW",
+        "unknown_conditions": [
+          "ocf_deterioration",
+          "two_period_negative_fcf"
+        ]
+      },
+      "review_run_id": "reviewer-b-dis-2022",
+      "role": "REVIEWER_B",
+      "run_timestamp": "2026-09-09T15:27:00.370714Z",
+      "schema_valid": true,
+      "status": "MACHINE_REVIEW",
+      "task": "OUTCOME_LABEL",
+      "tokens": null
+    },
+    {
+      "cost_usd": null,
+      "evidence_valid": true,
+      "input_hash": "1dfb5c56afa5535a963c6015024570322d70427f540172d03db106a2c1aeceb8",
+      "latency_ms": null,
+      "model_metadata": "UNAVAILABLE",
+      "observation_id": "dis-2023",
+      "output_hash": "8d2c8223f7a0200f14af28d033f7533686efda2acfb054aaef28edae80b182e6",
+      "packet_hash": "bc372ade349e2875fa0da6de24a3e7afaea10dbceaaa729b5c1765b9824134b6",
+      "prompt_version": "v031_numeric_label_review_b_independent_v2",
+      "result": {
+        "evidence_locators": [],
+        "label": null,
+        "reasons": [
+          "NO_ELIGIBLE_FORWARD_ANNUAL_OUTCOME_WITHIN_12_MONTHS"
+        ],
+        "status": "INSUFFICIENT_DATA"
+      },
+      "review_run_id": "reviewer-b-dis-2023",
+      "role": "REVIEWER_B",
+      "run_timestamp": "2026-09-09T15:27:00.370881Z",
+      "schema_valid": true,
+      "status": "MACHINE_REVIEW",
+      "task": "OUTCOME_LABEL",
+      "tokens": null
+    },
+    {
+      "cost_usd": null,
+      "evidence_valid": true,
+      "input_hash": "e7a8411bbe7a03e9745baf23de38b415f153cb32cb5634b9253cd12f6d616312",
+      "latency_ms": null,
+      "model_metadata": "UNAVAILABLE",
+      "observation_id": "f-2021",
+      "output_hash": "73a3bb7987b8a985034f7cc72c639e50f8e9a87bd79624e01d1e6f1ad9b3d915",
+      "packet_hash": "8ca9d61306ca6660722bb1c2472b1b530c5445c0fb331f2f33ba6e5a37e13294",
+      "prompt_version": "v031_numeric_label_review_b_independent_v2",
+      "result": {
+        "condition_statuses": {
+          "debt_to_assets_increase": "UNKNOWN",
+          "income_to_loss": "TRUE",
+          "ocf_deterioration": "TRUE",
+          "revenue_decline": "FALSE",
+          "two_period_negative_fcf": "TRUE"
+        },
+        "evidence_locators": [
+          "0000037996-22-000013",
+          "0000037996-23-000012",
+          "0000037996-22-000024",
+          "0000037996-22-000048"
+        ],
+        "fcf_context": "VERIFIED",
+        "label": 1,
+        "reasons": [
+          "POSITIVE_INCOME_TO_LOSS",
+          "OCF_DECLINE_OR_NEGATIVE",
+          "FCF_NEGATIVE_TWO_SUBSEQUENT_PERIODS"
+        ],
+        "status": "VERIFIED",
+        "unknown_conditions": [
+          "debt_to_assets_increase"
+        ]
+      },
+      "review_run_id": "reviewer-b-f-2021",
+      "role": "REVIEWER_B",
+      "run_timestamp": "2026-09-09T15:27:00.371195Z",
+      "schema_valid": true,
+      "status": "MACHINE_REVIEW",
+      "task": "OUTCOME_LABEL",
+      "tokens": null
+    },
+    {
+      "cost_usd": null,
+      "evidence_valid": true,
+      "input_hash": "73f465aefdc0aa92f9797598efd744c920c1d44e097a99776c0f5ab1d7d08f98",
+      "latency_ms": null,
+      "model_metadata": "UNAVAILABLE",
+      "observation_id": "f-2022",
+      "output_hash": "53d761edf0afbc44067e149dea54d1a94a38f31472ec4cfc69613ecb8776c835",
+      "packet_hash": "ff49b498b2e1bfd4260568e4956bbe5f11da94722639566a102da33bc91e6054",
+      "prompt_version": "v031_numeric_label_review_b_independent_v2",
+      "result": {
+        "evidence_locators": [],
+        "label": null,
+        "reasons": [
+          "NO_ELIGIBLE_FORWARD_ANNUAL_OUTCOME_WITHIN_12_MONTHS"
+        ],
+        "status": "INSUFFICIENT_DATA"
+      },
+      "review_run_id": "reviewer-b-f-2022",
+      "role": "REVIEWER_B",
+      "run_timestamp": "2026-09-09T15:27:00.371423Z",
+      "schema_valid": true,
+      "status": "MACHINE_REVIEW",
+      "task": "OUTCOME_LABEL",
+      "tokens": null
+    },
+    {
+      "cost_usd": null,
+      "evidence_valid": true,
+      "input_hash": "29c9315927ecac33b16de4125d1d601edd879ae8a4cf7579a494b9c73b8d22e4",
+      "latency_ms": null,
+      "model_metadata": "UNAVAILABLE",
+      "observation_id": "f-2023",
+      "output_hash": "19d8b458b00f9a9cfc1339f5126c105badd1e9dbe587ac72aeac4bcf8928383d",
+      "packet_hash": "adb30ccad0032660680c46fb15e641ad2794ed96a0ca8852639d5ec9b1c81b69",
+      "prompt_version": "v031_numeric_label_review_b_independent_v2",
+      "result": {
+        "evidence_locators": [],
+        "label": null,
+        "reasons": [
+          "NO_ELIGIBLE_FORWARD_ANNUAL_OUTCOME_WITHIN_12_MONTHS"
+        ],
+        "status": "INSUFFICIENT_DATA"
+      },
+      "review_run_id": "reviewer-b-f-2023",
+      "role": "REVIEWER_B",
+      "run_timestamp": "2026-09-09T15:27:00.371580Z",
+      "schema_valid": true,
+      "status": "MACHINE_REVIEW",
+      "task": "OUTCOME_LABEL",
+      "tokens": null
+    },
+    {
+      "cost_usd": null,
+      "evidence_valid": true,
+      "input_hash": "7eae08134782dfc5ae0f66743a1f8dee6997b8a89347f3d1fc9de9e2cad42434",
+      "latency_ms": null,
+      "model_metadata": "UNAVAILABLE",
+      "observation_id": "fcx-2021",
+      "output_hash": "afee4fc606cc438584c2de525d51f0705c53960bd0eb3f7598ccc161c8b184fd",
+      "packet_hash": "e6f08bf2cbecd917eb2484e7a909090d4f3a58b7905875d7081f2f2b35d60739",
+      "prompt_version": "v031_numeric_label_review_b_independent_v2",
+      "result": {
+        "condition_statuses": {
+          "debt_to_assets_increase": "FALSE",
+          "income_to_loss": "FALSE",
+          "ocf_deterioration": "TRUE",
+          "revenue_decline": "FALSE",
+          "two_period_negative_fcf": "FALSE"
+        },
+        "evidence_locators": [
+          "0000831259-22-000009",
+          "0000831259-23-000013",
+          "0000831259-22-000028",
+          "0000831259-22-000043"
+        ],
+        "fcf_context": "VERIFIED",
+        "label": 0,
+        "reasons": [
+          "OCF_DECLINE_OR_NEGATIVE"
+        ],
+        "status": "VERIFIED",
+        "unknown_conditions": []
+      },
+      "review_run_id": "reviewer-b-fcx-2021",
+      "role": "REVIEWER_B",
+      "run_timestamp": "2026-09-09T15:27:00.371799Z",
+      "schema_valid": true,
+      "status": "MACHINE_REVIEW",
+      "task": "OUTCOME_LABEL",
+      "tokens": null
+    },
+    {
+      "cost_usd": null,
+      "evidence_valid": true,
+      "input_hash": "d3312e802f021c755dda03aacc65b67a6065be9d3104d2a96fad72e91587ec14",
+      "latency_ms": null,
+      "model_metadata": "UNAVAILABLE",
+      "observation_id": "fcx-2022",
+      "output_hash": "df70abe76820e930e4b6c98303cb3afd7afdec4ec3277966a789d703ee8e000c",
+      "packet_hash": "307c6f39c8a7ed9ecacabebd73743dab02d5502d31c9031470db81c706aa6f2b",
+      "prompt_version": "v031_numeric_label_review_b_independent_v2",
+      "result": {
+        "evidence_locators": [],
+        "label": null,
+        "reasons": [
+          "NO_ELIGIBLE_FORWARD_ANNUAL_OUTCOME_WITHIN_12_MONTHS"
+        ],
+        "status": "INSUFFICIENT_DATA"
+      },
+      "review_run_id": "reviewer-b-fcx-2022",
+      "role": "REVIEWER_B",
+      "run_timestamp": "2026-09-09T15:27:00.371997Z",
+      "schema_valid": true,
+      "status": "MACHINE_REVIEW",
+      "task": "OUTCOME_LABEL",
+      "tokens": null
+    },
+    {
+      "cost_usd": null,
+      "evidence_valid": true,
+      "input_hash": "3c52a9c7e1c955a1806616b7d29538e3cf89c6429f6e58dd010b7ae62d469cee",
+      "latency_ms": null,
+      "model_metadata": "UNAVAILABLE",
+      "observation_id": "fcx-2023",
+      "output_hash": "c0a848ce457c8b3426ed18110062fddbdfe648b78934c3e48a4ba0bdf7678b16",
+      "packet_hash": "ea79ecff009d9d3bcd75802fd131691a79e697235a4f6e4789e7e84d8def3236",
+      "prompt_version": "v031_numeric_label_review_b_independent_v2",
+      "result": {
+        "evidence_locators": [],
+        "label": null,
+        "reasons": [
+          "NO_ELIGIBLE_FORWARD_ANNUAL_OUTCOME_WITHIN_12_MONTHS"
+        ],
+        "status": "INSUFFICIENT_DATA"
+      },
+      "review_run_id": "reviewer-b-fcx-2023",
+      "role": "REVIEWER_B",
+      "run_timestamp": "2026-09-09T15:27:00.372150Z",
+      "schema_valid": true,
+      "status": "MACHINE_REVIEW",
+      "task": "OUTCOME_LABEL",
+      "tokens": null
+    },
+    {
+      "cost_usd": null,
+      "evidence_valid": true,
+      "input_hash": "c16adad10145a3dccf5080fed067ee5845c8164aafad921b1b3367f2b68a7570",
+      "latency_ms": null,
+      "model_metadata": "UNAVAILABLE",
+      "observation_id": "fdx-2021",
+      "output_hash": "7c7df3629075986c59f0c3a865cd97658926e06a3061c3609391ff9497313957",
+      "packet_hash": "9c49e06456ba61ea8cf08ca04aef8034a178e3cf628ac2a3aa61b3782d0ffdee",
+      "prompt_version": "v031_numeric_label_review_b_independent_v2",
+      "result": {
+        "condition_statuses": {
+          "debt_to_assets_increase": "UNKNOWN",
+          "income_to_loss": "FALSE",
+          "ocf_deterioration": "FALSE",
+          "revenue_decline": "FALSE",
+          "two_period_negative_fcf": "FALSE"
+        },
+        "evidence_locators": [
+          "0001564590-21-037031",
+          "0000950170-22-012762",
+          "0001564590-21-048468",
+          "0001564590-21-060577"
+        ],
+        "fcf_context": "VERIFIED",
+        "label": 0,
+        "reasons": [],
+        "status": "VERIFIED",
+        "unknown_conditions": [
+          "debt_to_assets_increase"
+        ]
+      },
+      "review_run_id": "reviewer-b-fdx-2021",
+      "role": "REVIEWER_B",
+      "run_timestamp": "2026-09-09T15:27:00.372346Z",
+      "schema_valid": true,
+      "status": "MACHINE_REVIEW",
+      "task": "OUTCOME_LABEL",
+      "tokens": null
+    },
+    {
+      "cost_usd": null,
+      "evidence_valid": true,
+      "input_hash": "15c7be009e13d2d9026b3ba662e594b4befa11209f8670a030ce2e0c1598b23a",
+      "latency_ms": null,
+      "model_metadata": "UNAVAILABLE",
+      "observation_id": "fdx-2022",
+      "output_hash": "d14e53e0834503f6ed17af21c008349eb6d268ad8cab84aa8b06655b881299dd",
+      "packet_hash": "aa5a3f38eac4f80d144ec11b04823adf99fd85b6a492117a12a5d518bc6a5d83",
+      "prompt_version": "v031_numeric_label_review_b_independent_v2",
+      "result": {
+        "condition_statuses": {
+          "debt_to_assets_increase": "UNKNOWN",
+          "income_to_loss": "FALSE",
+          "ocf_deterioration": "FALSE",
+          "revenue_decline": "FALSE",
+          "two_period_negative_fcf": "FALSE"
+        },
+        "evidence_locators": [
+          "0000950170-22-012762",
+          "0000950170-23-033201",
+          "0000950170-22-018769",
+          "0000950170-22-026825"
+        ],
+        "fcf_context": "VERIFIED",
+        "label": 0,
+        "reasons": [],
+        "status": "VERIFIED",
+        "unknown_conditions": [
+          "debt_to_assets_increase"
+        ]
+      },
+      "review_run_id": "reviewer-b-fdx-2022",
+      "role": "REVIEWER_B",
+      "run_timestamp": "2026-09-09T15:27:00.372546Z",
+      "schema_valid": true,
+      "status": "MACHINE_REVIEW",
+      "task": "OUTCOME_LABEL",
+      "tokens": null
+    },
+    {
+      "cost_usd": null,
+      "evidence_valid": true,
+      "input_hash": "87d45cccced3cf69b60c863a29ee93f24846e0e1bdf57cb41be2dd1f96c0949d",
+      "latency_ms": null,
+      "model_metadata": "UNAVAILABLE",
+      "observation_id": "fdx-2023",
+      "output_hash": "59e0bd125e86f43d6c2f74c3332add8d50c0079a7b7fba3f945f1a1af14dfa8f",
+      "packet_hash": "8fd2f62ad189c0590442c20272b8003a63c895fc565e23cf6d98967ec04cd2b9",
+      "prompt_version": "v031_numeric_label_review_b_independent_v2",
+      "result": {
+        "evidence_locators": [],
+        "label": null,
+        "reasons": [
+          "NO_ELIGIBLE_FORWARD_ANNUAL_OUTCOME_WITHIN_12_MONTHS"
+        ],
+        "status": "INSUFFICIENT_DATA"
+      },
+      "review_run_id": "reviewer-b-fdx-2023",
+      "role": "REVIEWER_B",
+      "run_timestamp": "2026-09-09T15:27:00.372692Z",
+      "schema_valid": true,
+      "status": "MACHINE_REVIEW",
+      "task": "OUTCOME_LABEL",
+      "tokens": null
+    },
+    {
+      "cost_usd": null,
+      "evidence_valid": true,
+      "input_hash": "7b52a59b2cc2361fcc59463d5281507f065316e01aa56e929affcd950d933cfa",
+      "latency_ms": null,
+      "model_metadata": "UNAVAILABLE",
+      "observation_id": "gm-2021",
+      "output_hash": "ee49e4759ffdafd907b100036dabec95ce1b24cf0b056dc0ec72e6390e113aab",
+      "packet_hash": "3cd08d12a389d6e10a5c6705025af62bc3f4148e08a97b57e2bd155cafce0c80",
+      "prompt_version": "v031_numeric_label_review_b_independent_v2",
+      "result": {
+        "condition_statuses": {
+          "debt_to_assets_increase": "UNKNOWN",
+          "income_to_loss": "FALSE",
+          "ocf_deterioration": "FALSE",
+          "revenue_decline": "FALSE",
+          "two_period_negative_fcf": "FALSE"
+        },
+        "evidence_locators": [
+          "0001467858-22-000034",
+          "0001467858-23-000029",
+          "0001467858-22-000078",
+          "0001467858-22-000094"
+        ],
+        "fcf_context": "VERIFIED",
+        "label": 0,
+        "reasons": [],
+        "status": "VERIFIED",
+        "unknown_conditions": [
+          "debt_to_assets_increase"
+        ]
+      },
+      "review_run_id": "reviewer-b-gm-2021",
+      "role": "REVIEWER_B",
+      "run_timestamp": "2026-09-09T15:27:00.372899Z",
+      "schema_valid": true,
+      "status": "MACHINE_REVIEW",
+      "task": "OUTCOME_LABEL",
+      "tokens": null
+    },
+    {
+      "cost_usd": null,
+      "evidence_valid": true,
+      "input_hash": "8f7925010d4e97075f6644b39524bcd17215135de41ac0678eb8914f9915beb2",
+      "latency_ms": null,
+      "model_metadata": "UNAVAILABLE",
+      "observation_id": "gm-2022",
+      "output_hash": "078372c04ffb485f0c37c72db636f2bbd97a923d2a3f26d40889a37ce9704cdc",
+      "packet_hash": "3cd021cde31b769f1cd158da0e5116e796ebe0821866597bd34e9d7d54551f3d",
+      "prompt_version": "v031_numeric_label_review_b_independent_v2",
+      "result": {
+        "condition_statuses": {
+          "debt_to_assets_increase": "UNKNOWN",
+          "income_to_loss": "FALSE",
+          "ocf_deterioration": "FALSE",
+          "revenue_decline": "FALSE",
+          "two_period_negative_fcf": "FALSE"
+        },
+        "evidence_locators": [
+          "0001467858-23-000029",
+          "0001467858-24-000031",
+          "0001467858-23-000075",
+          "0001467858-23-000098"
+        ],
+        "fcf_context": "VERIFIED",
+        "label": 0,
+        "reasons": [],
+        "status": "VERIFIED",
+        "unknown_conditions": [
+          "debt_to_assets_increase"
+        ]
+      },
+      "review_run_id": "reviewer-b-gm-2022",
+      "role": "REVIEWER_B",
+      "run_timestamp": "2026-09-09T15:27:00.373107Z",
+      "schema_valid": true,
+      "status": "MACHINE_REVIEW",
+      "task": "OUTCOME_LABEL",
+      "tokens": null
+    },
+    {
+      "cost_usd": null,
+      "evidence_valid": true,
+      "input_hash": "4e2996732766f2fdede8eea5cf7d56192c61a67901bf49be690acf38b3f51af3",
+      "latency_ms": null,
+      "model_metadata": "UNAVAILABLE",
+      "observation_id": "gm-2023",
+      "output_hash": "4676a0c9b711e5fe155c32e8c78a50582e98d394b7f83eaab4c27446aed1eb78",
+      "packet_hash": "384b3ed3f8647a86f46e47234cf55dcd02c9f7e3d76cc0ad1c9e65b07bf08211",
+      "prompt_version": "v031_numeric_label_review_b_independent_v2",
+      "result": {
+        "evidence_locators": [],
+        "label": null,
+        "reasons": [
+          "NO_ELIGIBLE_FORWARD_ANNUAL_OUTCOME_WITHIN_12_MONTHS"
+        ],
+        "status": "INSUFFICIENT_DATA"
+      },
+      "review_run_id": "reviewer-b-gm-2023",
+      "role": "REVIEWER_B",
+      "run_timestamp": "2026-09-09T15:27:00.373263Z",
+      "schema_valid": true,
+      "status": "MACHINE_REVIEW",
+      "task": "OUTCOME_LABEL",
+      "tokens": null
+    },
+    {
+      "cost_usd": null,
+      "evidence_valid": true,
+      "input_hash": "0d680d679fed5e4fa1a55ef6faf5e2337f17dbc1ad8390e7d0b5cfe07ebc6d6e",
+      "latency_ms": null,
+      "model_metadata": "UNAVAILABLE",
+      "observation_id": "intc-2021",
+      "output_hash": "1911bb8baabc0274f86d3b7e4c936ab2589ab4c4fe2a0c3f467619a329b1c244",
+      "packet_hash": "2a38d1b99bf8b40aaf8b60fa62591944b7306cb91686ddcc2f692003db914660",
+      "prompt_version": "v031_numeric_label_review_b_independent_v2",
+      "result": {
+        "condition_statuses": {
+          "debt_to_assets_increase": "FALSE",
+          "income_to_loss": "FALSE",
+          "ocf_deterioration": "TRUE",
+          "revenue_decline": "TRUE",
+          "two_period_negative_fcf": "FALSE"
+        },
+        "evidence_locators": [
+          "0000050863-22-000007",
+          "0000050863-23-000006",
+          "0000050863-22-000020",
+          "0000050863-22-000030"
+        ],
+        "fcf_context": "VERIFIED",
+        "label": 1,
+        "reasons": [
+          "REVENUE_DECLINE_10PCT",
+          "OCF_DECLINE_OR_NEGATIVE"
+        ],
+        "status": "VERIFIED",
+        "unknown_conditions": []
+      },
+      "review_run_id": "reviewer-b-intc-2021",
+      "role": "REVIEWER_B",
+      "run_timestamp": "2026-09-09T15:27:00.373485Z",
+      "schema_valid": true,
+      "status": "MACHINE_REVIEW",
+      "task": "OUTCOME_LABEL",
+      "tokens": null
+    },
+    {
+      "cost_usd": null,
+      "evidence_valid": true,
+      "input_hash": "0515082e7118b3f1618cf3c46fea4c625f3f01bff748e7c08d983014abaa70ac",
+      "latency_ms": null,
+      "model_metadata": "UNAVAILABLE",
+      "observation_id": "intc-2022",
+      "output_hash": "3dc13a596056025e4723c9f7f7a6fe3e710122bd8ef1fbd2863826018e533129",
+      "packet_hash": "4be4dbaee413ed296fbe7eea1bddd2eaa960c2565652c1053d5a1574867b81e7",
+      "prompt_version": "v031_numeric_label_review_b_independent_v2",
+      "result": {
+        "condition_statuses": {
+          "debt_to_assets_increase": "FALSE",
+          "income_to_loss": "FALSE",
+          "ocf_deterioration": "TRUE",
+          "revenue_decline": "TRUE",
+          "two_period_negative_fcf": "TRUE"
+        },
+        "evidence_locators": [
+          "0000050863-23-000006",
+          "0000050863-24-000010",
+          "0000050863-23-000028",
+          "0000050863-23-000069"
+        ],
+        "fcf_context": "VERIFIED",
+        "label": 1,
+        "reasons": [
+          "REVENUE_DECLINE_10PCT",
+          "OCF_DECLINE_OR_NEGATIVE",
+          "FCF_NEGATIVE_TWO_SUBSEQUENT_PERIODS"
+        ],
+        "status": "VERIFIED",
+        "unknown_conditions": []
+      },
+      "review_run_id": "reviewer-b-intc-2022",
+      "role": "REVIEWER_B",
+      "run_timestamp": "2026-09-09T15:27:00.373706Z",
+      "schema_valid": true,
+      "status": "MACHINE_REVIEW",
+      "task": "OUTCOME_LABEL",
+      "tokens": null
+    },
+    {
+      "cost_usd": null,
+      "evidence_valid": true,
+      "input_hash": "bfe8247fa7cbd61cca959388ad704bf884f6c07991b11410252d010df01ca1f2",
+      "latency_ms": null,
+      "model_metadata": "UNAVAILABLE",
+      "observation_id": "intc-2023",
+      "output_hash": "7fe3dd7e6b13f6825cf4c40d6cce1545bbf115ae89e500ab2030207afee116dd",
+      "packet_hash": "927db31f9113b820f6bc72fd05cf0f007a09142fbc56289a531b8491a085c16e",
+      "prompt_version": "v031_numeric_label_review_b_independent_v2",
+      "result": {
+        "evidence_locators": [],
+        "label": null,
+        "reasons": [
+          "NO_ELIGIBLE_FORWARD_ANNUAL_OUTCOME_WITHIN_12_MONTHS"
+        ],
+        "status": "INSUFFICIENT_DATA"
+      },
+      "review_run_id": "reviewer-b-intc-2023",
+      "role": "REVIEWER_B",
+      "run_timestamp": "2026-09-09T15:27:00.373870Z",
+      "schema_valid": true,
+      "status": "MACHINE_REVIEW",
+      "task": "OUTCOME_LABEL",
+      "tokens": null
+    },
+    {
+      "cost_usd": null,
+      "evidence_valid": true,
+      "input_hash": "f29b0bd362dd45b42fcf12dad9f07f0b0d52b5092e7919bee7794db6822d4f7c",
+      "latency_ms": null,
+      "model_metadata": "UNAVAILABLE",
+      "observation_id": "jnj-2021",
+      "output_hash": "9bb1a7552e344c99d33acbb878c97ebf41e09ff91b5a1929faab6cc193d155d8",
+      "packet_hash": "40d1ff62709d90e1b0aa6e430bfb8849a62924c466d7db9dde8013875b2e0a87",
+      "prompt_version": "v031_numeric_label_review_b_independent_v2",
+      "result": {
+        "condition_statuses": {
+          "debt_to_assets_increase": "FALSE",
+          "income_to_loss": "FALSE",
+          "ocf_deterioration": "FALSE",
+          "revenue_decline": "FALSE",
+          "two_period_negative_fcf": "FALSE"
+        },
+        "evidence_locators": [
+          "0000200406-22-000022",
+          "0000200406-23-000016",
+          "0000200406-22-000048",
+          "0000200406-22-000071"
+        ],
+        "fcf_context": "VERIFIED",
+        "label": 0,
+        "reasons": [],
+        "status": "VERIFIED",
+        "unknown_conditions": []
+      },
+      "review_run_id": "reviewer-b-jnj-2021",
+      "role": "REVIEWER_B",
+      "run_timestamp": "2026-09-09T15:27:00.374088Z",
+      "schema_valid": true,
+      "status": "MACHINE_REVIEW",
+      "task": "OUTCOME_LABEL",
+      "tokens": null
+    },
+    {
+      "cost_usd": null,
+      "evidence_valid": true,
+      "input_hash": "363e34a391dcb25bc92abf81a3cd908dc0dd71fc21d9c9e6ce6325257ff5f7ac",
+      "latency_ms": null,
+      "model_metadata": "UNAVAILABLE",
+      "observation_id": "jnj-2022",
+      "output_hash": "c5d4a166e556f9017900b84da80a8b71e729e1a29c283c65ac4a358e16534052",
+      "packet_hash": "fa8e2e8b83156cd03ae6e637fbf3f85829706f3746e6cfab118ea73a66acb7ec",
+      "prompt_version": "v031_numeric_label_review_b_independent_v2",
+      "result": {
+        "condition_statuses": {
+          "debt_to_assets_increase": "FALSE",
+          "income_to_loss": "FALSE",
+          "ocf_deterioration": "FALSE",
+          "revenue_decline": "TRUE",
+          "two_period_negative_fcf": "FALSE"
+        },
+        "evidence_locators": [
+          "0000200406-23-000016",
+          "0000200406-24-000013",
+          "0000200406-23-000056",
+          "0000200406-23-000082"
+        ],
+        "fcf_context": "VERIFIED",
+        "label": 0,
+        "reasons": [
+          "REVENUE_DECLINE_10PCT"
+        ],
+        "status": "VERIFIED",
+        "unknown_conditions": []
+      },
+      "review_run_id": "reviewer-b-jnj-2022",
+      "role": "REVIEWER_B",
+      "run_timestamp": "2026-09-09T15:27:00.374356Z",
+      "schema_valid": true,
+      "status": "MACHINE_REVIEW",
+      "task": "OUTCOME_LABEL",
+      "tokens": null
+    },
+    {
+      "cost_usd": null,
+      "evidence_valid": true,
+      "input_hash": "2b694292e067546444352c254ad12cf05ccbd0eb75473d1dc5e07078f4f9a3c4",
+      "latency_ms": null,
+      "model_metadata": "UNAVAILABLE",
+      "observation_id": "jnj-2023",
+      "output_hash": "b58a1f75320b04b349e1a9e26b86c6e380a39d592c472588975d3753a8fe2dbe",
+      "packet_hash": "f7307866672804a44911a37736e17584fa360a6aebaf09e61c602d421e0ca5ff",
+      "prompt_version": "v031_numeric_label_review_b_independent_v2",
+      "result": {
+        "evidence_locators": [],
+        "label": null,
+        "reasons": [
+          "NO_ELIGIBLE_FORWARD_ANNUAL_OUTCOME_WITHIN_12_MONTHS"
+        ],
+        "status": "INSUFFICIENT_DATA"
+      },
+      "review_run_id": "reviewer-b-jnj-2023",
+      "role": "REVIEWER_B",
+      "run_timestamp": "2026-09-09T15:27:00.374527Z",
+      "schema_valid": true,
+      "status": "MACHINE_REVIEW",
+      "task": "OUTCOME_LABEL",
+      "tokens": null
+    },
+    {
+      "cost_usd": null,
+      "evidence_valid": true,
+      "input_hash": "ba54adeb82f1f9d4967221fe07378cc965cb226669b0aa46b74890cbd416de68",
+      "latency_ms": null,
+      "model_metadata": "UNAVAILABLE",
+      "observation_id": "khc-2021",
+      "output_hash": "f015e06bb537e3e1f298954721c3726708966ef2c931f232c35877b5d6975f94",
+      "packet_hash": "df373506f5ba4d78a10e9dec83fb7842a9201554dbb4ec7a0906f249ff213505",
+      "prompt_version": "v031_numeric_label_review_b_independent_v2",
+      "result": {
+        "condition_statuses": {
+          "debt_to_assets_increase": "FALSE",
+          "income_to_loss": "FALSE",
+          "ocf_deterioration": "TRUE",
+          "revenue_decline": "UNKNOWN",
+          "two_period_negative_fcf": "FALSE"
+        },
+        "evidence_locators": [
+          "0001637459-22-000018",
+          "0001637459-23-000009",
+          "0001637459-22-000060",
+          "0001637459-22-000159"
+        ],
+        "fcf_context": "VERIFIED",
+        "label": null,
+        "reasons": [
+          "OCF_DECLINE_OR_NEGATIVE"
+        ],
+        "status": "REQUIRES_HUMAN_REVIEW",
+        "unknown_conditions": [
+          "revenue_decline"
+        ]
+      },
+      "review_run_id": "reviewer-b-khc-2021",
+      "role": "REVIEWER_B",
+      "run_timestamp": "2026-09-09T15:27:00.374735Z",
+      "schema_valid": true,
+      "status": "MACHINE_REVIEW",
+      "task": "OUTCOME_LABEL",
+      "tokens": null
+    },
+    {
+      "cost_usd": null,
+      "evidence_valid": true,
+      "input_hash": "4630990fc3925c1d1882410b6ac1bf8fac792cb7d38f67021d4b4b90c949134c",
+      "latency_ms": null,
+      "model_metadata": "UNAVAILABLE",
+      "observation_id": "khc-2022",
+      "output_hash": "289b0f29797eb2c238b99f93b45b36cef18b09613b975dec9450c44a727caa6c",
+      "packet_hash": "276c6c070375687df35fda0db66b439f4e3a5edf66022821b1da7f5009e7267c",
+      "prompt_version": "v031_numeric_label_review_b_independent_v2",
+      "result": {
+        "condition_statuses": {
+          "debt_to_assets_increase": "FALSE",
+          "income_to_loss": "FALSE",
+          "ocf_deterioration": "FALSE",
+          "revenue_decline": "UNKNOWN",
+          "two_period_negative_fcf": "FALSE"
+        },
+        "evidence_locators": [
+          "0001637459-23-000009",
+          "0001637459-24-000018",
+          "0001637459-23-000047",
+          "0001637459-23-000114"
+        ],
+        "fcf_context": "VERIFIED",
+        "label": 0,
+        "reasons": [],
+        "status": "VERIFIED",
+        "unknown_conditions": [
+          "revenue_decline"
+        ]
+      },
+      "review_run_id": "reviewer-b-khc-2022",
+      "role": "REVIEWER_B",
+      "run_timestamp": "2026-09-09T15:27:00.374949Z",
+      "schema_valid": true,
+      "status": "MACHINE_REVIEW",
+      "task": "OUTCOME_LABEL",
+      "tokens": null
+    },
+    {
+      "cost_usd": null,
+      "evidence_valid": true,
+      "input_hash": "d342a393d8bef1df38c61400ceed1e869f2b4cd5b14017f6c501966769e1cdb7",
+      "latency_ms": null,
+      "model_metadata": "UNAVAILABLE",
+      "observation_id": "khc-2023",
+      "output_hash": "986f7214a5f6465f1143c9941113081100e865fbe24e5f32fdad27d0fe48b457",
+      "packet_hash": "c0dbbd2b4dc7a518747c04040ab87f45699e341b343f789a77a9d7dde6416d06",
+      "prompt_version": "v031_numeric_label_review_b_independent_v2",
+      "result": {
+        "evidence_locators": [],
+        "label": null,
+        "reasons": [
+          "NO_ELIGIBLE_FORWARD_ANNUAL_OUTCOME_WITHIN_12_MONTHS"
+        ],
+        "status": "INSUFFICIENT_DATA"
+      },
+      "review_run_id": "reviewer-b-khc-2023",
+      "role": "REVIEWER_B",
+      "run_timestamp": "2026-09-09T15:27:00.375111Z",
+      "schema_valid": true,
+      "status": "MACHINE_REVIEW",
+      "task": "OUTCOME_LABEL",
+      "tokens": null
+    },
+    {
+      "cost_usd": null,
+      "evidence_valid": true,
+      "input_hash": "aef7c667b2819d2c17c62cd7e0905f1691fb9828d9885c52ed529da6c7711388",
+      "latency_ms": null,
+      "model_metadata": "UNAVAILABLE",
+      "observation_id": "ko-2021",
+      "output_hash": "5d3ed1f5b3ef36fc090da8bfd6e204f0048f29fee4763a3e51fe40b46b04fc98",
+      "packet_hash": "038c99f58da10023b84d0705b2f91a6c570d7a343b1fada84bcc64565df0ed86",
+      "prompt_version": "v031_numeric_label_review_b_independent_v2",
+      "result": {
+        "condition_statuses": {
+          "debt_to_assets_increase": "FALSE",
+          "income_to_loss": "FALSE",
+          "ocf_deterioration": "FALSE",
+          "revenue_decline": "FALSE",
+          "two_period_negative_fcf": "FALSE"
+        },
+        "evidence_locators": [
+          "0000021344-22-000009",
+          "0000021344-23-000011",
+          "0000021344-22-000016",
+          "0000021344-22-000034"
+        ],
+        "fcf_context": "VERIFIED",
+        "label": 0,
+        "reasons": [],
+        "status": "VERIFIED",
+        "unknown_conditions": []
+      },
+      "review_run_id": "reviewer-b-ko-2021",
+      "role": "REVIEWER_B",
+      "run_timestamp": "2026-09-09T15:27:00.375349Z",
+      "schema_valid": true,
+      "status": "MACHINE_REVIEW",
+      "task": "OUTCOME_LABEL",
+      "tokens": null
+    },
+    {
+      "cost_usd": null,
+      "evidence_valid": true,
+      "input_hash": "c3e5fd5e9f2918bbd062a19265008641634c02ef224433d4bfc21c168190082b",
+      "latency_ms": null,
+      "model_metadata": "UNAVAILABLE",
+      "observation_id": "ko-2022",
+      "output_hash": "7c2930887d796e5f54a33477689e302fd87de99127218f224a9a1b7e3f11ebcf",
+      "packet_hash": "af2e18d83ae67f331073195bbf40614eba9d3a0980bbb91ab1caf73ef96a48ff",
+      "prompt_version": "v031_numeric_label_review_b_independent_v2",
+      "result": {
+        "condition_statuses": {
+          "debt_to_assets_increase": "FALSE",
+          "income_to_loss": "FALSE",
+          "ocf_deterioration": "FALSE",
+          "revenue_decline": "FALSE",
+          "two_period_negative_fcf": "FALSE"
+        },
+        "evidence_locators": [
+          "0000021344-23-000011",
+          "0000021344-24-000009",
+          "0000021344-23-000024",
+          "0000021344-23-000048"
+        ],
+        "fcf_context": "VERIFIED",
+        "label": 0,
+        "reasons": [],
+        "status": "VERIFIED",
+        "unknown_conditions": []
+      },
+      "review_run_id": "reviewer-b-ko-2022",
+      "role": "REVIEWER_B",
+      "run_timestamp": "2026-09-09T15:27:00.375582Z",
+      "schema_valid": true,
+      "status": "MACHINE_REVIEW",
+      "task": "OUTCOME_LABEL",
+      "tokens": null
+    },
+    {
+      "cost_usd": null,
+      "evidence_valid": true,
+      "input_hash": "4ff397f25a2cd8ea074ef6aad4321544c2276f0be88a860b47a6fe4ee75d5d02",
+      "latency_ms": null,
+      "model_metadata": "UNAVAILABLE",
+      "observation_id": "ko-2023",
+      "output_hash": "9e2366920de1f7816e31496aca4574f1810a63a042a9491de76a25afb1d905d7",
+      "packet_hash": "cd0e421248abbf98afac498028c063263e7c345a2e44f0cdbb9c8835331c13db",
+      "prompt_version": "v031_numeric_label_review_b_independent_v2",
+      "result": {
+        "evidence_locators": [],
+        "label": null,
+        "reasons": [
+          "NO_ELIGIBLE_FORWARD_ANNUAL_OUTCOME_WITHIN_12_MONTHS"
+        ],
+        "status": "INSUFFICIENT_DATA"
+      },
+      "review_run_id": "reviewer-b-ko-2023",
+      "role": "REVIEWER_B",
+      "run_timestamp": "2026-09-09T15:27:00.375745Z",
+      "schema_valid": true,
+      "status": "MACHINE_REVIEW",
+      "task": "OUTCOME_LABEL",
+      "tokens": null
+    },
+    {
+      "cost_usd": null,
+      "evidence_valid": true,
+      "input_hash": "4b64d6157d7f8969e7adf6ecbe0e144a111070ae3a56e51f76a88098c4929fff",
+      "latency_ms": null,
+      "model_metadata": "UNAVAILABLE",
+      "observation_id": "luv-2021",
+      "output_hash": "1cb2802ea7de0483ec04245afb98e25eb7c7ed83e9c08e9a134b2906178e13a1",
+      "packet_hash": "75e186c294d186f6c63313677a1b27fbf0b1d5f901a89c0721f78b25f0a234cd",
+      "prompt_version": "v031_numeric_label_review_b_independent_v2",
+      "result": {
+        "condition_statuses": {
+          "debt_to_assets_increase": "UNKNOWN",
+          "income_to_loss": "FALSE",
+          "ocf_deterioration": "FALSE",
+          "revenue_decline": "FALSE",
+          "two_period_negative_fcf": "FALSE"
+        },
+        "evidence_locators": [
+          "0000092380-22-000007",
+          "0000092380-23-000010",
+          "0000092380-22-000020",
+          "0000092380-22-000048"
+        ],
+        "fcf_context": "VERIFIED",
+        "label": 0,
+        "reasons": [],
+        "status": "VERIFIED",
+        "unknown_conditions": [
+          "debt_to_assets_increase"
+        ]
+      },
+      "review_run_id": "reviewer-b-luv-2021",
+      "role": "REVIEWER_B",
+      "run_timestamp": "2026-09-09T15:27:00.375944Z",
+      "schema_valid": true,
+      "status": "MACHINE_REVIEW",
+      "task": "OUTCOME_LABEL",
+      "tokens": null
+    },
+    {
+      "cost_usd": null,
+      "evidence_valid": true,
+      "input_hash": "a9e32b3be149f010baf1b3be8ae73ab4e193e27c0027aa501188efe5ce1d598f",
+      "latency_ms": null,
+      "model_metadata": "UNAVAILABLE",
+      "observation_id": "luv-2022",
+      "output_hash": "60841567fba5642fc5d91c9a712076586d6890841def9aa58f7b6198944c5bbf",
+      "packet_hash": "096b012bedd0052781477d0f229cec0deb2a07ba85189fd9859bfc3ca833cb19",
+      "prompt_version": "v031_numeric_label_review_b_independent_v2",
+      "result": {
+        "condition_statuses": {
+          "debt_to_assets_increase": "UNKNOWN",
+          "income_to_loss": "FALSE",
+          "ocf_deterioration": "FALSE",
+          "revenue_decline": "FALSE",
+          "two_period_negative_fcf": "FALSE"
+        },
+        "evidence_locators": [
+          "0000092380-23-000010",
+          "0000092380-24-000027",
+          "0000092380-23-000024",
+          "0000092380-23-000038"
+        ],
+        "fcf_context": "VERIFIED",
+        "label": 0,
+        "reasons": [],
+        "status": "VERIFIED",
+        "unknown_conditions": [
+          "debt_to_assets_increase"
+        ]
+      },
+      "review_run_id": "reviewer-b-luv-2022",
+      "role": "REVIEWER_B",
+      "run_timestamp": "2026-09-09T15:27:00.376149Z",
+      "schema_valid": true,
+      "status": "MACHINE_REVIEW",
+      "task": "OUTCOME_LABEL",
+      "tokens": null
+    },
+    {
+      "cost_usd": null,
+      "evidence_valid": true,
+      "input_hash": "02c281d03e0b724bae39304aa863185f3d03333aac47e3e25099c13eebf7f3e2",
+      "latency_ms": null,
+      "model_metadata": "UNAVAILABLE",
+      "observation_id": "luv-2023",
+      "output_hash": "eff7f8808e88532725a5b4b67790932d1db65fe3142883c0453e739a9b983a67",
+      "packet_hash": "914fe9a8eca392c1387cf8b396692f1dc6e1c7c2531384453b3ac8a768f08e99",
+      "prompt_version": "v031_numeric_label_review_b_independent_v2",
+      "result": {
+        "evidence_locators": [],
+        "label": null,
+        "reasons": [
+          "NO_ELIGIBLE_FORWARD_ANNUAL_OUTCOME_WITHIN_12_MONTHS"
+        ],
+        "status": "INSUFFICIENT_DATA"
+      },
+      "review_run_id": "reviewer-b-luv-2023",
+      "role": "REVIEWER_B",
+      "run_timestamp": "2026-09-09T15:27:00.376300Z",
+      "schema_valid": true,
+      "status": "MACHINE_REVIEW",
+      "task": "OUTCOME_LABEL",
+      "tokens": null
+    },
+    {
+      "cost_usd": null,
+      "evidence_valid": true,
+      "input_hash": "3ba38c29f646a89f06c1122ddce59d76bb3bd1f1f305edfc11041650ee551fc8",
+      "latency_ms": null,
+      "model_metadata": "UNAVAILABLE",
+      "observation_id": "msft-2021",
+      "output_hash": "0b37066c15b4e0d7439bb1a83d6890d4a1c2e3998e93e3c6ce69c83529c9ccf2",
+      "packet_hash": "5a7a0a10f3b511aba4545eefb15e8dc02f09c226e402a47cff1a566a72ae23ca",
+      "prompt_version": "v031_numeric_label_review_b_independent_v2",
+      "result": {
+        "condition_statuses": {
+          "debt_to_assets_increase": "FALSE",
+          "income_to_loss": "FALSE",
+          "ocf_deterioration": "FALSE",
+          "revenue_decline": "FALSE",
+          "two_period_negative_fcf": "FALSE"
+        },
+        "evidence_locators": [
+          "0001564590-21-039151",
+          "0001564590-22-026876",
+          "0001564590-21-051992",
+          "0001564590-22-002324"
+        ],
+        "fcf_context": "VERIFIED",
+        "label": 0,
+        "reasons": [],
+        "status": "VERIFIED",
+        "unknown_conditions": []
+      },
+      "review_run_id": "reviewer-b-msft-2021",
+      "role": "REVIEWER_B",
+      "run_timestamp": "2026-09-09T15:27:00.376538Z",
+      "schema_valid": true,
+      "status": "MACHINE_REVIEW",
+      "task": "OUTCOME_LABEL",
+      "tokens": null
+    },
+    {
+      "cost_usd": null,
+      "evidence_valid": true,
+      "input_hash": "9dc1aa1f5f8ac7766b25e98480997a797218dc2e283b43ba91e0591b824be325",
+      "latency_ms": null,
+      "model_metadata": "UNAVAILABLE",
+      "observation_id": "msft-2022",
+      "output_hash": "117861790dda365f64a2390655c99a307d60cb914899c8b457c6c866662d7706",
+      "packet_hash": "0983093a7cb88a3006e6a7bfa19ccac73d66fd12a1284f9ddc8d0e4c87189ca1",
+      "prompt_version": "v031_numeric_label_review_b_independent_v2",
+      "result": {
+        "condition_statuses": {
+          "debt_to_assets_increase": "FALSE",
+          "income_to_loss": "FALSE",
+          "ocf_deterioration": "FALSE",
+          "revenue_decline": "FALSE",
+          "two_period_negative_fcf": "FALSE"
+        },
+        "evidence_locators": [
+          "0001564590-22-026876",
+          "0000950170-23-035122",
+          "0001564590-22-035087",
+          "0001564590-23-000733"
+        ],
+        "fcf_context": "VERIFIED",
+        "label": 0,
+        "reasons": [],
+        "status": "VERIFIED",
+        "unknown_conditions": []
+      },
+      "review_run_id": "reviewer-b-msft-2022",
+      "role": "REVIEWER_B",
+      "run_timestamp": "2026-09-09T15:27:00.376766Z",
+      "schema_valid": true,
+      "status": "MACHINE_REVIEW",
+      "task": "OUTCOME_LABEL",
+      "tokens": null
+    },
+    {
+      "cost_usd": null,
+      "evidence_valid": true,
+      "input_hash": "aa8a5fd7966da40ad1f6dcc49a090c519bf0dba83830590be238f0b1c8cbc87b",
+      "latency_ms": null,
+      "model_metadata": "UNAVAILABLE",
+      "observation_id": "msft-2023",
+      "output_hash": "c39f68e181171c99f16f3ce7276478982bcb2bbd89fe839df519a70ace32f3f8",
+      "packet_hash": "3b2bdee453d305bfb4bede61458a6b53ff4748f55a9cee1d625d1a2023d5059d",
+      "prompt_version": "v031_numeric_label_review_b_independent_v2",
+      "result": {
+        "evidence_locators": [],
+        "label": null,
+        "reasons": [
+          "NO_ELIGIBLE_FORWARD_ANNUAL_OUTCOME_WITHIN_12_MONTHS"
+        ],
+        "status": "INSUFFICIENT_DATA"
+      },
+      "review_run_id": "reviewer-b-msft-2023",
+      "role": "REVIEWER_B",
+      "run_timestamp": "2026-09-09T15:27:00.376937Z",
+      "schema_valid": true,
+      "status": "MACHINE_REVIEW",
+      "task": "OUTCOME_LABEL",
+      "tokens": null
+    },
+    {
+      "cost_usd": null,
+      "evidence_valid": true,
+      "input_hash": "fccd5eee0bcf37ebb33ee3f0e97d2f8a20e292a5b9cd0fbfe7d0624839bc946f",
+      "latency_ms": null,
+      "model_metadata": "UNAVAILABLE",
+      "observation_id": "nee-2021",
+      "output_hash": "f91bebefff6c90c46bfbc0e94f680c60fa8061f7aab0699d6252521945224c41",
+      "packet_hash": "f1d97183fdacec14506286bd2b30380c3523e2012fe3eb58087533797bbbc819",
+      "prompt_version": "v031_numeric_label_review_b_independent_v2",
+      "result": {
+        "condition_statuses": {
+          "debt_to_assets_increase": "FALSE",
+          "income_to_loss": "FALSE",
+          "ocf_deterioration": "FALSE",
+          "revenue_decline": "UNKNOWN",
+          "two_period_negative_fcf": "UNKNOWN"
+        },
+        "evidence_locators": [
+          "0000753308-22-000014",
+          "0000753308-23-000019",
+          "0000753308-22-000033",
+          "0000753308-22-000055"
+        ],
+        "fcf_context": "INSUFFICIENT_DATA",
+        "label": null,
+        "reasons": [],
+        "status": "REQUIRES_HUMAN_REVIEW",
+        "unknown_conditions": [
+          "revenue_decline",
+          "two_period_negative_fcf"
+        ]
+      },
+      "review_run_id": "reviewer-b-nee-2021",
+      "role": "REVIEWER_B",
+      "run_timestamp": "2026-09-09T15:27:00.377225Z",
+      "schema_valid": true,
+      "status": "MACHINE_REVIEW",
+      "task": "OUTCOME_LABEL",
+      "tokens": null
+    },
+    {
+      "cost_usd": null,
+      "evidence_valid": true,
+      "input_hash": "d153327090e0a9e653d5e3eea1eec1433cad56704a61bbc2bb4a42754b37e16a",
+      "latency_ms": null,
+      "model_metadata": "UNAVAILABLE",
+      "observation_id": "nee-2022",
+      "output_hash": "bf4a994fbdf45e7177173bc59564aca976344ffe827a037ddd2003cfbfa7c7f9",
+      "packet_hash": "9771b969eb62809215f16b34add9bd21bd91e60d067acc0e53cc41d3eeb00667",
+      "prompt_version": "v031_numeric_label_review_b_independent_v2",
+      "result": {
+        "condition_statuses": {
+          "debt_to_assets_increase": "FALSE",
+          "income_to_loss": "FALSE",
+          "ocf_deterioration": "FALSE",
+          "revenue_decline": "UNKNOWN",
+          "two_period_negative_fcf": "UNKNOWN"
+        },
+        "evidence_locators": [
+          "0000753308-23-000019",
+          "0000753308-24-000008",
+          "0000753308-23-000033",
+          "0000753308-23-000045"
+        ],
+        "fcf_context": "INSUFFICIENT_DATA",
+        "label": null,
+        "reasons": [],
+        "status": "REQUIRES_HUMAN_REVIEW",
+        "unknown_conditions": [
+          "revenue_decline",
+          "two_period_negative_fcf"
+        ]
+      },
+      "review_run_id": "reviewer-b-nee-2022",
+      "role": "REVIEWER_B",
+      "run_timestamp": "2026-09-09T15:27:00.377487Z",
+      "schema_valid": true,
+      "status": "MACHINE_REVIEW",
+      "task": "OUTCOME_LABEL",
+      "tokens": null
+    },
+    {
+      "cost_usd": null,
+      "evidence_valid": true,
+      "input_hash": "c70f1f9c8f98041cc4ba8cd32450b90111d7b36f982a3c1cfeafee498d9ede02",
+      "latency_ms": null,
+      "model_metadata": "UNAVAILABLE",
+      "observation_id": "nee-2023",
+      "output_hash": "ac843a0c2b4f8b6dd7711c252cd3d02c5a95b84464ef69ccdf7db89b5baa72d3",
+      "packet_hash": "1354062e4857d337b907cb9af925bec2dc772ca8a732845be3a1cac74be41ac9",
+      "prompt_version": "v031_numeric_label_review_b_independent_v2",
+      "result": {
+        "evidence_locators": [],
+        "label": null,
+        "reasons": [
+          "NO_ELIGIBLE_FORWARD_ANNUAL_OUTCOME_WITHIN_12_MONTHS"
+        ],
+        "status": "INSUFFICIENT_DATA"
+      },
+      "review_run_id": "reviewer-b-nee-2023",
+      "role": "REVIEWER_B",
+      "run_timestamp": "2026-09-09T15:27:00.377690Z",
+      "schema_valid": true,
+      "status": "MACHINE_REVIEW",
+      "task": "OUTCOME_LABEL",
+      "tokens": null
+    },
+    {
+      "cost_usd": null,
+      "evidence_valid": true,
+      "input_hash": "9596dad640e2faad59527637fa004efa53f90f541fadcc5f6178a919a4fa04e2",
+      "latency_ms": null,
+      "model_metadata": "UNAVAILABLE",
+      "observation_id": "nflx-2021",
+      "output_hash": "719e9682c64b3cc9cfad4c7f9f338c51079087940f2c63164ede7f10e7e5b615",
+      "packet_hash": "1c0e1a49e5c35dc23dcfca20a0d399f98b061197c2f26ba342fe25048c7501d3",
+      "prompt_version": "v031_numeric_label_review_b_independent_v2",
+      "result": {
+        "condition_statuses": {
+          "debt_to_assets_increase": "FALSE",
+          "income_to_loss": "FALSE",
+          "ocf_deterioration": "FALSE",
+          "revenue_decline": "FALSE",
+          "two_period_negative_fcf": "FALSE"
+        },
+        "evidence_locators": [
+          "0001065280-22-000036",
+          "0001065280-23-000035",
+          "0001065280-22-000145",
+          "0001065280-22-000257"
+        ],
+        "fcf_context": "VERIFIED",
+        "label": 0,
+        "reasons": [],
+        "status": "VERIFIED",
+        "unknown_conditions": []
+      },
+      "review_run_id": "reviewer-b-nflx-2021",
+      "role": "REVIEWER_B",
+      "run_timestamp": "2026-09-09T15:27:00.377953Z",
+      "schema_valid": true,
+      "status": "MACHINE_REVIEW",
+      "task": "OUTCOME_LABEL",
+      "tokens": null
+    },
+    {
+      "cost_usd": null,
+      "evidence_valid": true,
+      "input_hash": "d0d0115d14513b8c36ad34ec3754d98b70862282247f788ae887281b978cde30",
+      "latency_ms": null,
+      "model_metadata": "UNAVAILABLE",
+      "observation_id": "nflx-2022",
+      "output_hash": "abc238dc192a8a99852acdb8063547d3edad5223b55c0bfd97b0739b86057116",
+      "packet_hash": "b82a47f5109de3642c52a68f754a49ff7ccca6209512e0798fceaa2f4c18d2fc",
+      "prompt_version": "v031_numeric_label_review_b_independent_v2",
+      "result": {
+        "condition_statuses": {
+          "debt_to_assets_increase": "FALSE",
+          "income_to_loss": "FALSE",
+          "ocf_deterioration": "FALSE",
+          "revenue_decline": "FALSE",
+          "two_period_negative_fcf": "FALSE"
+        },
+        "evidence_locators": [
+          "0001065280-23-000035",
+          "0001065280-24-000030",
+          "0001065280-23-000120",
+          "0001065280-23-000198"
+        ],
+        "fcf_context": "VERIFIED",
+        "label": 0,
+        "reasons": [],
+        "status": "VERIFIED",
+        "unknown_conditions": []
+      },
+      "review_run_id": "reviewer-b-nflx-2022",
+      "role": "REVIEWER_B",
+      "run_timestamp": "2026-09-09T15:27:00.378184Z",
+      "schema_valid": true,
+      "status": "MACHINE_REVIEW",
+      "task": "OUTCOME_LABEL",
+      "tokens": null
+    },
+    {
+      "cost_usd": null,
+      "evidence_valid": true,
+      "input_hash": "7a1c134770cbdb2ffedc573a5cb1afe36635eb15b5707525e47b0c7c7813f6bf",
+      "latency_ms": null,
+      "model_metadata": "UNAVAILABLE",
+      "observation_id": "nflx-2023",
+      "output_hash": "22ae2ffea2724ce47b01c55dca75545d0c5fa83590dd8e16442faaf57c2a2273",
+      "packet_hash": "8254ce62af4fe70034b3c689d5df3a63b6c1bb59ab1f057caf6ccbce421f174f",
+      "prompt_version": "v031_numeric_label_review_b_independent_v2",
+      "result": {
+        "evidence_locators": [],
+        "label": null,
+        "reasons": [
+          "NO_ELIGIBLE_FORWARD_ANNUAL_OUTCOME_WITHIN_12_MONTHS"
+        ],
+        "status": "INSUFFICIENT_DATA"
+      },
+      "review_run_id": "reviewer-b-nflx-2023",
+      "role": "REVIEWER_B",
+      "run_timestamp": "2026-09-09T15:27:00.378381Z",
+      "schema_valid": true,
+      "status": "MACHINE_REVIEW",
+      "task": "OUTCOME_LABEL",
+      "tokens": null
+    },
+    {
+      "cost_usd": null,
+      "evidence_valid": true,
+      "input_hash": "68c3a5a06328126d94048f4715615ec591f9aef59bb9e15609ebf5976cc592dc",
+      "latency_ms": null,
+      "model_metadata": "UNAVAILABLE",
+      "observation_id": "nue-2021",
+      "output_hash": "a521552a6e1681c77cbed5ef48252ccb7cdc6291e711fadcaa3392bd1a3accd1",
+      "packet_hash": "a81349e2f47cb8bc06fc343f5d481a797c650766ecd1e5f6c22b5020f1573ddf",
+      "prompt_version": "v031_numeric_label_review_b_independent_v2",
+      "result": {
+        "evidence_locators": [],
+        "label": null,
+        "reasons": [
+          "NO_ELIGIBLE_FORWARD_ANNUAL_OUTCOME_WITHIN_12_MONTHS"
+        ],
+        "status": "INSUFFICIENT_DATA"
+      },
+      "review_run_id": "reviewer-b-nue-2021",
+      "role": "REVIEWER_B",
+      "run_timestamp": "2026-09-09T15:27:00.378606Z",
+      "schema_valid": true,
+      "status": "MACHINE_REVIEW",
+      "task": "OUTCOME_LABEL",
+      "tokens": null
+    },
+    {
+      "cost_usd": null,
+      "evidence_valid": true,
+      "input_hash": "69011bdd6aae3bf9a46431e639bac52d18f30fb824312f3c150d6f0967f0b2b6",
+      "latency_ms": null,
+      "model_metadata": "UNAVAILABLE",
+      "observation_id": "nue-2022",
+      "output_hash": "afa3c45d46e8cb5dcd56986c9053bcdb9f0e082b203ae0772495e4f588f2c915",
+      "packet_hash": "5e2054c67460c55211e8537780e95a76b337ef6fdae6f76c70e283055f512939",
+      "prompt_version": "v031_numeric_label_review_b_independent_v2",
+      "result": {
+        "condition_statuses": {
+          "debt_to_assets_increase": "FALSE",
+          "income_to_loss": "FALSE",
+          "ocf_deterioration": "TRUE",
+          "revenue_decline": "TRUE",
+          "two_period_negative_fcf": "FALSE"
+        },
+        "evidence_locators": [
+          "0001564590-23-002793",
+          "0000950170-24-021195",
+          "0000950170-23-020173",
+          "0000950170-23-040234"
+        ],
+        "fcf_context": "VERIFIED",
+        "label": 1,
+        "reasons": [
+          "REVENUE_DECLINE_10PCT",
+          "OCF_DECLINE_OR_NEGATIVE"
+        ],
+        "status": "VERIFIED",
+        "unknown_conditions": []
+      },
+      "review_run_id": "reviewer-b-nue-2022",
+      "role": "REVIEWER_B",
+      "run_timestamp": "2026-09-09T15:27:00.378849Z",
+      "schema_valid": true,
+      "status": "MACHINE_REVIEW",
+      "task": "OUTCOME_LABEL",
+      "tokens": null
+    },
+    {
+      "cost_usd": null,
+      "evidence_valid": true,
+      "input_hash": "45c25799f3ca11de32a27d62b15951d0f1211454b509a503602ec18c8a986e23",
+      "latency_ms": null,
+      "model_metadata": "UNAVAILABLE",
+      "observation_id": "nue-2023",
+      "output_hash": "7c58e272de7eb4baa03410d6627c51c5bd24f10610b075ffb3061d8d7d81f475",
+      "packet_hash": "6ce8dd3b379aa6a69bad238b21fad47108c9fc964c2a9f27e7f792436d964706",
+      "prompt_version": "v031_numeric_label_review_b_independent_v2",
+      "result": {
+        "evidence_locators": [],
+        "label": null,
+        "reasons": [
+          "NO_ELIGIBLE_FORWARD_ANNUAL_OUTCOME_WITHIN_12_MONTHS"
+        ],
+        "status": "INSUFFICIENT_DATA"
+      },
+      "review_run_id": "reviewer-b-nue-2023",
+      "role": "REVIEWER_B",
+      "run_timestamp": "2026-09-09T15:27:00.379041Z",
+      "schema_valid": true,
+      "status": "MACHINE_REVIEW",
+      "task": "OUTCOME_LABEL",
+      "tokens": null
+    },
+    {
+      "cost_usd": null,
+      "evidence_valid": true,
+      "input_hash": "f5113ee2b73c5fe8777e2069fed7cdb160266a435fd174006a36311bdf8afda9",
+      "latency_ms": null,
+      "model_metadata": "UNAVAILABLE",
+      "observation_id": "oxy-2021",
+      "output_hash": "f9a3195c1978276ec3098886433c8fa1a36af5da5d0aac76cc0ca904267b99e0",
+      "packet_hash": "4840eafc90ae4b6b1b9c7ffe165510a882c857c1e381ac73cad8b6e602a16cc3",
+      "prompt_version": "v031_numeric_label_review_b_independent_v2",
+      "result": {
+        "evidence_locators": [],
+        "label": null,
+        "reasons": [
+          "NO_ELIGIBLE_FORWARD_ANNUAL_OUTCOME_WITHIN_12_MONTHS"
+        ],
+        "status": "INSUFFICIENT_DATA"
+      },
+      "review_run_id": "reviewer-b-oxy-2021",
+      "role": "REVIEWER_B",
+      "run_timestamp": "2026-09-09T15:27:00.379231Z",
+      "schema_valid": true,
+      "status": "MACHINE_REVIEW",
+      "task": "OUTCOME_LABEL",
+      "tokens": null
+    },
+    {
+      "cost_usd": null,
+      "evidence_valid": true,
+      "input_hash": "68782161ca13f54192162fc4f6098584274ca66412f62a1fe0a87923ad0f0f36",
+      "latency_ms": null,
+      "model_metadata": "UNAVAILABLE",
+      "observation_id": "oxy-2022",
+      "output_hash": "bc7e0f933a2983c8ea852b4ad3bc7c164968f8ac9312bffe02e36bda1057dbde",
+      "packet_hash": "0520ce7182e8127b7535ef55dd28afdcc21c2fa561c5e4e1d1903063e87567a4",
+      "prompt_version": "v031_numeric_label_review_b_independent_v2",
+      "result": {
+        "condition_statuses": {
+          "debt_to_assets_increase": "UNKNOWN",
+          "income_to_loss": "FALSE",
+          "ocf_deterioration": "TRUE",
+          "revenue_decline": "TRUE",
+          "two_period_negative_fcf": "FALSE"
+        },
+        "evidence_locators": [
+          "0000797468-23-000011",
+          "0000797468-24-000034",
+          "0000797468-23-000032",
+          "0000797468-23-000075"
+        ],
+        "fcf_context": "VERIFIED",
+        "label": 1,
+        "reasons": [
+          "REVENUE_DECLINE_10PCT",
+          "OCF_DECLINE_OR_NEGATIVE"
+        ],
+        "status": "VERIFIED",
+        "unknown_conditions": [
+          "debt_to_assets_increase"
+        ]
+      },
+      "review_run_id": "reviewer-b-oxy-2022",
+      "role": "REVIEWER_B",
+      "run_timestamp": "2026-09-09T15:27:00.379446Z",
+      "schema_valid": true,
+      "status": "MACHINE_REVIEW",
+      "task": "OUTCOME_LABEL",
+      "tokens": null
+    },
+    {
+      "cost_usd": null,
+      "evidence_valid": true,
+      "input_hash": "4c0b5b7fe2965017749930c8f065a43ee91c12f0d8f5829bb306738a6fb76a90",
+      "latency_ms": null,
+      "model_metadata": "UNAVAILABLE",
+      "observation_id": "oxy-2023",
+      "output_hash": "81d940534a7fa6ee03bc94ed7d9cfc86ce8c568783c57a01d7cb192aae852a0d",
+      "packet_hash": "a78548774c3e57a69513865d5a368ba07143517071bfefbb06d74305cf3dd303",
+      "prompt_version": "v031_numeric_label_review_b_independent_v2",
+      "result": {
+        "evidence_locators": [],
+        "label": null,
+        "reasons": [
+          "NO_ELIGIBLE_FORWARD_ANNUAL_OUTCOME_WITHIN_12_MONTHS"
+        ],
+        "status": "INSUFFICIENT_DATA"
+      },
+      "review_run_id": "reviewer-b-oxy-2023",
+      "role": "REVIEWER_B",
+      "run_timestamp": "2026-09-09T15:27:00.379602Z",
+      "schema_valid": true,
+      "status": "MACHINE_REVIEW",
+      "task": "OUTCOME_LABEL",
+      "tokens": null
+    },
+    {
+      "cost_usd": null,
+      "evidence_valid": true,
+      "input_hash": "51377014ef76abc66f944e629769c1f226d890f28cccc58c310614efaa7b81bd",
+      "latency_ms": null,
+      "model_metadata": "UNAVAILABLE",
+      "observation_id": "pfe-2021",
+      "output_hash": "8b75bdb1395dad4f49364e3daa73b602a68b740930c3a1ea33fe8d0bd43e1193",
+      "packet_hash": "7c665380fc7107569bec474eacb7438be7fe9c08723a0477ea1eb253d935c420",
+      "prompt_version": "v031_numeric_label_review_b_independent_v2",
+      "result": {
+        "condition_statuses": {
+          "debt_to_assets_increase": "FALSE",
+          "income_to_loss": "FALSE",
+          "ocf_deterioration": "FALSE",
+          "revenue_decline": "FALSE",
+          "two_period_negative_fcf": "FALSE"
+        },
+        "evidence_locators": [
+          "0000078003-22-000027",
+          "0000078003-23-000024",
+          "0000078003-22-000071",
+          "0000078003-22-000094"
+        ],
+        "fcf_context": "VERIFIED",
+        "label": 0,
+        "reasons": [],
+        "status": "VERIFIED",
+        "unknown_conditions": []
+      },
+      "review_run_id": "reviewer-b-pfe-2021",
+      "role": "REVIEWER_B",
+      "run_timestamp": "2026-09-09T15:27:00.379817Z",
+      "schema_valid": true,
+      "status": "MACHINE_REVIEW",
+      "task": "OUTCOME_LABEL",
+      "tokens": null
+    },
+    {
+      "cost_usd": null,
+      "evidence_valid": true,
+      "input_hash": "f4a9a342fd2c2831539a2443f3c464a61f1e4a07aa99c69d24bd8b8ccec3f42f",
+      "latency_ms": null,
+      "model_metadata": "UNAVAILABLE",
+      "observation_id": "pfe-2022",
+      "output_hash": "672cdbeedf976db5f202db4a395ebc8c24c95022f610453a5c5f8e20407d0222",
+      "packet_hash": "111681c6e1f6a46115b7a0c089d6a2262890fef25fe4c4a6ac46abda159b5f2f",
+      "prompt_version": "v031_numeric_label_review_b_independent_v2",
+      "result": {
+        "condition_statuses": {
+          "debt_to_assets_increase": "TRUE",
+          "income_to_loss": "FALSE",
+          "ocf_deterioration": "TRUE",
+          "revenue_decline": "TRUE",
+          "two_period_negative_fcf": "FALSE"
+        },
+        "evidence_locators": [
+          "0000078003-23-000024",
+          "0000078003-24-000039",
+          "0001628280-23-017196",
+          "0000078003-23-000088"
+        ],
+        "fcf_context": "VERIFIED",
+        "label": 1,
+        "reasons": [
+          "REVENUE_DECLINE_10PCT",
+          "OCF_DECLINE_OR_NEGATIVE",
+          "DEBT_TO_ASSETS_INCREASE_10PP"
+        ],
+        "status": "VERIFIED",
+        "unknown_conditions": []
+      },
+      "review_run_id": "reviewer-b-pfe-2022",
+      "role": "REVIEWER_B",
+      "run_timestamp": "2026-09-09T15:27:00.380034Z",
+      "schema_valid": true,
+      "status": "MACHINE_REVIEW",
+      "task": "OUTCOME_LABEL",
+      "tokens": null
+    },
+    {
+      "cost_usd": null,
+      "evidence_valid": true,
+      "input_hash": "8461ff3e0ea34f91c8b6ac94f900f3e5c533af59e8218b0d546684a2130015f0",
+      "latency_ms": null,
+      "model_metadata": "UNAVAILABLE",
+      "observation_id": "pfe-2023",
+      "output_hash": "5db5eaa32d698ee32f77181eb33f21f7f6e98fea319dd56f61affa89760868c3",
+      "packet_hash": "3431ae33383a3c86e74e3099328833ad1c8daaeda9bcaa7457a8d6b8445a7793",
+      "prompt_version": "v031_numeric_label_review_b_independent_v2",
+      "result": {
+        "evidence_locators": [],
+        "label": null,
+        "reasons": [
+          "NO_ELIGIBLE_FORWARD_ANNUAL_OUTCOME_WITHIN_12_MONTHS"
+        ],
+        "status": "INSUFFICIENT_DATA"
+      },
+      "review_run_id": "reviewer-b-pfe-2023",
+      "role": "REVIEWER_B",
+      "run_timestamp": "2026-09-09T15:27:00.380195Z",
+      "schema_valid": true,
+      "status": "MACHINE_REVIEW",
+      "task": "OUTCOME_LABEL",
+      "tokens": null
+    },
+    {
+      "cost_usd": null,
+      "evidence_valid": true,
+      "input_hash": "914830f7d4966d21bdc6aa399aef7beeefb7498e3eaf72835584a78d81750fe8",
+      "latency_ms": null,
+      "model_metadata": "UNAVAILABLE",
+      "observation_id": "pld-2021",
+      "output_hash": "788eb156c148639d95d8bfd09cbd0f8c2361b57a15813f78cb382cac9e604f55",
+      "packet_hash": "f6f40441df3bf36f94c4a5ab6a8dfc25579f5fb713ac79d887e65ad0ca578886",
+      "prompt_version": "v031_numeric_label_review_b_independent_v2",
+      "result": {
+        "evidence_locators": [],
+        "label": null,
+        "reasons": [
+          "NO_ELIGIBLE_FORWARD_ANNUAL_OUTCOME_WITHIN_12_MONTHS"
+        ],
+        "status": "INSUFFICIENT_DATA"
+      },
+      "review_run_id": "reviewer-b-pld-2021",
+      "role": "REVIEWER_B",
+      "run_timestamp": "2026-09-09T15:27:00.380344Z",
+      "schema_valid": true,
+      "status": "MACHINE_REVIEW",
+      "task": "OUTCOME_LABEL",
+      "tokens": null
+    },
+    {
+      "cost_usd": null,
+      "evidence_valid": true,
+      "input_hash": "9ccac0d891d0f4e2fa900a4888cd47e4316339620d3d83b2d163bf25c5a9b922",
+      "latency_ms": null,
+      "model_metadata": "UNAVAILABLE",
+      "observation_id": "pld-2022",
+      "output_hash": "50e98ef36d6ca59c6f76faa3a146e213194a99f0bef3298ee98dd3e44938c06e",
+      "packet_hash": "9e11337ef970385cd127e783b5930c25b132defd7d5ed552fc6300e3dc1cab37",
+      "prompt_version": "v031_numeric_label_review_b_independent_v2",
+      "result": {
+        "condition_statuses": {
+          "debt_to_assets_increase": "UNKNOWN",
+          "income_to_loss": "FALSE",
+          "ocf_deterioration": "FALSE",
+          "revenue_decline": "FALSE",
+          "two_period_negative_fcf": "UNKNOWN"
+        },
+        "evidence_locators": [
+          "0001564590-23-001902",
+          "0000950170-24-014539",
+          "0000950170-23-015979",
+          "0000950170-23-034768"
+        ],
+        "fcf_context": "INSUFFICIENT_DATA",
+        "label": null,
+        "reasons": [],
+        "status": "REQUIRES_HUMAN_REVIEW",
+        "unknown_conditions": [
+          "debt_to_assets_increase",
+          "two_period_negative_fcf"
+        ]
+      },
+      "review_run_id": "reviewer-b-pld-2022",
+      "role": "REVIEWER_B",
+      "run_timestamp": "2026-09-09T15:27:00.380506Z",
+      "schema_valid": true,
+      "status": "MACHINE_REVIEW",
+      "task": "OUTCOME_LABEL",
+      "tokens": null
+    },
+    {
+      "cost_usd": null,
+      "evidence_valid": true,
+      "input_hash": "6e739b23050ca59d64edb96503ffd597472dbff73c16371bfe66f1e7f750a968",
+      "latency_ms": null,
+      "model_metadata": "UNAVAILABLE",
+      "observation_id": "pld-2023",
+      "output_hash": "94c1a7b5b1899e7c326ef384c5e4f1efaafbc51d2d30311993dc9b230ea267f1",
+      "packet_hash": "8216bc41627fee4a35e76a3458218086c8f4b9d9f9061169a9c9ca29675c3e67",
+      "prompt_version": "v031_numeric_label_review_b_independent_v2",
+      "result": {
+        "evidence_locators": [],
+        "label": null,
+        "reasons": [
+          "NO_ELIGIBLE_FORWARD_ANNUAL_OUTCOME_WITHIN_12_MONTHS"
+        ],
+        "status": "INSUFFICIENT_DATA"
+      },
+      "review_run_id": "reviewer-b-pld-2023",
+      "role": "REVIEWER_B",
+      "run_timestamp": "2026-09-09T15:27:00.380626Z",
+      "schema_valid": true,
+      "status": "MACHINE_REVIEW",
+      "task": "OUTCOME_LABEL",
+      "tokens": null
+    },
+    {
+      "cost_usd": null,
+      "evidence_valid": true,
+      "input_hash": "2af5a4f4b3e674447cdee67f14e252c71f8311254a3ada0e029f326f6edfb7a1",
+      "latency_ms": null,
+      "model_metadata": "UNAVAILABLE",
+      "observation_id": "tgt-2021",
+      "output_hash": "95b17f27a09dde8edc936f1a21fa06ead8a4c7849559b3a2dea3f9d1d8154ffa",
+      "packet_hash": "48764560ad627f8fca243c99dad521dcb9203a0fb7f034555ce2a57f9a9c7848",
+      "prompt_version": "v031_numeric_label_review_b_independent_v2",
+      "result": {
+        "condition_statuses": {
+          "debt_to_assets_increase": "UNKNOWN",
+          "income_to_loss": "UNKNOWN",
+          "ocf_deterioration": "TRUE",
+          "revenue_decline": "FALSE",
+          "two_period_negative_fcf": "TRUE"
+        },
+        "evidence_locators": [
+          "0000027419-22-000007",
+          "0000027419-23-000015",
+          "0000027419-22-000015",
+          "0000027419-22-000027"
+        ],
+        "fcf_context": "VERIFIED",
+        "label": 1,
+        "reasons": [
+          "OCF_DECLINE_OR_NEGATIVE",
+          "FCF_NEGATIVE_TWO_SUBSEQUENT_PERIODS"
+        ],
+        "status": "VERIFIED",
+        "unknown_conditions": [
+          "income_to_loss",
+          "debt_to_assets_increase"
+        ]
+      },
+      "review_run_id": "reviewer-b-tgt-2021",
+      "role": "REVIEWER_B",
+      "run_timestamp": "2026-09-09T15:27:00.380828Z",
+      "schema_valid": true,
+      "status": "MACHINE_REVIEW",
+      "task": "OUTCOME_LABEL",
+      "tokens": null
+    },
+    {
+      "cost_usd": null,
+      "evidence_valid": true,
+      "input_hash": "cd919c10af96e77162b1e1012fc4fc0e3802c36c8c4cf617e50c160ef3bc7e1f",
+      "latency_ms": null,
+      "model_metadata": "UNAVAILABLE",
+      "observation_id": "tgt-2022",
+      "output_hash": "2e51a95df0a9a93624d9559a9c2172ab8412650d6354fd66418bb4c475539792",
+      "packet_hash": "698fb7a1ed6d62870fc9f973f6cef5ca07e4e5eb25952236118929e50078f6c1",
+      "prompt_version": "v031_numeric_label_review_b_independent_v2",
+      "result": {
+        "evidence_locators": [],
+        "label": null,
+        "reasons": [
+          "NO_ELIGIBLE_FORWARD_ANNUAL_OUTCOME_WITHIN_12_MONTHS"
+        ],
+        "status": "INSUFFICIENT_DATA"
+      },
+      "review_run_id": "reviewer-b-tgt-2022",
+      "role": "REVIEWER_B",
+      "run_timestamp": "2026-09-09T15:27:00.381022Z",
+      "schema_valid": true,
+      "status": "MACHINE_REVIEW",
+      "task": "OUTCOME_LABEL",
+      "tokens": null
+    },
+    {
+      "cost_usd": null,
+      "evidence_valid": true,
+      "input_hash": "3f806b4d6b0db79ea3b8393ab0c6f3fa99e9a49d498109bbf920bfe3c9b9a425",
+      "latency_ms": null,
+      "model_metadata": "UNAVAILABLE",
+      "observation_id": "tgt-2023",
+      "output_hash": "d9be97ee3766e604a8e51eea841c5f1dc6f4051e19299bffe509699d43c586c7",
+      "packet_hash": "58058cdbf399a6a2a945ae77169b9057ea0dc6d1eba2034899a043be3a4fa8dc",
+      "prompt_version": "v031_numeric_label_review_b_independent_v2",
+      "result": {
+        "evidence_locators": [],
+        "label": null,
+        "reasons": [
+          "NO_ELIGIBLE_FORWARD_ANNUAL_OUTCOME_WITHIN_12_MONTHS"
+        ],
+        "status": "INSUFFICIENT_DATA"
+      },
+      "review_run_id": "reviewer-b-tgt-2023",
+      "role": "REVIEWER_B",
+      "run_timestamp": "2026-09-09T15:27:00.381171Z",
+      "schema_valid": true,
+      "status": "MACHINE_REVIEW",
+      "task": "OUTCOME_LABEL",
+      "tokens": null
+    },
+    {
+      "cost_usd": null,
+      "evidence_valid": true,
+      "input_hash": "6d5b9c11f28e10201761bab848f4f45df14f71eb1a1fea66a1f8c45b98fc29cb",
+      "latency_ms": null,
+      "model_metadata": "UNAVAILABLE",
+      "observation_id": "tmus-2021",
+      "output_hash": "ae2c14069b26aca82cf7d537878b22655f819e9de07b366e03ca14dece0d421e",
+      "packet_hash": "46ef901e05157ea63b4c82ead76323e3d4585e7280dc0586229c0cd9efdf059a",
+      "prompt_version": "v031_numeric_label_review_b_independent_v2",
+      "result": {
+        "evidence_locators": [],
+        "label": null,
+        "reasons": [
+          "NO_ELIGIBLE_FORWARD_ANNUAL_OUTCOME_WITHIN_12_MONTHS"
+        ],
+        "status": "INSUFFICIENT_DATA"
+      },
+      "review_run_id": "reviewer-b-tmus-2021",
+      "role": "REVIEWER_B",
+      "run_timestamp": "2026-09-09T15:27:00.381366Z",
+      "schema_valid": true,
+      "status": "MACHINE_REVIEW",
+      "task": "OUTCOME_LABEL",
+      "tokens": null
+    },
+    {
+      "cost_usd": null,
+      "evidence_valid": true,
+      "input_hash": "ba736842c2b61690db73a409f43d0ac865447d5728a04fe6f034b673b1ad00dc",
+      "latency_ms": null,
+      "model_metadata": "UNAVAILABLE",
+      "observation_id": "tmus-2022",
+      "output_hash": "df5f1aab3ef0a4ff9291c63949ba24a426cd28523cc89b8b1ea5dcfb94715f02",
+      "packet_hash": "5f78db8a0395fad909b5fc0e3629c8684c87a4a2ace5037e4c0b48b9743739a9",
+      "prompt_version": "v031_numeric_label_review_b_independent_v2",
+      "result": {
+        "condition_statuses": {
+          "debt_to_assets_increase": "FALSE",
+          "income_to_loss": "FALSE",
+          "ocf_deterioration": "FALSE",
+          "revenue_decline": "FALSE",
+          "two_period_negative_fcf": "FALSE"
+        },
+        "evidence_locators": [
+          "0001283699-23-000016",
+          "0001283699-24-000008",
+          "0001283699-23-000087",
+          "0001283699-23-000134"
+        ],
+        "fcf_context": "VERIFIED",
+        "label": 0,
+        "reasons": [],
+        "status": "VERIFIED",
+        "unknown_conditions": []
+      },
+      "review_run_id": "reviewer-b-tmus-2022",
+      "role": "REVIEWER_B",
+      "run_timestamp": "2026-09-09T15:27:00.381629Z",
+      "schema_valid": true,
+      "status": "MACHINE_REVIEW",
+      "task": "OUTCOME_LABEL",
+      "tokens": null
+    },
+    {
+      "cost_usd": null,
+      "evidence_valid": true,
+      "input_hash": "7ca50a66e6ca0171b2bc206e2edacb034b133945933f6c9e97f2254e6c2734ad",
+      "latency_ms": null,
+      "model_metadata": "UNAVAILABLE",
+      "observation_id": "tmus-2023",
+      "output_hash": "f2d3037b30a541480c311ad507ad0e5a7540906d3f6bae900f965d292a9170c0",
+      "packet_hash": "c4531bf6a9338958b81e5405691429820eef82ff15be4b5fee24a627c4634b6c",
+      "prompt_version": "v031_numeric_label_review_b_independent_v2",
+      "result": {
+        "evidence_locators": [],
+        "label": null,
+        "reasons": [
+          "NO_ELIGIBLE_FORWARD_ANNUAL_OUTCOME_WITHIN_12_MONTHS"
+        ],
+        "status": "INSUFFICIENT_DATA"
+      },
+      "review_run_id": "reviewer-b-tmus-2023",
+      "role": "REVIEWER_B",
+      "run_timestamp": "2026-09-09T15:27:00.381815Z",
+      "schema_valid": true,
+      "status": "MACHINE_REVIEW",
+      "task": "OUTCOME_LABEL",
+      "tokens": null
+    },
+    {
+      "cost_usd": null,
+      "evidence_valid": true,
+      "input_hash": "b1941d254aef35a1c95a1e766e7c73278e77b9050b0e5c57ff474650336a45e5",
+      "latency_ms": null,
+      "model_metadata": "UNAVAILABLE",
+      "observation_id": "ups-2021",
+      "output_hash": "0be784405d38d29d831b82576d9908c346133b123ff0d09fc34d905e31a83a6f",
+      "packet_hash": "c08ed4eebaca11b9cbc8b3b7f0afd300aabc470376b3c9a2063fbdb49a537adf",
+      "prompt_version": "v031_numeric_label_review_b_independent_v2",
+      "result": {
+        "condition_statuses": {
+          "debt_to_assets_increase": "FALSE",
+          "income_to_loss": "FALSE",
+          "ocf_deterioration": "FALSE",
+          "revenue_decline": "FALSE",
+          "two_period_negative_fcf": "FALSE"
+        },
+        "evidence_locators": [
+          "0001090727-22-000007",
+          "0001090727-23-000006",
+          "0001090727-22-000022",
+          "0001090727-22-000034"
+        ],
+        "fcf_context": "VERIFIED",
+        "label": 0,
+        "reasons": [],
+        "status": "VERIFIED",
+        "unknown_conditions": []
+      },
+      "review_run_id": "reviewer-b-ups-2021",
+      "role": "REVIEWER_B",
+      "run_timestamp": "2026-09-09T15:27:00.382046Z",
+      "schema_valid": true,
+      "status": "MACHINE_REVIEW",
+      "task": "OUTCOME_LABEL",
+      "tokens": null
+    },
+    {
+      "cost_usd": null,
+      "evidence_valid": true,
+      "input_hash": "abe4207b736088367eb468cb96bc0bbde23a3221b16495d9cf28d509a4f478c0",
+      "latency_ms": null,
+      "model_metadata": "UNAVAILABLE",
+      "observation_id": "ups-2022",
+      "output_hash": "ba255a351c663d9000d5616a2e80c13a49527b0487600256fe839daa4419c3fb",
+      "packet_hash": "af0b55787172983ba7d6157aae0371745a1470646c98bd8f83d81e843c246ce1",
+      "prompt_version": "v031_numeric_label_review_b_independent_v2",
+      "result": {
+        "condition_statuses": {
+          "debt_to_assets_increase": "FALSE",
+          "income_to_loss": "FALSE",
+          "ocf_deterioration": "TRUE",
+          "revenue_decline": "FALSE",
+          "two_period_negative_fcf": "FALSE"
+        },
+        "evidence_locators": [
+          "0001090727-23-000006",
+          "0001090727-24-000008",
+          "0001090727-23-000025",
+          "0001090727-23-000038"
+        ],
+        "fcf_context": "VERIFIED",
+        "label": 0,
+        "reasons": [
+          "OCF_DECLINE_OR_NEGATIVE"
+        ],
+        "status": "VERIFIED",
+        "unknown_conditions": []
+      },
+      "review_run_id": "reviewer-b-ups-2022",
+      "role": "REVIEWER_B",
+      "run_timestamp": "2026-09-09T15:27:00.382269Z",
+      "schema_valid": true,
+      "status": "MACHINE_REVIEW",
+      "task": "OUTCOME_LABEL",
+      "tokens": null
+    },
+    {
+      "cost_usd": null,
+      "evidence_valid": true,
+      "input_hash": "4d1b81bd57186b909c600b0b66cb5da8f5325b951d1312770c3bf62c234b764c",
+      "latency_ms": null,
+      "model_metadata": "UNAVAILABLE",
+      "observation_id": "ups-2023",
+      "output_hash": "2eea012fe45e58888e2b8b5cf284112185926d80b63498a3be6456a780223b2b",
+      "packet_hash": "d91a4828f918fdb58aaea8561b90aa41f65bcb6936b786ce27f53a0d3b5b49d6",
+      "prompt_version": "v031_numeric_label_review_b_independent_v2",
+      "result": {
+        "evidence_locators": [],
+        "label": null,
+        "reasons": [
+          "NO_ELIGIBLE_FORWARD_ANNUAL_OUTCOME_WITHIN_12_MONTHS"
+        ],
+        "status": "INSUFFICIENT_DATA"
+      },
+      "review_run_id": "reviewer-b-ups-2023",
+      "role": "REVIEWER_B",
+      "run_timestamp": "2026-09-09T15:27:00.382434Z",
+      "schema_valid": true,
+      "status": "MACHINE_REVIEW",
+      "task": "OUTCOME_LABEL",
+      "tokens": null
+    },
+    {
+      "cost_usd": null,
+      "evidence_valid": true,
+      "input_hash": "cf30d8fc8c02d4e53e5b3d562ae21795faccf24735631fe82c87242032c0699f",
+      "latency_ms": null,
+      "model_metadata": "UNAVAILABLE",
+      "observation_id": "vz-2021",
+      "output_hash": "1c000cf9b151a4a86e0d7960bfda6473287f87ef1e7326b0e991d1be3c341b39",
+      "packet_hash": "9766609a70f45b4e30e7da23a4ddaf045bc5867d4ff01ea21a102078833bd66c",
+      "prompt_version": "v031_numeric_label_review_b_independent_v2",
+      "result": {
+        "condition_statuses": {
+          "debt_to_assets_increase": "FALSE",
+          "income_to_loss": "FALSE",
+          "ocf_deterioration": "FALSE",
+          "revenue_decline": "FALSE",
+          "two_period_negative_fcf": "UNKNOWN"
+        },
+        "evidence_locators": [
+          "0000732712-22-000008",
+          "0000732712-23-000012",
+          "0000732712-22-000019",
+          "0000732712-22-000043"
+        ],
+        "fcf_context": "INSUFFICIENT_DATA",
+        "label": 0,
+        "reasons": [],
+        "status": "VERIFIED",
+        "unknown_conditions": [
+          "two_period_negative_fcf"
+        ]
+      },
+      "review_run_id": "reviewer-b-vz-2021",
+      "role": "REVIEWER_B",
+      "run_timestamp": "2026-09-09T15:27:00.382620Z",
+      "schema_valid": true,
+      "status": "MACHINE_REVIEW",
+      "task": "OUTCOME_LABEL",
+      "tokens": null
+    },
+    {
+      "cost_usd": null,
+      "evidence_valid": true,
+      "input_hash": "37fe8cf5a2ccbce1636244b36c5d136da71febb25bdd428ead5baa5fb2a98f2d",
+      "latency_ms": null,
+      "model_metadata": "UNAVAILABLE",
+      "observation_id": "vz-2022",
+      "output_hash": "ce03bf33a178428b215693b83de0122ff64e1cbc37ea143044fc5da9efad8254",
+      "packet_hash": "473d3993555521125d9aaffa323d1acebffc840d4a1cae43bbff6e5200947bb1",
+      "prompt_version": "v031_numeric_label_review_b_independent_v2",
+      "result": {
+        "condition_statuses": {
+          "debt_to_assets_increase": "FALSE",
+          "income_to_loss": "FALSE",
+          "ocf_deterioration": "FALSE",
+          "revenue_decline": "FALSE",
+          "two_period_negative_fcf": "UNKNOWN"
+        },
+        "evidence_locators": [
+          "0000732712-23-000012",
+          "0000732712-24-000010",
+          "0000732712-23-000029",
+          "0000732712-23-000055"
+        ],
+        "fcf_context": "INSUFFICIENT_DATA",
+        "label": 0,
+        "reasons": [],
+        "status": "VERIFIED",
+        "unknown_conditions": [
+          "two_period_negative_fcf"
+        ]
+      },
+      "review_run_id": "reviewer-b-vz-2022",
+      "role": "REVIEWER_B",
+      "run_timestamp": "2026-09-09T15:27:00.382818Z",
+      "schema_valid": true,
+      "status": "MACHINE_REVIEW",
+      "task": "OUTCOME_LABEL",
+      "tokens": null
+    },
+    {
+      "cost_usd": null,
+      "evidence_valid": true,
+      "input_hash": "391e7416ef308f787651e76c045e7b230796c3bdff0d99ef2e36280def12bebb",
+      "latency_ms": null,
+      "model_metadata": "UNAVAILABLE",
+      "observation_id": "vz-2023",
+      "output_hash": "837aab427e7e2e218ae52484f04ffe81b3b2ef175c443834ebb1b664f657be74",
+      "packet_hash": "37fcf339c79f10e72817a5619689d254eb5ba0dc23168c8caa1dd04ffa78538a",
+      "prompt_version": "v031_numeric_label_review_b_independent_v2",
+      "result": {
+        "evidence_locators": [],
+        "label": null,
+        "reasons": [
+          "NO_ELIGIBLE_FORWARD_ANNUAL_OUTCOME_WITHIN_12_MONTHS"
+        ],
+        "status": "INSUFFICIENT_DATA"
+      },
+      "review_run_id": "reviewer-b-vz-2023",
+      "role": "REVIEWER_B",
+      "run_timestamp": "2026-09-09T15:27:00.382956Z",
+      "schema_valid": true,
+      "status": "MACHINE_REVIEW",
+      "task": "OUTCOME_LABEL",
+      "tokens": null
+    },
+    {
+      "cost_usd": null,
+      "evidence_valid": true,
+      "input_hash": "e6e8e61aa98b490b11d6c2fce30f73af4ca1e6261832a26e64e18c285b7132e9",
+      "latency_ms": null,
+      "model_metadata": "UNAVAILABLE",
+      "observation_id": "wba-2021",
+      "output_hash": "84dd1fdc0bfc46ee71e9d0fbed517b092ed94521e758c5ab97af3ebb25eb6900",
+      "packet_hash": "3123c11b800287e0d952e38a4f5366a91965b8525049ea5a13d448577e1d124a",
+      "prompt_version": "v031_numeric_label_review_b_independent_v2",
+      "result": {
+        "condition_statuses": {
+          "debt_to_assets_increase": "FALSE",
+          "income_to_loss": "FALSE",
+          "ocf_deterioration": "TRUE",
+          "revenue_decline": "FALSE",
+          "two_period_negative_fcf": "FALSE"
+        },
+        "evidence_locators": [
+          "0001618921-21-000085",
+          "0001618921-22-000064",
+          "0001618921-22-000004",
+          "0001618921-22-000024"
+        ],
+        "fcf_context": "VERIFIED",
+        "label": 0,
+        "reasons": [
+          "OCF_DECLINE_OR_NEGATIVE"
+        ],
+        "status": "VERIFIED",
+        "unknown_conditions": []
+      },
+      "review_run_id": "reviewer-b-wba-2021",
+      "role": "REVIEWER_B",
+      "run_timestamp": "2026-09-09T15:27:00.383186Z",
+      "schema_valid": true,
+      "status": "MACHINE_REVIEW",
+      "task": "OUTCOME_LABEL",
+      "tokens": null
+    },
+    {
+      "cost_usd": null,
+      "evidence_valid": true,
+      "input_hash": "74e468fa892f30cd28e76b14397934f3974f235e26401e6afb5f730281d5bc63",
+      "latency_ms": null,
+      "model_metadata": "UNAVAILABLE",
+      "observation_id": "wba-2022",
+      "output_hash": "7d216624ae89dd0f47ee8849c85d443d95c0ca81515d26f8be12425ba04749b5",
+      "packet_hash": "90fcbf238318363097b0789a045f3e7854d7f9b9114a7043b1d9c5552567230b",
+      "prompt_version": "v031_numeric_label_review_b_independent_v2",
+      "result": {
+        "condition_statuses": {
+          "debt_to_assets_increase": "FALSE",
+          "income_to_loss": "TRUE",
+          "ocf_deterioration": "TRUE",
+          "revenue_decline": "FALSE",
+          "two_period_negative_fcf": "FALSE"
+        },
+        "evidence_locators": [
+          "0001618921-22-000064",
+          "0001618921-23-000062",
+          "0001618921-23-000005",
+          "0001618921-23-000019"
+        ],
+        "fcf_context": "VERIFIED",
+        "label": 1,
+        "reasons": [
+          "POSITIVE_INCOME_TO_LOSS",
+          "OCF_DECLINE_OR_NEGATIVE"
+        ],
+        "status": "VERIFIED",
+        "unknown_conditions": []
+      },
+      "review_run_id": "reviewer-b-wba-2022",
+      "role": "REVIEWER_B",
+      "run_timestamp": "2026-09-09T15:27:00.383406Z",
+      "schema_valid": true,
+      "status": "MACHINE_REVIEW",
+      "task": "OUTCOME_LABEL",
+      "tokens": null
+    },
+    {
+      "cost_usd": null,
+      "evidence_valid": true,
+      "input_hash": "d1ecac0eaf1baa2e4d397c7dc9dd072326203e988e733cff6df401a4215661a7",
+      "latency_ms": null,
+      "model_metadata": "UNAVAILABLE",
+      "observation_id": "wba-2023",
+      "output_hash": "7a3d4a9f8a48e1bedae65413105c21151ce73b4cbece6aaaf022df37981e522b",
+      "packet_hash": "8addeffecb834724a5e0854dda15f269e2bf94e04801543b66c7f24f3938f2c6",
+      "prompt_version": "v031_numeric_label_review_b_independent_v2",
+      "result": {
+        "evidence_locators": [],
+        "label": null,
+        "reasons": [
+          "NO_ELIGIBLE_FORWARD_ANNUAL_OUTCOME_WITHIN_12_MONTHS"
+        ],
+        "status": "INSUFFICIENT_DATA"
+      },
+      "review_run_id": "reviewer-b-wba-2023",
+      "role": "REVIEWER_B",
+      "run_timestamp": "2026-09-09T15:27:00.383563Z",
+      "schema_valid": true,
+      "status": "MACHINE_REVIEW",
+      "task": "OUTCOME_LABEL",
+      "tokens": null
+    },
+    {
+      "cost_usd": null,
+      "evidence_valid": true,
+      "input_hash": "be836c2cf2d09fffc82ed900e33b24cd874fb09e57f98179205d99b75d4fba09",
+      "latency_ms": null,
+      "model_metadata": "UNAVAILABLE",
+      "observation_id": "wmt-2021",
+      "output_hash": "117e483098809ed8447f11af4666339b94f879cb37f40c6477f58cc00a0e580a",
+      "packet_hash": "134afbca0c1686de04d7752546a6dddc1f4088cdb59e6383c62e4c5a898d2bc1",
+      "prompt_version": "v031_numeric_label_review_b_independent_v2",
+      "result": {
+        "condition_statuses": {
+          "debt_to_assets_increase": "FALSE",
+          "income_to_loss": "FALSE",
+          "ocf_deterioration": "FALSE",
+          "revenue_decline": "FALSE",
+          "two_period_negative_fcf": "FALSE"
+        },
+        "evidence_locators": [
+          "0000104169-22-000012",
+          "0000104169-23-000020",
+          "0000104169-22-000029",
+          "0000104169-22-000072"
+        ],
+        "fcf_context": "VERIFIED",
+        "label": 0,
+        "reasons": [],
+        "status": "VERIFIED",
+        "unknown_conditions": []
+      },
+      "review_run_id": "reviewer-b-wmt-2021",
+      "role": "REVIEWER_B",
+      "run_timestamp": "2026-09-09T15:27:00.383757Z",
+      "schema_valid": true,
+      "status": "MACHINE_REVIEW",
+      "task": "OUTCOME_LABEL",
+      "tokens": null
+    },
+    {
+      "cost_usd": null,
+      "evidence_valid": true,
+      "input_hash": "7256209239906014e917fac8298b972f725310166e2119da93859b8e85b5842b",
+      "latency_ms": null,
+      "model_metadata": "UNAVAILABLE",
+      "observation_id": "wmt-2022",
+      "output_hash": "1964a630faf3839db195b6aafae8df3e7f39db3fa06d82e131e79f53357c3867",
+      "packet_hash": "7d510b2e18b8b056dcca75ef9a1517a64a6681b8c361e4bb4451b5a9ce663e10",
+      "prompt_version": "v031_numeric_label_review_b_independent_v2",
+      "result": {
+        "condition_statuses": {
+          "debt_to_assets_increase": "FALSE",
+          "income_to_loss": "FALSE",
+          "ocf_deterioration": "FALSE",
+          "revenue_decline": "FALSE",
+          "two_period_negative_fcf": "FALSE"
+        },
+        "evidence_locators": [
+          "0000104169-23-000020",
+          "0000104169-24-000056",
+          "0000104169-23-000052",
+          "0000104169-23-000097"
+        ],
+        "fcf_context": "VERIFIED",
+        "label": 0,
+        "reasons": [],
+        "status": "VERIFIED",
+        "unknown_conditions": []
+      },
+      "review_run_id": "reviewer-b-wmt-2022",
+      "role": "REVIEWER_B",
+      "run_timestamp": "2026-09-09T15:27:00.384149Z",
+      "schema_valid": true,
+      "status": "MACHINE_REVIEW",
+      "task": "OUTCOME_LABEL",
+      "tokens": null
+    },
+    {
+      "cost_usd": null,
+      "evidence_valid": true,
+      "input_hash": "7b26d3143514457e0d230bdec33cd5092fa003e04741431f5b2143f6a64d0275",
+      "latency_ms": null,
+      "model_metadata": "UNAVAILABLE",
+      "observation_id": "wmt-2023",
+      "output_hash": "d90a4a411afe4c9b3f696012e113284f8bd945ee86158623395dfa3f50113824",
+      "packet_hash": "ccd19887fea9df2bfb21f8469175f0226ac422dc63f80a44351773b42a2e9a47",
+      "prompt_version": "v031_numeric_label_review_b_independent_v2",
+      "result": {
+        "evidence_locators": [],
+        "label": null,
+        "reasons": [
+          "NO_ELIGIBLE_FORWARD_ANNUAL_OUTCOME_WITHIN_12_MONTHS"
+        ],
+        "status": "INSUFFICIENT_DATA"
+      },
+      "review_run_id": "reviewer-b-wmt-2023",
+      "role": "REVIEWER_B",
+      "run_timestamp": "2026-09-09T15:27:00.384358Z",
+      "schema_valid": true,
+      "status": "MACHINE_REVIEW",
+      "task": "OUTCOME_LABEL",
+      "tokens": null
+    }
+  ],
+  "reviewer_type": "MACHINE_REVIEWED"
+}

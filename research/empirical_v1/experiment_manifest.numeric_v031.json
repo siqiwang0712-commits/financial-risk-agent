@@ -1,0 +1,28 @@
+{
+  "dataset_hash": "3676fd8074fc3f1e5164fbb30f768351c4152b10475088f3ec4e75a809260fe8",
+  "experiment_hash": "cf816ebcdf34c3b7928c2b7aca1a622d5287b79d326b3de0ff96d40f8728a0cf",
+  "fusion_config": "NOT_USED_NUMERIC_BASELINES",
+  "git_commit": "1486cf8e2e86115bff27f3f0c8940e2237efaf10",
+  "immutable": true,
+  "label_data_hash": "548285828ad992aecc53c0225c5da065b0b070563f8c391f62674ef3314f639b",
+  "label_schema_hash": "272933b97207486d9edc1bef73175b6d27f983f0e9c0f4424af8b1aa3ffac72f",
+  "llm_model": "NOT_USED",
+  "model_config": {
+    "B0": "ratio_risk_score_v1",
+    "B1": "logistic_lr0.1_iter800_train_only_preprocessing",
+    "B2": "rules_score_delta_div100",
+    "B6": "temporal_risk_score_v1",
+    "code_hashes": {
+      "benchmark_runner": "a03164319b0abb2f2d624959e49552a850479dd546b266bb3dc70f5ef73bc51b",
+      "empirical_validation": "41d28d65bee2c73a864fd959303d9e5e96fbe3e3abdc8458c30a5e39c1c86c17",
+      "numeric_benchmark": "289f3475417bec6244c5a41b8e37261d2c2164c6b81dd1983dc9b9b9debf1e79",
+      "sec_bulk": "62d215ec6a4a85134b76caab8ededdfea4552c1dfc1e5daf1dee461cc94f8e02"
+    },
+    "threshold": 0.5
+  },
+  "prompt_version": "NOT_USED",
+  "random_seed": 31,
+  "rule_version": "a8de4b4d7e73a3e23940240e9ee54ae4a997f4f93c6b80fa71b0e7cd9f1d41a3",
+  "split_hash": "966fa9a9e5899cd820f263e64e4ce832a5bf301e399f1304134c57251156fe2b",
+  "working_tree_state": "DIRTY_LOCAL_V031_NO_COMMIT_BY_USER_REQUEST"
+}

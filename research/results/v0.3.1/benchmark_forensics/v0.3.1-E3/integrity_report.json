@@ -1,0 +1,92 @@
+{
+  "valid": true,
+  "gate": "PASS",
+  "observation_count": 90,
+  "company_count": 30,
+  "company_overlap_count": 0,
+  "future_leakage_count": 0,
+  "split_company_counts": {
+    "train": 18,
+    "validation": 6,
+    "test": 6
+  },
+  "errors": [],
+  "dataset_hash": "d3f48b35bdd5af556628b5ee43bc60392fc8c8aa8f5773fddeac37bb2ce08254",
+  "calibration": {
+    "eligible_for_probability_calibration": false,
+    "status": "RANKING_ONLY",
+    "warning": "Sampling does not preserve real-world prevalence; Brier/ECE cannot be interpreted as population PD calibration."
+  },
+  "independent_labels": {
+    "status": "NOT AVAILABLE",
+    "adjudicated_count": 0,
+    "human_adjudicated_count": 0,
+    "percent_agreement": null,
+    "errors": []
+  },
+  "capabilities": {
+    "AGENT_READY": "BLOCKED_EXTERNAL_DEPENDENCY",
+    "DOCUMENT_READY": "INSUFFICIENT_DATA",
+    "EVIDENCE_READY": "INSUFFICIENT_DATA",
+    "LABEL_READY": "VERIFIED",
+    "NUMERIC_READY": "VERIFIED",
+    "TEMPORAL_READY": "VERIFIED",
+    "labelled_observations": 42,
+    "numeric_observations": 90,
+    "temporal_companies": 30
+  },
+  "benchmarks": {
+    "B0_RATIOS_ONLY": {
+      "status": "READY",
+      "missing_capabilities": []
+    },
+    "B1_LOGISTIC_REGRESSION": {
+      "status": "READY",
+      "missing_capabilities": []
+    },
+    "B2_RULES_ONLY": {
+      "status": "READY",
+      "missing_capabilities": []
+    },
+    "B3_LLM_AGENT_ONLY": {
+      "status": "BLOCKED_EXTERNAL_DEPENDENCY",
+      "missing_capabilities": [
+        "AGENT_READY",
+        "DOCUMENT_READY"
+      ]
+    },
+    "B4_EXISTING_HYBRID": {
+      "status": "INSUFFICIENT_DATA",
+      "missing_capabilities": [
+        "DOCUMENT_READY"
+      ]
+    },
+    "B5_EVIDENCE_VERIFICATION": {
+      "status": "INSUFFICIENT_DATA",
+      "missing_capabilities": [
+        "DOCUMENT_READY",
+        "EVIDENCE_READY"
+      ]
+    },
+    "B6_NUMERIC_TEMPORAL": {
+      "status": "READY",
+      "missing_capabilities": []
+    },
+    "B7_SELECTIVE_PREDICTION": {
+      "status": "INSUFFICIENT_DATA",
+      "missing_capabilities": [
+        "BASE_PREDICTION_READY",
+        "RELIABILITY_READY"
+      ]
+    },
+    "B8_CRITIC_VERIFIER": {
+      "status": "BLOCKED_EXTERNAL_DEPENDENCY",
+      "missing_capabilities": [
+        "AGENT_READY",
+        "DOCUMENT_READY",
+        "EVIDENCE_READY"
+      ]
+    }
+  },
+  "benchmark_status": "PARTIALLY_READY"
+}

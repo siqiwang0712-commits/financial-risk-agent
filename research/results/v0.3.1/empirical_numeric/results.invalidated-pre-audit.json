@@ -1,0 +1,66 @@
+{
+  "B0": {
+    "status": "EMPIRICALLY_RUN",
+    "metrics": {
+      "auroc": 0.14285714285714285,
+      "pr_auc": 0.22619047619047616,
+      "f1": 0,
+      "recall": 0.0,
+      "balanced_accuracy": 0.5,
+      "false_negative_rate": 1.0,
+      "coverage": 1.0,
+      "abstention_rate": 0.0
+    },
+    "n": 9
+  },
+  "B1": {
+    "status": "EMPIRICALLY_RUN",
+    "metrics": {
+      "auroc": 0.9285714285714286,
+      "pr_auc": 0.8333333333333333,
+      "f1": 0.6666666666666666,
+      "recall": 1.0,
+      "balanced_accuracy": 0.8571428571428572,
+      "false_negative_rate": 0.0,
+      "coverage": 1.0,
+      "abstention_rate": 0.0
+    },
+    "n": 9
+  },
+  "B2": {
+    "status": "EMPIRICALLY_RUN",
+    "metrics": {
+      "auroc": 0.25,
+      "pr_auc": 0.22619047619047616,
+      "f1": 0,
+      "recall": 0.0,
+      "balanced_accuracy": 0.21428571428571427,
+      "false_negative_rate": 1.0,
+      "coverage": 1.0,
+      "abstention_rate": 0.0
+    },
+    "n": 9
+  },
+  "B6": {
+    "status": "EMPIRICALLY_RUN",
+    "metrics": {
+      "auroc": 0.14285714285714285,
+      "pr_auc": 0.19642857142857142,
+      "f1": 0,
+      "recall": 0.0,
+      "balanced_accuracy": 0.5,
+      "false_negative_rate": 1.0,
+      "coverage": 1.0,
+      "abstention_rate": 0.0
+    },
+    "n": 9
+  },
+  "B6_MINUS_B0_BOOTSTRAP": {
+    "delta": 0.0,
+    "ci_low": 0.0,
+    "ci_high": 0.0,
+    "cluster_count": 6,
+    "superiority_established": false
+  },
+  "experiment_hash": "96da42f21d45cead8616ed266ea7daf05362b759d7e34b11a7c6658afc4a8fbd"
+}

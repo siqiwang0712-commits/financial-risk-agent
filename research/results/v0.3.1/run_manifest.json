@@ -1,0 +1,9 @@
+{
+  "version": "v0.3.1-local",
+  "source_dataset": "finrisk-sec-mini-v1",
+  "source_results_preserved": "research/results/public_v1",
+  "replay_comparison": "legacy fusion v1 versus integrity fusion v2 on the same v0.3.1 claim-conditioned evidence; not a reconstruction of historical public_v1 scores",
+  "calibration_status": "UNCALIBRATED",
+  "validation_scope": "three-company single-reviewer public pilot",
+  "predictive_superiority_claimed": false
+}

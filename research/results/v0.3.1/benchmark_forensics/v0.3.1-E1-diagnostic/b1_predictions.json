@@ -1,0 +1,314 @@
+[
+  {
+    "observation_id": "aapl-2021",
+    "company_id": "AAPL",
+    "label": 0,
+    "split": "train",
+    "score": 0.27502743476726677,
+    "prediction": 0
+  },
+  {
+    "observation_id": "aep-2021",
+    "company_id": "AEP",
+    "label": 0,
+    "split": "train",
+    "score": 0.1193301810141593,
+    "prediction": 0
+  },
+  {
+    "observation_id": "amt-2021",
+    "company_id": "AMT",
+    "label": 0,
+    "split": "test",
+    "score": 0.21615984853450138,
+    "prediction": 0
+  },
+  {
+    "observation_id": "ba-2021",
+    "company_id": "BA",
+    "label": 0,
+    "split": "train",
+    "score": 0.13862209668261874,
+    "prediction": 0
+  },
+  {
+    "observation_id": "cat-2021",
+    "company_id": "CAT",
+    "label": 0,
+    "split": "train",
+    "score": 0.2828111663484731,
+    "prediction": 0
+  },
+  {
+    "observation_id": "cvx-2021",
+    "company_id": "CVX",
+    "label": 0,
+    "split": "train",
+    "score": 0.133115804845843,
+    "prediction": 0
+  },
+  {
+    "observation_id": "dal-2021",
+    "company_id": "DAL",
+    "label": 0,
+    "split": "train",
+    "score": 4.239051261766167e-05,
+    "prediction": 0
+  },
+  {
+    "observation_id": "dis-2022",
+    "company_id": "DIS",
+    "label": 0,
+    "split": "validation",
+    "score": 0.004023866134474712,
+    "prediction": 0
+  },
+  {
+    "observation_id": "f-2021",
+    "company_id": "F",
+    "label": 1,
+    "split": "train",
+    "score": 0.19891067841074317,
+    "prediction": 0
+  },
+  {
+    "observation_id": "fdx-2021",
+    "company_id": "FDX",
+    "label": 0,
+    "split": "validation",
+    "score": 0.03226590311666634,
+    "prediction": 0
+  },
+  {
+    "observation_id": "fdx-2022",
+    "company_id": "FDX",
+    "label": 0,
+    "split": "validation",
+    "score": 0.01650142673078085,
+    "prediction": 0
+  },
+  {
+    "observation_id": "gm-2021",
+    "company_id": "GM",
+    "label": 0,
+    "split": "train",
+    "score": 0.16238217988375522,
+    "prediction": 0
+  },
+  {
+    "observation_id": "gm-2022",
+    "company_id": "GM",
+    "label": 0,
+    "split": "train",
+    "score": 0.131181496768989,
+    "prediction": 0
+  },
+  {
+    "observation_id": "intc-2021",
+    "company_id": "INTC",
+    "label": 1,
+    "split": "train",
+    "score": 0.5064674188165647,
+    "prediction": 1
+  },
+  {
+    "observation_id": "intc-2022",
+    "company_id": "INTC",
+    "label": 1,
+    "split": "train",
+    "score": 0.8610932873616642,
+    "prediction": 1
+  },
+  {
+    "observation_id": "jnj-2021",
+    "company_id": "JNJ",
+    "label": 0,
+    "split": "train",
+    "score": 0.33892419882353375,
+    "prediction": 0
+  },
+  {
+    "observation_id": "khc-2022",
+    "company_id": "KHC",
+    "label": 0,
+    "split": "validation",
+    "score": 0.0027115590219573267,
+    "prediction": 0
+  },
+  {
+    "observation_id": "ko-2021",
+    "company_id": "KO",
+    "label": 0,
+    "split": "validation",
+    "score": 0.11720518318035528,
+    "prediction": 0
+  },
+  {
+    "observation_id": "ko-2022",
+    "company_id": "KO",
+    "label": 0,
+    "split": "validation",
+    "score": 0.06614235279860796,
+    "prediction": 0
+  },
+  {
+    "observation_id": "luv-2021",
+    "company_id": "LUV",
+    "label": 0,
+    "split": "train",
+    "score": 0.02126870172023631,
+    "prediction": 0
+  },
+  {
+    "observation_id": "luv-2022",
+    "company_id": "LUV",
+    "label": 0,
+    "split": "train",
+    "score": 0.0005435935142275701,
+    "prediction": 0
+  },
+  {
+    "observation_id": "msft-2021",
+    "company_id": "MSFT",
+    "label": 0,
+    "split": "train",
+    "score": 0.5491306637855577,
+    "prediction": 1
+  },
+  {
+    "observation_id": "msft-2022",
+    "company_id": "MSFT",
+    "label": 0,
+    "split": "train",
+    "score": 0.22336648738203616,
+    "prediction": 0
+  },
+  {
+    "observation_id": "nee-2021",
+    "company_id": "NEE",
+    "label": 0,
+    "split": "train",
+    "score": 0.0967762936032337,
+    "prediction": 0
+  },
+  {
+    "observation_id": "nee-2022",
+    "company_id": "NEE",
+    "label": 0,
+    "split": "train",
+    "score": 0.22990214166340747,
+    "prediction": 0
+  },
+  {
+    "observation_id": "nflx-2021",
+    "company_id": "NFLX",
+    "label": 0,
+    "split": "validation",
+    "score": 0.755383137846881,
+    "prediction": 1
+  },
+  {
+    "observation_id": "nflx-2022",
+    "company_id": "NFLX",
+    "label": 0,
+    "split": "validation",
+    "score": 0.22854167836675807,
+    "prediction": 0
+  },
+  {
+    "observation_id": "nue-2022",
+    "company_id": "NUE",
+    "label": 1,
+    "split": "test",
+    "score": 0.0013132159168234984,
+    "prediction": 0
+  },
+  {
+    "observation_id": "oxy-2022",
+    "company_id": "OXY",
+    "label": 1,
+    "split": "train",
+    "score": 0.5392100266341393,
+    "prediction": 1
+  },
+  {
+    "observation_id": "pfe-2021",
+    "company_id": "PFE",
+    "label": 0,
+    "split": "train",
+    "score": 0.12360944740076361,
+    "prediction": 0
+  },
+  {
+    "observation_id": "pfe-2022",
+    "company_id": "PFE",
+    "label": 1,
+    "split": "train",
+    "score": 0.36484961119081555,
+    "prediction": 0
+  },
+  {
+    "observation_id": "pld-2022",
+    "company_id": "PLD",
+    "label": 0,
+    "split": "test",
+    "score": 0.9979972243663924,
+    "prediction": 1
+  },
+  {
+    "observation_id": "tmus-2022",
+    "company_id": "TMUS",
+    "label": 0,
+    "split": "test",
+    "score": 0.0023229722751009004,
+    "prediction": 0
+  },
+  {
+    "observation_id": "ups-2021",
+    "company_id": "UPS",
+    "label": 0,
+    "split": "validation",
+    "score": 0.1740265336832142,
+    "prediction": 0
+  },
+  {
+    "observation_id": "vz-2021",
+    "company_id": "VZ",
+    "label": 0,
+    "split": "test",
+    "score": 0.3642801553297002,
+    "prediction": 0
+  },
+  {
+    "observation_id": "vz-2022",
+    "company_id": "VZ",
+    "label": 0,
+    "split": "test",
+    "score": 0.8675899296282625,
+    "prediction": 1
+  },
+  {
+    "observation_id": "wba-2022",
+    "company_id": "WBA",
+    "label": 1,
+    "split": "train",
+    "score": 0.7239583195618272,
+    "prediction": 1
+  },
+  {
+    "observation_id": "wmt-2021",
+    "company_id": "WMT",
+    "label": 0,
+    "split": "train",
+    "score": 0.1037084602698305,
+    "prediction": 0
+  },
+  {
+    "observation_id": "wmt-2022",
+    "company_id": "WMT",
+    "label": 0,
+    "split": "train",
+    "score": 0.04188090382635816,
+    "prediction": 0
+  }
+]

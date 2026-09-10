@@ -24,6 +24,8 @@ class DecisionBundle:
     component_versions: dict[str, str]
     human_review: dict[str, Any] | None
     final_decision: str
+    epistemics: dict[str, Any]
+    component_telemetry: tuple[dict[str, Any], ...]
     bundle_hash: str
 
     def to_dict(self) -> dict[str, Any]:
@@ -44,6 +46,8 @@ def build_decision_bundle(
     final_decision: str,
     risk_delta: dict[str, Any] | None = None,
     human_review: dict[str, Any] | None = None,
+    epistemics: dict[str, Any] | None = None,
+    component_telemetry: list[dict[str, Any]] | None = None,
 ) -> DecisionBundle:
     created_at = datetime.now(UTC).isoformat()
     input_hash, output_hash = canonical_hash(frozen_input), canonical_hash(frozen_output)
@@ -61,9 +65,11 @@ def build_decision_bundle(
         "component_versions": component_versions,
         "human_review": human_review,
         "final_decision": final_decision,
+        "epistemics": epistemics or {},
+        "component_telemetry": component_telemetry or [],
     }
     digest = canonical_hash(content)
-    return DecisionBundle(f"bundle_{digest[:20]}", organization_id, entity_id, created_at, document_hashes, input_hash, output_hash, risk_state, risk_delta, tuple(evidence_paths), calculations, tuple(agent_trace), component_versions, human_review, final_decision, digest)
+    return DecisionBundle(f"bundle_{digest[:20]}", organization_id, entity_id, created_at, document_hashes, input_hash, output_hash, risk_state, risk_delta, tuple(evidence_paths), calculations, tuple(agent_trace), component_versions, human_review, final_decision, epistemics or {}, tuple(component_telemetry or []), digest)
 
 
 def verify_decision_bundle(bundle: DecisionBundle) -> bool:

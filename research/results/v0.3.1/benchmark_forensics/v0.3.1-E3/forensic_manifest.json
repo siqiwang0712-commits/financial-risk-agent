@@ -1,0 +1,27 @@
+{
+  "artifact_hashes": {
+    "annual_outcome_corpus.json": "5a1c8a2cea41d4b64b4329a3cd5d39b065d7b015e4ddf7dd04920ce93468d7d2",
+    "b0_predictions.json": "94aacfb7af5ab46fb2ad40e6fff2429116880ca1a4de9e86b31abbb00c95fca1",
+    "b1_predictions.json": "a6abd8a5fd7410723763df0420d0b63f4272e98bfebbb54a0686945c483b8a3a",
+    "b2_predictions.json": "890c8e222d5bbb4c9bf0dfa3ef88b2bd35f2d9fd4669d9188b2f778a89fc5e26",
+    "b6_predictions.json": "fe3deb9f22f3430fdd66ed2785acd3d203a0a018166081ad3aed60f59b4b72f8",
+    "corpus_manifest.json": "a07429f0559be6fbdc318014dec0f3abd7819ffd448e75074ed80f796467ca7a",
+    "deterioration_labels.json": "0a94921afbbe42285a2ae2ca99f6cd7dad47aded5083a742ae80d11361ea8430",
+    "experiment_manifest.json": "530125e57c22ee569acc46d86e331a4543154018b4aebd596dfa9e94075f22a1",
+    "integrity_report.json": "cdeab67514bd5cc851c9fb245012e6ce3a6aabf86a6c7a592f3585d7c873ec3e",
+    "reported_fcf_periods.json": "7510bfa94a44fb714c2701d4b8ad404b1084fc6d9a19becd1d576a1c7d3c252a",
+    "results.json": "2c6441b439f7213ddc7d78e4e2b8ac761828f45a286da997f8410266c8f4af22",
+    "temporal_trajectories.json": "5b37dd52762687dbcc63cc5b07fe987307504b1e463e863d42ce55304de3bc31"
+  },
+  "configuration_hashes": {
+    "label_schema": "272933b97207486d9edc1bef73175b6d27f983f0e9c0f4424af8b1aa3ffac72f",
+    "numeric_model_code": "289f3475417bec6244c5a41b8e37261d2c2164c6b81dd1983dc9b9b9debf1e79",
+    "rules": "a8de4b4d7e73a3e23940240e9ee54ae4a997f4f93c6b80fa71b0e7cd9f1d41a3",
+    "runner_code": "044d339518db10a3a9932002a42ceef3fcfb6bdc308490b00612170d16c6bedf"
+  },
+  "created_at": "2026-09-09T16:06:17.082475Z",
+  "experiment_id": "v0.3.1-E3",
+  "immutable": true,
+  "manifest_hash": "5ef372939ab9bfbad9a30efe703b48bb1a49cf6bd14cb276d38fc169464b944c",
+  "overwrite_policy": "FAIL_IF_EXISTS"
+}

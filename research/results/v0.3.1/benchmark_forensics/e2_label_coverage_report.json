@@ -1,0 +1,155 @@
+{
+  "total_observations": 90,
+  "verified": 39,
+  "review_required": 6,
+  "insufficient_data": 45,
+  "summaries": {
+    "label_status": {
+      "INSUFFICIENT_DATA": 45,
+      "REQUIRES_HUMAN_REVIEW": 6,
+      "VERIFIED": 39
+    },
+    "attrition_category": {
+      "OUTCOME_WINDOW_NO_ELIGIBLE_FILING": 45,
+      "UNRESOLVED_LABEL_CONDITIONS": 6,
+      "VERIFIED": 39
+    },
+    "fiscal_year": {
+      "2021": 30,
+      "2022": 30,
+      "2023": 30
+    },
+    "sector": {
+      "Aerospace": 3,
+      "Airlines": 6,
+      "Automotive": 6,
+      "Consumer Staples": 6,
+      "Energy": 6,
+      "Industrials": 3,
+      "Logistics": 6,
+      "Materials": 6,
+      "Media": 6,
+      "Pharmaceuticals": 6,
+      "Real Estate": 6,
+      "Retail": 6,
+      "Retail Pharmacy": 3,
+      "Semiconductors": 3,
+      "Technology": 6,
+      "Telecommunications": 6,
+      "Utilities": 6
+    },
+    "split": {
+      "test": 18,
+      "train": 54,
+      "validation": 18
+    }
+  },
+  "status_breakdowns": {
+    "VERIFIED": {
+      "fiscal_year": {
+        "2021": 22,
+        "2022": 17
+      },
+      "sector": {
+        "Aerospace": 1,
+        "Airlines": 2,
+        "Automotive": 3,
+        "Consumer Staples": 3,
+        "Energy": 2,
+        "Industrials": 1,
+        "Logistics": 4,
+        "Materials": 2,
+        "Media": 2,
+        "Pharmaceuticals": 4,
+        "Real Estate": 1,
+        "Retail": 3,
+        "Retail Pharmacy": 2,
+        "Semiconductors": 2,
+        "Technology": 3,
+        "Telecommunications": 3,
+        "Utilities": 1
+      },
+      "split": {
+        "test": 6,
+        "train": 24,
+        "validation": 9
+      },
+      "missing_concept": {
+        "debt_to_assets_increase": 8,
+        "debt_to_assets_increase;income_to_loss": 1,
+        "none": 26,
+        "revenue_decline": 1,
+        "two_period_negative_fcf": 3
+      },
+      "attrition_category": {
+        "VERIFIED": 39
+      }
+    },
+    "REQUIRES_HUMAN_REVIEW": {
+      "fiscal_year": {
+        "2021": 3,
+        "2022": 3
+      },
+      "sector": {
+        "Airlines": 1,
+        "Consumer Staples": 1,
+        "Media": 1,
+        "Real Estate": 1,
+        "Utilities": 2
+      },
+      "split": {
+        "test": 1,
+        "train": 3,
+        "validation": 2
+      },
+      "missing_concept": {
+        "debt_to_assets_increase;two_period_negative_fcf": 2,
+        "ocf_deterioration;two_period_negative_fcf": 1,
+        "revenue_decline": 1,
+        "revenue_decline;two_period_negative_fcf": 2
+      },
+      "attrition_category": {
+        "UNRESOLVED_LABEL_CONDITIONS": 6
+      }
+    },
+    "INSUFFICIENT_DATA": {
+      "fiscal_year": {
+        "2021": 5,
+        "2022": 10,
+        "2023": 30
+      },
+      "sector": {
+        "Aerospace": 2,
+        "Airlines": 3,
+        "Automotive": 3,
+        "Consumer Staples": 2,
+        "Energy": 4,
+        "Industrials": 2,
+        "Logistics": 2,
+        "Materials": 4,
+        "Media": 3,
+        "Pharmaceuticals": 2,
+        "Real Estate": 4,
+        "Retail": 3,
+        "Retail Pharmacy": 1,
+        "Semiconductors": 1,
+        "Technology": 3,
+        "Telecommunications": 3,
+        "Utilities": 3
+      },
+      "split": {
+        "test": 11,
+        "train": 27,
+        "validation": 7
+      },
+      "missing_concept": {
+        "none": 45
+      },
+      "attrition_category": {
+        "OUTCOME_WINDOW_NO_ELIGIBLE_FILING": 45
+      }
+    }
+  },
+  "selection_bias_warning": "Attrition is systematic by fiscal year and filing cadence: all FY2023 observations lack a future annual filing in the available 2021Q1-2024Q4 corpus, and some prior-year next filings fall outside the strict calendar-12-month availability window.",
+  "report_hash": "6c2acdbc7d684dd8390cb789a1411c3c11ca6d6ff5df937b67ebc7b057233bca"
+}

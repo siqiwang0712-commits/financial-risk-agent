@@ -107,4 +107,4 @@ class FinRiskPipeline:
         for category in dimensions:nodes.append({"id":f"dimension:{category}","type":"dimension","label":category});edges.append({"from":f"dimension:{category}","to":"overall","relation":"weighted_into"})
         nodes.append({"id":"overall","type":"assessment","label":"overall risk"})
         graph={"nodes":nodes,"edges":edges}
-        return Assessment(company,str(year),score,level,conf,dimensions,metrics,models,signals,contradictions,missing,confidence_components=components,evidence_graph=graph)
+        return Assessment(company,str(year),score,level,conf,dimensions,metrics,models,signals,contradictions,missing,confidence_components=components,evidence_graph=graph,evidence_quality=conf,reliability_status="UNCALIBRATED")

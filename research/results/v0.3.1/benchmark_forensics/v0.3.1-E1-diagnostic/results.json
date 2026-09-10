@@ -1,0 +1,82 @@
+{
+  "B0": {
+    "status": "EMPIRICALLY_RUN",
+    "metrics": {
+      "auroc": 0.1,
+      "pr_auc": 0.2,
+      "f1": 0,
+      "recall": 0.0,
+      "balanced_accuracy": 0.5,
+      "false_negative_rate": 1.0,
+      "coverage": 1.0,
+      "abstention_rate": 0.0
+    },
+    "n": 6,
+    "positive_count": 1,
+    "negative_count": 5,
+    "power_status": "INSUFFICIENT_POWER",
+    "interpretation": "SUPERIORITY NOT ESTABLISHED"
+  },
+  "B1": {
+    "status": "EMPIRICALLY_RUN",
+    "metrics": {
+      "auroc": 0.0,
+      "pr_auc": 0.16666666666666666,
+      "f1": 0,
+      "recall": 0.0,
+      "balanced_accuracy": 0.3,
+      "false_negative_rate": 1.0,
+      "coverage": 1.0,
+      "abstention_rate": 0.0
+    },
+    "n": 6,
+    "positive_count": 1,
+    "negative_count": 5,
+    "power_status": "INSUFFICIENT_POWER",
+    "interpretation": "SUPERIORITY NOT ESTABLISHED"
+  },
+  "B2": {
+    "status": "EMPIRICALLY_RUN",
+    "metrics": {
+      "auroc": 0.0,
+      "pr_auc": 0.16666666666666666,
+      "f1": 0,
+      "recall": 0.0,
+      "balanced_accuracy": 0.1,
+      "false_negative_rate": 1.0,
+      "coverage": 1.0,
+      "abstention_rate": 0.0
+    },
+    "n": 6,
+    "positive_count": 1,
+    "negative_count": 5,
+    "power_status": "INSUFFICIENT_POWER",
+    "interpretation": "SUPERIORITY NOT ESTABLISHED"
+  },
+  "B6": {
+    "status": "EMPIRICALLY_RUN",
+    "metrics": {
+      "auroc": 0.0,
+      "pr_auc": 0.16666666666666666,
+      "f1": 0,
+      "recall": 0.0,
+      "balanced_accuracy": 0.5,
+      "false_negative_rate": 1.0,
+      "coverage": 1.0,
+      "abstention_rate": 0.0
+    },
+    "n": 6,
+    "positive_count": 1,
+    "negative_count": 5,
+    "power_status": "INSUFFICIENT_POWER",
+    "interpretation": "SUPERIORITY NOT ESTABLISHED"
+  },
+  "B6_MINUS_B0_BOOTSTRAP": {
+    "delta": 0.0,
+    "ci_low": 0.0,
+    "ci_high": 0.0,
+    "cluster_count": 5,
+    "superiority_established": false
+  },
+  "experiment_hash": "efb54b520b8f37e645008dd46fa7eae2ee7afa2a7e02ac2f38ff0e40aa328cd7"
+}

@@ -2,6 +2,37 @@
 
 ## [Unreleased]
 
+### v0.3.1 local hardening (not released)
+
+- Froze immutable `v0.3.1-E3` after separating the 90 feature observations from a label-only annual outcome pool. The E3 PIT gate reports 0 company overlap and 0 future leakage; deterministic replay matches all frozen benchmark artifacts.
+- Audited right-censoring: 42 labels are verified (34 negative, 8 positive), 6 require review, 17 have no next annual filing inside the frozen 12-month window, and 25 remain right-censored at the available 2024Q4 archive horizon. SEC 2025 bulk downloads were attempted through official URLs but returned 403; no outcomes were fabricated.
+- Replaced reviewer packets with complete, direction-neutral same-company evidence pools. Independent machine Reviewers A/B agreed on 90/90 normalized label states; this is machine review, not human gold, and the prior confirmation/evidence-selection-exposed artifacts remain explicitly invalid.
+
+- Froze `v0.3.1-E1-diagnostic`, completed score-polarity and label-attrition forensics, and created a separately hashed `v0.3.1-E2` without changing the cohort or thresholds.
+- Added filing-level SEC 10-Q/10-K FCF outcome reconciliation and condition-level `TRUE/FALSE/UNKNOWN` label sufficiency.
+- Replaced misleading tiny-sample `[0,0]` bootstrap output with valid/invalid replicate counts and `CI_NOT_ESTIMABLE` under inadequate class/cluster power.
+- Split extraction reporting into `MACHINE_AGREEMENT`, `VERIFIED_REFERENCE` and `MANUAL_REVIEW_REQUIRED`; no human gold is claimed.
+- At E2, invalidated the confirmation-exposed Reviewer B artifact and generated candidate-blind reviewer packets; E3 later supersedes this path with stricter neutral A/B review.
+
+- Rebuilt the frozen 90-observation SEC FSDS corpus after excluding dimensional segment facts from consolidated features.
+- Corrected the independent forward endpoint's OCF transition, calendar 12-month window and unavailable two-period FCF handling; 39 labels are verified, 6 require review and 45 are explicitly insufficient.
+- Added fact-level accession/period/unit/concept integrity checks and bound each observation to its actual source archive hash.
+- Ran corrected B0/B1/B2/B6 experiments; all missed the sole held-out positive and the result is marked `INSUFFICIENT_POWER`, with no predictive-superiority claim.
+- Added an independent-code-path SEC presentation/number reconciliation (E2: 1,164/1,165 comparable-field machine agreement), explicitly separated from human-adjudicated extraction gold.
+
+- Added an empirical-validation foundation over the pre-registered 30-company registry: fixed 90-observation acquisition plan, company-disjoint 18/6/6 split, PIT guard, dataset integrity gate and frozen independent label definitions.
+- Added fail-closed SEC acquisition, dual-review/extraction-gold contracts, calibration eligibility, company-clustered bootstrap deltas, structured FP/FN taxonomy and experiment-freeze verification.
+- Recorded the honest local state as 0/90 acquired, 0 adjudicated labels and benchmark `NOT RUN`; no SEC, annotation or LLM result was fabricated.
+- Actually attempted the official SEC acquisition twice using the repository owner's existing Git contact; all 90 observations were rejected with HTTP 403 and are preserved in a machine-readable failure report.
+- Added historical submissions expansion, primary filing/iXBRL HTML hashing, precise timestamp PIT comparison, empty-dataset failure, resumable partial acquisition, and blinded machine-review/run schemas.
+
+- Made hierarchical fusion non-compensatory and monotonic for additional adverse evidence; unknown dimensions remain excluded rather than treated as safe.
+- Added verified-evidence de-duplication and stable machine-readable decision reason codes.
+- Added claim-conditioned narrative schema and explicit incomplete-context outcomes before contradiction classification.
+- Separated evidence quality from calibrated reliability/probability with explicit calibration maturity states.
+- Added replayable component delta telemetry for XBRL, rules, models, narrative, Critic, Verifier and fusion.
+- Added independent `research/results/v0.3.1` replay output without modifying frozen `public_v1` results.
+
 ### Added
 
 - Temporal `EntityRiskState`, snapshots, evidence deltas and traceable risk-change attribution.

@@ -1,0 +1,32 @@
+[
+  {
+    "example_id": "aapl-2024",
+    "split": "train",
+    "gold_label": 0,
+    "legacy_fusion_v1_on_v031_evidence": 28,
+    "integrity_fusion_v2_score": 28,
+    "delta": 0,
+    "v031_decision": "PASS",
+    "reason_codes": "UNVALIDATED_RELIABILITY"
+  },
+  {
+    "example_id": "msft-2024",
+    "split": "validation",
+    "gold_label": 0,
+    "legacy_fusion_v1_on_v031_evidence": 24,
+    "integrity_fusion_v2_score": 28,
+    "delta": 4,
+    "v031_decision": "PASS",
+    "reason_codes": "UNVALIDATED_RELIABILITY"
+  },
+  {
+    "example_id": "intc-2024",
+    "split": "test",
+    "gold_label": 1,
+    "legacy_fusion_v1_on_v031_evidence": 73,
+    "integrity_fusion_v2_score": 73,
+    "delta": 0,
+    "v031_decision": "FLAG",
+    "reason_codes": "UNVALIDATED_RELIABILITY"
+  }
+]

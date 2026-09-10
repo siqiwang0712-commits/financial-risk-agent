@@ -98,6 +98,52 @@ class SecClient:
             cache.write_bytes(raw);cache.with_suffix(".sha256").write_text(hashlib.sha256(raw).hexdigest(),encoding="ascii")
         return payload
 
+    def get_bytes(self, url: str, cache_key: str | None = None) -> bytes:
+        """Fetch an SEC filing artifact with the same fair-access and hash policy."""
+        cache = self.cache_dir / f"{cache_key}.bin" if self.cache_dir and cache_key else None
+        if cache and cache.exists():
+            raw = cache.read_bytes()
+            hash_path = cache.with_suffix(".sha256")
+            if hash_path.exists() and hashlib.sha256(raw).hexdigest() != hash_path.read_text(encoding="ascii").strip():
+                raise ValueError(f"SEC cache hash mismatch: {cache}")
+            return raw
+        request = urllib.request.Request(
+            url,
+            headers={
+                "User-Agent": self.user_agent,
+                "Accept": "text/html,application/xhtml+xml,*/*",
+                "Accept-Encoding": "identity",
+                "Host": urlparse(url).netloc,
+            },
+        )
+        raw = None
+        for attempt in range(self.max_retries + 1):
+            delay = self.pause_seconds - (time.monotonic() - self._last_request_at)
+            if delay > 0:
+                time.sleep(delay)
+            try:
+                self._last_request_at = time.monotonic()
+                with urllib.request.urlopen(request, timeout=60) as response:
+                    raw = response.read()
+                break
+            except urllib.error.HTTPError as exc:
+                if exc.code == 403:
+                    raise RuntimeError("SEC rejected this network with HTTP 403; do not bypass Fair Access controls") from exc
+                if exc.code not in {429, 500, 502, 503, 504} or attempt >= self.max_retries:
+                    raise
+                retry_after = exc.headers.get("Retry-After")
+                time.sleep(float(retry_after) if retry_after and retry_after.isdigit() else min(2**attempt, 8))
+            except urllib.error.URLError:
+                if attempt >= self.max_retries:
+                    raise
+                time.sleep(min(2**attempt, 8))
+        assert raw is not None
+        if cache:
+            cache.parent.mkdir(parents=True, exist_ok=True)
+            cache.write_bytes(raw)
+            cache.with_suffix(".sha256").write_text(hashlib.sha256(raw).hexdigest(), encoding="ascii")
+        return raw
+
     def companyfacts(self, cik: str) -> dict[str, Any]:
         normalized = str(cik).zfill(10)
         return self.get_json(f"{SEC_BASE}/api/xbrl/companyfacts/CIK{normalized}.json", f"companyfacts-{normalized}")

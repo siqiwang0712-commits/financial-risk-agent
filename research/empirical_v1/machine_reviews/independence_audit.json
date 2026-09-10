@@ -1,0 +1,1464 @@
+{
+  "reviewer_b_independent_run": "MACHINE_REVIEWED",
+  "candidate_labels_visible_during_review": false,
+  "other_reviewer_outputs_visible_during_review": false,
+  "candidate_selected_directional_evidence_visible_during_review": false,
+  "posthoc_comparison_count": 90,
+  "posthoc_label_status_agreement_count": 90,
+  "reviewer_a_status": "MACHINE_REVIEWED",
+  "dual_review_status": "COMPLETE_MACHINE_ONLY",
+  "reviewer_pair_count": 90,
+  "reviewer_pair_agreement_count": 90,
+  "reviewer_pair_percent_agreement": 1.0,
+  "disagreement_count": 0,
+  "adjudication_status": "NOT_REQUIRED_NO_DISAGREEMENTS",
+  "human_gold_status": "NOT_ADJUDICATED",
+  "prior_reviewer_b_artifact": "CONFIRMATION_EXPOSED_INVALID",
+  "superseded_candidate_blind_artifact": "EVIDENCE_SELECTION_NOT_STRICT_ENOUGH_INVALID",
+  "independence_conclusion": "Earlier Reviewer B artifacts are invalid: the original read candidate labels and the first replacement used preselected next-year evidence. Neutral Reviewer A and B each received the complete same-company evidence pool, no candidate label or prediction, and no other reviewer output. Their agreement is machine-only and is not human-adjudicated gold.",
+  "comparisons": [
+    {
+      "observation_id": "aapl-2021",
+      "reviewer_label": 0,
+      "reviewer_status": "VERIFIED",
+      "candidate_label": 0,
+      "candidate_status": "VERIFIED",
+      "agreement": true
+    },
+    {
+      "observation_id": "aapl-2022",
+      "reviewer_label": null,
+      "reviewer_status": "INSUFFICIENT_DATA",
+      "candidate_label": null,
+      "candidate_status": "INSUFFICIENT_DATA",
+      "agreement": true
+    },
+    {
+      "observation_id": "aapl-2023",
+      "reviewer_label": 0,
+      "reviewer_status": "VERIFIED",
+      "candidate_label": 0,
+      "candidate_status": "VERIFIED",
+      "agreement": true
+    },
+    {
+      "observation_id": "aep-2021",
+      "reviewer_label": 0,
+      "reviewer_status": "VERIFIED",
+      "candidate_label": 0,
+      "candidate_status": "VERIFIED",
+      "agreement": true
+    },
+    {
+      "observation_id": "aep-2022",
+      "reviewer_label": null,
+      "reviewer_status": "INSUFFICIENT_DATA",
+      "candidate_label": null,
+      "candidate_status": "INSUFFICIENT_DATA",
+      "agreement": true
+    },
+    {
+      "observation_id": "aep-2023",
+      "reviewer_label": null,
+      "reviewer_status": "INSUFFICIENT_DATA",
+      "candidate_label": null,
+      "candidate_status": "INSUFFICIENT_DATA",
+      "agreement": true
+    },
+    {
+      "observation_id": "amt-2021",
+      "reviewer_label": 0,
+      "reviewer_status": "VERIFIED",
+      "candidate_label": 0,
+      "candidate_status": "VERIFIED",
+      "agreement": true
+    },
+    {
+      "observation_id": "amt-2022",
+      "reviewer_label": null,
+      "reviewer_status": "INSUFFICIENT_DATA",
+      "candidate_label": null,
+      "candidate_status": "INSUFFICIENT_DATA",
+      "agreement": true
+    },
+    {
+      "observation_id": "amt-2023",
+      "reviewer_label": null,
+      "reviewer_status": "INSUFFICIENT_DATA",
+      "candidate_label": null,
+      "candidate_status": "INSUFFICIENT_DATA",
+      "agreement": true
+    },
+    {
+      "observation_id": "ba-2021",
+      "reviewer_label": 0,
+      "reviewer_status": "VERIFIED",
+      "candidate_label": 0,
+      "candidate_status": "VERIFIED",
+      "agreement": true
+    },
+    {
+      "observation_id": "ba-2022",
+      "reviewer_label": null,
+      "reviewer_status": "INSUFFICIENT_DATA",
+      "candidate_label": null,
+      "candidate_status": "INSUFFICIENT_DATA",
+      "agreement": true
+    },
+    {
+      "observation_id": "ba-2023",
+      "reviewer_label": null,
+      "reviewer_status": "INSUFFICIENT_DATA",
+      "candidate_label": null,
+      "candidate_status": "INSUFFICIENT_DATA",
+      "agreement": true
+    },
+    {
+      "observation_id": "cat-2021",
+      "reviewer_label": 0,
+      "reviewer_status": "VERIFIED",
+      "candidate_label": 0,
+      "candidate_status": "VERIFIED",
+      "agreement": true
+    },
+    {
+      "observation_id": "cat-2022",
+      "reviewer_label": null,
+      "reviewer_status": "INSUFFICIENT_DATA",
+      "candidate_label": null,
+      "candidate_status": "INSUFFICIENT_DATA",
+      "agreement": true
+    },
+    {
+      "observation_id": "cat-2023",
+      "reviewer_label": null,
+      "reviewer_status": "INSUFFICIENT_DATA",
+      "candidate_label": null,
+      "candidate_status": "INSUFFICIENT_DATA",
+      "agreement": true
+    },
+    {
+      "observation_id": "cvx-2021",
+      "reviewer_label": 0,
+      "reviewer_status": "VERIFIED",
+      "candidate_label": 0,
+      "candidate_status": "VERIFIED",
+      "agreement": true
+    },
+    {
+      "observation_id": "cvx-2022",
+      "reviewer_label": null,
+      "reviewer_status": "INSUFFICIENT_DATA",
+      "candidate_label": null,
+      "candidate_status": "INSUFFICIENT_DATA",
+      "agreement": true
+    },
+    {
+      "observation_id": "cvx-2023",
+      "reviewer_label": null,
+      "reviewer_status": "INSUFFICIENT_DATA",
+      "candidate_label": null,
+      "candidate_status": "INSUFFICIENT_DATA",
+      "agreement": true
+    },
+    {
+      "observation_id": "dal-2021",
+      "reviewer_label": null,
+      "reviewer_status": "REQUIRES_HUMAN_REVIEW",
+      "candidate_label": null,
+      "candidate_status": "REQUIRES_HUMAN_REVIEW",
+      "agreement": true
+    },
+    {
+      "observation_id": "dal-2022",
+      "reviewer_label": null,
+      "reviewer_status": "INSUFFICIENT_DATA",
+      "candidate_label": null,
+      "candidate_status": "INSUFFICIENT_DATA",
+      "agreement": true
+    },
+    {
+      "observation_id": "dal-2023",
+      "reviewer_label": null,
+      "reviewer_status": "INSUFFICIENT_DATA",
+      "candidate_label": null,
+      "candidate_status": "INSUFFICIENT_DATA",
+      "agreement": true
+    },
+    {
+      "observation_id": "dis-2021",
+      "reviewer_label": null,
+      "reviewer_status": "INSUFFICIENT_DATA",
+      "candidate_label": null,
+      "candidate_status": "INSUFFICIENT_DATA",
+      "agreement": true
+    },
+    {
+      "observation_id": "dis-2022",
+      "reviewer_label": null,
+      "reviewer_status": "REQUIRES_HUMAN_REVIEW",
+      "candidate_label": null,
+      "candidate_status": "REQUIRES_HUMAN_REVIEW",
+      "agreement": true
+    },
+    {
+      "observation_id": "dis-2023",
+      "reviewer_label": 0,
+      "reviewer_status": "VERIFIED",
+      "candidate_label": 0,
+      "candidate_status": "VERIFIED",
+      "agreement": true
+    },
+    {
+      "observation_id": "f-2021",
+      "reviewer_label": 1,
+      "reviewer_status": "VERIFIED",
+      "candidate_label": 1,
+      "candidate_status": "VERIFIED",
+      "agreement": true
+    },
+    {
+      "observation_id": "f-2022",
+      "reviewer_label": null,
+      "reviewer_status": "INSUFFICIENT_DATA",
+      "candidate_label": null,
+      "candidate_status": "INSUFFICIENT_DATA",
+      "agreement": true
+    },
+    {
+      "observation_id": "f-2023",
+      "reviewer_label": null,
+      "reviewer_status": "INSUFFICIENT_DATA",
+      "candidate_label": null,
+      "candidate_status": "INSUFFICIENT_DATA",
+      "agreement": true
+    },
+    {
+      "observation_id": "fcx-2021",
+      "reviewer_label": 0,
+      "reviewer_status": "VERIFIED",
+      "candidate_label": 0,
+      "candidate_status": "VERIFIED",
+      "agreement": true
+    },
+    {
+      "observation_id": "fcx-2022",
+      "reviewer_label": null,
+      "reviewer_status": "INSUFFICIENT_DATA",
+      "candidate_label": null,
+      "candidate_status": "INSUFFICIENT_DATA",
+      "agreement": true
+    },
+    {
+      "observation_id": "fcx-2023",
+      "reviewer_label": null,
+      "reviewer_status": "INSUFFICIENT_DATA",
+      "candidate_label": null,
+      "candidate_status": "INSUFFICIENT_DATA",
+      "agreement": true
+    },
+    {
+      "observation_id": "fdx-2021",
+      "reviewer_label": 0,
+      "reviewer_status": "VERIFIED",
+      "candidate_label": 0,
+      "candidate_status": "VERIFIED",
+      "agreement": true
+    },
+    {
+      "observation_id": "fdx-2022",
+      "reviewer_label": 0,
+      "reviewer_status": "VERIFIED",
+      "candidate_label": 0,
+      "candidate_status": "VERIFIED",
+      "agreement": true
+    },
+    {
+      "observation_id": "fdx-2023",
+      "reviewer_label": 0,
+      "reviewer_status": "VERIFIED",
+      "candidate_label": 0,
+      "candidate_status": "VERIFIED",
+      "agreement": true
+    },
+    {
+      "observation_id": "gm-2021",
+      "reviewer_label": 0,
+      "reviewer_status": "VERIFIED",
+      "candidate_label": 0,
+      "candidate_status": "VERIFIED",
+      "agreement": true
+    },
+    {
+      "observation_id": "gm-2022",
+      "reviewer_label": 0,
+      "reviewer_status": "VERIFIED",
+      "candidate_label": 0,
+      "candidate_status": "VERIFIED",
+      "agreement": true
+    },
+    {
+      "observation_id": "gm-2023",
+      "reviewer_label": null,
+      "reviewer_status": "INSUFFICIENT_DATA",
+      "candidate_label": null,
+      "candidate_status": "INSUFFICIENT_DATA",
+      "agreement": true
+    },
+    {
+      "observation_id": "intc-2021",
+      "reviewer_label": 1,
+      "reviewer_status": "VERIFIED",
+      "candidate_label": 1,
+      "candidate_status": "VERIFIED",
+      "agreement": true
+    },
+    {
+      "observation_id": "intc-2022",
+      "reviewer_label": 1,
+      "reviewer_status": "VERIFIED",
+      "candidate_label": 1,
+      "candidate_status": "VERIFIED",
+      "agreement": true
+    },
+    {
+      "observation_id": "intc-2023",
+      "reviewer_label": null,
+      "reviewer_status": "INSUFFICIENT_DATA",
+      "candidate_label": null,
+      "candidate_status": "INSUFFICIENT_DATA",
+      "agreement": true
+    },
+    {
+      "observation_id": "jnj-2021",
+      "reviewer_label": 0,
+      "reviewer_status": "VERIFIED",
+      "candidate_label": 0,
+      "candidate_status": "VERIFIED",
+      "agreement": true
+    },
+    {
+      "observation_id": "jnj-2022",
+      "reviewer_label": 0,
+      "reviewer_status": "VERIFIED",
+      "candidate_label": 0,
+      "candidate_status": "VERIFIED",
+      "agreement": true
+    },
+    {
+      "observation_id": "jnj-2023",
+      "reviewer_label": null,
+      "reviewer_status": "INSUFFICIENT_DATA",
+      "candidate_label": null,
+      "candidate_status": "INSUFFICIENT_DATA",
+      "agreement": true
+    },
+    {
+      "observation_id": "khc-2021",
+      "reviewer_label": null,
+      "reviewer_status": "REQUIRES_HUMAN_REVIEW",
+      "candidate_label": null,
+      "candidate_status": "REQUIRES_HUMAN_REVIEW",
+      "agreement": true
+    },
+    {
+      "observation_id": "khc-2022",
+      "reviewer_label": 0,
+      "reviewer_status": "VERIFIED",
+      "candidate_label": 0,
+      "candidate_status": "VERIFIED",
+      "agreement": true
+    },
+    {
+      "observation_id": "khc-2023",
+      "reviewer_label": null,
+      "reviewer_status": "INSUFFICIENT_DATA",
+      "candidate_label": null,
+      "candidate_status": "INSUFFICIENT_DATA",
+      "agreement": true
+    },
+    {
+      "observation_id": "ko-2021",
+      "reviewer_label": 0,
+      "reviewer_status": "VERIFIED",
+      "candidate_label": 0,
+      "candidate_status": "VERIFIED",
+      "agreement": true
+    },
+    {
+      "observation_id": "ko-2022",
+      "reviewer_label": 0,
+      "reviewer_status": "VERIFIED",
+      "candidate_label": 0,
+      "candidate_status": "VERIFIED",
+      "agreement": true
+    },
+    {
+      "observation_id": "ko-2023",
+      "reviewer_label": null,
+      "reviewer_status": "INSUFFICIENT_DATA",
+      "candidate_label": null,
+      "candidate_status": "INSUFFICIENT_DATA",
+      "agreement": true
+    },
+    {
+      "observation_id": "luv-2021",
+      "reviewer_label": 0,
+      "reviewer_status": "VERIFIED",
+      "candidate_label": 0,
+      "candidate_status": "VERIFIED",
+      "agreement": true
+    },
+    {
+      "observation_id": "luv-2022",
+      "reviewer_label": 0,
+      "reviewer_status": "VERIFIED",
+      "candidate_label": 0,
+      "candidate_status": "VERIFIED",
+      "agreement": true
+    },
+    {
+      "observation_id": "luv-2023",
+      "reviewer_label": null,
+      "reviewer_status": "INSUFFICIENT_DATA",
+      "candidate_label": null,
+      "candidate_status": "INSUFFICIENT_DATA",
+      "agreement": true
+    },
+    {
+      "observation_id": "msft-2021",
+      "reviewer_label": 0,
+      "reviewer_status": "VERIFIED",
+      "candidate_label": 0,
+      "candidate_status": "VERIFIED",
+      "agreement": true
+    },
+    {
+      "observation_id": "msft-2022",
+      "reviewer_label": 0,
+      "reviewer_status": "VERIFIED",
+      "candidate_label": 0,
+      "candidate_status": "VERIFIED",
+      "agreement": true
+    },
+    {
+      "observation_id": "msft-2023",
+      "reviewer_label": null,
+      "reviewer_status": "INSUFFICIENT_DATA",
+      "candidate_label": null,
+      "candidate_status": "INSUFFICIENT_DATA",
+      "agreement": true
+    },
+    {
+      "observation_id": "nee-2021",
+      "reviewer_label": null,
+      "reviewer_status": "REQUIRES_HUMAN_REVIEW",
+      "candidate_label": null,
+      "candidate_status": "REQUIRES_HUMAN_REVIEW",
+      "agreement": true
+    },
+    {
+      "observation_id": "nee-2022",
+      "reviewer_label": null,
+      "reviewer_status": "REQUIRES_HUMAN_REVIEW",
+      "candidate_label": null,
+      "candidate_status": "REQUIRES_HUMAN_REVIEW",
+      "agreement": true
+    },
+    {
+      "observation_id": "nee-2023",
+      "reviewer_label": null,
+      "reviewer_status": "INSUFFICIENT_DATA",
+      "candidate_label": null,
+      "candidate_status": "INSUFFICIENT_DATA",
+      "agreement": true
+    },
+    {
+      "observation_id": "nflx-2021",
+      "reviewer_label": 0,
+      "reviewer_status": "VERIFIED",
+      "candidate_label": 0,
+      "candidate_status": "VERIFIED",
+      "agreement": true
+    },
+    {
+      "observation_id": "nflx-2022",
+      "reviewer_label": 0,
+      "reviewer_status": "VERIFIED",
+      "candidate_label": 0,
+      "candidate_status": "VERIFIED",
+      "agreement": true
+    },
+    {
+      "observation_id": "nflx-2023",
+      "reviewer_label": null,
+      "reviewer_status": "INSUFFICIENT_DATA",
+      "candidate_label": null,
+      "candidate_status": "INSUFFICIENT_DATA",
+      "agreement": true
+    },
+    {
+      "observation_id": "nue-2021",
+      "reviewer_label": null,
+      "reviewer_status": "INSUFFICIENT_DATA",
+      "candidate_label": null,
+      "candidate_status": "INSUFFICIENT_DATA",
+      "agreement": true
+    },
+    {
+      "observation_id": "nue-2022",
+      "reviewer_label": 1,
+      "reviewer_status": "VERIFIED",
+      "candidate_label": 1,
+      "candidate_status": "VERIFIED",
+      "agreement": true
+    },
+    {
+      "observation_id": "nue-2023",
+      "reviewer_label": null,
+      "reviewer_status": "INSUFFICIENT_DATA",
+      "candidate_label": null,
+      "candidate_status": "INSUFFICIENT_DATA",
+      "agreement": true
+    },
+    {
+      "observation_id": "oxy-2021",
+      "reviewer_label": null,
+      "reviewer_status": "INSUFFICIENT_DATA",
+      "candidate_label": null,
+      "candidate_status": "INSUFFICIENT_DATA",
+      "agreement": true
+    },
+    {
+      "observation_id": "oxy-2022",
+      "reviewer_label": 1,
+      "reviewer_status": "VERIFIED",
+      "candidate_label": 1,
+      "candidate_status": "VERIFIED",
+      "agreement": true
+    },
+    {
+      "observation_id": "oxy-2023",
+      "reviewer_label": null,
+      "reviewer_status": "INSUFFICIENT_DATA",
+      "candidate_label": null,
+      "candidate_status": "INSUFFICIENT_DATA",
+      "agreement": true
+    },
+    {
+      "observation_id": "pfe-2021",
+      "reviewer_label": 0,
+      "reviewer_status": "VERIFIED",
+      "candidate_label": 0,
+      "candidate_status": "VERIFIED",
+      "agreement": true
+    },
+    {
+      "observation_id": "pfe-2022",
+      "reviewer_label": 1,
+      "reviewer_status": "VERIFIED",
+      "candidate_label": 1,
+      "candidate_status": "VERIFIED",
+      "agreement": true
+    },
+    {
+      "observation_id": "pfe-2023",
+      "reviewer_label": null,
+      "reviewer_status": "INSUFFICIENT_DATA",
+      "candidate_label": null,
+      "candidate_status": "INSUFFICIENT_DATA",
+      "agreement": true
+    },
+    {
+      "observation_id": "pld-2021",
+      "reviewer_label": null,
+      "reviewer_status": "INSUFFICIENT_DATA",
+      "candidate_label": null,
+      "candidate_status": "INSUFFICIENT_DATA",
+      "agreement": true
+    },
+    {
+      "observation_id": "pld-2022",
+      "reviewer_label": null,
+      "reviewer_status": "REQUIRES_HUMAN_REVIEW",
+      "candidate_label": null,
+      "candidate_status": "REQUIRES_HUMAN_REVIEW",
+      "agreement": true
+    },
+    {
+      "observation_id": "pld-2023",
+      "reviewer_label": null,
+      "reviewer_status": "INSUFFICIENT_DATA",
+      "candidate_label": null,
+      "candidate_status": "INSUFFICIENT_DATA",
+      "agreement": true
+    },
+    {
+      "observation_id": "tgt-2021",
+      "reviewer_label": 1,
+      "reviewer_status": "VERIFIED",
+      "candidate_label": 1,
+      "candidate_status": "VERIFIED",
+      "agreement": true
+    },
+    {
+      "observation_id": "tgt-2022",
+      "reviewer_label": null,
+      "reviewer_status": "INSUFFICIENT_DATA",
+      "candidate_label": null,
+      "candidate_status": "INSUFFICIENT_DATA",
+      "agreement": true
+    },
+    {
+      "observation_id": "tgt-2023",
+      "reviewer_label": null,
+      "reviewer_status": "INSUFFICIENT_DATA",
+      "candidate_label": null,
+      "candidate_status": "INSUFFICIENT_DATA",
+      "agreement": true
+    },
+    {
+      "observation_id": "tmus-2021",
+      "reviewer_label": null,
+      "reviewer_status": "INSUFFICIENT_DATA",
+      "candidate_label": null,
+      "candidate_status": "INSUFFICIENT_DATA",
+      "agreement": true
+    },
+    {
+      "observation_id": "tmus-2022",
+      "reviewer_label": 0,
+      "reviewer_status": "VERIFIED",
+      "candidate_label": 0,
+      "candidate_status": "VERIFIED",
+      "agreement": true
+    },
+    {
+      "observation_id": "tmus-2023",
+      "reviewer_label": null,
+      "reviewer_status": "INSUFFICIENT_DATA",
+      "candidate_label": null,
+      "candidate_status": "INSUFFICIENT_DATA",
+      "agreement": true
+    },
+    {
+      "observation_id": "ups-2021",
+      "reviewer_label": 0,
+      "reviewer_status": "VERIFIED",
+      "candidate_label": 0,
+      "candidate_status": "VERIFIED",
+      "agreement": true
+    },
+    {
+      "observation_id": "ups-2022",
+      "reviewer_label": 0,
+      "reviewer_status": "VERIFIED",
+      "candidate_label": 0,
+      "candidate_status": "VERIFIED",
+      "agreement": true
+    },
+    {
+      "observation_id": "ups-2023",
+      "reviewer_label": null,
+      "reviewer_status": "INSUFFICIENT_DATA",
+      "candidate_label": null,
+      "candidate_status": "INSUFFICIENT_DATA",
+      "agreement": true
+    },
+    {
+      "observation_id": "vz-2021",
+      "reviewer_label": 0,
+      "reviewer_status": "VERIFIED",
+      "candidate_label": 0,
+      "candidate_status": "VERIFIED",
+      "agreement": true
+    },
+    {
+      "observation_id": "vz-2022",
+      "reviewer_label": 0,
+      "reviewer_status": "VERIFIED",
+      "candidate_label": 0,
+      "candidate_status": "VERIFIED",
+      "agreement": true
+    },
+    {
+      "observation_id": "vz-2023",
+      "reviewer_label": null,
+      "reviewer_status": "INSUFFICIENT_DATA",
+      "candidate_label": null,
+      "candidate_status": "INSUFFICIENT_DATA",
+      "agreement": true
+    },
+    {
+      "observation_id": "wba-2021",
+      "reviewer_label": 0,
+      "reviewer_status": "VERIFIED",
+      "candidate_label": 0,
+      "candidate_status": "VERIFIED",
+      "agreement": true
+    },
+    {
+      "observation_id": "wba-2022",
+      "reviewer_label": 1,
+      "reviewer_status": "VERIFIED",
+      "candidate_label": 1,
+      "candidate_status": "VERIFIED",
+      "agreement": true
+    },
+    {
+      "observation_id": "wba-2023",
+      "reviewer_label": null,
+      "reviewer_status": "INSUFFICIENT_DATA",
+      "candidate_label": null,
+      "candidate_status": "INSUFFICIENT_DATA",
+      "agreement": true
+    },
+    {
+      "observation_id": "wmt-2021",
+      "reviewer_label": 0,
+      "reviewer_status": "VERIFIED",
+      "candidate_label": 0,
+      "candidate_status": "VERIFIED",
+      "agreement": true
+    },
+    {
+      "observation_id": "wmt-2022",
+      "reviewer_label": 0,
+      "reviewer_status": "VERIFIED",
+      "candidate_label": 0,
+      "candidate_status": "VERIFIED",
+      "agreement": true
+    },
+    {
+      "observation_id": "wmt-2023",
+      "reviewer_label": null,
+      "reviewer_status": "INSUFFICIENT_DATA",
+      "candidate_label": null,
+      "candidate_status": "INSUFFICIENT_DATA",
+      "agreement": true
+    }
+  ],
+  "reviewer_pairs": [
+    {
+      "observation_id": "aapl-2021",
+      "reviewer_a_label": 0,
+      "reviewer_a_status": "VERIFIED",
+      "reviewer_b_label": 0,
+      "reviewer_b_status": "VERIFIED",
+      "agreement": true
+    },
+    {
+      "observation_id": "aapl-2022",
+      "reviewer_a_label": null,
+      "reviewer_a_status": "INSUFFICIENT_DATA",
+      "reviewer_b_label": null,
+      "reviewer_b_status": "INSUFFICIENT_DATA",
+      "agreement": true
+    },
+    {
+      "observation_id": "aapl-2023",
+      "reviewer_a_label": 0,
+      "reviewer_a_status": "VERIFIED",
+      "reviewer_b_label": 0,
+      "reviewer_b_status": "VERIFIED",
+      "agreement": true
+    },
+    {
+      "observation_id": "aep-2021",
+      "reviewer_a_label": 0,
+      "reviewer_a_status": "VERIFIED",
+      "reviewer_b_label": 0,
+      "reviewer_b_status": "VERIFIED",
+      "agreement": true
+    },
+    {
+      "observation_id": "aep-2022",
+      "reviewer_a_label": null,
+      "reviewer_a_status": "INSUFFICIENT_DATA",
+      "reviewer_b_label": null,
+      "reviewer_b_status": "INSUFFICIENT_DATA",
+      "agreement": true
+    },
+    {
+      "observation_id": "aep-2023",
+      "reviewer_a_label": null,
+      "reviewer_a_status": "INSUFFICIENT_DATA",
+      "reviewer_b_label": null,
+      "reviewer_b_status": "INSUFFICIENT_DATA",
+      "agreement": true
+    },
+    {
+      "observation_id": "amt-2021",
+      "reviewer_a_label": 0,
+      "reviewer_a_status": "VERIFIED",
+      "reviewer_b_label": 0,
+      "reviewer_b_status": "VERIFIED",
+      "agreement": true
+    },
+    {
+      "observation_id": "amt-2022",
+      "reviewer_a_label": null,
+      "reviewer_a_status": "INSUFFICIENT_DATA",
+      "reviewer_b_label": null,
+      "reviewer_b_status": "INSUFFICIENT_DATA",
+      "agreement": true
+    },
+    {
+      "observation_id": "amt-2023",
+      "reviewer_a_label": null,
+      "reviewer_a_status": "INSUFFICIENT_DATA",
+      "reviewer_b_label": null,
+      "reviewer_b_status": "INSUFFICIENT_DATA",
+      "agreement": true
+    },
+    {
+      "observation_id": "ba-2021",
+      "reviewer_a_label": 0,
+      "reviewer_a_status": "VERIFIED",
+      "reviewer_b_label": 0,
+      "reviewer_b_status": "VERIFIED",
+      "agreement": true
+    },
+    {
+      "observation_id": "ba-2022",
+      "reviewer_a_label": null,
+      "reviewer_a_status": "INSUFFICIENT_DATA",
+      "reviewer_b_label": null,
+      "reviewer_b_status": "INSUFFICIENT_DATA",
+      "agreement": true
+    },
+    {
+      "observation_id": "ba-2023",
+      "reviewer_a_label": null,
+      "reviewer_a_status": "INSUFFICIENT_DATA",
+      "reviewer_b_label": null,
+      "reviewer_b_status": "INSUFFICIENT_DATA",
+      "agreement": true
+    },
+    {
+      "observation_id": "cat-2021",
+      "reviewer_a_label": 0,
+      "reviewer_a_status": "VERIFIED",
+      "reviewer_b_label": 0,
+      "reviewer_b_status": "VERIFIED",
+      "agreement": true
+    },
+    {
+      "observation_id": "cat-2022",
+      "reviewer_a_label": null,
+      "reviewer_a_status": "INSUFFICIENT_DATA",
+      "reviewer_b_label": null,
+      "reviewer_b_status": "INSUFFICIENT_DATA",
+      "agreement": true
+    },
+    {
+      "observation_id": "cat-2023",
+      "reviewer_a_label": null,
+      "reviewer_a_status": "INSUFFICIENT_DATA",
+      "reviewer_b_label": null,
+      "reviewer_b_status": "INSUFFICIENT_DATA",
+      "agreement": true
+    },
+    {
+      "observation_id": "cvx-2021",
+      "reviewer_a_label": 0,
+      "reviewer_a_status": "VERIFIED",
+      "reviewer_b_label": 0,
+      "reviewer_b_status": "VERIFIED",
+      "agreement": true
+    },
+    {
+      "observation_id": "cvx-2022",
+      "reviewer_a_label": null,
+      "reviewer_a_status": "INSUFFICIENT_DATA",
+      "reviewer_b_label": null,
+      "reviewer_b_status": "INSUFFICIENT_DATA",
+      "agreement": true
+    },
+    {
+      "observation_id": "cvx-2023",
+      "reviewer_a_label": null,
+      "reviewer_a_status": "INSUFFICIENT_DATA",
+      "reviewer_b_label": null,
+      "reviewer_b_status": "INSUFFICIENT_DATA",
+      "agreement": true
+    },
+    {
+      "observation_id": "dal-2021",
+      "reviewer_a_label": null,
+      "reviewer_a_status": "REVIEW_REQUIRED",
+      "reviewer_b_label": null,
+      "reviewer_b_status": "REQUIRES_HUMAN_REVIEW",
+      "agreement": true
+    },
+    {
+      "observation_id": "dal-2022",
+      "reviewer_a_label": null,
+      "reviewer_a_status": "INSUFFICIENT_DATA",
+      "reviewer_b_label": null,
+      "reviewer_b_status": "INSUFFICIENT_DATA",
+      "agreement": true
+    },
+    {
+      "observation_id": "dal-2023",
+      "reviewer_a_label": null,
+      "reviewer_a_status": "INSUFFICIENT_DATA",
+      "reviewer_b_label": null,
+      "reviewer_b_status": "INSUFFICIENT_DATA",
+      "agreement": true
+    },
+    {
+      "observation_id": "dis-2021",
+      "reviewer_a_label": null,
+      "reviewer_a_status": "INSUFFICIENT_DATA",
+      "reviewer_b_label": null,
+      "reviewer_b_status": "INSUFFICIENT_DATA",
+      "agreement": true
+    },
+    {
+      "observation_id": "dis-2022",
+      "reviewer_a_label": null,
+      "reviewer_a_status": "REVIEW_REQUIRED",
+      "reviewer_b_label": null,
+      "reviewer_b_status": "REQUIRES_HUMAN_REVIEW",
+      "agreement": true
+    },
+    {
+      "observation_id": "dis-2023",
+      "reviewer_a_label": 0,
+      "reviewer_a_status": "VERIFIED",
+      "reviewer_b_label": 0,
+      "reviewer_b_status": "VERIFIED",
+      "agreement": true
+    },
+    {
+      "observation_id": "f-2021",
+      "reviewer_a_label": 1,
+      "reviewer_a_status": "VERIFIED",
+      "reviewer_b_label": 1,
+      "reviewer_b_status": "VERIFIED",
+      "agreement": true
+    },
+    {
+      "observation_id": "f-2022",
+      "reviewer_a_label": null,
+      "reviewer_a_status": "INSUFFICIENT_DATA",
+      "reviewer_b_label": null,
+      "reviewer_b_status": "INSUFFICIENT_DATA",
+      "agreement": true
+    },
+    {
+      "observation_id": "f-2023",
+      "reviewer_a_label": null,
+      "reviewer_a_status": "INSUFFICIENT_DATA",
+      "reviewer_b_label": null,
+      "reviewer_b_status": "INSUFFICIENT_DATA",
+      "agreement": true
+    },
+    {
+      "observation_id": "fcx-2021",
+      "reviewer_a_label": 0,
+      "reviewer_a_status": "VERIFIED",
+      "reviewer_b_label": 0,
+      "reviewer_b_status": "VERIFIED",
+      "agreement": true
+    },
+    {
+      "observation_id": "fcx-2022",
+      "reviewer_a_label": null,
+      "reviewer_a_status": "INSUFFICIENT_DATA",
+      "reviewer_b_label": null,
+      "reviewer_b_status": "INSUFFICIENT_DATA",
+      "agreement": true
+    },
+    {
+      "observation_id": "fcx-2023",
+      "reviewer_a_label": null,
+      "reviewer_a_status": "INSUFFICIENT_DATA",
+      "reviewer_b_label": null,
+      "reviewer_b_status": "INSUFFICIENT_DATA",
+      "agreement": true
+    },
+    {
+      "observation_id": "fdx-2021",
+      "reviewer_a_label": 0,
+      "reviewer_a_status": "VERIFIED",
+      "reviewer_b_label": 0,
+      "reviewer_b_status": "VERIFIED",
+      "agreement": true
+    },
+    {
+      "observation_id": "fdx-2022",
+      "reviewer_a_label": 0,
+      "reviewer_a_status": "VERIFIED",
+      "reviewer_b_label": 0,
+      "reviewer_b_status": "VERIFIED",
+      "agreement": true
+    },
+    {
+      "observation_id": "fdx-2023",
+      "reviewer_a_label": 0,
+      "reviewer_a_status": "VERIFIED",
+      "reviewer_b_label": 0,
+      "reviewer_b_status": "VERIFIED",
+      "agreement": true
+    },
+    {
+      "observation_id": "gm-2021",
+      "reviewer_a_label": 0,
+      "reviewer_a_status": "VERIFIED",
+      "reviewer_b_label": 0,
+      "reviewer_b_status": "VERIFIED",
+      "agreement": true
+    },
+    {
+      "observation_id": "gm-2022",
+      "reviewer_a_label": 0,
+      "reviewer_a_status": "VERIFIED",
+      "reviewer_b_label": 0,
+      "reviewer_b_status": "VERIFIED",
+      "agreement": true
+    },
+    {
+      "observation_id": "gm-2023",
+      "reviewer_a_label": null,
+      "reviewer_a_status": "INSUFFICIENT_DATA",
+      "reviewer_b_label": null,
+      "reviewer_b_status": "INSUFFICIENT_DATA",
+      "agreement": true
+    },
+    {
+      "observation_id": "intc-2021",
+      "reviewer_a_label": 1,
+      "reviewer_a_status": "VERIFIED",
+      "reviewer_b_label": 1,
+      "reviewer_b_status": "VERIFIED",
+      "agreement": true
+    },
+    {
+      "observation_id": "intc-2022",
+      "reviewer_a_label": 1,
+      "reviewer_a_status": "VERIFIED",
+      "reviewer_b_label": 1,
+      "reviewer_b_status": "VERIFIED",
+      "agreement": true
+    },
+    {
+      "observation_id": "intc-2023",
+      "reviewer_a_label": null,
+      "reviewer_a_status": "INSUFFICIENT_DATA",
+      "reviewer_b_label": null,
+      "reviewer_b_status": "INSUFFICIENT_DATA",
+      "agreement": true
+    },
+    {
+      "observation_id": "jnj-2021",
+      "reviewer_a_label": 0,
+      "reviewer_a_status": "VERIFIED",
+      "reviewer_b_label": 0,
+      "reviewer_b_status": "VERIFIED",
+      "agreement": true
+    },
+    {
+      "observation_id": "jnj-2022",
+      "reviewer_a_label": 0,
+      "reviewer_a_status": "VERIFIED",
+      "reviewer_b_label": 0,
+      "reviewer_b_status": "VERIFIED",
+      "agreement": true
+    },
+    {
+      "observation_id": "jnj-2023",
+      "reviewer_a_label": null,
+      "reviewer_a_status": "INSUFFICIENT_DATA",
+      "reviewer_b_label": null,
+      "reviewer_b_status": "INSUFFICIENT_DATA",
+      "agreement": true
+    },
+    {
+      "observation_id": "khc-2021",
+      "reviewer_a_label": null,
+      "reviewer_a_status": "REVIEW_REQUIRED",
+      "reviewer_b_label": null,
+      "reviewer_b_status": "REQUIRES_HUMAN_REVIEW",
+      "agreement": true
+    },
+    {
+      "observation_id": "khc-2022",
+      "reviewer_a_label": 0,
+      "reviewer_a_status": "VERIFIED",
+      "reviewer_b_label": 0,
+      "reviewer_b_status": "VERIFIED",
+      "agreement": true
+    },
+    {
+      "observation_id": "khc-2023",
+      "reviewer_a_label": null,
+      "reviewer_a_status": "INSUFFICIENT_DATA",
+      "reviewer_b_label": null,
+      "reviewer_b_status": "INSUFFICIENT_DATA",
+      "agreement": true
+    },
+    {
+      "observation_id": "ko-2021",
+      "reviewer_a_label": 0,
+      "reviewer_a_status": "VERIFIED",
+      "reviewer_b_label": 0,
+      "reviewer_b_status": "VERIFIED",
+      "agreement": true
+    },
+    {
+      "observation_id": "ko-2022",
+      "reviewer_a_label": 0,
+      "reviewer_a_status": "VERIFIED",
+      "reviewer_b_label": 0,
+      "reviewer_b_status": "VERIFIED",
+      "agreement": true
+    },
+    {
+      "observation_id": "ko-2023",
+      "reviewer_a_label": null,
+      "reviewer_a_status": "INSUFFICIENT_DATA",
+      "reviewer_b_label": null,
+      "reviewer_b_status": "INSUFFICIENT_DATA",
+      "agreement": true
+    },
+    {
+      "observation_id": "luv-2021",
+      "reviewer_a_label": 0,
+      "reviewer_a_status": "VERIFIED",
+      "reviewer_b_label": 0,
+      "reviewer_b_status": "VERIFIED",
+      "agreement": true
+    },
+    {
+      "observation_id": "luv-2022",
+      "reviewer_a_label": 0,
+      "reviewer_a_status": "VERIFIED",
+      "reviewer_b_label": 0,
+      "reviewer_b_status": "VERIFIED",
+      "agreement": true
+    },
+    {
+      "observation_id": "luv-2023",
+      "reviewer_a_label": null,
+      "reviewer_a_status": "INSUFFICIENT_DATA",
+      "reviewer_b_label": null,
+      "reviewer_b_status": "INSUFFICIENT_DATA",
+      "agreement": true
+    },
+    {
+      "observation_id": "msft-2021",
+      "reviewer_a_label": 0,
+      "reviewer_a_status": "VERIFIED",
+      "reviewer_b_label": 0,
+      "reviewer_b_status": "VERIFIED",
+      "agreement": true
+    },
+    {
+      "observation_id": "msft-2022",
+      "reviewer_a_label": 0,
+      "reviewer_a_status": "VERIFIED",
+      "reviewer_b_label": 0,
+      "reviewer_b_status": "VERIFIED",
+      "agreement": true
+    },
+    {
+      "observation_id": "msft-2023",
+      "reviewer_a_label": null,
+      "reviewer_a_status": "INSUFFICIENT_DATA",
+      "reviewer_b_label": null,
+      "reviewer_b_status": "INSUFFICIENT_DATA",
+      "agreement": true
+    },
+    {
+      "observation_id": "nee-2021",
+      "reviewer_a_label": null,
+      "reviewer_a_status": "REVIEW_REQUIRED",
+      "reviewer_b_label": null,
+      "reviewer_b_status": "REQUIRES_HUMAN_REVIEW",
+      "agreement": true
+    },
+    {
+      "observation_id": "nee-2022",
+      "reviewer_a_label": null,
+      "reviewer_a_status": "REVIEW_REQUIRED",
+      "reviewer_b_label": null,
+      "reviewer_b_status": "REQUIRES_HUMAN_REVIEW",
+      "agreement": true
+    },
+    {
+      "observation_id": "nee-2023",
+      "reviewer_a_label": null,
+      "reviewer_a_status": "INSUFFICIENT_DATA",
+      "reviewer_b_label": null,
+      "reviewer_b_status": "INSUFFICIENT_DATA",
+      "agreement": true
+    },
+    {
+      "observation_id": "nflx-2021",
+      "reviewer_a_label": 0,
+      "reviewer_a_status": "VERIFIED",
+      "reviewer_b_label": 0,
+      "reviewer_b_status": "VERIFIED",
+      "agreement": true
+    },
+    {
+      "observation_id": "nflx-2022",
+      "reviewer_a_label": 0,
+      "reviewer_a_status": "VERIFIED",
+      "reviewer_b_label": 0,
+      "reviewer_b_status": "VERIFIED",
+      "agreement": true
+    },
+    {
+      "observation_id": "nflx-2023",
+      "reviewer_a_label": null,
+      "reviewer_a_status": "INSUFFICIENT_DATA",
+      "reviewer_b_label": null,
+      "reviewer_b_status": "INSUFFICIENT_DATA",
+      "agreement": true
+    },
+    {
+      "observation_id": "nue-2021",
+      "reviewer_a_label": null,
+      "reviewer_a_status": "INSUFFICIENT_DATA",
+      "reviewer_b_label": null,
+      "reviewer_b_status": "INSUFFICIENT_DATA",
+      "agreement": true
+    },
+    {
+      "observation_id": "nue-2022",
+      "reviewer_a_label": 1,
+      "reviewer_a_status": "VERIFIED",
+      "reviewer_b_label": 1,
+      "reviewer_b_status": "VERIFIED",
+      "agreement": true
+    },
+    {
+      "observation_id": "nue-2023",
+      "reviewer_a_label": null,
+      "reviewer_a_status": "INSUFFICIENT_DATA",
+      "reviewer_b_label": null,
+      "reviewer_b_status": "INSUFFICIENT_DATA",
+      "agreement": true
+    },
+    {
+      "observation_id": "oxy-2021",
+      "reviewer_a_label": null,
+      "reviewer_a_status": "INSUFFICIENT_DATA",
+      "reviewer_b_label": null,
+      "reviewer_b_status": "INSUFFICIENT_DATA",
+      "agreement": true
+    },
+    {
+      "observation_id": "oxy-2022",
+      "reviewer_a_label": 1,
+      "reviewer_a_status": "VERIFIED",
+      "reviewer_b_label": 1,
+      "reviewer_b_status": "VERIFIED",
+      "agreement": true
+    },
+    {
+      "observation_id": "oxy-2023",
+      "reviewer_a_label": null,
+      "reviewer_a_status": "INSUFFICIENT_DATA",
+      "reviewer_b_label": null,
+      "reviewer_b_status": "INSUFFICIENT_DATA",
+      "agreement": true
+    },
+    {
+      "observation_id": "pfe-2021",
+      "reviewer_a_label": 0,
+      "reviewer_a_status": "VERIFIED",
+      "reviewer_b_label": 0,
+      "reviewer_b_status": "VERIFIED",
+      "agreement": true
+    },
+    {
+      "observation_id": "pfe-2022",
+      "reviewer_a_label": 1,
+      "reviewer_a_status": "VERIFIED",
+      "reviewer_b_label": 1,
+      "reviewer_b_status": "VERIFIED",
+      "agreement": true
+    },
+    {
+      "observation_id": "pfe-2023",
+      "reviewer_a_label": null,
+      "reviewer_a_status": "INSUFFICIENT_DATA",
+      "reviewer_b_label": null,
+      "reviewer_b_status": "INSUFFICIENT_DATA",
+      "agreement": true
+    },
+    {
+      "observation_id": "pld-2021",
+      "reviewer_a_label": null,
+      "reviewer_a_status": "INSUFFICIENT_DATA",
+      "reviewer_b_label": null,
+      "reviewer_b_status": "INSUFFICIENT_DATA",
+      "agreement": true
+    },
+    {
+      "observation_id": "pld-2022",
+      "reviewer_a_label": null,
+      "reviewer_a_status": "REVIEW_REQUIRED",
+      "reviewer_b_label": null,
+      "reviewer_b_status": "REQUIRES_HUMAN_REVIEW",
+      "agreement": true
+    },
+    {
+      "observation_id": "pld-2023",
+      "reviewer_a_label": null,
+      "reviewer_a_status": "INSUFFICIENT_DATA",
+      "reviewer_b_label": null,
+      "reviewer_b_status": "INSUFFICIENT_DATA",
+      "agreement": true
+    },
+    {
+      "observation_id": "tgt-2021",
+      "reviewer_a_label": 1,
+      "reviewer_a_status": "VERIFIED",
+      "reviewer_b_label": 1,
+      "reviewer_b_status": "VERIFIED",
+      "agreement": true
+    },
+    {
+      "observation_id": "tgt-2022",
+      "reviewer_a_label": null,
+      "reviewer_a_status": "INSUFFICIENT_DATA",
+      "reviewer_b_label": null,
+      "reviewer_b_status": "INSUFFICIENT_DATA",
+      "agreement": true
+    },
+    {
+      "observation_id": "tgt-2023",
+      "reviewer_a_label": null,
+      "reviewer_a_status": "INSUFFICIENT_DATA",
+      "reviewer_b_label": null,
+      "reviewer_b_status": "INSUFFICIENT_DATA",
+      "agreement": true
+    },
+    {
+      "observation_id": "tmus-2021",
+      "reviewer_a_label": null,
+      "reviewer_a_status": "INSUFFICIENT_DATA",
+      "reviewer_b_label": null,
+      "reviewer_b_status": "INSUFFICIENT_DATA",
+      "agreement": true
+    },
+    {
+      "observation_id": "tmus-2022",
+      "reviewer_a_label": 0,
+      "reviewer_a_status": "VERIFIED",
+      "reviewer_b_label": 0,
+      "reviewer_b_status": "VERIFIED",
+      "agreement": true
+    },
+    {
+      "observation_id": "tmus-2023",
+      "reviewer_a_label": null,
+      "reviewer_a_status": "INSUFFICIENT_DATA",
+      "reviewer_b_label": null,
+      "reviewer_b_status": "INSUFFICIENT_DATA",
+      "agreement": true
+    },
+    {
+      "observation_id": "ups-2021",
+      "reviewer_a_label": 0,
+      "reviewer_a_status": "VERIFIED",
+      "reviewer_b_label": 0,
+      "reviewer_b_status": "VERIFIED",
+      "agreement": true
+    },
+    {
+      "observation_id": "ups-2022",
+      "reviewer_a_label": 0,
+      "reviewer_a_status": "VERIFIED",
+      "reviewer_b_label": 0,
+      "reviewer_b_status": "VERIFIED",
+      "agreement": true
+    },
+    {
+      "observation_id": "ups-2023",
+      "reviewer_a_label": null,
+      "reviewer_a_status": "INSUFFICIENT_DATA",
+      "reviewer_b_label": null,
+      "reviewer_b_status": "INSUFFICIENT_DATA",
+      "agreement": true
+    },
+    {
+      "observation_id": "vz-2021",
+      "reviewer_a_label": 0,
+      "reviewer_a_status": "VERIFIED",
+      "reviewer_b_label": 0,
+      "reviewer_b_status": "VERIFIED",
+      "agreement": true
+    },
+    {
+      "observation_id": "vz-2022",
+      "reviewer_a_label": 0,
+      "reviewer_a_status": "VERIFIED",
+      "reviewer_b_label": 0,
+      "reviewer_b_status": "VERIFIED",
+      "agreement": true
+    },
+    {
+      "observation_id": "vz-2023",
+      "reviewer_a_label": null,
+      "reviewer_a_status": "INSUFFICIENT_DATA",
+      "reviewer_b_label": null,
+      "reviewer_b_status": "INSUFFICIENT_DATA",
+      "agreement": true
+    },
+    {
+      "observation_id": "wba-2021",
+      "reviewer_a_label": 0,
+      "reviewer_a_status": "VERIFIED",
+      "reviewer_b_label": 0,
+      "reviewer_b_status": "VERIFIED",
+      "agreement": true
+    },
+    {
+      "observation_id": "wba-2022",
+      "reviewer_a_label": 1,
+      "reviewer_a_status": "VERIFIED",
+      "reviewer_b_label": 1,
+      "reviewer_b_status": "VERIFIED",
+      "agreement": true
+    },
+    {
+      "observation_id": "wba-2023",
+      "reviewer_a_label": null,
+      "reviewer_a_status": "INSUFFICIENT_DATA",
+      "reviewer_b_label": null,
+      "reviewer_b_status": "INSUFFICIENT_DATA",
+      "agreement": true
+    },
+    {
+      "observation_id": "wmt-2021",
+      "reviewer_a_label": 0,
+      "reviewer_a_status": "VERIFIED",
+      "reviewer_b_label": 0,
+      "reviewer_b_status": "VERIFIED",
+      "agreement": true
+    },
+    {
+      "observation_id": "wmt-2022",
+      "reviewer_a_label": 0,
+      "reviewer_a_status": "VERIFIED",
+      "reviewer_b_label": 0,
+      "reviewer_b_status": "VERIFIED",
+      "agreement": true
+    },
+    {
+      "observation_id": "wmt-2023",
+      "reviewer_a_label": null,
+      "reviewer_a_status": "INSUFFICIENT_DATA",
+      "reviewer_b_label": null,
+      "reviewer_b_status": "INSUFFICIENT_DATA",
+      "agreement": true
+    }
+  ],
+  "report_hash": "27cc3b0ac12519fa178dc786ace64fdd0a7af711b10fc77235d483f8f19cbbbc"
+}

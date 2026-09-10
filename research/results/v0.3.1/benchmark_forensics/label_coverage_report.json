@@ -1,0 +1,49 @@
+{
+  "total_observations": 90,
+  "verified": 39,
+  "review_required": 6,
+  "insufficient_data": 45,
+  "summaries": {
+    "label_status": {
+      "INSUFFICIENT_DATA": 45,
+      "REQUIRES_HUMAN_REVIEW": 6,
+      "VERIFIED": 39
+    },
+    "attrition_category": {
+      "FCF_CONTEXT_INCOMPLETE_ONE_OTHER_SIGNAL": 6,
+      "OUTCOME_WINDOW_NO_ELIGIBLE_FILING": 45,
+      "VERIFIED": 39
+    },
+    "fiscal_year": {
+      "2021": 30,
+      "2022": 30,
+      "2023": 30
+    },
+    "sector": {
+      "Aerospace": 3,
+      "Airlines": 6,
+      "Automotive": 6,
+      "Consumer Staples": 6,
+      "Energy": 6,
+      "Industrials": 3,
+      "Logistics": 6,
+      "Materials": 6,
+      "Media": 6,
+      "Pharmaceuticals": 6,
+      "Real Estate": 6,
+      "Retail": 6,
+      "Retail Pharmacy": 3,
+      "Semiconductors": 3,
+      "Technology": 6,
+      "Telecommunications": 6,
+      "Utilities": 6
+    },
+    "split": {
+      "test": 18,
+      "train": 54,
+      "validation": 18
+    }
+  },
+  "selection_bias_warning": "Attrition is systematic by fiscal year and filing cadence: all FY2023 observations lack a future annual filing in the available 2021Q1-2024Q4 corpus, and some prior-year next filings fall outside the strict calendar-12-month availability window.",
+  "report_hash": "60119becf667256d000c4a277cd634e1fdd637adf7be213832e483c21608bd28"
+}

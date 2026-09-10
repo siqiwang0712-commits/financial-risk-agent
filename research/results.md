@@ -1,5 +1,13 @@
 # Results
 
+## v0.3.1 empirical numeric run
+
+The frozen 30-company × 3-year SEC Financial Statement Data Set corpus contains 90 filing-level observations and passes point-in-time integrity with zero company overlap and zero detected future leakage. E3's separate label-only outcome pool and corrected calendar-12-month endpoint produced 42 verified labels (34 negative, 8 positive), 6 review-required cases, 17 true no-eligible-outcome records and 25 right-censored records.
+
+The E3 held-out evaluation contains six labelled observations from five companies and one positive endpoint. Results were: B0 Ratios AUROC 0.100, PR-AUC 0.200, F1 0.000; B1 Logistic Regression AUROC 0.200, PR-AUC 0.200, F1 0.000; B2 Rules AUROC 0.100, PR-AUC 0.200, F1 0.000; B6 Numeric Temporal AUROC 0.100, PR-AUC 0.200, F1 0.000. All four baselines had a false-negative rate of 1.0. B6 minus B0 balanced-accuracy delta was 0.000; 691/1,000 cluster replicates retained both classes and 309 were invalid, so the interval is `CI_NOT_ESTIMABLE`, not `[0,0]`.
+
+These results do not establish predictive superiority. Statistical power is inadequate, the secondary label is deterministic rather than human-adjudicated hard distress, and the extraction check is a machine presentation-to-number reconciliation rather than independent human gold. It reconciled 1,165 comparable fields and agreed on 1,164 (99.914% machine agreement); the one Ford 2023 mismatch is a documented `ProfitLoss` versus `NetIncomeLoss` construct ambiguity requiring manual adjudication. Raw E1/E2/E3 predictions, manifests and forensic reports are retained for audit.
+
 ## Research questions
 
 - **RQ1:** Does hybrid reasoning reduce unsupported claims relative to semantic-only analysis?
@@ -32,4 +40,4 @@ Full Hybrid abstained on Apple, correctly classified Microsoft and missed Intel.
 
 Multiplying every monetary input by 1,000 left all scores and predictions unchanged, confirming scale invariance for the exercised pipeline. Deterministic 10% and 30% field deletion reduced evidence confidence as designed. Intel remained a false negative; at 30% missingness its score fell from 42.7 to 36.3 and confidence from .65 to .51. Apple continued to abstain. Raw results are in `robustness.csv/json`.
 
-The 30-company experiment is NOT RUN because SEC acquisition was blocked. No result has been imputed or fabricated.
+The statement above describes the historical `public_v1` narrative pilot. The separate v0.3.1 numeric experiment is now run on the 30-company corpus as reported at the top of this file; narrative/LLM B3–B5/B8 remain not run. No missing result has been imputed or fabricated.

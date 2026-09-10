@@ -11,11 +11,17 @@ Fully implemented locally:
 - Material conclusions use `Claim → Evidence → Tool/Rule/Model → Rationale → Confidence`.
 - Risk score, confidence and evidence coverage are separate output fields.
 
-Current verification: 80 tests pass at 92.93% line coverage. Ruff, benchmark reproduction, TypeScript and the Next.js production build pass. Docker Compose runtime validation was NOT RUN because Docker is unavailable on this machine.
+Current v0.3.1 verification: 123 tests pass at 90.76% line coverage. Ruff, deterministic replay, TypeScript and the Next.js production build pass. Docker Compose runtime validation remains NOT RUN because Docker is unavailable on this machine.
 
-Status date: 2026-09-06. This is an honest research-prototype status, not a production or performance claim.
+Status date: 2026-09-09. v0.3.1 remains local and uncommitted pending review. This is an honest research-prototype status, not a production or performance claim.
 
 ## Fully Implemented
+
+- v0.3.1 decision invariants: non-compensatory severe-dimension floor, missing-dimension exclusion, adverse-evidence monotonicity and verified-evidence de-duplication.
+- Claim-conditioned evidence checks with target, direction, horizon, basis, qualifiers, required constructs and explicit `CLAIM_CONTEXT_INCOMPLETE` outcomes.
+- Explicit `UNCALIBRATED / CALIBRATED_INTERNAL / VALIDATED_EXTERNAL` maturity semantics; uncalibrated evidence quality is never emitted as reliability or probability.
+- Replayable component delta telemetry for XBRL, rules, traditional models, narrative, Critic, Verifier and fusion. This is observational telemetry, not Value of Information.
+- Stable decision reason codes included in fusion, trace and DecisionBundle outputs.
 
 - Temporal entity risk snapshots, deterministic risk/evidence deltas and evidence-linked change attribution.
 - Seven-relation temporal evidence graph, tenant-scoped timeline API and PostgreSQL migration.
@@ -52,8 +58,10 @@ Status date: 2026-09-06. This is an honest research-prototype status, not a prod
 
 - SEC ingestion: normalization/reconciliation and rebuild client exist, but the live Company Facts endpoint returned HTTP 403 in this environment. Inline filing HTML and annual-report PDF remain separate inputs rather than a fully automated filing bundle downloader.
 - Public benchmark: actually executed, but only three technology companies and one single-reviewer label. It is useful for pipeline/error discovery, not inference.
+- Empirical numeric benchmark E3: EMPIRICALLY RUN. Sixteen official SEC 2021Q1–2024Q4 statement archives produced 90/90 filing-level feature observations plus a separate label-only outcome pool. PIT integrity: PASS; company overlap 0; future leakage 0; dataset hash `d3f48b35bdd5af556628b5ee43bc60392fc8c8aa8f5773fddeac37bb2ce08254`. The frozen endpoint yielded 42 verified labels (34 negative, 8 positive), 6 review-required cases, 17 true no-eligible-outcome records and 25 right-censored records. The six-observation held-out set has one positive; B0/B1/B2/B6 all missed it. Bootstrap: 691 valid, 309 single-class invalid, `CI_NOT_ESTIMABLE`. E3 experiment hash: `522aada4f12f1656e308f8907c87075402c25d20e7d752bde47b81f0fd1e98c4`; deterministic replay PASS. E1/E2 remain immutable.
+- Extraction validation: MACHINE RECONCILIATION RUN, HUMAN GOLD NOT ADJUDICATED. SEC presentation-to-number reconciliation produced 1,165 comparable fields, with 1,164 agreements (99.914%). The Ford 2023 net-income construct mismatch remains `MANUAL_REVIEW_REQUIRED` rather than being tuned away.
 - LLM integration: production adapter is implemented and mock-tested; no paid API run was performed because no key was supplied.
-- Confidence remains an uncalibrated evidence-coverage score. ECE is computed for baseline risk probabilities, not used to retrofit confidence.
+- The backward-compatible `confidence` field remains in legacy assessment objects, but v0.3.1 labels it as an uncalibrated evidence-quality index and exposes separate coverage, disagreement, reliability and calibration status.
 
 ## Not Implemented
 
@@ -61,17 +69,16 @@ Status date: 2026-09-06. This is an honest research-prototype status, not a prod
 - Production chaos tests for PostgreSQL, object storage and workers.
 
 - Independently double-annotated, adjudicated, sector-diverse benchmark large enough for a confirmatory hypothesis test.
-- Empirical XBRL extraction accuracy on a frozen independently labelled gold set.
+- Human-adjudicated XBRL extraction accuracy on a frozen independently labelled gold set; only machine reconciliation has run.
 - Production OCR, filing bundle orchestration, distributed worker deployment, external object storage, SSO, malware scanning and deployment hardening.
 - External PostgreSQL deployment validation. The schema and optional adapter exist; this run did not provision a production database.
 - Calibrated probability of default. The heuristic score is explicitly not a bankruptcy probability.
 
 ## Tests Passed
 
-- 80 Python tests passed.
-- Total line coverage: 92.93%; CI threshold remains 90%.
-- Public pilot and ablation artifacts regenerated successfully.
-- Previous Ruff, TypeScript and Next.js build checks remain CI-defined; final local QA should be read with the current command logs.
+- 123 Python tests passed.
+- Total line coverage: 90.76%; CI threshold remains 90%.
+- Independent v0.3.1 public-pilot and fusion replay artifacts generated; frozen `public_v1` hashes remained unchanged.
 
 ## Experiments Completed
 
@@ -80,6 +87,7 @@ Status date: 2026-09-06. This is an honest research-prototype status, not a prod
 - Full Hybrid: risk F1 0.000, contradiction F1 0.667, decision coverage 2/3, covered accuracy 0.500 [0,1], ECE 0.407.
 - Ratios Only: risk F1 1.000 on n=3. This is not evidence of superiority; the sample is too small.
 - Detailed results: `research/results/public_v1`; failures: `research/error_analysis.md`.
+- v0.3.1 diagnostic output: `research/results/v0.3.1`. Integrity-fusion deltas versus legacy fusion on the same v0.3.1 evidence were 0, +4 and 0; the pilot contradiction F1 was 1.000 while risk-classification F1 remained 0.000. These n=3 observations do not establish predictive superiority.
 - A 30-company cross-sector candidate registry is pre-registered but all rows remain `pending_sec_download` and are excluded from results.
 
 ## Experiments Pending
