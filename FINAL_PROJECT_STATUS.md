@@ -11,7 +11,7 @@ Fully implemented locally:
 - Material conclusions use `Claim → Evidence → Tool/Rule/Model → Rationale → Confidence`.
 - Risk score, confidence and evidence coverage are separate output fields.
 
-Current v0.3.1 verification: 123 tests pass at 90.76% line coverage. Ruff, deterministic replay, TypeScript and the Next.js production build pass. Docker Compose runtime validation remains NOT RUN because Docker is unavailable on this machine.
+Current v0.3.1 verification: 123 tests pass at 90.76% line coverage. E1/E2/E3 exact-byte hashes, Ruff, deterministic replay, TypeScript and the Next.js production build pass. The v0.3.0 `public_v1` snapshot is restored and protected from replay writes. PostgreSQL-backed migration execution remains CI-validated only; local Docker runtime validation is NOT RUN because Docker and PostgreSQL are unavailable on this machine.
 
 Status date: 2026-09-10. The v0.3.1 release-candidate implementation is synchronized on `main`; no v0.3.1 tag or GitHub Release has been created. This is an honest research-prototype status, not a production or performance claim.
 
@@ -78,7 +78,7 @@ Status date: 2026-09-10. The v0.3.1 release-candidate implementation is synchron
 
 - 123 Python tests passed.
 - Total line coverage: 90.76%; CI threshold remains 90%.
-- Independent v0.3.1 public-pilot and fusion replay artifacts generated; frozen `public_v1` hashes remained unchanged.
+- Independent v0.3.1 public-pilot and fusion replay artifacts generated under `research/results/v0.3.1`; the `public_v1` directory matches the v0.3.0 tag and the replay runner now refuses to overwrite it.
 
 ## Experiments Completed
 

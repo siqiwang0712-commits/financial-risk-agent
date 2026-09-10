@@ -26,6 +26,8 @@ v0.3.1 hardens correctness and establishes a reproducible numeric empirical foun
 
 Extraction reports 1,164/1,165 comparable-field **machine reconciliation agreement** (99.914%), not human accuracy; 456 fields remain manual-review-required and zero are human-verified references. Neutral machine Reviewers A/B agreed on 90/90 normalized outcomes, but this is not human gold. Document/NNT/paid-LLM empirical validation remains not run. Official SEC 2025 bulk downloads were blocked with HTTP 403, leaving 25 right-censored observations.
 
+Release-integrity verification confirms all E1/E2/E3 exact-byte artifact hashes and deterministic replay. The historical `research/results/public_v1` directory is restored to the v0.3.0 tag and protected against replay writes; every v0.3.1 result remains under `research/results/v0.3.1`. The verified suite contains 123 passing tests at 90.76% line coverage.
+
 ## Reproduce
 
 Place the official SEC 2021Q1–2024Q4 FSDS ZIPs in `data/sec-bulk/`, then run:

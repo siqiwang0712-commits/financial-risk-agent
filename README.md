@@ -324,7 +324,9 @@ $env:PYTHONPATH="backend"
 python scripts/run_public_benchmark.py
 ```
 
-This regenerates the checked-in CSV, JSON and SVG result artifacts under `research/results/public_v1`.
+This replays the pilot into `research/results/v0.3.1/public_pilot_replay`. The checked-in
+`research/results/public_v1` directory is the immutable v0.3.0 snapshot; the runner refuses
+to use it as an output directory.
 
 Rebuilding SEC snapshots separately requires an identifying User-Agent:
 

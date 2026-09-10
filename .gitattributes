@@ -7,3 +7,9 @@ research/results/public_v1/*.svg text eol=lf
 research/results/v0.3.1/*.csv text eol=lf
 research/results/v0.3.1/*.json text eol=lf
 research/results/v0.3.1/*.svg text eol=lf
+
+# Frozen forensic manifests hash exact artifact bytes. Preserve their original
+# CRLF byte representation on every platform instead of applying text filters.
+research/results/v0.3.1/benchmark_forensics/**/*.json -text
+# Derived cross-experiment reports are not immutable byte-hashed artifacts.
+research/results/v0.3.1/benchmark_forensics/*.json text eol=lf
