@@ -22,8 +22,8 @@
 
 - Added an empirical-validation foundation over the pre-registered 30-company registry: fixed 90-observation acquisition plan, company-disjoint 18/6/6 split, PIT guard, dataset integrity gate and frozen independent label definitions.
 - Added fail-closed SEC acquisition, dual-review/extraction-gold contracts, calibration eligibility, company-clustered bootstrap deltas, structured FP/FN taxonomy and experiment-freeze verification.
-- Recorded the honest local state as 0/90 acquired, 0 adjudicated labels and benchmark `NOT RUN`; no SEC, annotation or LLM result was fabricated.
-- Actually attempted the official SEC acquisition twice using the repository owner's existing Git contact; all 90 observations were rejected with HTTP 403 and are preserved in a machine-readable failure report.
+- Initial diagnostic state: recorded 0/90 acquired, 0 adjudicated labels and benchmark `NOT RUN`; no SEC, annotation or LLM result was fabricated. This state predates the successful local FSDS import summarized above.
+- Initial live-API attempt: official SEC acquisition was attempted twice using the repository owner's existing Git contact; all 90 requests were rejected with HTTP 403 and remain preserved in a machine-readable failure report. The later E3 numeric corpus was built from locally supplied official SEC FSDS archives, not from those failed requests.
 - Added historical submissions expansion, primary filing/iXBRL HTML hashing, precise timestamp PIT comparison, empty-dataset failure, resumable partial acquisition, and blinded machine-review/run schemas.
 
 - Made hierarchical fusion non-compensatory and monotonic for additional adverse evidence; unknown dimensions remain excluded rather than treated as safe.

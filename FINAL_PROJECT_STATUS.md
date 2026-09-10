@@ -13,7 +13,7 @@ Fully implemented locally:
 
 Current v0.3.1 verification: 123 tests pass at 90.76% line coverage. Ruff, deterministic replay, TypeScript and the Next.js production build pass. Docker Compose runtime validation remains NOT RUN because Docker is unavailable on this machine.
 
-Status date: 2026-09-09. v0.3.1 remains local and uncommitted pending review. This is an honest research-prototype status, not a production or performance claim.
+Status date: 2026-09-10. The v0.3.1 release-candidate implementation is synchronized on `main`; no v0.3.1 tag or GitHub Release has been created. This is an honest research-prototype status, not a production or performance claim.
 
 ## Fully Implemented
 
@@ -88,11 +88,11 @@ Status date: 2026-09-09. v0.3.1 remains local and uncommitted pending review. Th
 - Ratios Only: risk F1 1.000 on n=3. This is not evidence of superiority; the sample is too small.
 - Detailed results: `research/results/public_v1`; failures: `research/error_analysis.md`.
 - v0.3.1 diagnostic output: `research/results/v0.3.1`. Integrity-fusion deltas versus legacy fusion on the same v0.3.1 evidence were 0, +4 and 0; the pilot contradiction F1 was 1.000 while risk-classification F1 remained 0.000. These n=3 observations do not establish predictive superiority.
-- A 30-company cross-sector candidate registry is pre-registered but all rows remain `pending_sec_download` and are excluded from results.
+- The pre-registered 30-company cross-sector registry has now been materialized as the E3 numeric corpus: 30 companies x 3 fiscal years, or 90/90 filing-level feature observations. These observations are included in the numeric E3 results. Narrative-document validation, human adjudication and 25 outcome records beyond the available 2024Q4 data horizon remain incomplete and are not represented as validated results.
 
 ## Experiments Pending
 
-- Repeat SEC acquisition from a permitted network and measure non-circular extraction accuracy.
+- Acquire the required official 2025 SEC outcome archives from a permitted network to resolve the 25 right-censored records, and complete human-adjudicated extraction validation; current extraction figures measure machine reconciliation agreement only.
 - Run the real LLM baseline with a frozen model/prompt/pricing configuration.
 - Double annotation, adjudication, more companies/sectors and a locked confirmatory test.
 
