@@ -2,7 +2,9 @@
 
 ## [Unreleased]
 
-### v0.3.2 reproducibility and runtime integrity
+## [0.3.2] - 2026-09-11
+
+### Reproducibility and runtime integrity
 
 - Added read-only E1/E2/E3 frozen replay and dynamic Git clean/dirty provenance for future experiments; frozen v0.3.1 artifacts remain byte-for-byte unchanged.
 - Added prospective label schema v2 compatibility and standalone-period FCF v2 semantics without modifying E3.

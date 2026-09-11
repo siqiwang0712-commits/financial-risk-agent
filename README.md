@@ -23,7 +23,7 @@
 
 ## v0.3.2 — Reproducibility & Runtime Integrity (release hardening)
 
-v0.3.2 is a prospective hardening release. It does not regenerate E1/E2/E3 or
+v0.3.2 is a reproducibility and runtime-integrity hardening release. It does not regenerate E1/E2/E3 or
 reinterpret their results. It separates read-only frozen replay from new experiment
 creation, records the actual Git commit and dirty state for future experiments, adds a
 v2-compatible label schema and standalone-period FCF methodology, wires `DATABASE_URL`
@@ -452,13 +452,12 @@ npm run typecheck
 npm run build
 ```
 
-Recorded closeout status: **149 passed, 1 PostgreSQL-dependent test skipped** on both
-Python 3.11.9 and 3.12.10, at **90.55% line coverage**. Ruff, four frontend semantic
-tests, official-registry production/full dependency audits, TypeScript, the Next.js
-production build, prospective provenance validation and read-only E1/E2/E3 replay pass
-locally. PostgreSQL 17 migration/restart persistence and the production-overlay Docker
-smoke test pass locally; the current CI matrix reruns both paths. No v0.3.2 tag or
-Release exists, and production deployment is not claimed.
+The release gate covers Python 3.11 and 3.12 with a 90% minimum coverage threshold,
+Ruff, frontend semantic tests, official-registry production/full dependency audits,
+TypeScript, the Next.js production build, prospective provenance validation and
+read-only E1/E2/E3 replay. PostgreSQL 17 migration/restart persistence and the
+production-overlay Docker smoke test pass locally and remain CI requirements.
+Production deployment is not claimed.
 
 ## Repository map
 

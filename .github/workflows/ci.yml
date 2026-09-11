@@ -28,17 +28,17 @@ jobs:
         with: {python-version: "${{ matrix.python-version }}"}
       - run: python -m pip install pip==25.2
       - run: python -m pip install -c requirements.lock -e ".[dev,postgres]"
+      - run: python -m pip check
       - run: ruff check backend tests scripts
       - run: python scripts/validate_postgres_migration.py
       - run: pytest --cov=finrisk --cov-report=term-missing --cov-fail-under=90
       - name: Verify prospective empirical provenance fails closed
         run: python scripts/run_empirical_validation.py --provenance-v2 --report .runtime/integrity-report.json
-      - name: Reproduce v0.3.1 pilot without rewriting frozen v0.3.0 results
+      - name: Verify frozen v0.3.1 artifacts without regeneration
         run: |
           python scripts/replay_frozen_experiment.py v0.3.1-E1-diagnostic
           python scripts/replay_frozen_experiment.py v0.3.1-E2
           python scripts/replay_frozen_experiment.py v0.3.1-E3
-          python scripts/run_v031_replay.py
           git diff --exit-code -- research/results/public_v1 research/results/v0.3.1
   frontend:
     runs-on: ubuntu-latest
@@ -61,6 +61,8 @@ jobs:
       POSTGRES_PASSWORD: ci-only-strong-password-v032
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      - name: Build frontend production image
+        run: docker build -f frontend/Dockerfile -t finrisk-frontend:ci frontend
       - name: Build and start production PostgreSQL/API stack
         run: docker compose -f docker-compose.yml -f docker-compose.prod.yml up --build -d postgres migrate api
       - name: Verify readiness and PostgreSQL repository selection
