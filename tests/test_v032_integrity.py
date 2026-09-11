@@ -1,7 +1,12 @@
+import json
+import tomllib
 from pathlib import Path
 
 import pytest
-from finrisk.empirical_validation import validate_dataset_integrity
+from finrisk.empirical_validation import (
+    migrate_provenance_v2,
+    validate_dataset_integrity,
+)
 from finrisk.enterprise.domain import (
     AnalysisSnapshot,
     AuditEvent,
@@ -31,6 +36,23 @@ from finrisk.research_schema import migrate_review_record_v1_to_v2
 from finrisk.sec_bulk import build_reported_fcf_periods_v2
 
 ROOT = Path(__file__).resolve().parents[1]
+
+
+def _provenance_row() -> dict:
+    return {
+        "observation_id": "x-2024", "ticker": "X", "cik": "1", "sector": "test",
+        "fiscal_year": 2024, "period_end": "2024-12-31", "filing_date": "2025-02-01",
+        "accession": "a", "source_url": "https://sec.example/a", "source_hash": "a" * 64,
+        "source_available_time": "2025-02-01T00:00:00Z", "information_cutoff": "2025-02-01T00:00:00Z",
+        "outcome_window_end": "2026-02-01", "split": "train", "annotation_status": "pending",
+    }
+
+
+def _direct_provenance(concept: str) -> dict:
+    return {
+        "concept": concept, "unit": "USD", "period_end": "20241231",
+        "source_row": {"adsh": "a", "tag": concept, "ddate": "20241231", "uom": "USD", "coreg": "", "segments": ""},
+    }
 
 
 def test_frozen_replay_is_read_only_and_hash_verified():
@@ -64,17 +86,102 @@ def test_credentials_use_long_unique_identifier_and_rotation_revokes_old_key():
 
 
 def test_used_fact_without_provenance_fails_closed():
-    row = {
-        "observation_id": "x-2024", "ticker": "X", "cik": "1", "sector": "test",
-        "fiscal_year": 2024, "period_end": "2024-12-31", "filing_date": "2025-02-01",
-        "accession": "a", "source_url": "https://sec.example/a", "source_hash": "a" * 64,
-        "source_available_time": "2025-02-01T00:00:00Z", "information_cutoff": "2025-02-01T00:00:00Z",
-        "outcome_window_end": "2026-02-01", "split": "train", "annotation_status": "pending",
-        "facts": {"revenue": 1.0}, "fact_provenance": {},
-    }
+    row = {**_provenance_row(), "facts": {"revenue": 1.0}, "fact_provenance": {}}
     report = validate_dataset_integrity([row])
     assert report["gate"] == "STOP"
     assert "FACT_PROVENANCE_MISSING" in {item["code"] for item in report["errors"]}
+
+
+def test_direct_and_derived_fact_provenance_are_distinct_and_valid():
+    row = _provenance_row()
+    row["facts"] = {"short_term_debt": 2.0, "long_term_debt": 3.0, "total_debt": 5.0}
+    row["fact_provenance"] = {
+        "short_term_debt": _direct_provenance("ShortTermDebt"),
+        "long_term_debt": _direct_provenance("LongTermDebt"),
+        "total_debt": {"derived_from": ["short_term_debt", "long_term_debt"], "formula": "short_term_debt + long_term_debt"},
+    }
+    assert validate_dataset_integrity([row])["gate"] == "PASS"
+
+
+def test_derived_fact_missing_parent_fails_closed():
+    row = _provenance_row()
+    row["facts"] = {"short_term_debt": 2.0, "total_debt": 5.0}
+    row["fact_provenance"] = {
+        "short_term_debt": _direct_provenance("ShortTermDebt"),
+        "total_debt": {
+            "derived_from": ["short_term_debt", "long_term_debt"],
+            "formula": "short_term_debt + long_term_debt",
+        },
+    }
+    codes = {item["code"] for item in validate_dataset_integrity([row])["errors"]}
+    assert {"DERIVED_FACT_MISSING_PARENT", "DERIVED_PARENT_PROVENANCE_INVALID"} <= codes
+
+
+def test_v2_migration_marks_unsupported_derivation_unavailable_without_mutation():
+    row = _provenance_row()
+    row["facts"] = {"short_term_debt": 2.0, "long_term_debt": None, "total_debt": 2.0}
+    row["fact_provenance"] = {
+        "short_term_debt": _direct_provenance("ShortTermDebt"),
+        "total_debt": {
+            "derived_from": ["short_term_debt", "long_term_debt"],
+            "formula": "short_term_debt + long_term_debt",
+        },
+    }
+    original = json.loads(json.dumps(row))
+    migrated, audit = migrate_provenance_v2([row])
+    assert row == original
+    assert "total_debt" not in migrated[0]["facts"]
+    assert migrated[0]["unavailable_facts"]["total_debt"]["status"] == "UNAVAILABLE"
+    assert audit[0]["reason_code"] == "DERIVED_PARENT_UNAVAILABLE"
+    assert validate_dataset_integrity(migrated)["gate"] == "PASS"
+
+
+def test_v2_migration_does_not_hide_unknown_or_malformed_derivations():
+    row = _provenance_row()
+    row["facts"] = {"opaque_metric": 1.0}
+    row["fact_provenance"] = {"opaque_metric": {"derived_from": "missing", "formula": "x"}}
+    migrated, audit = migrate_provenance_v2([row])
+    assert audit == []
+    assert migrated[0]["facts"]["opaque_metric"] == 1.0
+    assert validate_dataset_integrity(migrated)["gate"] == "STOP"
+
+
+def test_unsupported_or_incorrect_derivation_fails_closed():
+    row = _provenance_row()
+    row["facts"] = {"short_term_debt": 2.0, "long_term_debt": 3.0, "total_debt": 6.0}
+    row["fact_provenance"] = {
+        "short_term_debt": _direct_provenance("ShortTermDebt"),
+        "long_term_debt": _direct_provenance("LongTermDebt"),
+        "total_debt": {"derived_from": ["short_term_debt", "long_term_debt"], "formula": "sum"},
+    }
+    assert "UNSUPPORTED_DERIVATION" in {
+        item["code"] for item in validate_dataset_integrity([row])["errors"]
+    }
+    row["fact_provenance"]["total_debt"]["formula"] = "short_term_debt + long_term_debt"
+    assert "DERIVED_VALUE_MISMATCH" in {
+        item["code"] for item in validate_dataset_integrity([row])["errors"]
+    }
+
+
+def test_invalid_or_cyclic_derivation_fails_closed():
+    row = _provenance_row()
+    row["facts"] = {"a": 1.0, "b": 1.0}
+    row["fact_provenance"] = {
+        "a": {"derived_from": ["b"], "formula": "b"},
+        "b": {"derived_from": ["a"], "formula": "a"},
+    }
+    assert "DERIVED_PROVENANCE_CYCLE" in {item["code"] for item in validate_dataset_integrity([row])["errors"]}
+    row["fact_provenance"]["a"] = {"derived_from": [], "formula": ""}
+    assert "INVALID_DERIVED_PROVENANCE" in {item["code"] for item in validate_dataset_integrity([row])["errors"]}
+
+
+def test_version_metadata_is_consistent():
+    from finrisk import __version__
+    from finrisk.api import app
+
+    pyproject = tomllib.loads((ROOT / "pyproject.toml").read_text(encoding="utf-8"))
+    frontend = json.loads((ROOT / "frontend/package.json").read_text(encoding="utf-8"))
+    assert {__version__, app.version, pyproject["project"]["version"], frontend["version"]} == {"0.3.2"}
 
 
 def test_ratio_missing_is_unavailable_and_cash_conversion_is_not_double_counted():

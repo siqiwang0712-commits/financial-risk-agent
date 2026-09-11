@@ -87,8 +87,11 @@ def test_integrity_rejects_empty_dataset() -> None:
 
 def test_integrity_rejects_cross_filing_fact_provenance() -> None:
     row = observation()
+    row["facts"] = {"revenue": 1.0}
     row["fact_provenance"] = {
         "revenue": {
+            "concept": "Revenues",
+            "unit": "USD",
             "source_row": {
                 "adsh": "wrong-accession",
                 "ddate": "20231231",

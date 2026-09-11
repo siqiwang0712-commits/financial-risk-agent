@@ -18,7 +18,9 @@ from finrisk.sec_bulk import (
 )
 
 
-def _archive(path, year: int, revenue: int, income: int, ocf: int, debt: int) -> None:
+def _archive(
+    path, year: int, revenue: int, income: int, ocf: int, debt: int, *, include_short_term_debt: bool = True
+) -> None:
     adsh = f"0000320193-{str(year + 1)[-2:]}-000001"
     period = f"{year}0930"
     filed = f"{year + 1}1025"
@@ -31,6 +33,8 @@ def _archive(path, year: int, revenue: int, income: int, ocf: int, debt: int) ->
         "LiabilitiesCurrent": (250, 0), "CashAndCashEquivalentsAtCarryingValue": (100, 0),
         "StockholdersEquity": (400, 0), "LongTermDebtNoncurrent": (debt, 0),
     }
+    if include_short_term_debt:
+        values["LongTermDebtCurrent"] = (0, 0)
     num = "adsh\ttag\tversion\tcoreg\tddate\tqtrs\tuom\tvalue\tfootnote\n"
     pre = "adsh\treport\tline\tstmt\tinpth\trfile\ttag\tversion\tplabel\tnegating\n"
     for tag, (value, qtrs) in values.items():
@@ -71,6 +75,16 @@ def test_bulk_import_metrics_labels_and_readiness(tmp_path):
     assert ready["NUMERIC_READY"] == "VERIFIED"
     assert ready["LABEL_READY"] == "VERIFIED"
     assert ready["DOCUMENT_READY"] == "INSUFFICIENT_DATA"
+
+
+def test_bulk_import_does_not_coerce_missing_debt_component_to_zero(tmp_path):
+    archive = tmp_path / "2022q4.zip"
+    _archive(archive, 2021, 1000, 100, 200, 200, include_short_term_debt=False)
+    submissions, numbers, sources = load_statement_archives([archive])
+    plan = [{"observation_id": "aapl-2021", "ticker": "AAPL", "sector": "Technology", "fiscal_year": "2021", "split": "train"}]
+    observations, _ = build_numeric_corpus(plan, submissions, numbers, sources)
+    assert observations[0]["facts"]["total_debt"] is None
+    assert observations[0]["fact_provenance"]["total_debt"] is None
 
 
 def test_negative_ocf_does_not_count_as_turning_negative_twice(tmp_path):

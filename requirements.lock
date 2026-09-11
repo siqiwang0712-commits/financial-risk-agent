@@ -1,14 +1,43 @@
-# Direct runtime and validation dependencies pinned for v0.3.2 reproducibility.
-# Install with: python -m pip install -r requirements.lock
+# Complete resolved Python environment constraints for v0.3.2.
+# CI installs the package with: python -m pip install -c requirements.lock -e ".[dev,postgres]"
+# Versions are shared by the supported CPython 3.11/3.12 matrix.
+annotated-doc==0.0.4
+annotated-types==0.6.0
+anyio==4.12.1
+certifi==2026.6.17
+charset-normalizer==3.4.7
+click==8.4.1
+colorama==0.4.6
+coverage==7.16.0
 fastapi==0.141.1
-uvicorn[standard]==0.52.4
+h11==0.16.0
+httpcore==1.0.9
+httptools==0.8.0
+httpx==0.28.1
+idna==3.18
+iniconfig==2.3.0
+packaging==26.0
+pip==25.2
+pillow==12.3.0
+pluggy==1.6.0
+psycopg==3.3.5
+psycopg-binary==3.3.5
 pydantic==2.13.4
-PyYAML==6.0.3
+pydantic-core==2.46.4
+pygments==2.20.0
 PyMuPDF==1.28.2
-python-multipart==0.0.32
-reportlab==5.0.1
-psycopg[binary]==3.3.5
 pytest==9.1.1
 pytest-cov==7.1.0
-httpx==0.28.1
+python-dotenv==1.2.1
+python-multipart==0.0.32
+PyYAML==6.0.3
+reportlab==5.0.1
 ruff==0.16.6
+setuptools==80.9.0
+starlette==1.6.0
+typing-extensions==4.15.0
+typing-inspection==0.4.2
+tzdata==2026.3
+uvicorn==0.52.4
+watchfiles==1.2.0
+websockets==17.1

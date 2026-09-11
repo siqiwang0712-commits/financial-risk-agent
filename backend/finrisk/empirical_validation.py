@@ -6,6 +6,7 @@ import random
 import re
 from collections import defaultdict
 from collections.abc import Callable
+from copy import deepcopy
 from datetime import UTC, date, datetime
 from typing import Any
 
@@ -47,6 +48,63 @@ BENCHMARK_REQUIREMENTS = {
     "B7_SELECTIVE_PREDICTION": {"BASE_PREDICTION_READY", "RELIABILITY_READY"},
     "B8_CRITIC_VERIFIER": {"DOCUMENT_READY", "EVIDENCE_READY", "AGENT_READY", "LABEL_READY"},
 }
+
+SUPPORTED_DERIVATIONS = {
+    "total_debt": {
+        "parents": {"short_term_debt", "long_term_debt"},
+        "formulas": {"short_term_debt + long_term_debt", "current + noncurrent debt"},
+    }
+}
+
+
+def migrate_provenance_v2(rows: list[dict[str, Any]]) -> tuple[list[dict[str, Any]], list[dict[str, Any]]]:
+    """Return a non-mutating view where unsupported legacy derivations are unavailable."""
+    migrated = deepcopy(rows)
+    audit: list[dict[str, Any]] = []
+    for row in migrated:
+        facts = row.get("facts") or {}
+        provenance_map = row.get("fact_provenance") or {}
+        for field in tuple(facts):
+            provenance = provenance_map.get(field) or {}
+            parents = provenance.get("derived_from")
+            if parents is None:
+                continue
+            if (
+                field != "total_debt"
+                or not isinstance(parents, list)
+                or set(parents) != SUPPORTED_DERIVATIONS["total_debt"]["parents"]
+                or len(parents) != 2
+                or not isinstance(provenance.get("formula"), str)
+                or provenance["formula"].strip() not in SUPPORTED_DERIVATIONS["total_debt"]["formulas"]
+                or "source_row" in provenance
+            ):
+                continue
+            missing = [
+                parent
+                for parent in parents
+                if not isinstance(parent, str)
+                or parent not in facts
+                or facts[parent] is None
+                or not provenance_map.get(parent)
+            ]
+            if not missing:
+                continue
+            facts.pop(field, None)
+            provenance_map.pop(field, None)
+            row.setdefault("unavailable_facts", {})[field] = {
+                "status": "UNAVAILABLE",
+                "reason_code": "DERIVED_PARENT_UNAVAILABLE",
+                "missing_parents": missing,
+                "provenance_schema": "2.0.0",
+            }
+            audit.append({
+                "observation_id": row.get("observation_id"),
+                "field": field,
+                "action": "MARK_UNAVAILABLE",
+                "reason_code": "DERIVED_PARENT_UNAVAILABLE",
+                "missing_parents": missing,
+            })
+    return migrated, audit
 
 
 def benchmark_readiness(capabilities: dict[str, str]) -> dict[str, dict[str, Any]]:
@@ -98,6 +156,106 @@ class PointInTimeGuard:
         return accepted
 
 
+def _fact_provenance_valid(
+    field: str,
+    *,
+    row_index: int,
+    row: dict[str, Any],
+    facts: dict[str, Any],
+    provenance_map: dict[str, Any],
+    expected_accession: str,
+    expected_period: str,
+    errors: list[dict[str, Any]],
+    trail: tuple[str, ...] = (),
+) -> bool:
+    """Validate a used fact through derived parents to direct SEC source rows."""
+    if field in trail:
+        errors.append({"row": row_index, "code": "DERIVED_PROVENANCE_CYCLE", "detail": (*trail, field)})
+        return False
+    if field not in facts or facts[field] is None:
+        errors.append({"row": row_index, "code": "DERIVED_FACT_MISSING_PARENT", "detail": field})
+        return False
+    provenance = provenance_map.get(field)
+    if not provenance:
+        errors.append({"row": row_index, "code": "FACT_PROVENANCE_MISSING", "detail": field})
+        return False
+    derived_from = provenance.get("derived_from")
+    if derived_from is not None:
+        formula = provenance.get("formula")
+        if (
+            not isinstance(derived_from, list)
+            or not derived_from
+            or len(set(derived_from)) != len(derived_from)
+            or not isinstance(formula, str)
+            or not formula.strip()
+            or "source_row" in provenance
+        ):
+            errors.append({"row": row_index, "code": "INVALID_DERIVED_PROVENANCE", "detail": field})
+            return False
+        valid = all(
+            isinstance(parent, str)
+            and _fact_provenance_valid(
+                parent,
+                row_index=row_index,
+                row=row,
+                facts=facts,
+                provenance_map=provenance_map,
+                expected_accession=expected_accession,
+                expected_period=expected_period,
+                errors=errors,
+                trail=(*trail, field),
+            )
+            for parent in derived_from
+        )
+        if not valid:
+            errors.append({"row": row_index, "code": "DERIVED_PARENT_PROVENANCE_INVALID", "detail": field})
+            return False
+        specification = SUPPORTED_DERIVATIONS.get(field)
+        if (
+            specification is None
+            or set(derived_from) != specification["parents"]
+            or formula.strip() not in specification["formulas"]
+        ):
+            errors.append({"row": row_index, "code": "UNSUPPORTED_DERIVATION", "detail": field})
+            return False
+        expected_value = sum(float(facts[parent]) for parent in derived_from)
+        tolerance = max(1e-6, abs(expected_value) * 1e-9)
+        if abs(float(facts[field]) - expected_value) > tolerance:
+            errors.append({"row": row_index, "code": "DERIVED_VALUE_MISMATCH", "detail": field})
+            return False
+        return True
+    source_row = provenance.get("source_row")
+    if not isinstance(source_row, dict):
+        errors.append({"row": row_index, "code": "FACT_PROVENANCE_INCOMPLETE", "detail": field})
+        return False
+    required = {
+        "adsh": source_row.get("adsh"),
+        "tag": source_row.get("tag"),
+        "ddate": source_row.get("ddate"),
+        "uom": source_row.get("uom"),
+        "concept": provenance.get("concept"),
+        "unit": provenance.get("unit"),
+        "source_hash": row.get("source_hash"),
+        "source_available_time": row.get("source_available_time"),
+    }
+    missing = sorted(key for key, value in required.items() if value in (None, ""))
+    valid = not missing
+    if missing:
+        errors.append({"row": row_index, "code": "FACT_PROVENANCE_INCOMPLETE", "detail": {field: missing}})
+    checks = (
+        (source_row.get("adsh") == expected_accession, "FACT_ACCESSION_MISMATCH"),
+        (source_row.get("ddate") == expected_period, "FACT_PERIOD_MISMATCH"),
+        (provenance.get("concept") == source_row.get("tag"), "FACT_CONCEPT_MISMATCH"),
+        (provenance.get("unit") == source_row.get("uom") == "USD", "FACT_UNIT_MISMATCH"),
+        (not (source_row.get("coreg") or "").strip() and not (source_row.get("segments") or "").strip(), "DIMENSIONAL_FACT_IN_CONSOLIDATED_FEATURE"),
+    )
+    for passed, code in checks:
+        if not passed:
+            errors.append({"row": row_index, "code": code, "detail": field})
+            valid = False
+    return valid
+
+
 def validate_dataset_integrity(rows: list[dict[str, Any]]) -> dict[str, Any]:
     errors: list[dict[str, Any]] = []
     if not rows:
@@ -143,39 +301,21 @@ def validate_dataset_integrity(rows: list[dict[str, Any]]) -> dict[str, Any]:
             errors.append({"row": index, "code": "INVALID_OR_FUTURE_AVAILABILITY"})
         expected_period = str(row.get("period_end", "")).replace("-", "")
         expected_accession = str(row.get("accession", ""))
+        facts = row.get("facts") or {}
         provenance_map = row.get("fact_provenance") or {}
-        for field, value in (row.get("facts") or {}).items():
-            if value is not None and field not in provenance_map:
-                errors.append({"row": index, "code": "FACT_PROVENANCE_MISSING", "detail": field})
-        for field, provenance in (row.get("fact_provenance") or {}).items():
-            if not provenance or "source_row" not in provenance:
-                if (row.get("facts") or {}).get(field) is not None:
-                    errors.append({"row": index, "code": "FACT_PROVENANCE_INCOMPLETE", "detail": field})
-                continue
-            source_row = provenance["source_row"] or {}
-            required_provenance = {
-                "adsh": source_row.get("adsh"),
-                "tag": source_row.get("tag"),
-                "ddate": source_row.get("ddate"),
-                "uom": source_row.get("uom"),
-                "source_hash": row.get("source_hash"),
-                "source_available_time": row.get("source_available_time"),
-            }
-            missing_provenance = sorted(
-                key for key, value in required_provenance.items() if value in (None, "")
-            )
-            if missing_provenance:
-                errors.append({"row": index, "code": "FACT_PROVENANCE_INCOMPLETE", "detail": {field: missing_provenance}})
-            if source_row.get("adsh") != expected_accession:
-                errors.append({"row": index, "code": "FACT_ACCESSION_MISMATCH", "detail": field})
-            if source_row.get("ddate") != expected_period:
-                errors.append({"row": index, "code": "FACT_PERIOD_MISMATCH", "detail": field})
-            if not source_row.get("tag"):
-                errors.append({"row": index, "code": "FACT_CONCEPT_MISSING", "detail": field})
-            if source_row.get("uom") != "USD":
-                errors.append({"row": index, "code": "FACT_UNIT_MISMATCH", "detail": field})
-            if (source_row.get("coreg") or "").strip() or (source_row.get("segments") or "").strip():
-                errors.append({"row": index, "code": "DIMENSIONAL_FACT_IN_CONSOLIDATED_FEATURE", "detail": field})
+
+        for field, value in facts.items():
+            if value is not None:
+                _fact_provenance_valid(
+                    field,
+                    row_index=index,
+                    row=row,
+                    facts=facts,
+                    provenance_map=provenance_map,
+                    expected_accession=expected_accession,
+                    expected_period=expected_period,
+                    errors=errors,
+                )
         label_source = str(row.get("label_generated_by", "")).lower()
         if label_source in SYSTEM_LABEL_SOURCES or row.get("system_score_used_as_label"):
             errors.append({"row": index, "code": "LABEL_CONTAMINATION"})

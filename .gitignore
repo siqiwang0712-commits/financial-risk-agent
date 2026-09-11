@@ -13,6 +13,7 @@ logs/
 .coverage
 htmlcov/
 .venv/
+.runtime/
 venv/
 node_modules/
 .next/

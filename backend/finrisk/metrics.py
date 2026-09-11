@@ -15,8 +15,8 @@ def _metric(name, value, formula, inputs, year):
 
 def calculate_metrics(v: dict[str, float | None], year: int, previous: dict[str, float | None] | None = None) -> dict[str, Metric]:
     debt = v.get("total_debt")
-    if debt is None and (v.get("short_term_debt") is not None or v.get("long_term_debt") is not None):
-        debt = (v.get("short_term_debt") or 0) + (v.get("long_term_debt") or 0)
+    if debt is None and v.get("short_term_debt") is not None and v.get("long_term_debt") is not None:
+        debt = v["short_term_debt"] + v["long_term_debt"]
     capex = v.get("capital_expenditure")
     fcf = None if v.get("operating_cash_flow") is None or capex is None else v["operating_cash_flow"] - abs(capex)
     ebit = v.get("ebit", v.get("operating_income"))
@@ -65,7 +65,8 @@ def calculate_metrics(v: dict[str, float | None], year: int, previous: dict[str,
                 prev = None if previous.get("operating_cash_flow") is None or previous.get("capital_expenditure") is None else previous["operating_cash_flow"]-abs(previous["capital_expenditure"])
             elif key=="total_debt":
                 prev = previous.get("total_debt")
-                if prev is None and (previous.get("short_term_debt") is not None or previous.get("long_term_debt") is not None): prev=(previous.get("short_term_debt") or 0)+(previous.get("long_term_debt") or 0)
+                if prev is None and previous.get("short_term_debt") is not None and previous.get("long_term_debt") is not None:
+                    prev = previous["short_term_debt"] + previous["long_term_debt"]
             else: prev = previous.get(key)
             value = None if current is None or prev in (None,0) else (current-prev)/abs(prev)
             m[f"{key}_growth"]=_metric(f"{key}_growth",value,f"({key}_current - {key}_prior) / abs({key}_prior)",{"current":current,"prior":prev},year)

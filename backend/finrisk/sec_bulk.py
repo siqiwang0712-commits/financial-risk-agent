@@ -286,8 +286,12 @@ def build_numeric_corpus(
         provenance: dict[str, Any] = {}
         for field in CONCEPT_ALIASES:
             facts[field], provenance[field] = _select_fact(nums_by_adsh.get(adsh, []), field, period)
-        if facts["total_debt"] is None and (facts["short_term_debt"] is not None or facts["long_term_debt"] is not None):
-            facts["total_debt"] = (facts["short_term_debt"] or 0.0) + (facts["long_term_debt"] or 0.0)
+        if (
+            facts["total_debt"] is None
+            and facts["short_term_debt"] is not None
+            and facts["long_term_debt"] is not None
+        ):
+            facts["total_debt"] = facts["short_term_debt"] + facts["long_term_debt"]
             provenance["total_debt"] = {"derived_from": ["short_term_debt", "long_term_debt"], "formula": "current + noncurrent debt"}
         accepted = _accepted(filing.get("accepted") or filing.get("filed", ""))
         filed_date = f"{filing['filed'][:4]}-{filing['filed'][4:6]}-{filing['filed'][6:8]}"

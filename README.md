@@ -10,8 +10,6 @@
 [![Python 3.11+](https://img.shields.io/badge/Python-3.11%2B-3776AB?logo=python&logoColor=white)](https://www.python.org/)
 [![FastAPI](https://img.shields.io/badge/API-FastAPI-009688?logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com/)
 [![Next.js](https://img.shields.io/badge/UI-Next.js-111111?logo=next.js&logoColor=white)](https://nextjs.org/)
-[![Tests](https://img.shields.io/badge/tests-134%20passed-2f855a)](#verification)
-[![Coverage](https://img.shields.io/badge/coverage-90.49%25-2f855a)](#verification)
 [![License](https://img.shields.io/badge/license-MIT-d45b3e)](LICENSE)
 
 **An evidence-grounded financial risk platform where an LLM plans and interprets, deterministic financial tools execute, and every material conclusion must trace back to verified evidence.**
@@ -23,7 +21,7 @@
 > [!IMPORTANT]
 > **Risk severity ≠ evidence coverage ≠ evidence quality ≠ model disagreement ≠ reliability ≠ probability.** FinRisk's 0–100 risk index is an expert-designed heuristic, not a bankruptcy probability, credit rating, fraud finding, or investment recommendation. Reliability is `UNCALIBRATED` unless a pinned held-out calibration run establishes otherwise.
 
-## v0.3.2 — Reproducibility & Runtime Integrity (in development)
+## v0.3.2 — Reproducibility & Runtime Integrity (release hardening)
 
 v0.3.2 is a prospective hardening release. It does not regenerate E1/E2/E3 or
 reinterpret their results. It separates read-only frozen replay from new experiment
@@ -44,6 +42,13 @@ is not regeneration: current code is not used to recreate historical outputs.
 The E1/E2/E3 manifests record original generation commit
 `1486cf8e2e86115bff27f3f0c8940e2237efaf10`; this provenance is preserved even though
 the working tree and released code have advanced.
+
+The prospective provenance validator distinguishes direct SEC facts from deterministic
+derivations and recursively requires every derivation parent to terminate in a valid SEC
+source row. During final closeout this correctly rejected 24 legacy corpus observations
+whose historical v1 `total_debt` derivation treated one missing component as zero. Those
+frozen inputs and E3 outputs remain unchanged; they are not silently upgraded to v2
+provenance semantics.
 
 The current runtime uses PostgreSQL whenever `DATABASE_URL` is set; in-memory storage is
 an explicit test/lightweight-development mode. Production mode rejects missing/default
@@ -425,7 +430,7 @@ npm run typecheck
 npm run build
 ```
 
-Recorded local status: **105 tests passed**, **92.36% line coverage**. Ruff, TypeScript, the Next.js production build and deterministic replay pass. This working tree has not been committed, tagged or pushed.
+Recorded local closeout status: **143 tests passed** on both Python 3.11.9 and 3.12.10 with a real PostgreSQL 17 service, at **90.56% line coverage**. PostgreSQL migrations, restart persistence, Ruff, frontend semantic tests, TypeScript, the Next.js production build, prospective provenance validation and deterministic replay pass locally. The v0.3.2 implementation is on `main`; the final release-integrity changes are local and uncommitted, and no v0.3.2 tag or Release exists.
 
 ## Repository map
 

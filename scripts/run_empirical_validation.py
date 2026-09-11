@@ -11,6 +11,7 @@ from finrisk.empirical_validation import (
     calibration_eligibility,
     canonical_hash,
     independent_label_report,
+    migrate_provenance_v2,
     validate_dataset_integrity,
 )
 
@@ -24,6 +25,8 @@ READINESS = ROOT / "research/empirical_v1/readiness.json"
 def main() -> int:
     parser = argparse.ArgumentParser(description="Fail-closed empirical validation entry point")
     parser.add_argument("--manifest", type=Path, default=DEFAULT_MANIFEST)
+    parser.add_argument("--provenance-v2", action="store_true")
+    parser.add_argument("--report", type=Path, default=REPORT)
     parser.add_argument("--allow-not-available", action="store_true", help="write an honest blocked report and exit successfully; never runs a benchmark")
     args = parser.parse_args()
     if not args.manifest.exists():
@@ -40,7 +43,17 @@ def main() -> int:
         print(json.dumps(report, indent=2))
         return 0 if args.allow_not_available else 2
     rows = json.loads(args.manifest.read_text(encoding="utf-8"))
+    migration_audit = []
+    if args.provenance_v2:
+        rows, migration_audit = migrate_provenance_v2(rows)
     integrity = validate_dataset_integrity(rows)
+    integrity["provenance_schema"] = "2.0.0" if args.provenance_v2 else "legacy"
+    integrity["provenance_migration"] = {
+        "mode": "NON_MUTATING_PROSPECTIVE_VIEW" if args.provenance_v2 else "NOT_APPLIED",
+        "source_manifest_modified": False,
+        "unavailable_fact_count": len(migration_audit),
+        "audit": migration_audit,
+    }
     integrity["dataset_hash"] = canonical_hash(rows)
     integrity["calibration"] = calibration_eligibility(
         {"population_prevalence_preserved": False, "case_control_sampling": True}
@@ -53,7 +66,8 @@ def main() -> int:
     integrity["benchmark_status"] = "PARTIALLY_READY" if any(
         item["status"] == "READY" for item in integrity["benchmarks"].values()
     ) else "NOT RUN"
-    REPORT.write_text(json.dumps(integrity, indent=2), encoding="utf-8")
+    args.report.parent.mkdir(parents=True, exist_ok=True)
+    args.report.write_text(json.dumps(integrity, indent=2), encoding="utf-8")
     print(json.dumps(integrity, indent=2))
     return 0 if integrity["valid"] else 2
 

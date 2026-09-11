@@ -10,6 +10,10 @@
 - Protected expensive analysis endpoints, bounded PDF resources, sanitized correlation IDs/errors, and split liveness/readiness health checks.
 - Added provenance completeness checks, explicit missing-baseline abstention, selective-performance semantics, correlated-evidence caps and distinct aggregate-critical reason codes.
 - Removed frontend localhost coupling, loaded the frozen pilot from its artifact-backed API, added semantic UI tests, and hardened container defaults.
+- Distinguished direct SEC provenance from recursively verified deterministic derivations; missing, cyclic or untraceable parents now fail closed, and prospective debt construction no longer coerces a missing component to zero.
+- Unified backend, API, package and frontend version metadata at 0.3.2 with a regression test.
+- Pinned the complete Python dependency graph, pip/build backend and GitHub Actions revisions used by the Python 3.11/3.12 release gate.
+- Expanded the Python environment lock to transitive constraints and made CI/container installation consume it.
 
 ### v0.3.1 — released
 
