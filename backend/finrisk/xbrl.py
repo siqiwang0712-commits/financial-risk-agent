@@ -28,7 +28,7 @@ CONCEPTS: dict[str, tuple[str, ...]] = {
     "current_liabilities": ("LiabilitiesCurrent",),
     "short_term_debt": ("ShortTermBorrowings", "ShortTermDebtCurrent", "LongTermDebtCurrent"),
     "long_term_debt": ("LongTermDebtNoncurrent",),
-    "total_debt": ("LongTermDebtAndFinanceLeaseObligationsCurrent", "LongTermDebt"),
+    "total_debt": ("LongTermDebtAndFinanceLeaseObligations", "LongTermDebt"),
     "total_liabilities": ("Liabilities",),
     "shareholder_equity": ("StockholdersEquity", "StockholdersEquityIncludingPortionAttributableToNoncontrollingInterest"),
     "retained_earnings": ("RetainedEarningsAccumulatedDeficit",),
@@ -257,6 +257,38 @@ def parse_companyfacts(payload: dict[str, Any], fiscal_years: list[int] | None =
                 period_start=item.get("start"), period_end=item.get("end"),
                 original_unit=unit_name, provenance_url=filing_url,
             ))
+        year_values = {value.line_item: value for value in output if value.fiscal_year == year}
+        if "total_debt" not in year_values:
+            current = year_values.get("short_term_debt")
+            noncurrent = year_values.get("long_term_debt")
+            if (
+                current is not None
+                and noncurrent is not None
+                and current.accession == noncurrent.accession
+                and current.period_end == noncurrent.period_end
+                and current.original_unit == noncurrent.original_unit
+            ):
+                output.append(
+                    FinancialValue(
+                        line_item="total_debt",
+                        value=float(current.value) + float(noncurrent.value),
+                        fiscal_year=year,
+                        statement="xbrl",
+                        unit=current.unit,
+                        currency=current.currency,
+                        document=current.document,
+                        page=0,
+                        source_text="short_term_debt + long_term_debt",
+                        confidence=min(current.confidence, noncurrent.confidence),
+                        restated=current.restated or noncurrent.restated,
+                        source_type="sec_xbrl_derived",
+                        accession=current.accession,
+                        filed_at=max(current.filed_at or "", noncurrent.filed_at or ""),
+                        period_end=current.period_end,
+                        original_unit=current.original_unit,
+                        provenance_url=current.provenance_url,
+                    )
+                )
     return output
 
 

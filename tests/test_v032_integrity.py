@@ -222,8 +222,8 @@ def test_aggregate_critical_has_distinct_reason_code():
 
 def test_ytd_fcf_is_converted_to_standalone_periods():
     submissions = [
-        {"adsh": "q1", "cik": "320193", "form": "10-Q", "period": "20230331", "filed": "20230501", "accepted": "20230501120000", "__archive_sha256": "a", "__archive_name": "q1"},
-        {"adsh": "q2", "cik": "320193", "form": "10-Q", "period": "20230630", "filed": "20230801", "accepted": "20230801120000", "__archive_sha256": "b", "__archive_name": "q2"},
+        {"adsh": "q1", "cik": "320193", "form": "10-Q", "period": "20230331", "fy": "2023", "filed": "20230501", "accepted": "20230501120000", "__archive_sha256": "a", "__archive_name": "q1"},
+        {"adsh": "q2", "cik": "320193", "form": "10-Q", "period": "20230630", "fy": "2023", "filed": "20230801", "accepted": "20230801120000", "__archive_sha256": "b", "__archive_name": "q2"},
     ]
     numbers = []
     for adsh, period, qtrs, ocf, capex in (("q1", "20230331", "1", 100, 20), ("q2", "20230630", "2", 240, 50)):

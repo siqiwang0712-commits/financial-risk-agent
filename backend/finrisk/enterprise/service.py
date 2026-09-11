@@ -88,6 +88,12 @@ class EnterpriseRiskService:
     def create_case(self, principal: Principal, case: RiskCase) -> RiskCase:
         authorize(principal, "write", case.organization_id)
         self.repository.get_entity(case.organization_id, case.entity_id)
+        if case.snapshot_id:
+            snapshot = self.repository.get_snapshot(case.organization_id, case.snapshot_id)
+            if snapshot.organization_id != case.organization_id:
+                raise PermissionError("snapshot organization does not match risk case")
+            if snapshot.entity_id != case.entity_id:
+                raise ValueError("snapshot entity does not match risk case")
         saved = self.repository.save(case)
         self._audit(
             case.organization_id,

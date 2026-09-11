@@ -40,3 +40,10 @@ non-root user, and a dedicated record survived an API-container restart. Product
 deployment remains unvalidated.
 
 The stricter validator exposed 24 historical corpus observations where the v1 `total_debt` derivation used one available component while the other was missing. Those frozen observations and E3 results remain untouched. A non-mutating provenance-v2 compatibility view marks the unsupported values `UNAVAILABLE`, records every action and passes the prospective 90-observation integrity gate with zero company overlap and zero future leakage. New ingestion leaves debt unavailable unless both components exist.
+
+The final integrity pass also aligns FSDS and CompanyFacts debt semantics: only an
+aggregate SEC concept is accepted directly, while component-based `total_debt` requires
+both short- and long-term debt with recursively valid provenance. Standalone FCF v2 now
+groups cumulative quarters by issuer and SEC fiscal year, including non-calendar fiscal
+years. Server-generated Agent assessments are persisted as tenant/entity-scoped snapshots;
+RiskCase creation rejects a snapshot associated with another entity in the same tenant.

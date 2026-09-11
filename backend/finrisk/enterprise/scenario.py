@@ -28,7 +28,12 @@ def apply_scenario(values: dict[str, float], scenario: Scenario) -> dict[str, fl
     if "operating_income" in stressed:
         stressed["operating_income"] += values.get("revenue", 0) * scenario.margin_pp
     if "interest_expense" in stressed:
-        debt = values.get("total_debt", 0)
+        debt = values.get("total_debt")
+        if debt is None and (
+            scenario.interest_rate_bp or scenario.refinancing_cost_pct
+        ):
+            raise ValueError("total_debt is required for debt-cost stress")
+        debt = debt or 0
         stressed["interest_expense"] += (
             debt * scenario.interest_rate_bp / 10_000
             + debt * scenario.refinancing_cost_pct

@@ -93,6 +93,11 @@ def test_temporal_scenario_policy_alerts_and_tension():
     )
     assert apply_scenario(base, scenario)["revenue"] == 90
     assert compare_scenario(base, 2025, scenario)["calculation_mode"] == "deterministic"
+    with pytest.raises(ValueError, match="total_debt"):
+        apply_scenario(
+            {"interest_expense": 10},
+            Scenario("rate shock", interest_rate_bp=100),
+        )
     policy = PolicyVersion(
         "p", "org", 1, "base", {"leverage": {"warning": 3.0, "critical": 5.0}}, "u"
     )

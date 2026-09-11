@@ -48,7 +48,7 @@ CONCEPT_ALIASES: dict[str, tuple[str, ...]] = {
     "inventory": ("InventoryNet",),
     "short_term_debt": ("ShortTermBorrowings", "LongTermDebtCurrent", "DebtCurrent"),
     "long_term_debt": ("LongTermDebtNoncurrent",),
-    "total_debt": ("LongTermDebtAndFinanceLeaseObligationsCurrent", "LongTermDebtAndFinanceLeaseObligationsNoncurrent"),
+    "total_debt": ("LongTermDebtAndFinanceLeaseObligations", "LongTermDebt"),
     "gross_profit": ("GrossProfit",),
     "operating_income": ("OperatingIncomeLoss",),
     "interest_expense": ("InterestExpenseNonOperating", "InterestAndDebtExpense"),
@@ -184,10 +184,23 @@ def build_companyfacts_corpus(
             provenance[field] = None if not selected else {
                 "concept": selected["concept"], "period_start": selected.get("start"), "period_end": selected["end"],
                 "unit": selected["unit"], "accession": selected["accn"], "filed": selected["filed"],
+                "source_row": {
+                    "adsh": selected["accn"], "tag": selected["concept"],
+                    "ddate": str(selected["end"]).replace("-", ""),
+                    "uom": selected["unit"],
+                    "coreg": "", "segments": "",
+                },
             }
-        if facts["total_debt"] is None and (facts["short_term_debt"] is not None or facts["long_term_debt"] is not None):
-            facts["total_debt"] = (facts["short_term_debt"] or 0) + (facts["long_term_debt"] or 0)
-            provenance["total_debt"] = {"derived_from": ["short_term_debt", "long_term_debt"]}
+        if (
+            facts["total_debt"] is None
+            and facts["short_term_debt"] is not None
+            and facts["long_term_debt"] is not None
+        ):
+            facts["total_debt"] = facts["short_term_debt"] + facts["long_term_debt"]
+            provenance["total_debt"] = {
+                "derived_from": ["short_term_debt", "long_term_debt"],
+                "formula": "short_term_debt + long_term_debt",
+            }
         filed = filing["filed"]
         available = f"{filed}T23:59:59Z"  # conservative when bulk CompanyFacts omits acceptance time
         base = {
@@ -292,7 +305,10 @@ def build_numeric_corpus(
             and facts["long_term_debt"] is not None
         ):
             facts["total_debt"] = facts["short_term_debt"] + facts["long_term_debt"]
-            provenance["total_debt"] = {"derived_from": ["short_term_debt", "long_term_debt"], "formula": "current + noncurrent debt"}
+            provenance["total_debt"] = {
+                "derived_from": ["short_term_debt", "long_term_debt"],
+                "formula": "short_term_debt + long_term_debt",
+            }
         accepted = _accepted(filing.get("accepted") or filing.get("filed", ""))
         filed_date = f"{filing['filed'][:4]}-{filing['filed'][4:6]}-{filing['filed'][6:8]}"
         filed_available = f"{filed_date}T23:59:59Z"
@@ -397,6 +413,7 @@ def build_reported_fcf_periods(
         filed_at = f"{filed[:4]}-{filed[4:6]}-{filed[6:8]}T23:59:59Z"
         records.append({
             "ticker": inverse_ciks[cik], "accession": adsh, "form": filing.get("form"),
+            "fiscal_year": int(filing["fy"]) if str(filing.get("fy", "")).isdigit() else None,
             "period_end": f"{period[:4]}-{period[4:6]}-{period[6:8]}",
             "source_available_time": max(accepted, filed_at),
             "source_hash": filing.get("__archive_sha256"),
@@ -421,8 +438,10 @@ def build_reported_fcf_periods_v2(
     records = build_reported_fcf_periods(submissions, numbers)
     grouped: dict[tuple[str, str], list[dict[str, Any]]] = defaultdict(list)
     for record in records:
-        year = record["period_end"][:4]
-        grouped[(record["ticker"], year)].append(record)
+        fiscal_year = record.get("fiscal_year")
+        if fiscal_year is None:
+            continue
+        grouped[(record["ticker"], str(fiscal_year))].append(record)
     output: list[dict[str, Any]] = []
     for rows in grouped.values():
         rows.sort(key=lambda item: item["period_end"])

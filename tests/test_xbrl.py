@@ -71,3 +71,20 @@ def test_sec_acquisition_fails_closed():
     client.latest_filing = lambda ticker: (_ for _ in ()).throw(RuntimeError("SEC unavailable"))
     result = acquire_latest_filing(client, "ACME")
     assert result["decision"] == "ABSTAIN" and result["filing"] is None
+
+
+def test_companyfacts_debt_component_is_not_aggregate_and_derives_only_complete_total():
+    payload = fixture()
+    unit = payload["facts"]["us-gaap"]
+    base = {"fy": 2024, "fp": "FY", "form": "10-K", "filed": "2024-10-01", "accn": "1", "end": "2024-09-30"}
+    unit["LongTermDebtAndFinanceLeaseObligationsCurrent"] = {"units": {"USD": [{**base, "val": 999}]}}
+    unit["LongTermDebtCurrent"] = {"units": {"USD": [{**base, "val": 10}]}}
+    unit["LongTermDebtNoncurrent"] = {"units": {"USD": [{**base, "val": 40}]}}
+    values = parse_companyfacts(payload, [2024])
+    total = next(value for value in values if value.line_item == "total_debt")
+    assert total.value == 50
+    assert total.source_type == "sec_xbrl_derived"
+
+    del unit["LongTermDebtNoncurrent"]
+    incomplete = parse_companyfacts(payload, [2024])
+    assert not any(value.line_item == "total_debt" for value in incomplete)

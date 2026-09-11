@@ -13,6 +13,11 @@ analysis endpoints, bounded PDF processing, complete fact-provenance gates, expl
 numeric abstention, versioned consistency policy, artifact-backed frontend pilot data,
 semantic frontend tests and hardened container configuration.
 
+The final v0.3.2 integrity pass uses the same strict aggregate/component debt semantics in
+FSDS and CompanyFacts ingestion, groups standalone FCF by issuer fiscal year, and enforces
+tenant plus entity scope from server-generated analysis snapshots through RiskCase
+creation. Missing debt components remain unavailable rather than being coerced to zero.
+
 ## Three-layer Agent refactor
 
 Fully implemented locally:

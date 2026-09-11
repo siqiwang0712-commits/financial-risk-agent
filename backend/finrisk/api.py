@@ -4,6 +4,7 @@ import asyncio
 import json
 import logging
 import os
+from dataclasses import asdict
 from pathlib import Path
 from tempfile import NamedTemporaryFile
 from typing import Annotated
@@ -28,6 +29,7 @@ except ImportError:
 
 from .agent import FinancialRiskAgent
 from .enterprise.api import enterprise_router
+from .enterprise.decision import create_snapshot
 from .enterprise.domain import Principal
 from .enterprise.observability import bind_correlation_id, structured_event
 from .enterprise.postgres import PostgresEnterpriseRepository
@@ -126,6 +128,7 @@ if FastAPI:
         pages: dict[int, str] = Field(default_factory=dict)
         document: str = "Annual Report"
         entity_type: str = "industrial"
+        entity_id: str | None = None
 
     app = FastAPI(
         title="FinRisk-Agent API",
@@ -181,6 +184,37 @@ if FastAPI:
         return principal
 
     protected = Depends(authenticated_principal)
+
+    def persist_agent_snapshot(state, actor: Principal, entity_id: str | None) -> None:
+        if entity_id is None:
+            if os.getenv("FINRISK_ENV", "development").lower() == "production":
+                raise HTTPException(422, "entity_id is required for persisted production analysis")
+            return
+        generated = state.analysis_snapshot
+        if not generated:
+            raise HTTPException(422, "agent did not produce a trusted analysis snapshot")
+        frozen_output = dict(generated["frozen_output"])
+        frozen_output["agent"] = {
+            "risk_severity": state.risk_severity,
+            "risk_trajectory": state.risk_trajectory,
+            "evidence_coverage": state.evidence_coverage,
+            "epistemics": state.epistemics,
+            "decision_trace": state.decision_trace,
+            "decision": state.decision,
+        }
+        snapshot = create_snapshot(
+            actor.organization_id,
+            entity_id,
+            generated["frozen_input"],
+            frozen_output,
+            generated["document_versions"],
+            generated["component_versions"],
+        )
+        try:
+            saved = enterprise_service.save_snapshot(actor, snapshot)
+        except (KeyError, PermissionError, ValueError) as exc:
+            raise HTTPException(422, "analysis snapshot persistence rejected") from exc
+        state.analysis_snapshot = asdict(saved)
 
     @app.get("/health/live")
     def health_live():
@@ -275,6 +309,7 @@ if FastAPI:
             raise HTTPException(
                 422, "agent assessment could not be completed"
             )
+        persist_agent_snapshot(state, actor, req.entity_id)
         return state.to_dict()
 
     @app.post("/api/v1/documents/analyze")
@@ -282,6 +317,7 @@ if FastAPI:
         company: Annotated[str, Form()],
         fiscal_year: Annotated[int, Form()],
         file: Annotated[UploadFile, File()],
+        entity_id: Annotated[str | None, Form()] = None,
         actor: Principal = protected,
     ):
         try:
@@ -326,6 +362,7 @@ if FastAPI:
                     422,
                     "agent workflow could not be completed",
                 )
+            persist_agent_snapshot(state, actor, entity_id)
             payload = state.assessment or {}
             payload["agent"] = {
                 key: value

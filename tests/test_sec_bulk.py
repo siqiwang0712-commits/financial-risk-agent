@@ -3,15 +3,18 @@ from __future__ import annotations
 import io
 import zipfile
 
+from finrisk.empirical_validation import validate_dataset_integrity
 from finrisk.extraction_reference import (
     construct_pre_num_reference,
     load_pre_num_reference_rows,
 )
 from finrisk.sec_bulk import (
     build_annual_outcome_corpus,
+    build_companyfacts_corpus,
     build_deterioration_labels,
     build_numeric_corpus,
     build_reported_fcf_periods,
+    build_reported_fcf_periods_v2,
     enrich_metrics,
     load_statement_archives,
     readiness_report,
@@ -85,6 +88,97 @@ def test_bulk_import_does_not_coerce_missing_debt_component_to_zero(tmp_path):
     observations, _ = build_numeric_corpus(plan, submissions, numbers, sources)
     assert observations[0]["facts"]["total_debt"] is None
     assert observations[0]["fact_provenance"]["total_debt"] is None
+
+
+def _companyfacts_payload(*, include_long_term: bool = True) -> dict:
+    accession = "0000320193-24-000001"
+
+    def fact(value: int, *, instant: bool = True) -> dict:
+        row = {
+            "fy": 2023, "fp": "FY", "form": "10-K", "val": value,
+            "filed": "2024-01-31", "accn": accession, "end": "2023-12-31",
+        }
+        if instant:
+            row["frame"] = "CY2023Q4I"
+        else:
+            row["start"] = "2023-01-01"
+        return {"units": {"USD": [row]}}
+
+    facts = {
+        "RevenueFromContractWithCustomerExcludingAssessedTax": fact(1000, instant=False),
+        "LongTermDebtCurrent": fact(10),
+        "LongTermDebtAndFinanceLeaseObligationsCurrent": fact(999),
+    }
+    if include_long_term:
+        facts["LongTermDebtNoncurrent"] = fact(40)
+    return {"cik": 320193, "facts": {"us-gaap": facts}}
+
+
+def test_companyfacts_debt_semantics_and_provenance_v2():
+    payload = _companyfacts_payload()
+    companies = {"0000320193": {"data": payload, "member_sha256": "b" * 64}}
+    source = {"sha256": "a" * 64, "source_type": "SEC_COMPANYFACTS_BULK"}
+    plan = [{
+        "observation_id": "aapl-2023", "ticker": "AAPL", "sector": "Technology",
+        "fiscal_year": "2023", "split": "train",
+    }]
+    observations, _ = build_companyfacts_corpus(plan, companies, source)
+    row = observations[0]
+    assert row["facts"]["short_term_debt"] == 10
+    assert row["facts"]["long_term_debt"] == 40
+    assert row["facts"]["total_debt"] == 50
+    assert row["fact_provenance"]["total_debt"] == {
+        "derived_from": ["short_term_debt", "long_term_debt"],
+        "formula": "short_term_debt + long_term_debt",
+    }
+    assert validate_dataset_integrity(observations)["gate"] == "PASS"
+    row["fact_provenance"]["short_term_debt"]["source_row"]["tag"] = "WrongTag"
+    assert validate_dataset_integrity(observations)["gate"] == "STOP"
+
+
+def test_companyfacts_missing_debt_component_stays_unavailable():
+    companies = {
+        "0000320193": {
+            "data": _companyfacts_payload(include_long_term=False),
+            "member_sha256": "b" * 64,
+        }
+    }
+    plan = [{
+        "observation_id": "aapl-2023", "ticker": "AAPL", "sector": "Technology",
+        "fiscal_year": "2023", "split": "train",
+    }]
+    rows, _ = build_companyfacts_corpus(
+        plan, companies, {"sha256": "a" * 64, "source_type": "SEC_COMPANYFACTS_BULK"}
+    )
+    assert rows[0]["facts"]["total_debt"] is None
+    assert rows[0]["fact_provenance"]["total_debt"] is None
+
+
+def test_standalone_fcf_groups_non_calendar_quarters_by_fiscal_year():
+    submissions = []
+    numbers = []
+    for accession, period, filed, qtrs, ocf, capex in (
+        ("q1", "20231031", "20231201", "1", "100", "20"),
+        ("q2", "20240131", "20240301", "2", "240", "50"),
+    ):
+        submissions.append({
+            "adsh": accession, "cik": "320193", "form": "10-Q", "period": period,
+            "fy": "2024", "filed": filed, "accepted": f"{filed}120000",
+            "__archive_sha256": "a" * 64, "__archive_name": "official.zip",
+        })
+        base = {
+            "adsh": accession, "version": "us-gaap/2024", "coreg": "",
+            "ddate": period, "qtrs": qtrs, "uom": "USD", "segments": "",
+        }
+        numbers.extend([
+            {**base, "tag": "NetCashProvidedByUsedInOperatingActivities", "value": ocf},
+            {**base, "tag": "PaymentsToAcquirePropertyPlantAndEquipment", "value": capex},
+        ])
+    periods = build_reported_fcf_periods_v2(submissions, numbers)
+    second = next(row for row in periods if row["accession"] == "q2")
+    assert second["operating_cash_flow"] == 140
+    assert second["capital_expenditure"] == 30
+    assert second["free_cash_flow"] == 110
 
 
 def test_negative_ocf_does_not_count_as_turning_negative_twice(tmp_path):

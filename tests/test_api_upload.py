@@ -197,3 +197,67 @@ def test_pdf_upload_preserves_prior_year_for_trends():
     )
     assert response.status_code == 200
     assert response.json()["extraction"]["prior_year"] == 2024
+
+
+def test_agent_analysis_persists_tenant_snapshot_for_risk_case():
+    client, headers = authenticated_client()
+    entity = client.post(
+        "/api/v1/enterprise/entities", headers=headers, json={"name": "Analyzed entity"}
+    ).json()
+    analysis = client.post(
+        "/api/v1/agent/assess",
+        headers=headers,
+        json={
+            "company": "Analyzed entity",
+            "fiscal_year": 2025,
+            "entity_id": entity["id"],
+            "current": {
+                "cash": 100, "current_assets": 300, "current_liabilities": 200,
+                "total_assets": 1000, "total_liabilities": 500,
+                "short_term_debt": 20, "long_term_debt": 180,
+                "shareholder_equity": 500, "revenue": 800,
+                "net_income": 80, "operating_cash_flow": 100,
+            },
+        },
+    )
+    assert analysis.status_code == 200
+    snapshot = analysis.json()["analysis_snapshot"]
+    assert snapshot["organization_id"]
+    assert snapshot["entity_id"] == entity["id"]
+    created = client.post(
+        "/api/v1/enterprise/risk-cases",
+        headers=headers,
+        json={
+            "entity_id": entity["id"], "domain": "liquidity",
+            "snapshot_id": snapshot["id"], "rationale": "server-derived assessment",
+        },
+    )
+    assert created.status_code == 200
+    assert created.json()["snapshot_id"] == snapshot["id"]
+
+
+def test_risk_case_rejects_snapshot_from_other_entity_in_same_tenant():
+    client, headers = authenticated_client()
+    first = client.post(
+        "/api/v1/enterprise/entities", headers=headers, json={"name": "First"}
+    ).json()
+    second = client.post(
+        "/api/v1/enterprise/entities", headers=headers, json={"name": "Second"}
+    ).json()
+    analysis = client.post(
+        "/api/v1/agent/assess",
+        headers=headers,
+        json={
+            "company": "First", "fiscal_year": 2025, "entity_id": first["id"],
+            "current": {"cash": 10, "current_assets": 20, "current_liabilities": 10},
+        },
+    ).json()
+    response = client.post(
+        "/api/v1/enterprise/risk-cases",
+        headers=headers,
+        json={
+            "entity_id": second["id"], "domain": "liquidity",
+            "snapshot_id": analysis["analysis_snapshot"]["id"], "rationale": "invalid scope",
+        },
+    )
+    assert response.status_code == 422

@@ -182,6 +182,8 @@ def enterprise_router(
             snapshot = service.repository.get_snapshot(actor.organization_id, req.snapshot_id)
         except KeyError as exc:
             raise HTTPException(422, "server-side analysis snapshot not found") from exc
+        if snapshot.organization_id != actor.organization_id or snapshot.entity_id != req.entity_id:
+            raise HTTPException(422, "analysis snapshot scope does not match risk case")
         output = snapshot.frozen_output
         agent_output = output.get("agent", {})
         trace = agent_output.get("decision_trace", {})

@@ -130,6 +130,24 @@ def test_decision_trace_snapshot_replay_and_tenant_isolation():
         service.repository.get_snapshot("org-b", snapshot.id)
 
 
+def test_risk_case_rejects_same_tenant_cross_entity_snapshot():
+    service = EnterpriseRiskService()
+    org = service.create_organization("Org", "analyst")
+    principal = Principal("analyst", org.id, Role.ANALYST)
+    first = service.create_entity(principal, "First")
+    second = service.create_entity(principal, "Second")
+    snapshot = create_snapshot(
+        org.id, first.id, {"cash": 1}, {"agent": {}}, {}, {"fusion": "v1"}
+    )
+    service.save_snapshot(principal, snapshot)
+    case = RiskCase(
+        new_id("case"), org.id, second.id, RiskDomain.LIQUIDITY,
+        "high", "stable", 0.5, 0.5, snapshot_id=snapshot.id,
+    )
+    with pytest.raises(ValueError, match="snapshot entity"):
+        service.create_case(principal, case)
+
+
 def test_failure_policy_sensitivity_and_final_case_proof_gate():
     result = hierarchical_escalation({"liquidity": 70, "cash_flow": 30}, 0.8, 0.8)
     assert (
