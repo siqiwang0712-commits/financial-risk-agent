@@ -14,6 +14,10 @@
 - Unified backend, API, package and frontend version metadata at 0.3.2 with a regression test.
 - Pinned the complete Python dependency graph, pip/build backend and GitHub Actions revisions used by the Python 3.11/3.12 release gate.
 - Expanded the Python environment lock to transitive constraints and made CI/container installation consume it.
+- Installed the PostgreSQL runtime extra in the backend image and made production migrations an explicit one-shot prerequisite with bootstrap and auto-migration disabled.
+- Moved PDF opening, page counting and text scanning into a bounded worker path; all upload, page, text and timeout limits now come from validated environment configuration.
+- Replaced mirror-hosted frontend lock URLs, upgraded within the Next.js 15 line, pinned a patched PostCSS override and added an official-registry high/critical production audit gate.
+- Added a production-overlay container smoke gate that verifies PostgreSQL migration, API readiness and `PostgresEnterpriseRepository` selection.
 
 ### v0.3.1 — released
 

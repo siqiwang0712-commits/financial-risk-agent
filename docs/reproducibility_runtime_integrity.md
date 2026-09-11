@@ -39,6 +39,16 @@ The frontend uses npm's lockfile. Dockerfiles select fixed major/minor runtime f
 but image digests are not pinned because this machine cannot pull and verify them; image
 byte identity is therefore not claimed.
 
+The backend image consumes `requirements.lock` and installs the PostgreSQL extra, so a
+configured `DATABASE_URL` has its required psycopg runtime. The production compose
+overlay requires an explicit database password, disables bootstrap and runtime
+auto-migration, and runs migrations as a separate successful prerequisite. CI exercises
+the composed PostgreSQL → migration → API path and checks repository selection through
+`/health/ready`. The production-overlay path passed locally on Docker Desktop 29.7.2,
+including migration success, non-root API execution and persistence across an API
+restart. This validates the composed runtime boundary but is not production deployment
+or availability validation.
+
 ## Runtime persistence
 
 `DATABASE_URL` selects `PostgresEnterpriseRepository` and durable credential storage.

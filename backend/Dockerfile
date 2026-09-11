@@ -1,12 +1,15 @@
 FROM python:3.12-slim
 WORKDIR /app
+ENV PYTHONPATH=/app/backend
 COPY pyproject.toml ./
 COPY requirements.lock ./
 COPY backend ./backend
 COPY rules ./rules
 COPY config ./config
+COPY migrations ./migrations
+COPY scripts/validate_postgres_migration.py ./scripts/validate_postgres_migration.py
 RUN python -m pip install --no-cache-dir pip==25.2 \
-    && python -m pip install --no-cache-dir -c requirements.lock .
+    && python -m pip install --no-cache-dir -c requirements.lock ".[postgres]"
 RUN addgroup --system finrisk && adduser --system --ingroup finrisk finrisk \
     && chown -R finrisk:finrisk /app
 USER finrisk

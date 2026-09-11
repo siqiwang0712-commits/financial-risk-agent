@@ -299,7 +299,7 @@ FinRisk is a research and enterprise-architecture prototype. It does not claim p
 
 ### Prerequisites
 
-- Python 3.11–3.13
+- Python >=3.11; the release gate tests Python 3.11 and 3.12
 - Node.js 22+
 - npm 10+
 - Docker Desktop (optional)
@@ -344,7 +344,21 @@ Open `http://localhost:3000`.
 docker compose up --build
 ```
 
-Docker runtime validation was not available in the recorded local environment. The compose configuration and PostgreSQL-backed CI path exist, but local Docker operation is **NOT VALIDATED**.
+The development compose file uses an explicitly development-only database password. For
+the production overlay, provide a non-default secret; migrations run as an explicit,
+one-shot service before the API starts, while runtime auto-migration and organization
+bootstrap remain disabled:
+
+```bash
+POSTGRES_PASSWORD='<strong-secret>' docker compose -f docker-compose.yml -f docker-compose.prod.yml up --build
+```
+
+The release CI includes a PostgreSQL-to-migration-to-API smoke test and asserts that
+`/health/ready` reports `PostgresEnterpriseRepository`. The same production-overlay
+path passed locally with Docker Desktop 29.7.2: migration exited successfully, the API
+ran as a non-root user, readiness probed the database, and a dedicated smoke record
+survived an API-container restart. This is runtime integration validation, not a claim
+of production deployment validation.
 
 ### Run the synthetic offline demo
 
@@ -384,7 +398,13 @@ The ingestion client includes cache, rate limiting, retry/backoff, accession pro
 | `POST /api/v1/xbrl/normalize` | Normalize SEC Company Facts with provenance |
 | `/api/v1/enterprise/*` | Tenant-scoped entities, cases, scenarios, policies, governance and audit |
 
-PDF uploads validate magic bytes and limits (50 MB, 500 pages), and parsing runs outside the async event loop. Internet-facing deployment still needs production identity, malware scanning, isolated workers and operational validation.
+PDF uploads validate magic bytes and configurable limits from
+`FINRISK_MAX_UPLOAD_MB`, `FINRISK_MAX_PDF_PAGES`,
+`FINRISK_MAX_EXTRACTED_CHARS` and `FINRISK_ANALYSIS_TIMEOUT_SECONDS`. Opening,
+page counting and page-text scanning run in Starlette's bounded worker pool rather than
+the async event loop. Invalid, encrypted, oversized and timed-out inputs fail closed,
+and temporary files are removed. Internet-facing deployment still needs production
+identity, malware scanning, isolated workers and operational validation.
 
 The default narrative provider is deterministic and offline. To enable the schema-constrained real provider, copy `.env.example`, set `FINRISK_LLM_PROVIDER=openai`, configure `OPENAI_API_KEY`, and pin model pricing if cost estimates are needed. Calls record prompt version, attempts, tokens, estimated cost, latency and schema status. Tests never require a live API.
 
@@ -426,11 +446,19 @@ ruff check backend tests scripts
 
 ```bash
 cd frontend
+npm audit --omit=dev --audit-level=high --registry=https://registry.npmjs.org
+npm test
 npm run typecheck
 npm run build
 ```
 
-Recorded local closeout status: **143 tests passed** on both Python 3.11.9 and 3.12.10 with a real PostgreSQL 17 service, at **90.56% line coverage**. PostgreSQL migrations, restart persistence, Ruff, frontend semantic tests, TypeScript, the Next.js production build, prospective provenance validation and deterministic replay pass locally. The v0.3.2 implementation is on `main`; the final release-integrity changes are local and uncommitted, and no v0.3.2 tag or Release exists.
+Recorded closeout status: **149 passed, 1 PostgreSQL-dependent test skipped** on both
+Python 3.11.9 and 3.12.10, at **90.55% line coverage**. Ruff, four frontend semantic
+tests, official-registry production/full dependency audits, TypeScript, the Next.js
+production build, prospective provenance validation and read-only E1/E2/E3 replay pass
+locally. PostgreSQL 17 migration/restart persistence and the production-overlay Docker
+smoke test pass locally; the current CI matrix reruns both paths. No v0.3.2 tag or
+Release exists, and production deployment is not claimed.
 
 ## Repository map
 

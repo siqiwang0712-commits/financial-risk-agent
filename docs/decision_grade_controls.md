@@ -33,4 +33,9 @@ The decision-grade manifest validator enforces required provenance, company-disj
 
 ## Deployment readiness
 
-GitHub Actions now provisions PostgreSQL and validates the migration before tests, while retaining lint, ≥90% coverage, frozen benchmark reproduction, frontend typecheck and build. This local machine has no Docker executable, so Docker runtime validation remains **NOT RUN**.
+GitHub Actions provisions PostgreSQL and validates migration and restart persistence
+before tests, while retaining lint, ≥90% coverage, frozen benchmark replay, frontend
+security/type/test/build gates and a production-overlay Docker smoke test. The same
+smoke passed locally using Docker Desktop 29.7.2, including explicit migration,
+PostgreSQL-backed readiness, non-root API execution and persistence across API restart.
+Production deployment is not claimed.

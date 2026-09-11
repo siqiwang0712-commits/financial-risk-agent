@@ -1,6 +1,8 @@
+import time
+
 import fitz
 from fastapi.testclient import TestClient
-from finrisk.api import app
+from finrisk.api import agent, app
 
 
 def authenticated_client() -> tuple[TestClient, dict[str, str]]:
@@ -11,6 +13,16 @@ def authenticated_client() -> tuple[TestClient, dict[str, str]]:
     )
     assert response.status_code == 200
     return client, {"X-API-Key": response.json()["api_key"]}
+
+
+def pdf_bytes(*texts: str) -> bytes:
+    doc = fitz.open()
+    for text in texts:
+        page = doc.new_page()
+        page.insert_text((72, 72), text)
+    result = doc.tobytes()
+    doc.close()
+    return result
 
 
 def test_pdf_upload_reaches_assessment_pipeline():
@@ -56,6 +68,94 @@ def test_upload_rejects_non_pdf():
         headers=headers,
     )
     assert response.status_code == 415
+
+
+def test_upload_limit_comes_from_environment(monkeypatch):
+    monkeypatch.setenv("FINRISK_MAX_UPLOAD_MB", "1")
+    client, headers = authenticated_client()
+    response = client.post(
+        "/api/v1/documents/analyze",
+        data={"company": "X", "fiscal_year": "2025"},
+        files={"file": ("large.pdf", b"%PDF" + b"x" * 1024 * 1024, "application/pdf")},
+        headers=headers,
+    )
+    assert response.status_code == 413
+    assert response.json()["detail"] == "PDF upload-size limit exceeded"
+
+
+def test_pdf_page_limit_is_fail_closed(monkeypatch):
+    monkeypatch.setenv("FINRISK_MAX_PDF_PAGES", "1")
+    client, headers = authenticated_client()
+    response = client.post(
+        "/api/v1/documents/analyze",
+        data={"company": "X", "fiscal_year": "2025"},
+        files={"file": ("pages.pdf", pdf_bytes("one", "two"), "application/pdf")},
+        headers=headers,
+    )
+    assert response.status_code == 413
+    assert response.json()["detail"] == "PDF page limit exceeded"
+
+
+def test_pdf_text_limit_is_fail_closed(monkeypatch):
+    monkeypatch.setenv("FINRISK_MAX_EXTRACTED_CHARS", "4")
+    client, headers = authenticated_client()
+    response = client.post(
+        "/api/v1/documents/analyze",
+        data={"company": "X", "fiscal_year": "2025"},
+        files={"file": ("text.pdf", pdf_bytes("long text"), "application/pdf")},
+        headers=headers,
+    )
+    assert response.status_code == 413
+    assert response.json()["detail"] == "PDF extracted-text limit exceeded"
+
+
+def test_invalid_and_encrypted_pdfs_are_rejected():
+    client, headers = authenticated_client()
+    invalid = client.post(
+        "/api/v1/documents/analyze",
+        data={"company": "X", "fiscal_year": "2025"},
+        files={"file": ("invalid.pdf", b"%PDF broken", "application/pdf")},
+        headers=headers,
+    )
+    assert invalid.status_code == 422
+
+    doc = fitz.open()
+    doc.new_page()
+    encrypted_bytes = doc.tobytes(
+        encryption=fitz.PDF_ENCRYPT_AES_256,
+        owner_pw="owner-secret",
+        user_pw="user-secret",
+    )
+    doc.close()
+    encrypted = client.post(
+        "/api/v1/documents/analyze",
+        data={"company": "X", "fiscal_year": "2025"},
+        files={"file": ("encrypted.pdf", encrypted_bytes, "application/pdf")},
+        headers=headers,
+    )
+    assert encrypted.status_code == 422
+    assert encrypted.json()["detail"] == "encrypted PDFs are not supported"
+
+
+def test_analysis_timeout_cleans_temporary_file(monkeypatch):
+    seen_paths = []
+
+    def slow_run(*args, **kwargs):
+        seen_paths.append(args[2])
+        time.sleep(0.1)
+
+    monkeypatch.setattr(agent, "run_document", slow_run)
+    monkeypatch.setenv("FINRISK_ANALYSIS_TIMEOUT_SECONDS", "0.02")
+    client, headers = authenticated_client()
+    response = client.post(
+        "/api/v1/documents/analyze",
+        data={"company": "X", "fiscal_year": "2025"},
+        files={"file": ("timeout.pdf", pdf_bytes("valid"), "application/pdf")},
+        headers=headers,
+    )
+    assert response.status_code == 504
+    assert seen_paths
+    assert all(not path.exists() for path in seen_paths)
 
 
 def test_conflicting_candidates_are_not_silently_selected():

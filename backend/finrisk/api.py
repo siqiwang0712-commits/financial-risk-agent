@@ -41,6 +41,57 @@ from .enterprise.service import EnterpriseRiskService
 from .pipeline import FinRiskPipeline
 from .xbrl import parse_companyfacts, values_by_year
 
+
+class PdfBoundaryError(ValueError):
+    """A safe, client-facing PDF resource-boundary failure."""
+
+    def __init__(self, status_code: int, detail: str) -> None:
+        super().__init__(detail)
+        self.status_code = status_code
+        self.detail = detail
+
+
+def _positive_env_number(name: str, default: str, cast):
+    raw = os.getenv(name, default)
+    try:
+        value = cast(raw)
+    except (TypeError, ValueError) as exc:
+        raise RuntimeError(f"{name} must be a positive number") from exc
+    if value <= 0:
+        raise RuntimeError(f"{name} must be a positive number")
+    return value
+
+
+def _pdf_limits() -> tuple[int, int, int, float]:
+    upload_mb = _positive_env_number("FINRISK_MAX_UPLOAD_MB", "50", int)
+    pages = _positive_env_number("FINRISK_MAX_PDF_PAGES", "500", int)
+    chars = _positive_env_number("FINRISK_MAX_EXTRACTED_CHARS", "5000000", int)
+    timeout = _positive_env_number(
+        "FINRISK_ANALYSIS_TIMEOUT_SECONDS", "60", float
+    )
+    return upload_mb * 1024 * 1024, pages, chars, timeout
+
+
+def _inspect_pdf(data: bytes, max_pages: int, max_chars: int) -> None:
+    """Inspect a PDF synchronously; callers must run this in a bounded worker pool."""
+    try:
+        import fitz
+
+        with fitz.open(stream=data, filetype="pdf") as document:
+            if document.needs_pass:
+                raise PdfBoundaryError(422, "encrypted PDFs are not supported")
+            if document.page_count > max_pages:
+                raise PdfBoundaryError(413, "PDF page limit exceeded")
+            extracted_chars = 0
+            for page in document:
+                extracted_chars += len(page.get_text("text"))
+                if extracted_chars > max_chars:
+                    raise PdfBoundaryError(413, "PDF extracted-text limit exceeded")
+    except PdfBoundaryError:
+        raise
+    except Exception as exc:
+        raise PdfBoundaryError(422, "PDF could not be safely parsed") from exc
+
 if FastAPI:
 
     ROOT = Path(__file__).resolve().parents[2]
@@ -137,9 +188,21 @@ if FastAPI:
 
     @app.get("/health/ready")
     def health_ready():
+        repository = enterprise_service.repository
+        if isinstance(repository, PostgresEnterpriseRepository):
+            try:
+                with repository.connection.cursor() as cursor:
+                    cursor.execute("SELECT 1")
+                    if cursor.fetchone()[0] != 1:
+                        raise RuntimeError("unexpected database probe result")
+            except Exception as exc:
+                structured_event(api_logger, "health.database_unavailable")
+                raise HTTPException(
+                    503, "database readiness check failed"
+                ) from exc
         return {
             "status": "ready",
-            "repository": enterprise_service.repository.__class__.__name__,
+            "repository": repository.__class__.__name__,
             "llm_provider": pipeline.provider.__class__.__name__,
             "agent_tools": agent.tools.names(),
         }
@@ -221,25 +284,20 @@ if FastAPI:
         file: Annotated[UploadFile, File()],
         actor: Principal = protected,
     ):
-        data = await file.read(50 * 1024 * 1024 + 1)
-        if len(data) > 50 * 1024 * 1024:
-            raise HTTPException(413, "PDF exceeds 50 MB limit")
+        try:
+            max_bytes, max_pages, max_chars, timeout_seconds = _pdf_limits()
+        except RuntimeError as exc:
+            structured_event(api_logger, "document.configuration_invalid")
+            raise HTTPException(503, "document analysis is not configured safely") from exc
+        data = await file.read(max_bytes + 1)
+        if len(data) > max_bytes:
+            raise HTTPException(413, "PDF upload-size limit exceeded")
         if not data.startswith(b"%PDF"):
             raise HTTPException(415, "Only valid PDF files are accepted")
         try:
-            import fitz
-            with fitz.open(stream=data, filetype="pdf") as document:
-                if document.needs_pass:
-                    raise HTTPException(422, "encrypted PDFs are not supported")
-                if document.page_count > int(os.getenv("FINRISK_MAX_PDF_PAGES", "500")):
-                    raise HTTPException(413, "PDF page limit exceeded")
-                extracted_chars = sum(len(page.get_text("text")) for page in document)
-                if extracted_chars > int(os.getenv("FINRISK_MAX_EXTRACTED_CHARS", "5000000")):
-                    raise HTTPException(413, "PDF extracted-text limit exceeded")
-        except HTTPException:
-            raise
-        except Exception as exc:
-            raise HTTPException(422, "PDF could not be safely parsed") from exc
+            await run_in_threadpool(_inspect_pdf, data, max_pages, max_chars)
+        except PdfBoundaryError as exc:
+            raise HTTPException(exc.status_code, exc.detail) from exc
         with NamedTemporaryFile(suffix=".pdf", delete=False) as tmp:
             tmp.write(data)
             path = Path(tmp.name)
@@ -253,8 +311,13 @@ if FastAPI:
                         path,
                         file.filename or "Annual Report",
                     ),
-                    timeout=float(os.getenv("FINRISK_ANALYSIS_TIMEOUT_SECONDS", "60")),
+                    timeout=timeout_seconds,
                 )
+            except TimeoutError as exc:
+                structured_event(api_logger, "document.analysis_timeout")
+                raise HTTPException(504, "document analysis timed out") from exc
+            except HTTPException:
+                raise
             except Exception as exc:
                 structured_event(api_logger, "document.analysis_failed", error_type=type(exc).__name__)
                 raise HTTPException(422, "document analysis could not be completed") from exc

@@ -50,6 +50,24 @@ jobs:
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
         with: {node-version: "22", cache: npm, cache-dependency-path: frontend/package-lock.json}
       - run: npm ci
+      - name: Audit production dependencies (high and critical)
+        run: npm audit --omit=dev --audit-level=high --registry=https://registry.npmjs.org
       - run: npm run typecheck
       - run: npm test
       - run: npm run build
+  docker-smoke:
+    runs-on: ubuntu-latest
+    env:
+      POSTGRES_PASSWORD: ci-only-strong-password-v032
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      - name: Build and start production PostgreSQL/API stack
+        run: docker compose -f docker-compose.yml -f docker-compose.prod.yml up --build -d postgres migrate api
+      - name: Verify readiness and PostgreSQL repository selection
+        run: python scripts/verify_docker_health.py
+      - name: Show container logs on failure
+        if: failure()
+        run: docker compose -f docker-compose.yml -f docker-compose.prod.yml logs postgres migrate api
+      - name: Stop smoke-test stack
+        if: always()
+        run: docker compose -f docker-compose.yml -f docker-compose.prod.yml down -v

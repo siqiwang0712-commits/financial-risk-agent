@@ -6,4 +6,22 @@ services:
     environment:
       FINRISK_ENV: production
       FINRISK_ENABLE_ORG_BOOTSTRAP: "0"
+      FINRISK_AUTO_MIGRATE: "0"
       DATABASE_URL: postgresql://finrisk:${POSTGRES_PASSWORD:?POSTGRES_PASSWORD is required}@postgres:5432/finrisk
+    depends_on:
+      postgres:
+        condition: service_healthy
+      migrate:
+        condition: service_completed_successfully
+  migrate:
+    build: {context: ., dockerfile: backend/Dockerfile}
+    environment:
+      FINRISK_ENV: production
+      FINRISK_ENABLE_ORG_BOOTSTRAP: "0"
+      FINRISK_AUTO_MIGRATE: "0"
+      DATABASE_URL: postgresql://finrisk:${POSTGRES_PASSWORD:?POSTGRES_PASSWORD is required}@postgres:5432/finrisk
+    command: ["python", "scripts/validate_postgres_migration.py"]
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: "no"

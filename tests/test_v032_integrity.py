@@ -335,3 +335,20 @@ def test_postgres_credentials_persist_hash_and_revoke_on_rotation():
     missing = PostgresCredentialStore(_Connection([( [], [] )]))
     with pytest.raises(KeyError):
         missing.rotate("missing")
+
+
+def test_backend_container_installs_postgres_runtime_and_migrations():
+    dockerfile = (ROOT / "backend/Dockerfile").read_text(encoding="utf-8")
+    assert '".[postgres]"' in dockerfile
+    assert "ENV PYTHONPATH=/app/backend" in dockerfile
+    assert "COPY migrations ./migrations" in dockerfile
+    assert "requirements.lock" in dockerfile
+
+
+def test_production_compose_has_explicit_safe_migration_contract():
+    production = (ROOT / "docker-compose.prod.yml").read_text(encoding="utf-8")
+    assert "POSTGRES_PASSWORD:?POSTGRES_PASSWORD is required" in production
+    assert 'FINRISK_AUTO_MIGRATE: "0"' in production
+    assert 'FINRISK_ENABLE_ORG_BOOTSTRAP: "0"' in production
+    assert "service_completed_successfully" in production
+    assert 'restart: "no"' in production
