@@ -8,6 +8,7 @@
 
 - Added read-only E1/E2/E3 frozen replay and dynamic Git clean/dirty provenance for future experiments; frozen v0.3.1 artifacts remain byte-for-byte unchanged.
 - Added prospective label schema v2 compatibility and standalone-period FCF v2 semantics without modifying E3.
+- Aligned the canonical E3 execution status with the independent machine-review audit (A/B, 90/90 agreement, human gold not adjudicated) and added a drift regression test.
 - Wired `DATABASE_URL` to PostgreSQL runtime persistence and durable long-ID credential storage; hardened tenant-scoped risk-case derivation and final-state evidence gates.
 - Protected expensive analysis endpoints, bounded PDF resources, sanitized correlation IDs/errors, and split liveness/readiness health checks.
 - Added provenance completeness checks, explicit missing-baseline abstention, selective-performance semantics, correlated-evidence caps and distinct aggregate-critical reason codes.

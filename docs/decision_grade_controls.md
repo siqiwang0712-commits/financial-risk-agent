@@ -29,7 +29,7 @@ Structured events include correlation ID, stage, latency and failure type while 
 
 ## Benchmark validity
 
-The decision-grade manifest validator enforces required provenance, company-disjoint splits, review state and point-in-time leakage checks. Dual review/adjudication, a deterministic logistic baseline, decision stump, calibration curve, selective coverage, false-negative cost and risk ranking are implemented. The ~90 company-year corpus and all results under this protocol are **NOT RUN / NOT VALIDATED**. Existing `public_v1` results remain unchanged and explicitly pilot-only.
+The decision-grade manifest validator enforces required provenance, company-disjoint splits, review state and point-in-time leakage checks. The 90-observation numeric E3 corpus passed the PIT gate, and B0/B1/B2/B6 were executed. Neutral machine reviewers agreed on 90/90 normalized states, but this is not human gold. The held-out endpoint is underpowered; document/LLM confirmatory validation and human adjudication remain incomplete. Existing `public_v1` results remain unchanged and explicitly pilot-only.
 
 ## Deployment readiness
 

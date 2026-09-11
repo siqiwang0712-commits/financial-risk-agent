@@ -1,6 +1,6 @@
 # Temporal Risk Intelligence
 
-Status: **IMPLEMENTED AND TESTED WITH CONTROLLED FIXTURES; NOT YET VALIDATED ON A MULTI-PERIOD PUBLIC CORPUS**.
+Status: **IMPLEMENTED, TESTED, AND EXECUTED ON THE 30-COMPANY NUMERIC E3 CORPUS; DOCUMENT/EVIDENCE ATTRIBUTION USEFULNESS NOT VALIDATED**.
 
 ## State transition
 
@@ -25,4 +25,4 @@ Migration `002_temporal_intelligence.sql` adds tenant-scoped risk snapshots, dec
 
 ## Validation boundary
 
-Unit and API integration fixtures validate state updates, attribution, evidence deltas, tenant scoping and duplicate rejection. The existing public pilot has only one period per company, so real temporal accuracy and attribution usefulness remain **NOT VALIDATED**.
+Unit and API integration fixtures validate state updates, attribution, evidence deltas, tenant scoping and duplicate rejection. Numeric B6 and 30 multi-period company trajectories were executed in E3. The held-out test is underpowered, and document/evidence attribution usefulness remains **NOT VALIDATED**.

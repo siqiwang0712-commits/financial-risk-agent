@@ -6,7 +6,6 @@
 
 **Design and implementation:** FinRisk-Agent preserves provenance, computes formulas and four traditional models in code, evaluates 68 configuration rules, verifies every accepted narrative quote against its page, detects optimistic-language conflicts, and separates risk from confidence.
 
-**Evaluation:** a company-disjoint five-baseline protocol, calibration metrics, ablations, and an error taxonomy are implemented or specified. No real-world result is invented; the current executable fixture is synthetic.
+**Evaluation:** E3 contains 90 SEC-derived observations covering 30 companies and three fiscal years with company-disjoint splits and a passing point-in-time gate. Numeric B0/B1/B2/B6 were executed, but the six-observation held-out test has only one positive and is underpowered. Human-gold extraction, document evidence, and LLM confirmatory validation remain incomplete; synthetic fixtures are used only for engineering tests.
 
 **Insight:** an LLM should be treated as a fallible semantic sensor, not a financial-risk oracle. Reliability comes from assigning each subsystem the task it can auditably perform.
-

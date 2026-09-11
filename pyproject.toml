@@ -24,6 +24,9 @@ where = ["backend"]
 testpaths = ["tests"]
 pythonpath = ["backend"]
 addopts = "-q"
+filterwarnings = [
+  "ignore:Using `httpx` with `starlette.testclient` is deprecated:starlette.exceptions.StarletteDeprecationWarning",
+]
 
 [tool.ruff.lint.per-file-ignores]
 "backend/finrisk/sec_bulk.py" = ["F401"]

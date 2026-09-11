@@ -70,7 +70,7 @@ Status date: 2026-09-11. This remains a research prototype. Predictive superiori
 
 ## Partially Implemented
 
-- Temporal intelligence is implemented and fixture-tested but lacks an independently labelled multi-period public corpus.
+- Temporal intelligence is implemented, fixture-tested, and executed as numeric B6 across 30 E3 company trajectories. The held-out test is underpowered, and document/evidence attribution usefulness is not validated.
 - Calibration calculations and policy gates are implemented; reliability is not calibrated on a sufficient held-out dataset.
 - Analyst–Critic–Verifier uses structured deterministic verification around existing semantic extraction; paid-LLM role comparison is NOT RUN.
 
@@ -78,6 +78,7 @@ Status date: 2026-09-11. This remains a research prototype. Predictive superiori
 - Public benchmark: actually executed, but only three technology companies and one single-reviewer label. It is useful for pipeline/error discovery, not inference.
 - Empirical numeric benchmark E3: EMPIRICALLY RUN. Sixteen official SEC 2021Q1–2024Q4 statement archives produced 90/90 filing-level feature observations plus a separate label-only outcome pool. PIT integrity: PASS; company overlap 0; future leakage 0; dataset hash `d3f48b35bdd5af556628b5ee43bc60392fc8c8aa8f5773fddeac37bb2ce08254`. The frozen endpoint yielded 42 verified labels (34 negative, 8 positive), 6 review-required cases, 17 true no-eligible-outcome records and 25 right-censored records. The six-observation held-out set has one positive; B0/B1/B2/B6 all missed it. Bootstrap: 691 valid, 309 single-class invalid, `CI_NOT_ESTIMABLE`. E3 experiment hash: `522aada4f12f1656e308f8907c87075402c25d20e7d752bde47b81f0fd1e98c4`; deterministic replay PASS. E1/E2 remain immutable.
 - Extraction validation: MACHINE RECONCILIATION RUN, HUMAN GOLD NOT ADJUDICATED. SEC presentation-to-number reconciliation produced 1,165 comparable fields, with 1,164 agreements (99.914%). The Ford 2023 net-income construct mismatch remains `MANUAL_REVIEW_REQUIRED` rather than being tuned away.
+- Reviewer independence: neutral machine Reviewers A and B completed 90/90 paired reviews with 90/90 normalized-state agreement. Status is `COMPLETE_MACHINE_ONLY`; human gold remains `NOT_ADJUDICATED`.
 - LLM integration: production adapter is implemented and mock-tested; no paid API run was performed because no key was supplied.
 - The backward-compatible `confidence` field remains in legacy assessment objects, but v0.3.1 labels it as an uncalibrated evidence-quality index and exposes separate coverage, disagreement, reliability and calibration status.
 

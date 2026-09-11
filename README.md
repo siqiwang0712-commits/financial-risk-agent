@@ -58,7 +58,7 @@ for replay, persistence, trust-boundary and deployment maturity details.
 
 ## v0.3.1 — Decision Integrity & Research Readiness (released, frozen)
 
-This local hardening release makes the existing architecture stricter without adding new product domains:
+This hardening release makes the existing architecture stricter without adding new product domains:
 
 - non-compensatory, coverage-aware fusion prevents severe supported dimensions from being averaged away;
 - missing dimensions remain unknown rather than entering fusion as zero;
@@ -92,7 +92,7 @@ python scripts/prepare_empirical_foundation.py
 python scripts/run_empirical_validation.py
 ```
 
-The second command exits non-zero until the relevant corpus integrity gate passes. `--allow-not-available` is only for CI/status reporting; it never runs a benchmark. Readiness is capability-scoped: missing documents/LLM access cannot block numeric B0/B1/B2/B6 once numeric observations and forward labels exist.
+The second command exits non-zero when the relevant corpus integrity gate fails. Readiness is capability-scoped: missing documents/LLM access cannot block numeric B0/B1/B2/B6 once numeric observations and forward labels exist.
 
 SEC acquisition now has three explicit routes: official `companyfacts.zip` or Financial Statement Data Set ZIPs, a local/offline cache, and the rate-limited live API fallback. Raw bulk files are intentionally Git-ignored. To import official bulk data and run the numeric baselines:
 
@@ -291,7 +291,7 @@ Current evidence is diagnostic only: RQ3 is not supported by the pilot, RQ2 has 
 |---|---|
 | **VALIDATED — limited local scope** | Automated tests and ≥90% coverage gate; Ruff, TypeScript and production frontend build; deterministic finance fixtures; 90-observation SEC numeric ingestion and PIT integrity; corrected B0/B1/B2/B6 execution |
 | **IMPLEMENTED, NOT EXTERNALLY VALIDATED** | XBRL/PDF reconciliation, temporal state/attribution, applicability routing, selective automation, constrained provider, critic/verifier, DecisionBundle, risk-case mitigation workflow, RBAC/API keys, PostgreSQL migrations and Workbench |
-| **PLANNED / NOT RUN** | Independently dual-reviewed ~90 company-year benchmark, paid-LLM evaluation, calibrated risk model, production identity/object storage/worker/telemetry deployment |
+| **PLANNED / NOT RUN** | Human-adjudicated document/evidence benchmark, paid-LLM evaluation, calibrated risk model, production identity/object storage/worker/telemetry deployment |
 
 FinRisk is a research and enterprise-architecture prototype. It does not claim production deployment, regulatory approval, SOC 2, ISO 27001, external model validation or real enterprise customers.
 

@@ -219,12 +219,16 @@ def test_pre_num_reference_is_separate_from_adjudicated_gold(tmp_path):
 def test_bulk_and_reference_exclude_dimensional_facts(tmp_path):
     path = tmp_path / "2022q4.zip"
     _archive(path, 2021, 1000, 100, 200, 200)
-    with zipfile.ZipFile(path, "a") as archive:
-        num = archive.read("num.txt").decode()
-        num = num.replace("\tfootnote\n", "\tfootnote\tsegments\n")
-        num = num.replace("\t1000\t\n", "\t1000\t\t\n")
-        num += "0000320193-22-000001\tRevenueFromContractWithCustomerExcludingAssessedTax\tus-gaap/2023\t\t20210930\t4\tUSD\t50\t\tGeography=US;\n"
-        archive.writestr("num.txt", num)
+    with zipfile.ZipFile(path) as archive:
+        entries = {name: archive.read(name) for name in archive.namelist()}
+    num = entries["num.txt"].decode()
+    num = num.replace("\tfootnote\n", "\tfootnote\tsegments\n")
+    num = num.replace("\t1000\t\n", "\t1000\t\t\n")
+    num += "0000320193-22-000001\tRevenueFromContractWithCustomerExcludingAssessedTax\tus-gaap/2023\t\t20210930\t4\tUSD\t50\t\tGeography=US;\n"
+    entries["num.txt"] = num.encode()
+    with zipfile.ZipFile(path, "w") as archive:
+        for name, contents in entries.items():
+            archive.writestr(name, contents)
     submissions, numbers, sources = load_statement_archives([path])
     plan = [{"observation_id": "aapl-2021", "ticker": "AAPL", "sector": "Technology", "fiscal_year": "2021", "split": "train"}]
     observations, _ = build_numeric_corpus(plan, submissions, numbers, sources)

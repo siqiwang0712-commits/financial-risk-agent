@@ -65,6 +65,23 @@ def test_frozen_replay_is_read_only_and_hash_verified():
     assert before == after
 
 
+def test_execution_status_matches_canonical_independence_audit():
+    status = json.loads(
+        (ROOT / "research/empirical_v1/execution_status.json").read_text(encoding="utf-8")
+    )
+    audit = json.loads(
+        (ROOT / "research/empirical_v1/machine_reviews/independence_audit.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    assert status["reviewer_a_status"] == audit["reviewer_a_status"] == "MACHINE_REVIEWED"
+    assert status["reviewer_b_status"] == audit["reviewer_b_independent_run"] == "MACHINE_REVIEWED"
+    assert status["dual_review_status"] == audit["dual_review_status"] == "COMPLETE_MACHINE_ONLY"
+    assert status["reviewer_pair_count"] == audit["reviewer_pair_count"] == 90
+    assert status["reviewer_pair_agreement_count"] == audit["reviewer_pair_agreement_count"] == 90
+    assert status["human_adjudication_status"] == audit["human_gold_status"] == "NOT_ADJUDICATED"
+
+
 def test_review_schema_migration_is_non_mutating():
     original = {"reviewer_1_label": 1, "reviewer_2_label": 0}
     migrated = migrate_review_record_v1_to_v2(original)
