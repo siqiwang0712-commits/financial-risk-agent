@@ -2,10 +2,13 @@ from __future__ import annotations
 
 from collections import defaultdict
 
+from .evidence import PROVENANCE_COVERED_STATUSES, coverage_ratio
+from .severity import severity_label
+
 CATEGORIES=["liquidity","solvency_leverage","profitability","cash_flow","earnings_quality","accounting","governance_audit","business_going_concern"]
 
 
-def risk_level(score): return "Very Low" if score<20 else "Low" if score<40 else "Moderate" if score<60 else "High" if score<80 else "Critical"
+def risk_level(score): return severity_label(score)
 
 
 def aggregate(signals,contradictions,config:dict):
@@ -33,7 +36,11 @@ def confidence_components(values,verified_evidence,models,multi_year=False,numer
     completeness=sum(values.get(k) is not None for k in REQUIRED_FIELDS)/len(REQUIRED_FIELDS)
     ev=sum(e.verified for e in verified_evidence)/len(verified_evidence) if verified_evidence else 0
     numeric_evidence=numeric_evidence or []
-    numeric_provenance=sum(e.verification_status in {"located","verified"} for e in numeric_evidence)/len(numeric_evidence) if numeric_evidence else 0
+    # Provenance coverage asks "can this number be traced to a source location?".
+    # It is deliberately broader than the proof gate in `pipeline.assess`, which
+    # requires `verified`. The two are separate published concepts
+    # (evidence coverage != evidence quality) and must not be conflated.
+    numeric_provenance=coverage_ratio(numeric_evidence,PROVENANCE_COVERED_STATUSES)
     applicable=sum(m.output is not None for m in models)/max(1,len(models))
     components={"core_data_completeness":completeness,"numeric_provenance_coverage":numeric_provenance,"verified_claim_coverage":ev,"applicable_model_coverage":applicable,"temporal_depth":1.0 if multi_year else 0.5}
     return {k:round(v,3) for k,v in components.items()}

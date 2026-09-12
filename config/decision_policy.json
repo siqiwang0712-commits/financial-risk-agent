@@ -1,5 +1,5 @@
 {
-  "version": "decision-policy-v2-integrity",
+  "version": "decision-policy-v3-configurable-uplift",
   "status": "expert-designed; not calibrated",
   "minimum_coverage": 0.4,
   "maximum_disagreement": 0.45,
@@ -9,5 +9,7 @@
   "critical_dimension_score": 80.0,
   "elevated_dimension_score": 50.0,
   "interaction_dimension_score": 50.0,
-  "interaction_premium": 8.0
+  "interaction_premium": 8.0,
+  "interaction_uplift_per_dimension": 5.0,
+  "interaction_uplift_cap": 15.0
 }

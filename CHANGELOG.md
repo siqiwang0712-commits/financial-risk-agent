@@ -2,6 +2,28 @@
 
 ## [Unreleased]
 
+### Fixed
+
+- Agent and pipeline now build one shared fact set (`finrisk/facts.py`). The Agent path previously passed raw metrics while the pipeline injected `*_change`, `*_gap`, model outputs and narrative signals, so the same filing produced 10 rule signals on one path and 15 on the other and the published workflow trace disagreed with the decision it described.
+- Narrative extraction now runs exactly once per analysis. The Agent and the deterministic assessment each invoked the provider, producing two claim sets that fed `contradictions` and `disclosure_tensions` respectively; both now consume the same admitted claims and the full verification list.
+- Claim-level consistency is computed once, on the same thick fact set that produces `contradictions`. The same claim could previously be reported as a material contradiction and as a non-issue in one response.
+- Correlated-evidence de-duplication is scoped per risk dimension. A purely global cap dropped a whole dimension, reduced the escalation count and lowered the aggregate, so adding adverse evidence could decrease the score; a brute-force search found 8000 such counterexamples and now finds none.
+- Fusion exposes a single outward-facing score. `overall_score` is now the fusion score the decision derives from, and the previous weighted aggregate is preserved as `legacy_weighted_score`; the Workbench could previously show `N/A` next to a `PASS` decision.
+- The recorded `fusion` component version is derived from the decision-policy hash. Escalation constants (`interaction_uplift_per_dimension`, `interaction_uplift_cap`) moved into `config/decision_policy.json`, so a parameter change is reported as `VERSION_MISMATCH` instead of being misreported as output drift.
+- `interaction_aware` no longer reads a missing dimension as a zero score. Unresolved interaction pairs are reported with `CLAIM_CONTEXT_INCOMPLETE` instead of being silently evaluated as "no interaction".
+- Severity thresholds have one definition (`finrisk/severity.py`) instead of separate copies in `scoring.risk_level` and `enterprise.fusion._severity`.
+- Provenance coverage and proof-gate coverage are named explicitly (`PROVENANCE_COVERED_STATUSES` / `PROOF_COVERED_STATUSES`) so the two published concepts cannot be conflated.
+
+### Changed
+
+- `AgentPlanner` orders `narrative_evidence` before `risk_rules`, matching execution, because configured rules consume verified narrative signals.
+- The capability maturity matrix gains a `Wired` column separating "tested library capability" from "reachable from a live entry point".
+
+### Documentation
+
+- README and `PROJECT_STATUS.md` describe correlated-evidence de-duplication as a per-dimension library capability rather than an active step in the Agent decision path.
+- README corrects the attribution for `risk_trajectory`: it reads the current run only and reports `insufficient_history` unless a snapshot store supplies prior periods, rather than being limited by pilot data.
+
 ## [0.3.2] - 2026-09-11
 
 - Closed remaining release-integrity gaps in required-input evidence completeness, canonical going-concern taxonomy, duplicate PostgreSQL snapshot handling, finite numeric API boundaries and evidence-only coverage semantics.

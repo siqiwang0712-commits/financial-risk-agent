@@ -4,6 +4,7 @@ from collections.abc import Callable
 from dataclasses import dataclass
 from statistics import pstdev
 
+from ..severity import severity_key
 from .domain import Decision, FusionResult
 from .integrity import DecisionReasonCode
 
@@ -16,19 +17,7 @@ DEFAULT_DECISION_POLICY = {
 
 
 def _severity(score: float | None) -> str:
-    if score is None:
-        return "unknown"
-    return (
-        "critical"
-        if score >= 80
-        else "high"
-        if score >= 60
-        else "moderate"
-        if score >= 40
-        else "low"
-        if score >= 20
-        else "very_low"
-    )
+    return severity_key(score)
 
 
 def _final(
@@ -162,7 +151,12 @@ def hierarchical_escalation(
     disagreement = 0.0
     if active:
         maximum = max(active.values())
-        interaction_uplift = min(15, 5 * max(0, len(elevated) - 1))
+        # Configured so the frozen component version detects parameter changes.
+        interaction_uplift = min(
+            effective.get("interaction_uplift_cap", 15.0),
+            effective.get("interaction_uplift_per_dimension", 5.0)
+            * max(0, len(elevated) - 1),
+        )
         score = maximum + interaction_uplift
         values = list(active.values())
         disagreement = min(1.0, pstdev(values) / 50) if len(values) > 1 else 0.0
@@ -200,11 +194,21 @@ def interaction_aware(
     ]
     effective = DEFAULT_DECISION_POLICY | (policy or {})
     interaction_threshold = effective.get("interaction_dimension_score", 50)
+    # A pair is evaluable only when BOTH dimensions carry a supported score.
+    # `active` already excludes unsupported dimensions, so a default of 0 would
+    # silently read "unknown" as "no risk" (missing must never mean safe).
     triggered = [
         f"{a}+{b}"
         for a, b in interactions
-        if active.get(a, 0) >= interaction_threshold
-        and active.get(b, 0) >= interaction_threshold
+        if active.get(a) is not None
+        and active.get(b) is not None
+        and active[a] >= interaction_threshold
+        and active[b] >= interaction_threshold
+    ]
+    indeterminate = [
+        f"{a}+{b}"
+        for a, b in interactions
+        if (active.get(a) is None) != (active.get(b) is None)
     ]
     score = (
         None
@@ -213,7 +217,7 @@ def interaction_aware(
             100, result.score + effective.get("interaction_premium", 8) * len(triggered)
         )
     )
-    return _final(
+    outcome = _final(
         "interaction_aware",
         score,
         coverage,
@@ -223,6 +227,12 @@ def interaction_aware(
         "Transparent pairwise interaction premiums applied after equal-weight baseline",
         policy,
     )
+    if indeterminate:
+        # Surface the unresolved pair instead of reporting an evaluated "no interaction".
+        outcome.reason_codes.append(
+            DecisionReasonCode.CLAIM_CONTEXT_INCOMPLETE.value
+        )
+    return outcome
 
 
 FUSION_METHODS: dict[str, Callable] = {
@@ -245,10 +255,17 @@ class RiskContribution:
 def deduplicate_contributions(
     contributions: list[RiskContribution],
 ) -> tuple[list[RiskContribution], int]:
-    """Globally cap a correlated evidence group to its strongest contribution."""
-    unique: dict[str, RiskContribution] = {}
+    """Cap a correlated evidence group to its strongest contribution per dimension.
+
+    The cap is scoped to the dimension on purpose. A purely global cap can drop a
+    whole risk dimension from the fusion input, which reduces the escalation count
+    and therefore lowers the aggregate: adding adverse evidence would make the
+    score go down. Scoping per dimension keeps fusion monotonic in adverse
+    evidence while still suppressing duplicate citations of one disclosure.
+    """
+    unique: dict[tuple[str, str], RiskContribution] = {}
     for item in contributions:
-        key = item.evidence_group or item.evidence_id
+        key = (item.dimension, item.evidence_group or item.evidence_id)
         if key not in unique or item.score > unique[key].score:
             unique[key] = item
     return list(unique.values()), len(contributions) - len(unique)

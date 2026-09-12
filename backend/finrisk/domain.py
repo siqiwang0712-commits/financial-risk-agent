@@ -146,6 +146,10 @@ class Assessment:
     evidence_quality: float = 0.0
     evidence_coverage: float = 0.0
     reliability_status: str = "UNCALIBRATED"
+    # Computed once, on the same fact set that produced `contradictions`, so the
+    # claim-level classification and the contradiction list cannot disagree.
+    claim_consistency_evaluations: list[dict[str, Any]] = field(default_factory=list)
+    disclosure_tensions: list[dict[str, Any]] = field(default_factory=list)
     disclaimer: str = "Risk scores are heuristic assessment scores, not bankruptcy probabilities or investment advice."
 
     def to_dict(self) -> dict[str, Any]:

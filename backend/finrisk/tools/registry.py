@@ -174,10 +174,18 @@ def _models(current: dict, previous: dict | None, entity_type: str):
 
 
 def _claims(provider, verifier, pages, document, year):
-    accepted = []
+    """Extract once and verify once.
+
+    Returns both the admitted subset and the complete verification list so the
+    caller can hand both to the deterministic assessment, keeping
+    `verified_claim_coverage`'s denominator (all extracted claims) intact while
+    ensuring the provider is invoked exactly once per analysis.
+    """
+    accepted, verifications = [], []
     for claim in provider.extract(pages, document, year):
         evidence = verifier.verify(claim.evidence, pages)
+        verifications.append(evidence)
         if evidence.verified:
             claim.evidence = evidence
             accepted.append(claim)
-    return accepted
+    return {"accepted": accepted, "verifications": verifications}

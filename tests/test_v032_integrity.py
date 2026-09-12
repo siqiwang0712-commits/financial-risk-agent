@@ -206,12 +206,26 @@ def test_ratio_missing_is_unavailable_and_cash_conversion_is_not_double_counted(
     assert ratio_risk_score({"cfo_to_net_income": -2, "net_income": -1}) is None
 
 
-def test_correlated_evidence_is_globally_capped():
+def test_correlated_evidence_is_capped_per_dimension():
+    # One disclosure cited twice inside the same dimension collapses to its
+    # strongest contribution.
+    unique, suppressed = deduplicate_contributions([
+        RiskContribution("liquidity", 70, "ev-a", evidence_group="filing-note-1"),
+        RiskContribution("liquidity", 60, "ev-b", evidence_group="filing-note-1"),
+    ])
+    assert len(unique) == 1 and unique[0].score == 70 and suppressed == 1
+
+
+def test_correlated_evidence_never_removes_a_risk_dimension():
+    # A source shared by two dimensions must not delete a whole risk dimension:
+    # dropping one lowers the escalation count and therefore the aggregate, which
+    # would make fusion non-monotonic in adverse evidence.
     unique, suppressed = deduplicate_contributions([
         RiskContribution("liquidity", 70, "ev-a", evidence_group="filing-note-1"),
         RiskContribution("solvency", 60, "ev-b", evidence_group="filing-note-1"),
     ])
-    assert len(unique) == 1 and unique[0].score == 70 and suppressed == 1
+    assert {item.dimension for item in unique} == {"liquidity", "solvency"}
+    assert suppressed == 0
 
 
 def test_aggregate_critical_has_distinct_reason_code():

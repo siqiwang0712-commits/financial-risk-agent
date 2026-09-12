@@ -44,7 +44,7 @@ Status date: 2026-09-11. This remains a research prototype. Predictive superiori
 
 ## Fully Implemented
 
-- v0.3.1 decision invariants: non-compensatory severe-dimension floor, missing-dimension exclusion, adverse-evidence monotonicity and verified-evidence de-duplication.
+- v0.3.1 decision invariants: non-compensatory severe-dimension floor, missing-dimension exclusion, adverse-evidence monotonicity and verified-evidence de-duplication scoped per risk dimension. The de-duplication helper is a library capability; the Agent decision path consumes per-dimension maxima directly and does not call it.
 - Claim-conditioned evidence checks with target, direction, horizon, basis, qualifiers, required constructs and explicit `CLAIM_CONTEXT_INCOMPLETE` outcomes.
 - Explicit `UNCALIBRATED / CALIBRATED_INTERNAL / VALIDATED_EXTERNAL` maturity semantics; uncalibrated evidence quality is never emitted as reliability or probability.
 - Replayable component delta telemetry for XBRL, rules, traditional models, narrative, Critic, Verifier and fusion. This is observational telemetry, not Value of Information.

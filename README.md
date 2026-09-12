@@ -67,7 +67,7 @@ This hardening release makes the existing architecture stricter without adding n
 
 - non-compensatory, coverage-aware fusion prevents severe supported dimensions from being averaged away;
 - missing dimensions remain unknown rather than entering fusion as zero;
-- evidence IDs are de-duplicated before contributing and adverse-evidence monotonicity is regression-tested;
+- evidence IDs are de-duplicated within a risk dimension before contributing, and adverse-evidence monotonicity is regression-tested (a purely global cap removed whole dimensions and was not monotonic); the de-duplication helper is a library capability and the Agent decision path consumes per-dimension maxima directly;
 - narrative checks are claim-conditioned: target, direction, horizon, basis, qualifiers and required evidence constructs are validated before contradiction classification;
 - API, Workbench and DecisionBundle expose calibration maturity and never present the evidence-quality index as a correctness probability;
 - XBRL, rules, models, narrative, Critic, Verifier and fusion record observed component deltas for replay—a telemetry foundation, not a Value-of-Information estimator.
@@ -235,7 +235,7 @@ See [Decision-grade controls](docs/decision_grade_controls.md).
 
 FinRisk now models a filing as an update from `R(t-1)` to `R(t)`, not an isolated score. `RiskDelta` separates dimension, metric and evidence changes and attaches each attribution driver to evidence-path identifiers. The temporal graph adds `SUPPORTS`, `CONTRADICTS`, `SUPERSEDES`, `DERIVED_FROM`, `CONFIRMS`, `WEAKENS` and `INVALIDATES` relationships.
 
-This capability is code-complete and fixture-tested. The current public pilot has one period per company, so real multi-period attribution quality remains **NOT VALIDATED**.
+This capability is code-complete and fixture-tested, and it is exercised through the enterprise snapshot/timeline API and the E3 numeric trajectories. The Agent's own `risk_trajectory` field is derived from the current run only: the single-process local path does not persist history, so it reports `insufficient_history` unless a snapshot store supplies prior periods. Real multi-period attribution quality remains **NOT VALIDATED**.
 
 ## Analyst Workbench
 
@@ -264,9 +264,11 @@ The checked-in public pilot runs five baselines on **three company-disjoint FY20
 | Ratios Only | 3/3 | **1.000** | **1.000** |
 | Rule Engine | 3/3 | 0.667 | 0.750 |
 | Traditional Models | 3/3 | 0.500 | 0.500 |
-| Full Hybrid | 2/3 | 0.000 | 0.500 |
+| Full Hybrid² | 2/3 | 0.000 | 0.500 |
 
 ¹ The recorded pilot used the deterministic offline semantic provider. A paid LLM baseline was **NOT RUN** because no API credential was supplied.
+
+² The pilot scores this row with the expert-weighted aggregate over risk dimensions (`scoring.aggregate`). The Agent decision path uses hierarchical escalation instead, so this row does not describe the strategy the product decides with. `research/results/v0.3.1/decision_integrity_replay.json` compares both on the v0.3.1 evidence, but no experiment reports predictive metrics for hierarchical escalation against the labelled endpoint.
 
 Full Hybrid did **not** outperform Ratios Only. Its contradiction F1 was `0.667`; most bootstrap intervals span `[0, 1]`. The result supports only two claims: the evaluation pipeline executes end to end, and the current fusion design needs a larger independently labelled validation set. It does not establish superiority of any architecture.
 

@@ -5,7 +5,6 @@ import time
 from pathlib import Path
 from typing import Any
 
-from ..contradictions import evaluate_claim_consistency
 from ..domain import Evidence
 from ..enterprise.applicability import applicability_report
 from ..enterprise.decision import (
@@ -24,9 +23,11 @@ from ..enterprise.fusion import (
 from ..enterprise.integrity import CalibrationStatus, epistemic_summary
 from ..enterprise.telemetry import component_delta
 from ..enterprise.temporal import classify_trajectory
-from ..enterprise.tension import classify_tension
+from ..evidence import VERIFIER_VERSION
+from ..facts import build_facts
 from ..llm import NarrativeProvider, provider_from_env
 from ..scoring import aggregate
+from ..severity import severity_label
 from ..tools import build_tool_registry
 from .planner import AgentPlanner
 from .reflection import reflect
@@ -83,20 +84,25 @@ class FinancialRiskAgent:
                     "year": year,
                 },
             )
-            facts = current | {name: metric.value for name, metric in metrics.items()}
-            context["facts"] = facts
-            self._call(state, "models", traditional_models=context)
-            self._call(state, "rules", risk_rules={"facts": facts})
-            claims = []
+            models = self._call(state, "models", traditional_models=context)
+            claims: list = []
+            claim_verifications: list = []
             semantic_failed = False
             if pages:
                 try:
-                    claims = self._call(
+                    extraction = self._call(
                         state, "claims", narrative_evidence=context
                     )
+                    claims = extraction["accepted"]
+                    claim_verifications = extraction["verifications"]
                 except Exception as exc:  # noqa: BLE001 - semantic failure degrades safely
                     semantic_failed = True
                     state.warnings.append(f"Narrative provider unavailable: {exc}")
+            # Same builder the deterministic assessment uses, so the published trace
+            # and the decision it describes cannot be computed from different facts.
+            facts = build_facts(current, previous, year, metrics, models, claims)
+            context["facts"] = facts
+            self._call(state, "rules", risk_rules={"facts": facts})
             state.transition(AgentStatus.CROSS_CHECKING)
             if pages:
                 self._call(
@@ -123,6 +129,12 @@ class FinancialRiskAgent:
                     "document": document,
                     "entity_type": entity_type,
                     "source_map": source_map,
+                    # Hand the already-extracted claims over so the provider runs
+                    # exactly once per analysis and both paths see one claim set.
+                    "narrative_claims": None if semantic_failed else claims,
+                    "claim_verifications": None
+                    if semantic_failed
+                    else claim_verifications,
                 },
             )
             state.assessment = assessment.to_dict()
@@ -146,30 +158,30 @@ class FinancialRiskAgent:
                 decision_policy,
             )
             state.fusion = fusion.__dict__
+            # Exactly one outward-facing score: the one the decision is derived from.
+            # The weighted aggregate that used to be returned as `overall_score` is
+            # preserved under an explicit legacy name, so the number shown to an
+            # analyst and the number that drove the decision cannot diverge.
+            state.assessment["legacy_weighted_score"] = assessment.overall_score
+            state.assessment["overall_score"] = fusion.score
+            state.assessment["risk_level"] = severity_label(fusion.score)
             state.risk_score = fusion.score
             state.risk_severity = fusion.severity
             state.decision = fusion.decision.value
             state.model_disagreement = fusion.disagreement
+            # This single-process run holds one period, so there is no series to
+            # classify. Multi-period trajectories are produced by the persisted
+            # snapshot path (enterprise timeline API) and by the E3 numeric corpus;
+            # see docs/temporal_risk_intelligence.md.
             state.risk_trajectory = classify_trajectory([])
-            tensions = []
-            claim_evaluations = []
-            for claim in claims:
-                evaluation = evaluate_claim_consistency(claim, facts)
-                claim_evaluations.append(evaluation.to_dict())
-                tensions.append(
-                    classify_tension(
-                        claim,
-                        list(evaluation.supporting_evidence),
-                        list(evaluation.opposing_evidence),
-                        "Compared with all available normalized evidence for the claim category.",
-                        "complete"
-                        if not evaluation.missing_evidence_types
-                        else "incomplete_context",
-                        evaluation.reason_code,
-                    ).to_dict()
-                )
-            state.assessment["disclosure_tensions"] = tensions
-            state.assessment["claim_consistency_evaluations"] = claim_evaluations
+            # Read the claim-level classification from the assessment instead of
+            # recomputing it here on a thinner fact set. The two used to disagree
+            # about whether the same claim was a material contradiction, so one API
+            # response could report a claim as both a contradiction and a non-issue.
+            state.assessment["disclosure_tensions"] = assessment.disclosure_tensions
+            state.assessment["claim_consistency_evaluations"] = (
+                assessment.claim_consistency_evaluations
+            )
             state.assessment["enterprise_fusion"] = state.fusion
             versions = self.component_versions()
             state.decision_trace = build_decision_trace(
@@ -437,10 +449,13 @@ class FinancialRiskAgent:
                 (self.root / "config" / "scoring.json").read_text(encoding="utf-8")
             ),
             "decision_policy": canonical_hash(decision_policy),
-            "fusion": "hierarchical_escalation:v2-monotonic",
+            # Derived from the policy hash so a change to the escalation
+            # parameters is detected as a component-version change rather than
+            # being misreported as output drift.
+            "fusion": f"hierarchical_escalation:{canonical_hash(decision_policy)[:12]}",
             "applicability": "applicability-router:v1",
             "calibration": "UNCALIBRATED:v1",
-            "evidence_verifier": "exact-page-quote:v1",
+            "evidence_verifier": VERIFIER_VERSION,
             "agent_review": "analyst-critic-verifier:v1",
             "prompt": getattr(self.provider, "prompt_version", "mock-or-unversioned"),
             "model": self.provider.__class__.__name__,

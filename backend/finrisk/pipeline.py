@@ -3,10 +3,12 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-from .contradictions import detect_contradictions
+from .contradictions import detect_contradictions, evaluate_claim_consistency
 from .domain import Assessment, RuleSignal
 from .enterprise.applicability import MODEL_REQUIREMENTS, enforce_applicability
-from .evidence import EvidenceVerifier
+from .enterprise.tension import classify_tension
+from .evidence import PROOF_COVERED_STATUSES, EvidenceVerifier
+from .facts import build_facts, narrative_signals
 from .llm import NarrativeProvider, provider_from_env
 from .metrics import calculate_metrics, resolve_total_debt
 from .models import altman_z, beneish_m, ohlson_o, piotroski_f
@@ -22,7 +24,7 @@ class FinRiskPipeline:
         self.model_scoring=json.loads((self.root/"config"/"model_scoring.json").read_text(encoding="utf-8"))
         self.provider=provider or provider_from_env(); self.verifier=EvidenceVerifier()
 
-    def assess(self,company:str,year:int,current:dict,previous:dict|None=None,pages:dict[int,str]|None=None,document="Annual Report",entity_type="industrial",source_map:dict|None=None) -> Assessment:
+    def assess(self,company:str,year:int,current:dict,previous:dict|None=None,pages:dict[int,str]|None=None,document="Annual Report",entity_type="industrial",source_map:dict|None=None,narrative_claims:list|None=None,claim_verifications:list|None=None) -> Assessment:
         pages=pages or {}
         source_map=source_map or {}
         metrics=calculate_metrics(current,year,previous)
@@ -91,44 +93,35 @@ class FinRiskPipeline:
                 prior_requirements = [(key, period - 1) for key, period in current_requirements if period == year]
                 return list(dict.fromkeys(current_requirements + prior_requirements))
             return [(name, year)]
-        facts={k:m.value for k,m in metrics.items()}|current
         resolved_debt, debt_parents = resolve_total_debt(current)
         if current.get("total_debt") is None and resolved_debt is not None:
-            facts["total_debt"] = resolved_debt
             source_map = dict(source_map)
             source_map["total_debt"] = [
                 evidence for parent in debt_parents for evidence in source_map.get(parent, [])
             ]
-        if previous:
-            for key in ("short_term_debt",):
-                facts[f"{key}_growth"]=None if current.get(key) is None or previous.get(key) in (None,0) else (current[key]-previous[key])/abs(previous[key])
-            for key in ("gross_margin","operating_margin","receivable_days","inventory_days","cash_conversion_cycle"):
-                prior=calculate_metrics(previous,year-1).get(key); now=metrics.get(key)
-                facts[f"{key}_change"]=None if not prior or not now or prior.value is None or now.value is None else now.value-prior.value
-            facts["accounts_receivable_growth_gap"] = None if facts.get("accounts_receivable_growth") is None or facts.get("revenue_growth") is None else facts["accounts_receivable_growth"]-facts["revenue_growth"]
-            facts["inventory_growth_gap"] = None if facts.get("inventory_growth") is None or facts.get("revenue_growth") is None else facts["inventory_growth"]-facts["revenue_growth"]
         model_input=current|{"working_capital":metrics["working_capital"].value,"ebit":current.get("ebit",current.get("operating_income"))}
         models=[altman_z(model_input,"bank" if entity_type in {"bank","financial_institution"} else "public_manufacturer")]
         if previous: models += [beneish_m(current,previous),piotroski_f(current,previous)]
         models += [ohlson_o(model_input)]
         models = enforce_applicability(models, entity_type, model_input | current)
-        model_metric_names={"Altman Z-Score":"altman_z_score","Beneish M-Score":"beneish_m_score","Piotroski F-Score":"piotroski_f_score","Ohlson O-Score":"ohlson_o_score"}
-        for model in models:facts[model_metric_names[model.name]]=model.output
-        ohlson=next(m for m in models if m.name=="Ohlson O-Score")
-        facts["ohlson_probability"]=ohlson.derived_outputs.get("probability")
-        claims=self.provider.extract(pages,document,year) if pages else []
-        verified=[]; accepted=[]
-        for claim in claims:
-            ev=self.verifier.verify(claim.evidence,pages); verified.append(ev)
-            if ev.verified: claim.evidence=ev; accepted.append(claim)
-        narrative_signals = {
-            "going_concern_doubt": [c for c in accepted if c.risk_category=="business_going_concern" and c.polarity=="negative"],
-            "material_weakness": [c for c in accepted if "material weakness" in c.claim.lower() and c.polarity=="negative"],
-            "refinancing_dependency": [c for c in accepted if "refinancing" in c.claim.lower() and c.polarity=="negative"],
-        }
-        facts.update({key: bool(items) for key, items in narrative_signals.items()})
+        if narrative_claims is None:
+            raw_claims=self.provider.extract(pages,document,year) if pages else []
+            verified=[]; accepted=[]
+            for claim in raw_claims:
+                ev=self.verifier.verify(claim.evidence,pages); verified.append(ev)
+                if ev.verified: claim.evidence=ev; accepted.append(claim)
+        else:
+            # Supplied by the caller so narrative extraction runs exactly once per
+            # analysis. `claim_verifications` carries the full verification list,
+            # not just the accepted subset, so `verified_claim_coverage` keeps its
+            # original denominator (fraction of extracted claims that verified).
+            accepted=list(narrative_claims)
+            verified=list(claim_verifications or [])
+        # One definition of the fact set, shared with the Agent path.
+        facts = build_facts(current, previous, year, metrics, models, accepted)
+        signals_by_source = narrative_signals(accepted)
         source_map = dict(source_map)
-        for key, items in narrative_signals.items():
+        for key, items in signals_by_source.items():
             if items:
                 source_map[key] = [item.evidence for item in items]
         signals=self.rules.evaluate(facts)
@@ -184,6 +177,14 @@ class FinRiskPipeline:
                 for key in signal.required_inputs
             }
         contradictions=detect_contradictions(accepted,facts)
+        # Claim-level consistency is derived here, from the same `accepted` claims
+        # and the same thick `facts` that produced `contradictions`, so the tension
+        # list can never contradict the contradiction list.
+        claim_evaluations=[];tensions=[]
+        for claim in accepted:
+            evaluation=evaluate_claim_consistency(claim,facts)
+            claim_evaluations.append(evaluation.to_dict())
+            tensions.append(classify_tension(claim,list(evaluation.supporting_evidence),list(evaluation.opposing_evidence),"Compared with all available normalized evidence for the claim category.","complete" if not evaluation.missing_evidence_types else "incomplete_context",evaluation.reason_code).to_dict())
         score,level,dimensions=aggregate(signals,contradictions,self.scoring)
         missing=[f"{m.name}: N/A — {m.missing_reason} Impact: assessment confidence reduced." for m in metrics.values() if m.value is None]
         numeric_evidence=[e for refs in source_map.values() for e in refs]
@@ -194,8 +195,11 @@ class FinRiskPipeline:
             for signal in signals
             for name in signal.required_inputs
         ]
+        # Proof gate: a material input group counts as covered only when it is
+        # non-empty and every reference is `verified`. `located` intentionally does
+        # not qualify here (see `evidence.PROOF_COVERED_STATUSES`).
         evidence_coverage = round(
-            sum(bool(refs) and all(ref.verification_status == "verified" for ref in refs) for refs in material_groups)
+            sum(bool(refs) and all(ref.verification_status in PROOF_COVERED_STATUSES for ref in refs) for refs in material_groups)
             / len(material_groups),
             3,
         ) if material_groups else 0.0
@@ -228,4 +232,4 @@ class FinRiskPipeline:
         for category in dimensions:nodes.append({"id":f"dimension:{category}","type":"dimension","label":category});edges.append({"from":f"dimension:{category}","to":"overall","relation":"weighted_into"})
         nodes.append({"id":"overall","type":"assessment","label":"overall risk"})
         graph={"nodes":nodes,"edges":edges}
-        return Assessment(company,str(year),score,level,conf,dimensions,metrics,models,signals,contradictions,missing,confidence_components=components,evidence_graph=graph,evidence_quality=conf,evidence_coverage=evidence_coverage,reliability_status="UNCALIBRATED")
+        return Assessment(company,str(year),score,level,conf,dimensions,metrics,models,signals,contradictions,missing,confidence_components=components,evidence_graph=graph,evidence_quality=conf,evidence_coverage=evidence_coverage,reliability_status="UNCALIBRATED",claim_consistency_evaluations=claim_evaluations,disclosure_tensions=tensions)

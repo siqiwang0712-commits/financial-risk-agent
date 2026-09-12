@@ -127,3 +127,30 @@ def test_v031_replay_is_separate_and_monotonic():
     assert not run_manifest["predictive_superiority_claimed"]
     assert len(replay) == 3
     assert all(item["delta"] >= 0 for item in replay)
+
+
+def test_fusion_is_monotonic_when_a_correlated_source_adds_a_dimension():
+    """Adding adverse evidence must never lower the fused score.
+
+    A global evidence cap used to drop the weaker dimension of a shared source,
+    which reduced the escalation count and lowered the aggregate. The cap is now
+    scoped per dimension, so this stays monotonic.
+    """
+    base = fuse_verified_contributions(
+        [
+            RiskContribution("liquidity", 55, "ev-1", evidence_group="g1"),
+            RiskContribution("solvency", 60, "ev-2", evidence_group="g2"),
+        ],
+        0.9,
+        0.9,
+    )
+    augmented = fuse_verified_contributions(
+        [
+            RiskContribution("liquidity", 55, "ev-1", evidence_group="g1"),
+            RiskContribution("solvency", 60, "ev-2", evidence_group="g2"),
+            RiskContribution("solvency", 60, "ev-3", evidence_group="g1"),
+        ],
+        0.9,
+        0.9,
+    )
+    assert augmented.score >= base.score
