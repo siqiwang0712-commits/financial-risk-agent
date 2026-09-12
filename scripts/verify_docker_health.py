@@ -17,6 +17,10 @@ while time.monotonic() < deadline:
             raise RuntimeError(f"unexpected readiness status: {payload!r}")
         if payload.get("repository") != "PostgresEnterpriseRepository":
             raise RuntimeError(f"unexpected runtime repository: {payload!r}")
+        with urlopen("http://127.0.0.1:3000/api/v1/public-pilot", timeout=5) as response:
+            frontend_payload = json.load(response)
+        if frontend_payload.get("runtime") != "v0.3.2":
+            raise RuntimeError(f"frontend API proxy failed: {frontend_payload!r}")
         print("production compose API is ready with PostgresEnterpriseRepository")
         break
     except (OSError, URLError, ValueError, RuntimeError) as exc:

@@ -41,7 +41,7 @@ def deterministic_verifier(
     for item in judgements:
         for path_id in item.evidence_path_ids:
             path = evidence_paths.get(path_id)
-            if path is None or path.get("evidence_path_status") not in {"VERIFIED", "LOCATED"}:
+            if path is None or path.get("evidence_path_status") != "VERIFIED":
                 citation_errors.append(path_id)
     blocking = [item for item in challenges if item.severity == "blocking"]
     return {
@@ -60,7 +60,7 @@ def three_role_review(
     valid = {
         key
         for key, value in evidence_paths.items()
-        if value.get("evidence_path_status") in {"VERIFIED", "LOCATED"}
+        if value.get("evidence_path_status") == "VERIFIED"
     }
     challenges = critic(judgements, valid, applicability or {})
     verification = deterministic_verifier(judgements, challenges, evidence_paths)

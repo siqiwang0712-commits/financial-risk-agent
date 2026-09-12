@@ -23,3 +23,13 @@ def test_end_to_end_synthetic():
     assert 0<=a.overall_score<=100 and 0<a.confidence<=1
     assert a.triggered_rules and a.contradictions
     assert "not bankruptcy probabilities" in render_text_report(a)
+
+
+def test_narrative_boolean_inherits_verified_source():
+    assessment=FinRiskPipeline(ROOT).assess(
+        "Issuer",2025,{"current_assets":10,"current_liabilities":5},
+        pages={7:"Management identified a material weakness."},document="10-K",
+    )
+    signal=next(item for item in assessment.triggered_rules if item.rule_id=="ACC_005")
+    assert signal.source_refs
+    assert all(item.verification_status=="verified" for item in signal.source_refs)

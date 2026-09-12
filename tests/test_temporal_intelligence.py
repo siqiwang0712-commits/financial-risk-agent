@@ -142,12 +142,19 @@ def test_three_role_review_rejects_unsupported_and_population_mismatch():
 
 
 def test_immutable_decision_bundle_and_agent_integration():
-    bundle = build_decision_bundle("org", "entity", {"10-K": "abc"}, {"cash": 1}, {"decision": "REVIEW"}, {"score": 50}, [], {"metrics": {}}, [], {"rules": "v1", "calibration": "none"}, "REVIEW")
+    source = {"metrics": {"cash": 1}}
+    bundle = build_decision_bundle("org", "entity", {"10-K": "abc"}, {"cash": 1}, {"decision": "REVIEW"}, {"score": 50}, [], source, [], {"rules": "v1", "calibration": "none"}, "REVIEW")
+    source["metrics"]["cash"] = 999
+    assert bundle.calculations["metrics"]["cash"] == 1
     assert verify_decision_bundle(bundle)
     altered = bundle.__class__(**{**bundle.to_dict(), "final_decision": "PASS"})
     assert not verify_decision_bundle(altered)
     state = FinancialRiskAgent(ROOT).run("Temporal Co", 2025, {"current_assets": 80, "current_liabilities": 100, "cash": 5})
     assert state.decision_bundle["bundle_hash"]
+    assert state.decision == state.decision_trace["decision"]
+    assert state.decision == state.assessment["final_decision"]
+    assert state.decision == state.analysis_snapshot["frozen_output"]["final_decision"]
+    assert state.decision == state.decision_bundle["final_decision"]
     assert state.role_review["verifier"]["status"] in {"VERIFIED", "REJECTED"}
 
 
@@ -161,7 +168,7 @@ def test_full_case_mitigation_resolution_and_reopen_loop():
         org.id,
         entity.id,
         {"document_hash": "abc"},
-        {"agent": {"decision_trace": {"paths": [{"evidence_path_status": "VERIFIED", "source_evidence": [{"source": "SEC"}]}]}}},
+        {"agent": {"decision_trace": {"paths": [{"risk_domain": "liquidity", "evidence_path_status": "VERIFIED", "source_evidence": [{"source": "SEC"}]}]}}},
         {"10-K": "abc"},
         {"fusion": "v2"},
     )
@@ -178,6 +185,28 @@ def test_full_case_mitigation_resolution_and_reopen_loop():
     assert resolved.resolution_evidence == ["evidence-1"]
     reopened = service.reopen(reviewer, case.id, "new filing breached limit")
     assert reopened.status is RiskCaseStatus.OPEN and reopened.monitoring_state == "reopened"
+
+
+def test_final_state_proof_isolated_to_risk_case_domain():
+    service = EnterpriseRiskService()
+    org = service.create_organization("Org", "admin")
+    analyst = Principal("analyst", org.id, Role.ANALYST)
+    reviewer = Principal("reviewer", org.id, Role.REVIEWER)
+    entity = service.create_entity(analyst, "Issuer")
+    snapshot = create_snapshot(
+        org.id, entity.id, {},
+        {"agent": {"decision_trace": {"paths": [{
+            "risk_domain": "accounting", "evidence_path_status": "VERIFIED",
+            "source_evidence": [{"source": "SEC"}],
+        }]}}}, {}, {},
+    )
+    service.save_snapshot(analyst, snapshot)
+    case = RiskCase(new_id("case"), org.id, entity.id, RiskDomain.LIQUIDITY, "high", "stable", .8, .8, snapshot_id=snapshot.id)
+    service.create_case(analyst, case)
+    service.transition(reviewer, case.id, RiskCaseStatus.OPEN)
+    service.transition(reviewer, case.id, RiskCaseStatus.UNDER_REVIEW)
+    with pytest.raises(ValueError, match="verified server-side evidence path"):
+        service.transition(reviewer, case.id, RiskCaseStatus.ACCEPTED)
 
 
 def test_champion_challenger_system_gate():

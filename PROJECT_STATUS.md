@@ -17,6 +17,10 @@ The final v0.3.2 integrity pass uses the same strict aggregate/component debt se
 FSDS and CompanyFacts ingestion, groups standalone FCF by issuer fiscal year, and enforces
 tenant plus entity scope from server-generated analysis snapshots through RiskCase
 creation. Missing debt components remain unavailable rather than being coerced to zero.
+Canonical Ohlson dummy coefficients and Beneish leverage inputs are regression-tested;
+the available Piotroski implementation is explicitly a limited style proxy rather than a
+claim of exact canonical fidelity. Evidence states are fail-closed: located or partial
+material inputs cannot satisfy a verified proof gate.
 
 ## Three-layer Agent refactor
 
@@ -66,7 +70,7 @@ Status date: 2026-09-11. This remains a research prototype. Predictive superiori
 - Enterprise REST endpoints and PostgreSQL migration for organizations, entities, policies, cases, documents, jobs, model registry, alerts and audit events.
 
 - Existing deterministic metrics, four traditional models, 68-rule engine, eight dimensions, evidence graph, confidence decomposition, FastAPI, Next.js and PDF/text reporting remain intact.
-- SEC Company Facts XBRL normalization for US GAAP/IFRS aliases with fiscal year, unit, taxonomy, concept, accession, filed date, period, restatement and source URL provenance.
+- SEC Company Facts XBRL normalization with US GAAP as the primary mapped taxonomy and limited mapped IFRS concepts; fiscal year, unit, taxonomy, concept, accession, filed date, period, restatement and source URL provenance are retained.
 - Cross-source reconciliation with tolerance, explicit match/conflict/single-source states and XBRL authority—never silent averaging.
 - Real OpenAI-compatible narrative provider with strict JSON Schema plus Pydantic validation, bounded retry, prompt version, injectable offline transport, token/cost/latency/status JSONL logging and environment selection. The LLM cannot compute financial outputs or scores.
 - Multi-dimensional narrative–numeric consistency checks for liquidity, solvency, profitability, cash flow, earnings quality and going concern, with traceable metric/value conflicts.

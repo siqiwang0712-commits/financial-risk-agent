@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
-from ..metrics import calculate_metrics
+from ..metrics import calculate_metrics, resolve_total_debt
 
 
 @dataclass(frozen=True)
@@ -21,6 +21,9 @@ class Scenario:
 
 def apply_scenario(values: dict[str, float], scenario: Scenario) -> dict[str, float]:
     stressed = dict(values)
+    debt, debt_parents = resolve_total_debt(values)
+    if debt is not None and debt_parents != ("total_debt",):
+        stressed["total_debt"] = debt
     if "revenue" in stressed:
         stressed["revenue"] *= 1 + scenario.revenue_pct + scenario.fx_pct
     if "gross_profit" in stressed:
@@ -28,7 +31,6 @@ def apply_scenario(values: dict[str, float], scenario: Scenario) -> dict[str, fl
     if "operating_income" in stressed:
         stressed["operating_income"] += values.get("revenue", 0) * scenario.margin_pp
     if "interest_expense" in stressed:
-        debt = values.get("total_debt")
         if debt is None and (
             scenario.interest_rate_bp or scenario.refinancing_cost_pct
         ):

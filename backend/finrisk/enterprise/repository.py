@@ -46,6 +46,8 @@ class InMemoryEnterpriseRepository:
         self._events: list[AuditEvent] = []
 
     def save(self, item):
+        if isinstance(item, AnalysisSnapshot) and item.id in self.snapshots:
+            raise ValueError(f"analysis snapshot already exists: {item.id}")
         target = (
             self.organizations
             if isinstance(item, Organization)

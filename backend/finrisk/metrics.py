@@ -3,6 +3,17 @@ from __future__ import annotations
 from .domain import Metric
 
 
+def resolve_total_debt(values: dict[str, float | None]) -> tuple[float | None, tuple[str, ...]]:
+    direct = values.get("total_debt")
+    if direct is not None:
+        return direct, ("total_debt",)
+    short_term = values.get("short_term_debt")
+    long_term = values.get("long_term_debt")
+    if short_term is None or long_term is None:
+        return None, ("short_term_debt", "long_term_debt")
+    return short_term + long_term, ("short_term_debt", "long_term_debt")
+
+
 def _safe_div(a: float | None, b: float | None) -> float | None:
     return None if a is None or b is None or b == 0 else a / b
 
@@ -14,9 +25,7 @@ def _metric(name, value, formula, inputs, year):
 
 
 def calculate_metrics(v: dict[str, float | None], year: int, previous: dict[str, float | None] | None = None) -> dict[str, Metric]:
-    debt = v.get("total_debt")
-    if debt is None and v.get("short_term_debt") is not None and v.get("long_term_debt") is not None:
-        debt = v["short_term_debt"] + v["long_term_debt"]
+    debt, debt_keys = resolve_total_debt(v)
     capex = v.get("capital_expenditure")
     fcf = None if v.get("operating_cash_flow") is None or capex is None else v["operating_cash_flow"] - abs(capex)
     ebit = v.get("ebit", v.get("operating_income"))
@@ -35,12 +44,12 @@ def calculate_metrics(v: dict[str, float | None], year: int, previous: dict[str,
       "quick_ratio": (_safe_div(None if v.get("current_assets") is None or v.get("inventory") is None else v["current_assets"]-v["inventory"], v.get("current_liabilities")), "(current_assets - inventory) / current_liabilities", {"current_assets":v.get("current_assets"),"inventory":v.get("inventory"),"current_liabilities":v.get("current_liabilities")}),
       "cash_ratio": (_safe_div(v.get("cash"), v.get("current_liabilities")), "cash / current_liabilities", {"cash":v.get("cash"),"current_liabilities":v.get("current_liabilities")}),
       "working_capital": (None if v.get("current_assets") is None or v.get("current_liabilities") is None else v["current_assets"]-v["current_liabilities"], "current_assets - current_liabilities", {"current_assets":v.get("current_assets"),"current_liabilities":v.get("current_liabilities")}),
-      "debt_to_equity": (_safe_div(debt, v.get("shareholder_equity")), "total_debt / shareholder_equity", {"total_debt":debt,"shareholder_equity":v.get("shareholder_equity")}),
-      "debt_to_assets": (_safe_div(debt, v.get("total_assets")), "total_debt / total_assets", {"total_debt":debt,"total_assets":v.get("total_assets")}),
+      "debt_to_equity": (_safe_div(debt, v.get("shareholder_equity")), "total_debt / shareholder_equity", {**{key:v.get(key) for key in debt_keys},"shareholder_equity":v.get("shareholder_equity")}),
+      "debt_to_assets": (_safe_div(debt, v.get("total_assets")), "total_debt / total_assets", {**{key:v.get(key) for key in debt_keys},"total_assets":v.get("total_assets")}),
       "liabilities_to_assets": (_safe_div(v.get("total_liabilities"),v.get("total_assets")), "total_liabilities / total_assets", {"total_liabilities":v.get("total_liabilities"),"total_assets":v.get("total_assets")}),
-      "net_debt": (None if debt is None or v.get("cash") is None else debt-v["cash"], "total_debt - cash", {"total_debt":debt,"cash":v.get("cash")}),
+      "net_debt": (None if debt is None or v.get("cash") is None else debt-v["cash"], "total_debt - cash", {**{key:v.get(key) for key in debt_keys},"cash":v.get("cash")}),
       "interest_coverage": (_safe_div(ebit, v.get("interest_expense")), "EBIT / interest_expense", {"EBIT":ebit,"interest_expense":v.get("interest_expense")}),
-      "debt_to_ebitda": (_safe_div(debt,v.get("ebitda")), "total_debt / EBITDA", {"total_debt":debt,"EBITDA":v.get("ebitda")}),
+      "debt_to_ebitda": (_safe_div(debt,v.get("ebitda")), "total_debt / EBITDA", {**{key:v.get(key) for key in debt_keys},"EBITDA":v.get("ebitda")}),
       "gross_margin": (_safe_div(v.get("gross_profit"),v.get("revenue")), "gross_profit / revenue", {"gross_profit":v.get("gross_profit"),"revenue":v.get("revenue")}),
       "operating_margin": (_safe_div(v.get("operating_income"),v.get("revenue")), "operating_income / revenue", {"operating_income":v.get("operating_income"),"revenue":v.get("revenue")}),
       "net_margin": (_safe_div(v.get("net_income"),v.get("revenue")), "net_income / revenue", {"net_income":v.get("net_income"),"revenue":v.get("revenue")}),

@@ -98,9 +98,8 @@ class FinancialRiskAgent:
                     semantic_failed = True
                     state.warnings.append(f"Narrative provider unavailable: {exc}")
             state.transition(AgentStatus.CROSS_CHECKING)
-            contradictions = []
             if pages:
-                contradictions = self._call(
+                self._call(
                     state,
                     "consistency",
                     contradiction_detection={"claims": claims, "facts": facts},
@@ -161,19 +160,11 @@ class FinancialRiskAgent:
             for claim in claims:
                 evaluation = evaluate_claim_consistency(claim, facts)
                 claim_evaluations.append(evaluation.to_dict())
-                matched = [
-                    item
-                    for item in contradictions
-                    if item.management_claim == claim.claim
-                ]
-                opposing = [
-                    fact for item in matched for fact in item.conflicting_evidence
-                ]
                 tensions.append(
                     classify_tension(
                         claim,
-                        [],
-                        opposing,
+                        list(evaluation.supporting_evidence),
+                        list(evaluation.opposing_evidence),
                         "Compared with all available normalized evidence for the claim category.",
                         "complete"
                         if not evaluation.missing_evidence_types
@@ -242,20 +233,37 @@ class FinancialRiskAgent:
                     risk_domain=path["risk_domain"],
                     strength="material",
                     evidence_path_ids=(path_id,),
+                    model=(
+                        path["rule_or_model"].split(":", 1)[1]
+                        if str(path["rule_or_model"]).startswith("model:")
+                        else None
+                    ),
                 )
-                for item in state.conclusions
+                for item in candidates
                 for path_id, path in evidence_paths.items()
                 if path_id in item.claim
             ]
             state.role_review = three_role_review(
                 judgements,
                 evidence_paths,
-                {item["model"]: item["status"] for item in applicability},
+                {
+                    "Altman Z-Score" if item["model"] == "altman" else
+                    "Beneish M-Score" if item["model"] == "beneish" else
+                    "Piotroski F-Score" if item["model"] == "piotroski" else
+                    "Ohlson O-Score": item["status"]
+                    for item in applicability
+                },
             )
             state.assessment["agent_role_review"] = state.role_review
             decision_before_review = state.decision
             if state.role_review["recommended_decision"] == "REVIEW":
                 state.decision = "REVIEW"
+            state.decision_trace["initial_fusion_decision"] = fusion.decision.value
+            state.decision_trace["failure_aware_decision"] = failure_decision["decision"]
+            state.decision_trace["review_decision"] = state.decision
+            state.decision_trace["decision"] = state.decision
+            state.assessment["decision_trace"] = state.decision_trace
+            state.assessment["final_decision"] = state.decision
             state.epistemics = epistemic_summary(
                 evidence_coverage=state.evidence_coverage,
                 evidence_quality=state.confidence,

@@ -187,10 +187,18 @@ def enterprise_router(
         output = snapshot.frozen_output
         agent_output = output.get("agent", {})
         trace = agent_output.get("decision_trace", {})
+        aliases = {
+            "accounting": "accounting_anomaly",
+            "governance": "governance_audit",
+            "going_concern": "business_going_concern",
+            "solvency": "solvency_leverage",
+        }
         verified_paths = [
             path for path in trace.get("paths", [])
             if path.get("evidence_path_status") == "VERIFIED"
             and path.get("source_evidence")
+            and aliases.get(path.get("risk_domain"), path.get("risk_domain"))
+            == req.domain.value
         ]
         case = RiskCase(
             new_id("case"),

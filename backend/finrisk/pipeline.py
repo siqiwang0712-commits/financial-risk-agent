@@ -8,7 +8,7 @@ from .domain import Assessment, RuleSignal
 from .enterprise.applicability import enforce_applicability
 from .evidence import EvidenceVerifier
 from .llm import NarrativeProvider, provider_from_env
-from .metrics import calculate_metrics
+from .metrics import calculate_metrics, resolve_total_debt
 from .models import altman_z, beneish_m, ohlson_o, piotroski_f
 from .rules import RuleEngine
 from .scoring import aggregate, confidence, confidence_components
@@ -33,6 +33,13 @@ class FinRiskPipeline:
                     identity=(ev.document,ev.page,ev.source_text)
                     if identity not in seen:metric.source_refs.append(ev);seen.add(identity)
         facts={k:m.value for k,m in metrics.items()}|current
+        resolved_debt, debt_parents = resolve_total_debt(current)
+        if current.get("total_debt") is None and resolved_debt is not None:
+            facts["total_debt"] = resolved_debt
+            source_map = dict(source_map)
+            source_map["total_debt"] = [
+                evidence for parent in debt_parents for evidence in source_map.get(parent, [])
+            ]
         if previous:
             for key in ("short_term_debt",):
                 facts[f"{key}_growth"]=None if current.get(key) is None or previous.get(key) in (None,0) else (current[key]-previous[key])/abs(previous[key])
@@ -55,7 +62,16 @@ class FinRiskPipeline:
         for claim in claims:
             ev=self.verifier.verify(claim.evidence,pages); verified.append(ev)
             if ev.verified: claim.evidence=ev; accepted.append(claim)
-        facts.update({"going_concern_doubt":any(c.risk_category=="going_concern" and c.polarity=="negative" for c in accepted),"material_weakness":any("material weakness" in c.claim.lower() and c.polarity=="negative" for c in accepted),"refinancing_dependency":any("refinancing" in c.claim.lower() and c.polarity=="negative" for c in accepted)})
+        narrative_signals = {
+            "going_concern_doubt": [c for c in accepted if c.risk_category=="going_concern" and c.polarity=="negative"],
+            "material_weakness": [c for c in accepted if "material weakness" in c.claim.lower() and c.polarity=="negative"],
+            "refinancing_dependency": [c for c in accepted if "refinancing" in c.claim.lower() and c.polarity=="negative"],
+        }
+        facts.update({key: bool(items) for key, items in narrative_signals.items()})
+        source_map = dict(source_map)
+        for key, items in narrative_signals.items():
+            if items:
+                source_map[key] = [item.evidence for item in items]
         signals=self.rules.evaluate(facts)
         ops={"<":lambda a,b:a<b,"<=":lambda a,b:a<=b,">":lambda a,b:a>b,">=":lambda a,b:a>=b}
         for mapping in self.model_scoring["mappings"]:

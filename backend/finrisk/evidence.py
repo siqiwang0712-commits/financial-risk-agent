@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import re
 from dataclasses import replace
 
 from .domain import Evidence
@@ -11,13 +10,9 @@ class EvidenceVerifier:
         source = " ".join(evidence.source_text.split())
         page = " ".join(page_texts.get(evidence.page, "").split())
         exact = bool(source) and source.casefold() in page.casefold()
-        if not exact and source:
-            tokens = set(re.findall(r"\w+", source.casefold()))
-            hay = set(re.findall(r"\w+", page.casefold()))
-            exact = len(tokens) >= 5 and len(tokens & hay) / len(tokens) >= 0.9
         return replace(
             evidence,
             confidence=evidence.confidence if exact else min(evidence.confidence, 0.25),
             verified=exact,
-            verification_status="verified" if exact else "rejected",
+            verification_status="verified" if exact else "unverified",
         )

@@ -4,6 +4,10 @@
 
 ## [0.3.2] - 2026-09-11
 
+- Corrected canonical Ohlson and Beneish formula semantics; explicitly marked the available Piotroski implementation as a limited proxy.
+- Hardened verified-evidence state transitions, complete material proof paths, final-decision synchronization, immutable snapshots/bundles, and domain-scoped RiskCase proof gates.
+- Added runtime frontend-to-API proxy verification and configurable Compose LLM provider wiring with CI pinned to mock execution.
+
 ### Reproducibility and runtime integrity
 
 - Added read-only E1/E2/E3 frozen replay and dynamic Git clean/dirty provenance for future experiments; frozen v0.3.1 artifacts remain byte-for-byte unchanged.

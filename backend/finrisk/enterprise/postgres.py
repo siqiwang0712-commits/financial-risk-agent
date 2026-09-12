@@ -66,6 +66,9 @@ class PostgresEnterpriseRepository:
             raise TypeError(f"unsupported repository item: {type(item).__name__}")
         with self.connection.cursor() as cursor:
             cursor.execute(sql, values)
+            if isinstance(item, AnalysisSnapshot) and getattr(cursor, "rowcount", 1) == 0:
+                self.connection.rollback()
+                raise ValueError(f"analysis snapshot already exists: {item.id}")
         self.connection.commit()
         return item
 

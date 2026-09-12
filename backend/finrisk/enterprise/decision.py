@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+from copy import deepcopy
 from typing import Any
 
 from .domain import AnalysisSnapshot, new_id
@@ -22,8 +23,8 @@ def build_decision_trace(
         for reason_code in dimension.get("key_drivers", []):
             signal = rules.get(reason_code, {})
             evidence = signal.get("source_refs", [])
-            verified = any(
-                item.get("verification_status") in {"verified", "located"}
+            verified = bool(evidence) and all(
+                item.get("verification_status", "").casefold() == "verified"
                 for item in evidence
             )
             paths.append(
@@ -109,6 +110,10 @@ def create_snapshot(
     document_versions: dict[str, str],
     component_versions: dict[str, str],
 ) -> AnalysisSnapshot:
+    frozen_input = deepcopy(frozen_input)
+    frozen_output = deepcopy(frozen_output)
+    document_versions = deepcopy(document_versions)
+    component_versions = deepcopy(component_versions)
     return AnalysisSnapshot(
         new_id("snapshot"),
         organization_id,

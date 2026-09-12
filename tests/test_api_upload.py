@@ -177,6 +177,10 @@ def test_conflicting_candidates_are_not_silently_selected():
     assert response.status_code == 200
     issues = response.json()["extraction"]["review_issues"]
     assert any(x["line_item"] == "cash" for x in issues)
+    assert not any(
+        node["type"] == "financial_value" and node["label"] == "cash"
+        for node in response.json()["evidence_graph"]["nodes"]
+    )
 
 
 def test_pdf_upload_preserves_prior_year_for_trends():
@@ -224,6 +228,8 @@ def test_agent_analysis_persists_tenant_snapshot_for_risk_case():
     snapshot = analysis.json()["analysis_snapshot"]
     assert snapshot["organization_id"]
     assert snapshot["entity_id"] == entity["id"]
+    assert analysis.json()["decision_bundle"]["organization_id"] == snapshot["organization_id"]
+    assert analysis.json()["decision_bundle"]["entity_id"] == entity["id"]
     created = client.post(
         "/api/v1/enterprise/risk-cases",
         headers=headers,
@@ -261,3 +267,13 @@ def test_risk_case_rejects_snapshot_from_other_entity_in_same_tenant():
         },
     )
     assert response.status_code == 422
+
+
+def test_assessment_rejects_nonfinite_and_boolean_numeric_inputs():
+    client, headers = authenticated_client()
+    for value in ("NaN", "Infinity", "-Infinity", True):
+        response = client.post(
+            "/api/v1/agent/assess", headers=headers,
+            json={"company": "Invalid", "fiscal_year": 2025, "current": {"cash": value}},
+        )
+        assert response.status_code == 422

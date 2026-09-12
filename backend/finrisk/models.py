@@ -25,19 +25,21 @@ def altman_z(v: dict, entity_type="public_manufacturer") -> ModelResult:
 
 
 def beneish_m(c: dict, p: dict) -> ModelResult:
-    required=["accounts_receivable","revenue","gross_profit","current_assets","ppe","total_assets","depreciation","sga","total_debt","net_income","operating_cash_flow"]
+    required=["accounts_receivable","revenue","gross_profit","current_assets","current_liabilities","ppe","total_assets","depreciation","sga","long_term_debt","net_income","operating_cash_flow"]
     miss=sorted(set(_missing(c,required)+_missing(p,required)))
     if miss:return ModelResult("Beneish M-Score",None,"Insufficient data","Screening signal, not proof of manipulation",{},"-4.84+0.920DSRI+0.528GMI+0.404AQI+0.892SGI+0.115DEPI-0.172SGAI+4.679TATA-0.327LVGI",miss)
     invalid=sorted(set(_invalid(c,required,("revenue","total_assets"))+_invalid(p,required,("revenue","total_assets"))))
     if invalid:return ModelResult("Beneish M-Score",None,"Invalid input domain","Screening signal, not proof of manipulation",{},"Beneish 8-variable formula",invalid)
-    safe=lambda a,b: a/b if b else None
+    safe=lambda a,b: None if a is None or b in (None, 0) else a/b
+    prior_depreciation_rate=safe(p["depreciation"],p["depreciation"]+p["ppe"])
+    current_depreciation_rate=safe(c["depreciation"],c["depreciation"]+c["ppe"])
     vals={
       "DSRI":safe(c["accounts_receivable"]/c["revenue"],p["accounts_receivable"]/p["revenue"]),
       "GMI":safe((p["gross_profit"]/p["revenue"]),(c["gross_profit"]/c["revenue"])),
       "AQI":safe(1-(c["current_assets"]+c["ppe"])/c["total_assets"],1-(p["current_assets"]+p["ppe"])/p["total_assets"]),
-      "SGI":safe(c["revenue"],p["revenue"]), "DEPI":safe(p["depreciation"]/(p["depreciation"]+p["ppe"]),c["depreciation"]/(c["depreciation"]+c["ppe"])),
+      "SGI":safe(c["revenue"],p["revenue"]), "DEPI":safe(prior_depreciation_rate,current_depreciation_rate),
       "SGAI":safe(c["sga"]/c["revenue"],p["sga"]/p["revenue"]), "TATA":(c["net_income"]-c["operating_cash_flow"])/c["total_assets"],
-      "LVGI":safe(c["total_debt"]/c["total_assets"],p["total_debt"]/p["total_assets"])}
+      "LVGI":safe((c["current_liabilities"]+c["long_term_debt"])/c["total_assets"],(p["current_liabilities"]+p["long_term_debt"])/p["total_assets"])}
     if any(x is None for x in vals.values()):return ModelResult("Beneish M-Score",None,"Invalid denominator","Screening signal, not proof of manipulation",vals,"Beneish 8-variable formula",["non-zero denominators"])
     m=-4.84+.920*vals["DSRI"]+.528*vals["GMI"]+.404*vals["AQI"]+.892*vals["SGI"]+.115*vals["DEPI"]-.172*vals["SGAI"]+4.679*vals["TATA"]-.327*vals["LVGI"]
     return ModelResult("Beneish M-Score",round(m,4),"Elevated manipulation risk signal" if m>-1.78 else "No elevated signal","Screening signal, not proof of manipulation",vals,"Beneish 8-variable formula")
@@ -46,16 +48,16 @@ def beneish_m(c: dict, p: dict) -> ModelResult:
 def piotroski_f(c: dict,p: dict) -> ModelResult:
     keys=["net_income","operating_cash_flow","total_assets","long_term_debt","current_assets","current_liabilities","shares_outstanding","gross_profit","revenue"]
     miss=sorted(set(_missing(c,keys)+_missing(p,keys)))
-    if miss:return ModelResult("Piotroski F-Score",None,"Insufficient data","Originally designed for value stocks",{},"Nine binary signals (0-9)",miss)
+    if miss:return ModelResult("Piotroski F-Score",None,"Insufficient data","LIMITED: Piotroski-style proxy; beginning/average asset denominators unavailable",{},"Nine proxy binary signals (0-9)",miss)
     invalid=sorted(set(_invalid(c,keys,("total_assets","current_liabilities","revenue"))+_invalid(p,keys,("total_assets","current_liabilities","revenue"))))
-    if invalid:return ModelResult("Piotroski F-Score",None,"Invalid input domain","Originally designed for value stocks",{},"Nine binary signals (0-9)",invalid)
+    if invalid:return ModelResult("Piotroski F-Score",None,"Invalid input domain","LIMITED: Piotroski-style proxy; beginning/average asset denominators unavailable",{},"Nine proxy binary signals (0-9)",invalid)
     roa=lambda x:x["net_income"]/x["total_assets"]
     cr=lambda x:x["current_assets"]/x["current_liabilities"]
     gm=lambda x:x["gross_profit"]/x["revenue"]
     turn=lambda x:x["revenue"]/x["total_assets"]
     signals=[roa(c)>0,c["operating_cash_flow"]>0,roa(c)>roa(p),c["operating_cash_flow"]>c["net_income"],c["long_term_debt"]/c["total_assets"]<p["long_term_debt"]/p["total_assets"],cr(c)>cr(p),c["shares_outstanding"]<=p["shares_outstanding"],gm(c)>gm(p),turn(c)>turn(p)]
     score=sum(signals)
-    return ModelResult("Piotroski F-Score",score,"Strong" if score>=7 else "Weak" if score<=3 else "Mixed","Originally designed for value stocks",{f"signal_{i+1}":int(x) for i,x in enumerate(signals)},"Sum of nine binary signals (0-9)")
+    return ModelResult("Piotroski F-Score",score,"Strong proxy signal" if score>=7 else "Weak proxy signal" if score<=3 else "Mixed proxy signal","LIMITED: Piotroski-style proxy; end-of-period assets replace unavailable beginning/average denominators",{f"signal_{i+1}":int(x) for i,x in enumerate(signals)},"Sum of nine Piotroski-style proxy signals (0-9)")
 
 
 def ohlson_o(v: dict) -> ModelResult:
@@ -65,6 +67,8 @@ def ohlson_o(v: dict) -> ModelResult:
     invalid=_invalid(v,keys,("total_assets","total_liabilities","current_assets","gnp_price_index"))
     if invalid:return ModelResult("Ohlson O-Score",None,"Invalid input domain","Industrial firms; CPI/GNP index requires consistent base-year units",v,"Ohlson (1980) nine-factor logit",invalid)
     size=math.log(v["total_assets"]/v["gnp_price_index"])
-    o=-1.32-.407*size+6.03*v["total_liabilities"]/v["total_assets"]-1.43*v["working_capital"]/v["total_assets"]+.0757*v["current_liabilities"]/v["current_assets"]-2.37*v["net_income"]/v["total_assets"]-1.83*v["funds_from_operations"]/v["total_liabilities"]+.285*(1 if v["total_liabilities"]>v["total_assets"] else 0)-1.72*(1 if v["net_income"]<0 and v["prior_net_income"]<0 else 0)-.521*(v["net_income"]-v["prior_net_income"])/(abs(v["net_income"])+abs(v["prior_net_income"]))
+    denominator=abs(v["net_income"])+abs(v["prior_net_income"])
+    chin=0.0 if denominator == 0 else (v["net_income"]-v["prior_net_income"])/denominator
+    o=-1.32-.407*size+6.03*v["total_liabilities"]/v["total_assets"]-1.43*v["working_capital"]/v["total_assets"]+.0757*v["current_liabilities"]/v["current_assets"]-2.37*v["net_income"]/v["total_assets"]-1.83*v["funds_from_operations"]/v["total_liabilities"]-1.72*(1 if v["total_liabilities"]>v["total_assets"] else 0)+.285*(1 if v["net_income"]<0 and v["prior_net_income"]<0 else 0)-.521*chin
     probability=1/(1+math.exp(-o))
     return ModelResult("Ohlson O-Score",round(o,4),f"Model-implied distress probability {probability:.1%}","Industrial firms; not the FinRisk overall score",v,"Ohlson (1980) nine-factor logit",derived_outputs={"probability":round(probability,6)})

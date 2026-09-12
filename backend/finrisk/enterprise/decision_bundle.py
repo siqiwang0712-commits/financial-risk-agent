@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from copy import deepcopy
 from dataclasses import asdict, dataclass
 from datetime import UTC, datetime
 from typing import Any
@@ -49,6 +50,18 @@ def build_decision_bundle(
     epistemics: dict[str, Any] | None = None,
     component_telemetry: list[dict[str, Any]] | None = None,
 ) -> DecisionBundle:
+    document_hashes = deepcopy(document_hashes)
+    frozen_input = deepcopy(frozen_input)
+    frozen_output = deepcopy(frozen_output)
+    risk_state = deepcopy(risk_state)
+    risk_delta = deepcopy(risk_delta)
+    evidence_paths = deepcopy(evidence_paths)
+    calculations = deepcopy(calculations)
+    agent_trace = deepcopy(agent_trace)
+    component_versions = deepcopy(component_versions)
+    human_review = deepcopy(human_review)
+    epistemics = deepcopy(epistemics)
+    component_telemetry = deepcopy(component_telemetry)
     created_at = datetime.now(UTC).isoformat()
     input_hash, output_hash = canonical_hash(frozen_input), canonical_hash(frozen_output)
     content = {

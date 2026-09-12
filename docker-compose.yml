@@ -15,7 +15,14 @@ services:
     build: {context: ., dockerfile: backend/Dockerfile}
     ports: ["8000:8000"]
     environment:
-      FINRISK_LLM_PROVIDER: mock
+      FINRISK_LLM_PROVIDER: ${FINRISK_LLM_PROVIDER:-mock}
+      FINRISK_LLM_MODEL: ${FINRISK_LLM_MODEL:-gpt-4.1-mini}
+      FINRISK_LLM_ENDPOINT: ${FINRISK_LLM_ENDPOINT:-https://api.openai.com/v1/chat/completions}
+      FINRISK_LLM_MAX_RETRIES: ${FINRISK_LLM_MAX_RETRIES:-2}
+      FINRISK_LLM_MAX_TOKENS: ${FINRISK_LLM_MAX_TOKENS:-1200}
+      FINRISK_INPUT_COST_PER_MILLION: ${FINRISK_INPUT_COST_PER_MILLION:-0}
+      FINRISK_OUTPUT_COST_PER_MILLION: ${FINRISK_OUTPUT_COST_PER_MILLION:-0}
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
       DATABASE_URL: postgresql://finrisk:${POSTGRES_PASSWORD:-local-development-only}@postgres:5432/finrisk
       FINRISK_ENV: development
       FINRISK_AUTO_MIGRATE: "1"

@@ -25,9 +25,9 @@ class ApplicabilityDecision:
 
 MODEL_REQUIREMENTS = {
     "altman": {"working_capital", "total_assets", "retained_earnings", "ebit", "market_value_equity", "total_liabilities", "revenue"},
-    "beneish": {"accounts_receivable", "revenue", "gross_profit", "total_assets", "depreciation", "ppe", "sga"},
-    "piotroski": {"net_income", "operating_cash_flow", "total_assets", "current_assets", "current_liabilities", "shares_outstanding"},
-    "ohlson": {"total_assets", "total_liabilities", "working_capital", "current_liabilities", "current_assets", "net_income", "funds_from_operations"},
+    "beneish": {"accounts_receivable", "revenue", "gross_profit", "current_assets", "current_liabilities", "ppe", "total_assets", "depreciation", "sga", "long_term_debt", "net_income", "operating_cash_flow"},
+    "piotroski": {"net_income", "operating_cash_flow", "total_assets", "long_term_debt", "current_assets", "current_liabilities", "shares_outstanding", "gross_profit", "revenue"},
+    "ohlson": {"total_assets", "total_liabilities", "working_capital", "current_liabilities", "current_assets", "net_income", "funds_from_operations", "prior_net_income", "gnp_price_index"},
 }
 FINANCIAL_INDUSTRIES = {"bank", "banking", "insurance", "financial_institution", "broker_dealer"}
 
@@ -43,6 +43,8 @@ def route_model(model: str, industry: str, facts: dict[str, object]) -> Applicab
         return ApplicabilityDecision(key, ApplicabilityStatus.NOT_APPLICABLE, ("regulated financial institutions have structurally different balance sheets",), missing)
     if key == "altman" and normalized_industry not in {"manufacturing", "industrial", "public_manufacturer"}:
         reasons.append("original public-manufacturer population does not match the supplied industry")
+    if key == "piotroski":
+        reasons.append("Piotroski-style proxy uses end-of-period asset denominators")
     if missing:
         reasons.append(f"missing {len(missing)} required component(s)")
     status = ApplicabilityStatus.APPLICABLE if not reasons else ApplicabilityStatus.LIMITED

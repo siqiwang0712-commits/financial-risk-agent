@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from datetime import date
+
 from .auth import authorize
 from .domain import (
     AuditEvent,
@@ -115,10 +117,18 @@ class EnterpriseRiskService:
                 raise ValueError("a server-side analysis snapshot is required")
             snapshot = self.repository.get_snapshot(case.organization_id, case.snapshot_id)
             trace = snapshot.frozen_output.get("agent", {}).get("decision_trace", {})
+            aliases = {
+                "accounting": "accounting_anomaly",
+                "governance": "governance_audit",
+                "going_concern": "business_going_concern",
+                "solvency": "solvency_leverage",
+            }
             verified = [
                 path for path in trace.get("paths", [])
                 if path.get("evidence_path_status") == "VERIFIED"
                 and path.get("source_evidence")
+                and aliases.get(path.get("risk_domain"), path.get("risk_domain"))
+                == case.domain.value
             ]
             if not verified:
                 raise ValueError("a verified server-side evidence path is required")
@@ -137,6 +147,10 @@ class EnterpriseRiskService:
         return saved
 
     def add_action(self, principal: Principal, case_id: str, description: str, owner_id: str, due_date: str) -> RiskCase:
+        try:
+            date.fromisoformat(due_date)
+        except ValueError as exc:
+            raise ValueError("due_date must be an ISO calendar date") from exc
         case = self.repository.get_case(principal.organization_id, case_id)
         authorize(principal, "write", case.organization_id)
         payload = add_mitigation_action(case, principal.user_id, description, owner_id, due_date)

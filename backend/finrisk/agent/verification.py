@@ -8,7 +8,10 @@ def verify_conclusions(
 ) -> tuple[list[MaterialConclusion], list[str]]:
     accepted, warnings = [], []
     for conclusion in conclusions:
-        if conclusion.evidence:
+        if conclusion.evidence and all(
+            item.get("verification_status") == "verified"
+            for item in conclusion.evidence
+        ):
             accepted.append(conclusion)
         else:
             warnings.append(f"Rejected unsupported conclusion: {conclusion.claim}")

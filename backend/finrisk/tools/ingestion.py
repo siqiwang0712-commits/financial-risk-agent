@@ -20,18 +20,6 @@ def ingest_pdf(path: Path, document: str, fiscal_year: int) -> dict:
     current, previous, sources, candidates, review_issues = {}, {}, {}, {}, []
     for item in extracted:
         candidates.setdefault((item.fiscal_year, item.line_item), []).append(item)
-        if item.fiscal_year == fiscal_year:
-            sources.setdefault(item.line_item, []).append(
-                Evidence(
-                    item.document,
-                    item.page,
-                    item.source_text,
-                    item.fiscal_year,
-                    item.confidence,
-                    False,
-                    "located",
-                )
-            )
     prior_year = max(
         (year for year, _ in candidates if year < fiscal_year), default=None
     )
@@ -60,7 +48,14 @@ def ingest_pdf(path: Path, document: str, fiscal_year: int) -> dict:
         }
         target = current if candidate_year == fiscal_year else previous
         if len(usable) == 1:
-            target[key] = usable.pop()
+            selected_value = usable.pop()
+            target[key] = selected_value
+            if candidate_year == fiscal_year:
+                selected = next(item for item in ranked if item.value == selected_value)
+                sources[key] = [Evidence(
+                    selected.document, selected.page, selected.source_text,
+                    selected.fiscal_year, selected.confidence, False, "located",
+                )]
         elif len(usable) > 1:
             review_issues.append(
                 {

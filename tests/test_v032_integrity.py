@@ -362,6 +362,17 @@ def test_backend_container_installs_postgres_runtime_and_migrations():
     assert "requirements.lock" in dockerfile
 
 
+def test_compose_llm_and_frontend_proxy_are_runtime_configurable():
+    compose = (ROOT / "docker-compose.yml").read_text(encoding="utf-8")
+    workflow = (ROOT / ".github/workflows/ci.yml").read_text(encoding="utf-8")
+    route = (ROOT / "frontend/app/api/v1/[...path]/route.ts").read_text(encoding="utf-8")
+    assert "FINRISK_LLM_PROVIDER: ${FINRISK_LLM_PROVIDER:-mock}" in compose
+    assert "FINRISK_LLM_MAX_TOKENS" in compose and "OPENAI_API_KEY" in compose
+    assert "FINRISK_LLM_PROVIDER: mock" in workflow
+    assert "127.0.0.1:3000/api/v1/public-pilot" in (ROOT / "scripts/verify_docker_health.py").read_text(encoding="utf-8")
+    assert "process.env.FINRISK_API_UPSTREAM" in route
+
+
 def test_production_compose_has_explicit_safe_migration_contract():
     production = (ROOT / "docker-compose.prod.yml").read_text(encoding="utf-8")
     assert "POSTGRES_PASSWORD:?POSTGRES_PASSWORD is required" in production

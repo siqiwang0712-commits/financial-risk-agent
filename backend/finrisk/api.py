@@ -22,7 +22,7 @@ try:
     )
     from fastapi.middleware.cors import CORSMiddleware
     from fastapi.responses import JSONResponse
-    from pydantic import BaseModel, Field
+    from pydantic import BaseModel, Field, field_validator
     from starlette.concurrency import run_in_threadpool
 except ImportError:
     FastAPI = None
@@ -30,6 +30,7 @@ except ImportError:
 from .agent import FinancialRiskAgent
 from .enterprise.api import enterprise_router
 from .enterprise.decision import create_snapshot
+from .enterprise.decision_bundle import build_decision_bundle
 from .enterprise.domain import Principal
 from .enterprise.observability import bind_correlation_id, structured_event
 from .enterprise.postgres import PostgresEnterpriseRepository
@@ -123,12 +124,30 @@ if FastAPI:
     class AssessmentRequest(BaseModel):
         company: str = Field(min_length=1)
         fiscal_year: int
-        current: dict[str, float | bool | str | None]
-        previous: dict[str, float | bool | str | None] | None = None
+        current: dict[str, float | bool | None]
+        previous: dict[str, float | bool | None] | None = None
         pages: dict[int, str] = Field(default_factory=dict)
         document: str = "Annual Report"
         entity_type: str = "industrial"
         entity_id: str | None = None
+
+        @field_validator("current", "previous")
+        @classmethod
+        def finite_financial_inputs(cls, values):
+            import math
+
+            if values is None:
+                return values
+            boolean_signals = {
+                "going_concern_doubt", "material_weakness", "refinancing_dependency"
+            }
+            for name, value in values.items():
+                if isinstance(value, bool):
+                    if name not in boolean_signals:
+                        raise ValueError(f"boolean is not valid for numeric field {name}")
+                elif value is not None and not math.isfinite(value):
+                    raise ValueError(f"non-finite financial input: {name}")
+            return values
 
     app = FastAPI(
         title="FinRisk-Agent API",
@@ -215,6 +234,24 @@ if FastAPI:
         except (KeyError, PermissionError, ValueError) as exc:
             raise HTTPException(422, "analysis snapshot persistence rejected") from exc
         state.analysis_snapshot = asdict(saved)
+        prior_bundle = state.decision_bundle
+        state.decision_bundle = build_decision_bundle(
+            actor.organization_id,
+            entity_id,
+            generated["document_versions"],
+            generated["frozen_input"],
+            frozen_output,
+            prior_bundle.get("risk_state", {}),
+            list(prior_bundle.get("evidence_paths", [])),
+            prior_bundle.get("calculations", {}),
+            list(prior_bundle.get("agent_trace", [])),
+            generated["component_versions"],
+            state.decision,
+            risk_delta=prior_bundle.get("risk_delta"),
+            human_review=prior_bundle.get("human_review"),
+            epistemics=state.epistemics,
+            component_telemetry=state.component_telemetry,
+        ).to_dict()
 
     @app.get("/health/live")
     def health_live():

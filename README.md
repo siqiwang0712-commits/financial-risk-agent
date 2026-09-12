@@ -29,6 +29,11 @@ creation, records the actual Git commit and dirty state for future experiments, 
 v2-compatible label schema and standalone-period FCF methodology, wires `DATABASE_URL`
 to durable PostgreSQL repositories and credentials, derives risk cases from server-held
 snapshots, and hardens authenticated analysis endpoints and deployment defaults.
+The final correctness closeout also regression-tests canonical Ohlson and Beneish
+formula semantics, explicitly labels the available Piotroski calculation as a limited
+proxy, prevents `LOCATED` or partial evidence from satisfying material proof gates,
+synchronizes the final failure-aware decision across trace/snapshot/bundle, and verifies
+the containerized frontend-to-API route. These changes do not alter frozen benchmarks.
 
 ```bash
 python scripts/replay_frozen_experiment.py v0.3.1-E1-diagnostic

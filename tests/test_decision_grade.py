@@ -16,6 +16,7 @@ from finrisk.benchmark_protocol import (
 from finrisk.domain import Evidence
 from finrisk.enterprise.decision import (
     build_decision_trace,
+    canonical_hash,
     create_snapshot,
     replay_diff,
     replay_snapshot,
@@ -47,6 +48,7 @@ from finrisk.enterprise.observability import (
 )
 from finrisk.enterprise.security import CredentialStore, issue_api_key
 from finrisk.enterprise.service import EnterpriseRiskService
+from finrisk.evidence import EvidenceVerifier
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -83,7 +85,7 @@ def test_decision_trace_snapshot_replay_and_tenant_isolation():
                         "document": "10-K",
                         "page": 8,
                         "source_text": "Cash declined",
-                        "verification_status": "located",
+                        "verification_status": "verified",
                     }
                 ],
             }
@@ -122,12 +124,41 @@ def test_decision_trace_snapshot_replay_and_tenant_isolation():
     )
     service = EnterpriseRiskService()
     service.repository.save(snapshot)
+    with pytest.raises(ValueError, match="already exists"):
+        service.repository.save(snapshot)
     assert (
         service.repository.get_snapshot("org-a", snapshot.id).input_hash
         == snapshot.input_hash
     )
     with pytest.raises(KeyError):
         service.repository.get_snapshot("org-b", snapshot.id)
+
+
+def test_located_or_noncontiguous_evidence_never_verifies_material_path():
+    evidence = Evidence("10-K", 1, "cash declined debt increased liquidity weak", 2025)
+    page = {1: "Cash declined. Unrelated discussion. Debt increased. Much later liquidity weak."}
+    checked = EvidenceVerifier().verify(evidence, page)
+    assert checked.verification_status == "unverified" and not checked.verified
+    assessment = {
+        "dimensions": {"liquidity": {"key_drivers": ["L1"], "coverage": .5}},
+        "triggered_rules": [{"rule_id": "L1", "family": "liquidity", "source_refs": [
+            {"verification_status": "verified"}, {"verification_status": "located"}
+        ]}],
+    }
+    trace = build_decision_trace(assessment, {"decision": "FLAG"})
+    assert trace["paths"][0]["evidence_path_status"] == "UNVERIFIED"
+
+
+def test_snapshot_detaches_mutable_inputs_and_preserves_hash():
+    original_input = {"facts": {"cash": 1}}
+    original_output = {"decision": "FLAG", "items": [1]}
+    snapshot = create_snapshot("org", "entity", original_input, original_output, {}, {})
+    original_input["facts"]["cash"] = 999
+    original_output["items"].append(2)
+    assert snapshot.frozen_input["facts"]["cash"] == 1
+    assert snapshot.frozen_output["items"] == [1]
+    assert canonical_hash(snapshot.frozen_input) == snapshot.input_hash
+    assert canonical_hash(snapshot.frozen_output) == snapshot.output_hash
 
 
 def test_risk_case_rejects_same_tenant_cross_entity_snapshot():
@@ -277,7 +308,7 @@ def test_agent_emits_versioned_proof_and_snapshot():
         9,
         "Current assets 80; current liabilities 100",
         2025,
-        verification_status="located",
+        verification_status="verified",
     )
     state = FinancialRiskAgent(ROOT).run(
         "Trace Co",

@@ -47,3 +47,12 @@ both short- and long-term debt with recursively valid provenance. Standalone FCF
 groups cumulative quarters by issuer and SEC fiscal year, including non-calendar fiscal
 years. Server-generated Agent assessments are persisted as tenant/entity-scoped snapshots;
 RiskCase creation rejects a snapshot associated with another entity in the same tenant.
+
+Release-closeout regression checks correct the canonical Ohlson dummy coefficients and
+Beneish LVGI definition, and label the existing end-of-period-asset Piotroski calculation
+as a limited proxy. Located, partial, or non-contiguous evidence no longer satisfies
+verified material paths. Final failure/review overrides are synchronized across Agent
+state, trace, snapshot, DecisionBundle, and persisted case derivation. Snapshots and
+bundles detach mutable inputs before hashing. The production frontend uses a runtime API
+proxy, and CI exercises the public API through the frontend container while explicitly
+keeping paid LLM calls disabled.
