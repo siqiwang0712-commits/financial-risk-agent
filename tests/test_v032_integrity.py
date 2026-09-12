@@ -360,6 +360,7 @@ def test_backend_container_installs_postgres_runtime_and_migrations():
     assert "ENV PYTHONPATH=/app/backend" in dockerfile
     assert "COPY migrations ./migrations" in dockerfile
     assert "requirements.lock" in dockerfile
+    assert "COPY research/results/public_v1 ./research/results/public_v1" in dockerfile
 
 
 def test_compose_llm_and_frontend_proxy_are_runtime_configurable():
