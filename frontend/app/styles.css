@@ -82,6 +82,16 @@ h1 span {
   padding-bottom: 20px;
 }
 
+/* Brand block: keeps the title from squeezing the nav on narrow viewports. */
+.brand {
+  min-width: 0;
+  flex: 1 1 auto;
+}
+
+.brand h1 {
+  overflow-wrap: anywhere;
+}
+
 .appNav {
   font: 600 11px monospace;
   color: var(--muted);
@@ -154,6 +164,19 @@ h1 span {
 /* Panel system */
 .panel {
   margin-top: 24px;
+}
+
+/* Panel modifiers: keep the vertical rhythm distinct per section role. */
+.pilotPanel {
+  margin-top: 28px;
+}
+
+.intakePanel {
+  margin-top: 0;
+}
+
+.whyPanel {
+  margin-top: 0;
 }
 
 .panelHeading {
@@ -563,6 +586,11 @@ button.ghost {
 /* ================================================================
    Tabs (page.tsx)
    ================================================================ */
+
+/* Wraps the decision headline, tab bar and tab body for one analysis. */
+.analysisSection {
+  margin-top: 16px;
+}
 
 .tabBar {
   display: flex;
@@ -1262,6 +1290,12 @@ button.ghost {
   color: white;
   font: 12px monospace;
   flex-shrink: 0;
+}
+
+/* A planned step that actually executed: marked with the sage accent. */
+.planList li.ran {
+  border-left: 3px solid var(--sage);
+  padding-left: 10px;
 }
 
 .planList li.skipped .planIndex {
