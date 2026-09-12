@@ -425,7 +425,7 @@ Liquidity, leverage, debt service, profitability, cash flow, working capital and
 |---|---|---|
 | Altman Z | distress screening zone | public-manufacturer applicability checks |
 | Beneish M | manipulation-risk screening signal | never presented as fraud proof |
-| Piotroski F | nine-signal financial-strength score | original value-stock context disclosed |
+| Piotroski-style F-Score proxy | nine-signal financial-strength proxy | limited, non-canonical implementation; original value-stock context disclosed |
 | Ohlson O | O-score and separately derived logistic probability | input-domain and unit warnings |
 
 Model mappings are configured in [config/model_scoring.json](config/model_scoring.json).
@@ -458,7 +458,7 @@ npm run build
 ```
 
 The release gate covers Python 3.11 and 3.12 with a 90% minimum coverage threshold,
-Ruff, frontend semantic tests, official-registry production/full dependency audits,
+Ruff, frontend semantic tests, a CI-enforced official-registry production dependency audit (the full dependency audit is verified locally),
 TypeScript, the Next.js production build, prospective provenance validation and
 read-only E1/E2/E3 replay. PostgreSQL 17 migration/restart persistence and the
 production-overlay Docker smoke test pass locally and remain CI requirements.
@@ -494,7 +494,7 @@ These are implemented controls in a prototype, not certification claims. Review 
 
 ## Limitations
 
-- The public benchmark has only three company-year observations and single-reviewer labels.
+- The immutable v0.3.0 `public_v1` pilot contains three company-year observations and single-reviewer labels; the separate E3 numeric corpus contains 90 observations across 30 companies. Neither establishes predictive superiority.
 - No paid-provider LLM benchmark has been run; mock/offline semantics are for testing and pipeline reproduction.
 - PDF table reconstruction is conservative; complex geometry, OCR and cross-page headers need further work.
 - Live SEC Company Facts retrieval was blocked by HTTP 403 in the recorded environment, although offline ingestion tests pass.
