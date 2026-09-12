@@ -272,7 +272,7 @@ The checked-in public pilot runs five baselines on **three company-disjoint FY20
 
 ² The pilot scores this row with the expert-weighted aggregate over risk dimensions (`scoring.aggregate`). The Agent decision path uses hierarchical escalation instead, so this row does not describe the strategy the product decides with. `research/results/v0.3.1/decision_integrity_replay.json` compares both on the v0.3.1 evidence, but no experiment reports predictive metrics for hierarchical escalation against the labelled endpoint.
 
-Full Hybrid did **not** outperform Ratios Only. Its contradiction F1 was `0.667`; most bootstrap intervals span `[0, 1]`. The result supports only two claims: the evaluation pipeline executes end to end, and the current fusion design needs a larger independently labelled validation set. It does not establish superiority of any architecture.
+Full Hybrid did **not** outperform Ratios Only. In the frozen v0.3.0 `public_v1` run its contradiction F1 was `0.667`; the separate v0.3.1 integrity replay, which re-scores claim-conditioned evidence, raises it to `1.000` ([Error analysis](research/error_analysis.md)). Both figures are n=3 diagnostics with single-reviewer labels and neither is evidence of generalization. Most bootstrap intervals span `[0, 1]`. The result supports only two claims: the evaluation pipeline executes end to end, and the current fusion design needs a larger independently labelled validation set. It does not establish superiority of any architecture.
 
 Artifacts:
 
