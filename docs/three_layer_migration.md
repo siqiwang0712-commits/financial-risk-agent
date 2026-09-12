@@ -4,7 +4,9 @@ This refactor preserves the deterministic engine and adds an explicit orchestrat
 
 | Previous module | Three-layer role | Migration |
 |---|---|---|
-| `frontend/app/page.tsx` | Interface | Renders assessment, public Agent trace and evidence paths; performs no finance |
+| `frontend/app/page.tsx` | Interface | State and tab routing only; performs no finance |
+| `frontend/components/*.tsx` | Interface | Renders assessment, public Agent trace and evidence paths; performs no finance |
+| `frontend/lib/api.ts` | Interface data access | Reads through the `/api/v1` proxy and falls back to the bundled sample only when the upstream is unreachable |
 | `api.py` | Interface adapter | Validates transport inputs and invokes `FinancialRiskAgent` |
 | `pipeline.py` | Tool/service compatibility facade | Preserved for benchmarks and deterministic assessment assembly |
 | `parser.py`, `xbrl.py` | Tool layer / ingestion | Exposed as `pdf_extraction` and `xbrl_extraction` |

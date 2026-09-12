@@ -250,6 +250,8 @@ Portfolio → Entity → Risk Case → Risk Drivers → Evidence
 
 It keeps severity, trajectory, evidence coverage, decision confidence and model disagreement visually separate. Risk findings can become owned cases with reviewer status, due dates, actions, comments and an audited human override.
 
+The Workbench is a componentized Next.js application (`frontend/components/`): decision summary, decision basis with reason codes and failure states, the eight-dimension risk grid, the conclusion-to-evidence trail, decision-path provenance drill-down, the declared-plan-versus-executed agent trace, and component telemetry. When the API upstream is unreachable, the Workbench falls back to a bundled sample — a real pipeline output for the repository's synthetic fixture — and labels its origin on screen, so a review never opens on an empty shell.
+
 > The screenshot is from the local prototype. It is not evidence of a hosted production deployment.
 
 ## Real results, not marketing results
