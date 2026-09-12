@@ -1,38 +1,203 @@
-'use client';
+"use client";
 
-import {FormEvent,useEffect,useState} from 'react';
-import {displayReliability,displayScore,normalizeDecision,safeApiJson} from '../lib/presentation.mjs';
+import { useEffect, useState } from "react";
+import { AppHeader } from "../components/AppHeader";
+import { IntakePanel } from "../components/IntakePanel";
+import { PilotTable } from "../components/PilotTable";
+import { DecisionSummary } from "../components/DecisionSummary";
+import { WhyDecision } from "../components/WhyDecision";
+import { DimensionGrid } from "../components/DimensionGrid";
+import { EvidenceTrail } from "../components/EvidenceTrail";
+import { DecisionPaths } from "../components/DecisionPaths";
+import { AgentTrace } from "../components/AgentTrace";
+import { TelemetryPanel } from "../components/TelemetryPanel";
+import {
+  loadPilot,
+  loadSampleAssessment,
+  analyzeDocument,
+} from "../lib/api";
+import type {
+  AssessmentPayload,
+  Loaded,
+  PilotPayload,
+  DataOrigin,
+} from "../lib/types";
 
-type Evidence={source:string;document:string;page:number|null;quote:string;source_text?:string;confidence:number;verification_status:string};
-type Conclusion={claim:string;reason:string;tool:string;rationale:string;confidence:number;evidence:Evidence[]};
-type Trace={step_id:string;phase:string;tool:string;status:string;summary:string;error?:string};
-type ComponentTelemetry={component:string;status:string;delta_risk:number|null;delta_coverage:number;delta_disagreement:number;decision_changed:boolean;new_evidence:number;latency_ms:number;estimated_cost_usd:number};
-type DecisionPath={reason_code:string;risk_domain:string;rule_or_model:string;rule_version:string;fusion_version:string;confidence:number;coverage:number;disagreement:number;evidence_path_status:string;source_evidence:Evidence[];fusion_contribution:{method:string;dimension_score:number|null;role:string}};
-type Agent={status:string;confidence:number;evidence_coverage:number;risk_severity:string;risk_trajectory:string;decision:string;model_disagreement:number;epistemics:{evidence_quality:number;reliability:number|null;calibration_status:string;probability:null};component_telemetry:ComponentTelemetry[];decision_trace:{proof_coverage:number;verified_path_count:number;material_path_count:number;paths:DecisionPath[]};analysis_snapshot:{id:string;input_hash:string;output_hash:string;component_versions:Record<string,string>};plan:{id:string;phase:string;tool:string;purpose:string}[];trace:Trace[];conclusions:Conclusion[];reflection:string[];warnings:string[]};
-type Tension={claim:string;classification:string;confidence:number;opposing_evidence:string[]};
-type Result={company:string;overall_score:number|null;risk_level:string;confidence:number;dimensions:Record<string,{score:number|null;level:string;key_drivers:string[]}>;metrics:Record<string,{value:number|null;formula:string}>;models:{name:string;output:number|null;interpretation:string;applicability:string}[];contradictions:{category:string;management_claim:string;conflicting_evidence:string[]}[];disclosure_tensions?:Tension[];missing_information:string[];disclaimer:string;agent?:Agent;extraction?:{review_required:boolean}};
-const labels:Record<string,string>={liquidity:'Liquidity',solvency_leverage:'Solvency & Leverage',profitability:'Profitability',cash_flow:'Cash Flow',earnings_quality:'Earnings Quality',accounting:'Accounting',governance_audit:'Governance & Audit',business_going_concern:'Business / Going Concern'};
-type PilotRow={entity:string;decision:string;score:number|null;coverage:number;reliability:string;filing:string};
-const API_BASE=process.env.NEXT_PUBLIC_FINRISK_API_BASE??'';
+type TabKey =
+  | "overview"
+  | "dimensions"
+  | "evidence"
+  | "paths"
+  | "trace"
+  | "telemetry";
 
-export default function Home(){
-  const [file,setFile]=useState<File|null>(null),[company,setCompany]=useState(''),[year,setYear]=useState(new Date().getFullYear()-1),[apiKey,setApiKey]=useState(''),[pilotPortfolio,setPilotPortfolio]=useState<PilotRow[]>([]),[result,setResult]=useState<Result|null>(null),[error,setError]=useState(''),[loading,setLoading]=useState(false);
-  useEffect(()=>{fetch(`${API_BASE}/api/v1/public-pilot`).then(safeApiJson).then(data=>setPilotPortfolio((data as {rows:PilotRow[]}).rows)).catch(()=>setPilotPortfolio([]))},[]);
-  async function submit(e:FormEvent){e.preventDefault();if(!file)return;setLoading(true);setError('');const body=new FormData();body.append('company',company);body.append('fiscal_year',String(year));body.append('file',file);try{const res=await fetch(`${API_BASE}/api/v1/documents/analyze`,{method:'POST',body,headers:{'X-API-Key':apiKey}});const data=await safeApiJson(res) as Result;setResult(data)}catch(err){setError(err instanceof Error?err.message:'Analysis failed')}finally{setLoading(false)}}
-  return <main>
-    <header><div><span className="eyebrow">EVIDENCE → INTELLIGENCE → DECISION → ACTION → MONITORING</span><h1>FinRisk<span>Enterprise</span></h1></div><nav>Executive · Entity · Evidence · Risk Register · Scenario · Governance</nav><div className="status">● Prototype</div></header>
-    <section className="portfolio"><div className="sectionTitle"><div><p className="kicker">Analyst workbench</p><h2>Portfolio risk intelligence</h2></div><p>v0.3.0 frozen public pilot · current runtime v0.3.2</p></div><div className="portfolioTable"><div className="portfolioRow portfolioHead"><span>Entity</span><span>Current decision</span><span>Score</span><span>Coverage</span><span>Reliability</span><span>Open cases</span><span>Last filing</span></div>{pilotPortfolio.map(row=><div className="portfolioRow" key={row.entity}><strong>{row.entity}</strong><span><i className={`riskPill ${normalizeDecision(row.decision).toLowerCase()}`}>{normalizeDecision(row.decision)}</i></span><span>{displayScore(row.score)}</span><span>{row.coverage}</span><span className="uncalibrated">{displayReliability(row.reliability,null)}</span><span>N/A</span><span>{row.filing}</span></div>)}</div><p className="portfolioNote">Rows are loaded from the immutable v0.3.0 artifact through the API. They are not current v0.3.2 runtime decisions and are not externally validated.</p></section>
-      <section className="hero"><div><p className="kicker">Supplemental evidence intake</p><h2>Every material conclusion has a path back to evidence.</h2><p>The primary product path is SEC filing intelligence. PDF upload remains available as a supplemental narrative source; unsupported claims are rejected and inadequate coverage produces an abstention.</p><form onSubmit={submit}><input aria-label="API key" type="password" placeholder="Tenant API key" value={apiKey} onChange={e=>setApiKey(e.target.value)} required/><input aria-label="Company" placeholder="Company name" value={company} onChange={e=>setCompany(e.target.value)} required/><input aria-label="Fiscal year" type="number" value={year} onChange={e=>setYear(Number(e.target.value))} required/><label className="upload"><input type="file" accept="application/pdf" onChange={e=>setFile(e.target.files?.[0]||null)}/><b>{file?.name||'Choose annual report'}</b><small>PDF · maximum 50 MB</small></label><button disabled={!file||!apiKey||loading}>{loading?'Agent is analyzing…':'Run Agent analysis'}</button></form>{error&&<p className="error">{error}</p>}</div>{result&&<aside><span className="agentStatus">{result.agent?.status||'ASSESSMENT'}</span><div className="score">{displayScore(result.overall_score)}<small>{result.overall_score!==null?'/100':''}</small></div><b>{result.risk_level}</b><p>Evidence quality: {result.agent?.epistemics?.evidence_quality??result.confidence}</p><p>Evidence coverage: {result.agent?.evidence_coverage??'N/A'}</p><p>Reliability: {displayReliability(result.agent?.epistemics?.calibration_status??'UNCALIBRATED',result.agent?.epistemics?.reliability)}</p><em>{result.extraction?.review_required?'Extraction review required':'Verified inputs'}</em></aside>}</section>
-    {result&&<><section className="decisionStrip"><div><small>DECISION</small><b>{result.agent?.decision||'REVIEW'}</b></div><div><small>SEVERITY</small><b>{result.agent?.risk_severity||result.risk_level}</b></div><div><small>TRAJECTORY</small><b>{result.agent?.risk_trajectory||'insufficient history'}</b></div><div><small>COVERAGE</small><b>{result.agent?.evidence_coverage??'N/A'}</b></div><div><small>EVIDENCE QUALITY</small><b>{result.agent?.epistemics?.evidence_quality??result.confidence}</b></div><div><small>DISAGREEMENT</small><b>{result.agent?.model_disagreement??'N/A'}</b></div></section>
-      <section><div className="sectionTitle"><h3>Risk dashboard</h3><p>{result.company}</p></div><div className="grid">{Object.entries(result.dimensions).map(([key,d],i)=><article key={key}><div className="num">0{i+1}</div><h4>{labels[key]||key}</h4><strong>{d.score??'N/A'} {d.level}</strong><div className="bar"><i style={{width:`${d.score??0}%`}}/></div><p>{d.key_drivers.join(', ')||'Insufficient triggered evidence'}</p></article>)}</div></section>
-      {result.agent&&<section className="agentPanel"><div className="sectionTitle"><h3>Agent workflow</h3><p>Public structured trace · no hidden chain-of-thought</p></div><div className="timeline">{result.agent.trace.map((t,i)=><div className="trace" key={`${t.step_id}-${i}`}><span>{i+1}</span><div><small>{t.phase}</small><b>{t.tool}</b><p>{t.summary}{t.error&&`: ${t.error}`}</p></div><em>{t.status}</em></div>)}</div>
-      <h3>Conclusion → Reason → Tool result → Evidence</h3>{result.agent.conclusions.length?result.agent.conclusions.map((c,i)=><article className="conclusion" key={i}><div className="claim"><small>CONCLUSION</small><h4>{c.claim}</h4><p>{c.reason}</p></div><div><small>TOOL / RATIONALE</small><b>{c.tool}</b><p>{c.rationale} · confidence {c.confidence}</p></div><div><small>VERIFIED EVIDENCE</small>{c.evidence.map((ev,j)=><blockquote key={j}><b>{ev.verification_status}</b> · {ev.document}{ev.page?` · page ${ev.page}`:''}<br/>{ev.quote}</blockquote>)}</div></article>):<p className="notice">No evidence-supported material risk conclusion was admitted.</p>}
-      {[...result.agent.reflection,...result.agent.warnings].length>0&&<div className="warnings"><b>Reflection and uncertainty</b><ul>{[...result.agent.reflection,...result.agent.warnings].map((x,i)=><li key={i}>{x}</li>)}</ul></div>}</section>}
-      {result.agent?.component_telemetry&&<section><div className="sectionTitle"><h3>Component value telemetry</h3><p>Observed deltas · not a Value-of-Information estimate</p></div><div className="grid">{result.agent.component_telemetry.map(t=><article key={t.component}><h4>{t.component}</h4><strong>{t.status}</strong><p>Δrisk {t.delta_risk??'N/A'} · Δcoverage {t.delta_coverage}<br/>Δdisagreement {t.delta_disagreement} · evidence +{t.new_evidence}<br/>{t.latency_ms} ms · estimated cost ${t.estimated_cost_usd}</p></article>)}</div></section>}
-      {result.agent?.decision_trace&&<section className="traceDrill"><div className="sectionTitle"><h3>Decision trace / evidence drill-down</h3><p>{result.agent.decision_trace.verified_path_count}/{result.agent.decision_trace.material_path_count} verified paths · proof coverage {result.agent.decision_trace.proof_coverage}</p></div>{result.agent.decision_trace.paths.map((path,i)=><details key={`${path.reason_code}-${i}`}><summary><b>{path.reason_code}</b><span>{path.risk_domain} · {path.evidence_path_status}</span><em>{path.fusion_contribution.role} · {path.fusion_contribution.dimension_score??'N/A'}</em></summary><div className="pathMeta"><p>Rule/model: {path.rule_or_model}<br/>Rule version: {path.rule_version}<br/>Fusion: {path.fusion_version} / {path.fusion_contribution.method}</p><p>Confidence {path.confidence} · coverage {path.coverage} · disagreement {path.disagreement}</p></div>{path.source_evidence.length?path.source_evidence.map((ev,j)=><blockquote key={j}>{ev.document} · page {ev.page}<br/>{ev.quote||ev.source_text}</blockquote>):<p className="notice">No authoritative source span reaches this material driver. Decision must degrade or abstain.</p>}</details>)}<div className="snapshot"><small>IMMUTABLE ANALYSIS SNAPSHOT</small><b>{result.agent.analysis_snapshot.id}</b><code>input {result.agent.analysis_snapshot.input_hash}<br/>output {result.agent.analysis_snapshot.output_hash}</code></div></section>}
-      <section className="detailGrid"><div><h3>Quantitative models</h3>{result.models.map(m=><article className="compact" key={m.name}><b>{m.name}</b><span>{m.output??'N/A'}</span><p>{m.interpretation} · {m.applicability}</p></article>)}</div><div><h3>Disclosure tension</h3>{result.disclosure_tensions?.length?result.disclosure_tensions.map((c,i)=><article className="compact" key={i}><b>{c.classification}</b><span>{c.confidence}</span><p>{c.claim}</p><ul>{c.opposing_evidence.map((x,j)=><li key={j}>{x}</li>)}</ul></article>):<p className="notice">Insufficient verified narrative evidence for a tension classification.</p>}</div></section>
-      <section className="workbench"><div><small>RISK REGISTER</small><h3>Human-controlled workflow</h3><p>Verified findings become tenant-isolated cases with owner, reviewer, due date, actions and immutable decision history.</p></div><div><small>SCENARIO LAB</small><h3>Deterministic stress tests</h3><p>Revenue, margin, rates, working capital, refinancing, debt and FX shocks recompute without LLM arithmetic.</p></div><div><small>MODEL GOVERNANCE</small><h3>Experimental by default</h3><p>Dataset, prompt, rule, fusion and policy versions are recorded. Validation is never implied without a completed run.</p></div></section>
-    </>}
-    <footer>{result?.disclaimer||'Risk scores are heuristic assessments, not bankruptcy probabilities or investment advice.'}</footer>
-  </main>
+const TAB_LABEL: Record<TabKey, string> = {
+  overview: "Why this decision",
+  dimensions: "Risk dimensions",
+  evidence: "Evidence chain",
+  paths: "Decision paths",
+  trace: "Agent trace",
+  telemetry: "Telemetry",
+};
+
+export default function Page() {
+  const [pilot, setPilot] = useState<Loaded<PilotPayload> | null>(null);
+  const [assessment, setAssessment] = useState<AssessmentPayload | null>(null);
+  const [origin, setOrigin] = useState<DataOrigin>("offline-sample");
+  const [loadingPilot, setLoadingPilot] = useState(true);
+  const [loadingAnalysis, setLoadingAnalysis] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [errorIsUpstream, setErrorIsUpstream] = useState(false);
+  const [activeTab, setActiveTab] = useState<TabKey>("overview");
+
+  useEffect(() => {
+    let cancelled = false;
+    loadPilot().then((res) => {
+      if (cancelled) return;
+      setPilot(res);
+      setOrigin(res.origin);
+      setLoadingPilot(false);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  const handleLoadSample = () => {
+    setError(null);
+    setErrorIsUpstream(false);
+    setLoadingAnalysis(true);
+    setTimeout(() => {
+      const res = loadSampleAssessment();
+      setAssessment(res.payload);
+      setOrigin(res.origin);
+      setLoadingAnalysis(false);
+      setActiveTab("overview");
+    }, 400);
+  };
+
+  const handleAnalyze = async (opts: {
+    file: File;
+    company: string;
+    fiscalYear: number;
+    apiKey: string;
+  }) => {
+    setError(null);
+    setErrorIsUpstream(false);
+    setLoadingAnalysis(true);
+    const result = await analyzeDocument(opts);
+    setLoadingAnalysis(false);
+    if (result.ok) {
+      setAssessment(result.loaded.payload);
+      setOrigin(result.loaded.origin);
+      setActiveTab("overview");
+    } else {
+      setError(result.failure.message);
+      setErrorIsUpstream(result.failure.upstreamUnavailable);
+    }
+  };
+
+  const agent = assessment?.agent;
+
+  return (
+    <>
+      <AppHeader
+        origin={origin}
+        runtime={pilot?.payload.runtime ?? "v0.3.2"}
+      />
+      <main>
+        {/* Pilot table */}
+        <section className="portfolio">
+          <p className="eyebrow">Public pilot — 2021 filings</p>
+          <h2>Evidence-grounded risk assessment</h2>
+          <p className="portfolioNote">
+            A rule-hybrid agent that reads annual reports, computes metrics, evaluates models,
+            checks for contradictions, and renders a decision only when the evidence chain is
+            verifiable. If sources are missing or conflicting, it abstains.
+          </p>
+
+          {loadingPilot ? (
+            <p className="muted">Loading pilot data…</p>
+          ) : (
+            <PilotTable pilot={pilot} />
+          )}
+        </section>
+
+        {/* Intake */}
+        <section className="intakeSection">
+          <IntakePanel
+            onLoadSample={handleLoadSample}
+            onAnalyze={handleAnalyze}
+            busy={loadingAnalysis}
+            error={error}
+            errorIsUpstream={errorIsUpstream}
+            onDismissError={() => setError(null)}
+          />
+        </section>
+
+        {/* Analysis result */}
+        {assessment && (
+          <section className="analysisSection">
+            <DecisionSummary payload={assessment} />
+
+            <nav className="tabBar" aria-label="Analysis sections">
+              {(Object.keys(TAB_LABEL) as TabKey[]).map((key) => (
+                <button
+                  key={key}
+                  type="button"
+                  className={activeTab === key ? "active" : ""}
+                  onClick={() => setActiveTab(key)}
+                >
+                  {TAB_LABEL[key]}
+                </button>
+              ))}
+            </nav>
+
+            <div className="tabBody">
+              {activeTab === "overview" && (
+                <WhyDecision payload={assessment} />
+              )}
+
+              {activeTab === "dimensions" && (
+                <DimensionGrid dimensions={assessment.dimensions} />
+              )}
+
+              {activeTab === "evidence" && (
+                <EvidenceTrail
+                  conclusions={agent?.conclusions ?? []}
+                />
+              )}
+
+              {activeTab === "paths" && agent?.decision_trace && (
+                <DecisionPaths trace={agent.decision_trace} />
+              )}
+
+              {activeTab === "trace" && agent && (
+                <AgentTrace
+                  plan={agent.plan}
+                  trace={agent.trace}
+                  status={agent.status}
+                />
+              )}
+
+              {activeTab === "telemetry" && agent?.component_telemetry && (
+                <TelemetryPanel items={agent.component_telemetry} />
+              )}
+            </div>
+          </section>
+        )}
+
+        {/* Footer */}
+        <footer>
+          <p>
+            FinRisk-Agent v0.3.0 · Un-calibrated research prototype · Not for production use.
+          </p>
+          <p className="muted">
+            All decisions are provisional. Evidence coverage, model disagreement and reliability
+            status are shown explicitly so that over-confidence is visible.
+          </p>
+        </footer>
+      </main>
+    </>
+  );
 }
