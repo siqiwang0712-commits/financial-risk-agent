@@ -27,7 +27,19 @@ The evaluated set is `n=3`, not the planned 30-company confirmatory corpus. Raw 
 | Traditional Models | 3/3 | .333 | .500 | .500 | .500 | 1.000 | .250 | .167 |
 | Full Hybrid | 2/3 | .500 | .500 | .000 | 1.000 | 1.000 | .193 | .407 |
 
-Full Hybrid abstained on Apple, correctly classified Microsoft and missed Intel. Its contradiction F1 is .667. Accuracy intervals span [0,1] except Ratios Only [1,1]; at n=3 even that interval is not evidence of generalization. AUPRC is especially unstable with one positive example.
+Full Hybrid abstained on Apple, correctly classified Microsoft and missed Intel. Its contradiction F1 is .667 in the frozen v0.3.0 `public_v1` run; the separate v0.3.1 integrity replay, which re-scores claim-conditioned evidence on the v0.3.1 evidence set, raises it to 1.000 (see `research/results/v0.3.1/decision_integrity_replay.json`). Both figures are n=3 diagnostics with single-reviewer labels and neither is evidence of generalization. Accuracy intervals span [0,1] except Ratios Only [1,1]; at n=3 even that interval is not evidence of generalization. AUPRC is especially unstable with one positive example.
+
+The `Full Hybrid` row is scored with the expert-weighted aggregate over risk dimensions (`scoring.aggregate`). The Agent decision path uses hierarchical escalation instead, so this row does **not** describe the strategy the product decides with. `decision_integrity_replay.json` compares both on the v0.3.1 evidence, but no experiment reports predictive metrics for hierarchical escalation against the labelled endpoint.
+
+## Artifacts
+
+- [Machine-readable summary](results/public_v1/summary.json)
+- [Raw predictions](results/public_v1/predictions.csv)
+- [Per-company score decomposition](results/public_v1/score_decomposition.csv)
+- [Confusion matrices](results/public_v1/confusion_matrices.csv)
+- [Ablations](results/public_v1/ablations.csv)
+- [Robustness checks](results/public_v1/robustness.csv)
+- [Error analysis](error_analysis.md)
 
 ## RQ status
 

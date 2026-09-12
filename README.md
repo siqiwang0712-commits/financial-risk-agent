@@ -14,110 +14,23 @@
 
 **An evidence-grounded financial risk platform where an LLM plans and interprets, deterministic financial tools execute, and every material conclusion must trace back to verified evidence.**
 
-[Quick start](#quick-start) · [Architecture](#architecture) · [Research results](#real-results-not-marketing-results) · [Workbench](#analyst-workbench) · [Documentation](#documentation)
+[Quick start](#quick-start) · [Architecture](#architecture) · [Research results](#research-results) · [Workbench](#analyst-workbench) · [Documentation](#documentation)
 
 </div>
 
 > [!IMPORTANT]
-> **Risk severity ≠ evidence coverage ≠ evidence quality ≠ model disagreement ≠ reliability ≠ probability.** FinRisk's 0–100 risk index is an expert-designed heuristic, not a bankruptcy probability, credit rating, fraud finding, or investment recommendation. Reliability is `UNCALIBRATED` unless a pinned held-out calibration run establishes otherwise.
+> **FinRisk is a research prototype.** The 0–100 risk index is an expert-designed heuristic. It is not a bankruptcy probability, credit rating, fraud finding, or investment recommendation.
+>
+> **Risk severity ≠ evidence coverage ≠ evidence quality ≠ model disagreement ≠ reliability ≠ probability.** These are separate quantities and are never collapsed into one another. Reliability is reported `UNCALIBRATED`.
+>
+> No production deployment, external validation, or regulatory approval is claimed. See [Limitations](research/limitations.md).
 
-## v0.3.2 — Reproducibility & Runtime Integrity (release hardening)
+## Current release
 
-v0.3.2 is a reproducibility and runtime-integrity hardening release. It does not regenerate E1/E2/E3 or
-reinterpret their results. It separates read-only frozen replay from new experiment
-creation, records the actual Git commit and dirty state for future experiments, adds a
-v2-compatible label schema and standalone-period FCF methodology, wires `DATABASE_URL`
-to durable PostgreSQL repositories and credentials, derives risk cases from server-held
-snapshots, and hardens authenticated analysis endpoints and deployment defaults.
-The final correctness closeout also regression-tests canonical Ohlson and Beneish
-formula semantics, explicitly labels the available Piotroski calculation as a limited
-proxy, prevents `LOCATED` or partial evidence from satisfying material proof gates,
-synchronizes the final failure-aware decision across trace/snapshot/bundle, and verifies
-the containerized frontend-to-API route. These changes do not alter frozen benchmarks.
+**v0.3.2** — reproducibility and runtime-integrity hardening. Frozen E1/E2/E3 experiments replay read-only, and `DATABASE_URL` selects durable PostgreSQL persistence.
 
-```bash
-python scripts/replay_frozen_experiment.py v0.3.1-E1-diagnostic
-python scripts/replay_frozen_experiment.py v0.3.1-E2
-python scripts/replay_frozen_experiment.py v0.3.1-E3
-```
-
-Frozen replay verifies existing manifest and artifact bytes and reports both the
-original generation commit and current replay commit. It performs no writes. A replay
-is not regeneration: current code is not used to recreate historical outputs.
-The E1/E2/E3 manifests record original generation commit
-`1486cf8e2e86115bff27f3f0c8940e2237efaf10`; this provenance is preserved even though
-the working tree and released code have advanced.
-
-The prospective provenance validator distinguishes direct SEC facts from deterministic
-derivations and recursively requires every derivation parent to terminate in a valid SEC
-source row. During final closeout this correctly rejected 24 legacy corpus observations
-whose historical v1 `total_debt` derivation treated one missing component as zero. Those
-frozen inputs and E3 outputs remain unchanged; they are not silently upgraded to v2
-provenance semantics.
-
-The current runtime uses PostgreSQL whenever `DATABASE_URL` is set; in-memory storage is
-an explicit test/lightweight-development mode. Production mode rejects missing/default
-database credentials and disables organization/snapshot bootstrap endpoints. See
-[`docs/reproducibility_runtime_integrity.md`](docs/reproducibility_runtime_integrity.md)
-for replay, persistence, trust-boundary and deployment maturity details.
-
-## v0.3.1 — Decision Integrity & Research Readiness (released, frozen)
-
-This hardening release makes the existing architecture stricter without adding new product domains:
-
-- non-compensatory, coverage-aware fusion prevents severe supported dimensions from being averaged away;
-- missing dimensions remain unknown rather than entering fusion as zero;
-- evidence IDs are de-duplicated within a risk dimension before contributing, and adverse-evidence monotonicity is regression-tested (a purely global cap removed whole dimensions and was not monotonic); the de-duplication helper is a library capability and the Agent decision path consumes per-dimension maxima directly;
-- narrative checks are claim-conditioned: target, direction, horizon, basis, qualifiers and required evidence constructs are validated before contradiction classification;
-- API, Workbench and DecisionBundle expose calibration maturity and never present the evidence-quality index as a correctness probability;
-- XBRL, rules, models, narrative, Critic, Verifier and fusion record observed component deltas for replay—a telemetry foundation, not a Value-of-Information estimator.
-
-Machine-readable reason codes include `SEVERE_VERIFIED_SIGNAL`, `INSUFFICIENT_EVIDENCE`, `CLAIM_CONTEXT_INCOMPLETE`, `HIGH_MODEL_DISAGREEMENT`, `UNVALIDATED_RELIABILITY` and `CRITICAL_DIMENSION_ESCALATION`.
-
-The independently written replay artifacts live under [`research/results/v0.3.1`](research/results/v0.3.1). The frozen `public_v1` directory is an immutable three-observation narrative pilot and is not overwritten; E3 is the separate 90-observation, 30-company numeric corpus. **v0.3.1 improves decision integrity and research readiness, but does not establish real-world predictive superiority.**
-
-### Empirical Validation Foundation (local numeric run)
-
-The pre-registered 30-company registry is expanded into a deterministic 30 × 3 plan with an 18/6/6 company-disjoint train/validation/frozen-test split. Sixteen official SEC 2021Q1–2024Q4 Financial Statement Data Set ZIPs produce all 90 filing-level feature observations. E3 separates future annual filings into a label-only outcome pool: outcome facts are admitted only after each observation cutoff and never enter features. The PIT gate passes with zero company overlap and zero detected future leakage. The frozen calendar-12-month endpoint yields 42 verified labels (34 negative, 8 positive), 6 review-required cases and 42 insufficient observations: 17 next annual filings are genuinely outside the fixed window and 25 are explicitly right-censored by the available archive horizon. Missing outcomes are never imputed.
-
-The immutable E3 numeric experiment evaluated six labelled test observations from five held-out companies, with one positive endpoint. AUROC was 0.100 for B0, 0.200 for B1, 0.100 for B2 and 0.100 for B6. Every baseline missed the positive case at its frozen threshold (FNR 1.0). Of 1,000 company-clustered bootstrap replicates, 691 retained both classes and 309 were invalid; the CI is deliberately reported `CI_NOT_ESTIMABLE` because class/cluster power is inadequate. This is a negative, underpowered result—not evidence of predictive superiority or probability calibration. E1 and E2 remain immutable audit artifacts; E3 deterministic replay matches all six frozen result/prediction artifacts byte-for-byte.
-
-The implementation nevertheless makes the eventual run auditable and fail-closed:
-
-- `PointInTimeGuard` rejects evidence made public after an observation cutoff, including later restatements.
-- Dataset integrity stops on company overlap, future leakage, duplicate filings, invalid hashes, schema errors or system-generated labels.
-- Forward labels are frozen independently of FinRisk output: objective 12-month distress and a secondary rule-defined deterioration endpoint.
-- Experiment manifests pin dataset/split/rules/models/fusion/prompt/labels/seed/git revision; incomplete inputs cannot create an immutable freeze.
-- Statistical tooling includes ranking/classification metrics, selective coverage and company-clustered bootstrap deltas. Case-control samples are explicitly `RANKING_ONLY`, not population PD calibration.
-
-After installing the package locally, the single validation gate is:
-
-```bash
-python scripts/prepare_empirical_foundation.py
-python scripts/run_empirical_validation.py
-```
-
-The second command exits non-zero when the relevant corpus integrity gate fails. Readiness is capability-scoped: missing documents/LLM access cannot block numeric B0/B1/B2/B6 once numeric observations and forward labels exist.
-
-SEC acquisition now has three explicit routes: official `companyfacts.zip` or Financial Statement Data Set ZIPs, a local/offline cache, and the rate-limited live API fallback. Raw bulk files are intentionally Git-ignored. To import official bulk data and run the numeric baselines:
-
-```powershell
-# Place companyfacts.zip OR quarterly SEC Financial Statement Data Set ZIPs here.
-New-Item -ItemType Directory -Force data/sec-bulk
-python scripts/import_sec_bulk.py
-python scripts/replay_frozen_experiment.py v0.3.1-E3
-```
-
-`run_numeric_benchmarks.py` is reserved for prospective experiments and refuses to
-regenerate frozen E3 from a different HEAD. The importer records ZIP/member SHA-256
-provenance, preserves missing values, selects original 10-K filings rather than silently
-substituting amendments, and generates only a versioned forward numerical endpoint.
-Corpus acquisition via the live API remains separately explicit and requires an
-SEC-compliant identifying user agent:
-
-```bash
-SEC_USER_AGENT="Researcher Name researcher@example.edu" python scripts/acquire_empirical_corpus.py
-```
+- [CHANGELOG](CHANGELOG.md) — complete release history
+- [Reproducibility and runtime integrity](docs/reproducibility_runtime_integrity.md) — replay, persistence and trust boundaries
 
 ## Why FinRisk exists
 
@@ -133,28 +46,128 @@ An unconstrained LLM is the wrong financial-risk oracle. It may transpose column
 | Risk patterns and thresholds | Versioned rules and policy | Inspectable, replayable and organization-scoped |
 | Material conclusions | Failure-aware fusion + verification | No valid evidence path → `REVIEW` or `ABSTAIN` |
 
-The core research proposition is simple:
-
 > **Financial arithmetic belongs to deterministic systems. Semantic interpretation belongs to a constrained LLM. Decisions belong to an auditable evidence path.**
 
 ## What you can do
 
 - Ingest SEC Company Facts / inline XBRL and page-aware annual-report PDFs.
-- Normalize financial values across currency, scale, period, taxonomy and restatement candidates.
+- Normalize values across currency, scale, period, taxonomy and restatement candidates.
 - Compute liquidity, leverage, profitability, cash-flow, working-capital and trend metrics.
 - Run Altman Z, Beneish M, Piotroski F and Ohlson O with explicit applicability checks.
 - Evaluate 68 versioned expert rules without scattering thresholds through application code.
-- Extract structured narrative claims through mock or real OpenAI-compatible providers.
 - Verify quotations against cited pages before admitting them as evidence.
-- Compare narrative with multi-signal numeric evidence across six consistency domains.
 - Fuse risk using weighted-average, max-severity, hierarchical or interaction-aware strategies.
-- Convert findings into tenant-scoped risk cases, actions, reviews and immutable audit events.
 - Replay an assessment from frozen inputs and versions, then show any output drift.
-- Apply deterministic stress scenarios and compare baseline versus stressed decisions.
-- Update `R(t-1) → R(t)` with traceable risk, metric and evidence-change attribution.
-- Route traditional models through explicit `APPLICABLE / LIMITED / NOT_APPLICABLE` decisions.
 - Gate automation on evidence coverage, calibrated reliability and disagreement.
-- Preserve a complete immutable DecisionBundle and governed mitigation lifecycle.
+
+## Quick start
+
+Prerequisites: Python >=3.11 (release gate tests 3.11 and 3.12), Node.js 22+, npm 10+, Docker Desktop (optional).
+
+### Backend
+
+```bash
+python -m venv .venv
+source .venv/bin/activate          # Windows PowerShell: .venv\Scripts\Activate.ps1
+python -m pip install -e ".[dev]"
+uvicorn finrisk.api:app --reload
+```
+
+API documentation is available at `http://localhost:8000/docs`; health is at `http://localhost:8000/health`.
+
+### Frontend
+
+```bash
+cd frontend
+npm ci
+npm run dev
+```
+
+Open `http://localhost:3000`.
+
+### Docker Compose
+
+```bash
+docker compose up --build
+```
+
+The development compose file uses an explicitly development-only database password. For the production overlay, provide a non-default secret; migrations run as a one-shot service before the API starts:
+
+```bash
+POSTGRES_PASSWORD='<strong-secret>' docker compose -f docker-compose.yml -f docker-compose.prod.yml up --build
+```
+
+### Run the synthetic offline demo
+
+```powershell
+$env:PYTHONPATH="backend"
+python scripts/run_demo.py
+```
+
+The included company fixture is explicitly `synthetic`. It validates mechanics, not real-world performance.
+
+### Reproducing the research
+
+Replay the frozen E1/E2/E3 experiments (read-only; verifies manifest and artifact bytes without regenerating anything):
+
+```bash
+python scripts/replay_frozen_experiment.py v0.3.1-E1-diagnostic
+python scripts/replay_frozen_experiment.py v0.3.1-E2
+python scripts/replay_frozen_experiment.py v0.3.1-E3
+```
+
+Replay the public pilot into `research/results/v0.3.1/public_pilot_replay`:
+
+```powershell
+$env:PYTHONPATH="backend"
+python scripts/run_public_benchmark.py
+```
+
+The checked-in `research/results/public_v1` directory is the immutable v0.3.0 snapshot; the runner refuses to use it as an output directory.
+
+Run the empirical validation gate (exits non-zero when corpus integrity fails):
+
+```bash
+python scripts/prepare_empirical_foundation.py
+python scripts/run_empirical_validation.py
+```
+
+Rebuilding SEC snapshots requires an identifying User-Agent, and importing official bulk data expects the ZIP in `data/sec-bulk`:
+
+```powershell
+$env:SEC_USER_AGENT="FinRisk-Agent your-email@example.com"
+python scripts/build_public_benchmark.py
+```
+
+```bash
+python scripts/import_sec_bulk.py
+SEC_USER_AGENT="Researcher Name researcher@example.edu" python scripts/acquire_empirical_corpus.py
+```
+
+SEC acquisition has three explicit routes: official `companyfacts.zip` or Financial Statement Data Set ZIPs, a local/offline cache, and the rate-limited live API fallback. Raw bulk files are intentionally Git-ignored.
+
+A previously recorded live Company Facts rebuild received HTTP 403. That is preserved as a real failure, not replaced with synthetic "live" data. Full methodology lives in the [dataset card](research/dataset_card.md) and [evaluation protocol](research/evaluation_protocol.md).
+
+## Documentation
+
+| Topic | Document |
+|---|---|
+| Architecture and enterprise boundary | [Enterprise platform](docs/enterprise_platform.md) |
+| Decision trace, replay, governance and threat model | [Decision-grade controls](docs/decision_grade_controls.md) |
+| Reproducibility, replay and deployment maturity | [Reproducibility and runtime integrity](docs/reproducibility_runtime_integrity.md) |
+| Three-layer migration | [Migration map](docs/three_layer_migration.md) |
+| Temporal risk design | [Temporal risk intelligence](docs/temporal_risk_intelligence.md) |
+| Risk Case lifecycle | [Enterprise workflow](docs/risk_case_workflow.md) |
+| Capability truth table | [Capability maturity matrix](docs/capability_maturity_matrix.md) |
+| Flagship real-data walkthrough | [Case Study 001 — Intel FY2024](docs/case_study_001.md) |
+| Release history | [CHANGELOG](CHANGELOG.md) |
+| Implemented / partial / not-implemented inventory | [PROJECT_STATUS](PROJECT_STATUS.md) |
+| Dataset and label provenance | [Dataset card](research/dataset_card.md) |
+| Evaluation design | [Evaluation protocol](research/evaluation_protocol.md) |
+| Results and negative findings | [Results](research/results.md) |
+| Error analysis | [Error analysis](research/error_analysis.md) |
+| Research limitations | [Limitations](research/limitations.md) |
+| Human–AI study | [Study protocol](research/human_ai_study_protocol.md) |
 
 ## Architecture
 
@@ -182,8 +195,6 @@ Only structured execution metadata is retained: plan step, tool name, status, re
 
 ### Agent tool registry
 
-The typed registry exposes:
-
 | Tool family | Capabilities |
 |---|---|
 | Ingestion | PDF extraction, XBRL normalization, period and unit reconciliation |
@@ -202,8 +213,6 @@ Unknown tools, malformed arguments and missing required inputs fail closed.
 
 <img src="docs/assets/decision-trace-v2.svg" alt="Auditable FinRisk decision trace" width="100%" />
 
-Every material conclusion follows this graph:
-
 ```text
 document → page/section/span → extracted fact or claim → metric/rule/model
          → fusion contribution → risk dimension → final decision
@@ -220,20 +229,15 @@ Conflicting top-ranked facts are not silently selected. Missing values are never
 
 ### Deterministic replay
 
-Each analysis can freeze its input hash, document version, policy and rule versions, prompt/model version, fusion strategy, configuration and timestamp into an immutable snapshot. Replay creates a separate result and diff; it never overwrites the historical decision.
+Each analysis can freeze its inputs into an immutable snapshot: input hash, document version, policy and rule versions, prompt/model version, fusion strategy, configuration and timestamp.
 
-This makes questions such as these answerable:
-
-- Was the source document different?
-- Did a threshold, model, prompt or fusion strategy change?
-- Is the result byte-for-byte reproducible under the pinned configuration?
-- Which decision path changed, and why?
+Replay creates a separate result and diff; it never overwrites the historical decision. That makes four audit questions answerable. Was the source document different? Did a threshold, model, prompt or fusion strategy change? Is the result byte-for-byte reproducible? Which decision path changed, and why?
 
 See [Decision-grade controls](docs/decision_grade_controls.md).
 
 ### Risk is an evolving state
 
-FinRisk now models a filing as an update from `R(t-1)` to `R(t)`, not an isolated score. `RiskDelta` separates dimension, metric and evidence changes and attaches each attribution driver to evidence-path identifiers. The temporal graph adds `SUPPORTS`, `CONTRADICTS`, `SUPERSEDES`, `DERIVED_FROM`, `CONFIRMS`, `WEAKENS` and `INVALIDATES` relationships.
+FinRisk models a filing as an update from `R(t-1)` to `R(t)`, not an isolated score. `RiskDelta` separates dimension, metric and evidence changes, and attaches each attribution driver to evidence-path identifiers. The temporal graph adds `SUPPORTS`, `CONTRADICTS`, `SUPERSEDES`, `DERIVED_FROM`, `CONFIRMS`, `WEAKENS` and `INVALIDATES` relationships.
 
 This capability is code-complete and fixture-tested, and it is exercised through the enterprise snapshot/timeline API and the E3 numeric trajectories. The Agent's own `risk_trajectory` field is derived from the current run only: the single-process local path does not persist history, so it reports `insufficient_history` unless a snapshot store supplies prior periods. Real multi-period attribution quality remains **NOT VALIDATED**.
 
@@ -250,11 +254,11 @@ Portfolio → Entity → Risk Case → Risk Drivers → Evidence
 
 It keeps severity, trajectory, evidence coverage, decision confidence and model disagreement visually separate. Risk findings can become owned cases with reviewer status, due dates, actions, comments and an audited human override.
 
-The Workbench is a componentized Next.js application (`frontend/components/`): decision summary, decision basis with reason codes and failure states, the eight-dimension risk grid, the conclusion-to-evidence trail, decision-path provenance drill-down, the declared-plan-versus-executed agent trace, and component telemetry. When the API upstream is unreachable, the Workbench falls back to a bundled sample — a real pipeline output for the repository's synthetic fixture — and labels its origin on screen, so a review never opens on an empty shell.
+When the API upstream is unreachable, the Workbench falls back to a bundled sample and labels its origin on screen. That sample is a real pipeline output for the repository's synthetic fixture, not a hand-written mock-up, so a review never opens on an empty shell.
 
 > The screenshot is from the local prototype. It is not evidence of a hosted production deployment.
 
-## Real results, not marketing results
+## Research results
 
 The checked-in public pilot runs five baselines on **three company-disjoint FY2024 observations**: Apple, Microsoft and Intel. It is intentionally too small for inferential claims, but it is reproducible and preserves a valuable negative result.
 
@@ -270,20 +274,13 @@ The checked-in public pilot runs five baselines on **three company-disjoint FY20
 
 ¹ The recorded pilot used the deterministic offline semantic provider. A paid LLM baseline was **NOT RUN** because no API credential was supplied.
 
-² The pilot scores this row with the expert-weighted aggregate over risk dimensions (`scoring.aggregate`). The Agent decision path uses hierarchical escalation instead, so this row does not describe the strategy the product decides with. `research/results/v0.3.1/decision_integrity_replay.json` compares both on the v0.3.1 evidence, but no experiment reports predictive metrics for hierarchical escalation against the labelled endpoint.
+² This row scores the expert-weighted aggregate over risk dimensions (`scoring.aggregate`); the Agent decision path uses hierarchical escalation instead, so the row does not describe the strategy the product decides with.
 
-Full Hybrid did **not** outperform Ratios Only. In the frozen v0.3.0 `public_v1` run its contradiction F1 was `0.667`; the separate v0.3.1 integrity replay, which re-scores claim-conditioned evidence, raises it to `1.000` ([Error analysis](research/error_analysis.md)). Both figures are n=3 diagnostics with single-reviewer labels and neither is evidence of generalization. Most bootstrap intervals span `[0, 1]`. The result supports only two claims: the evaluation pipeline executes end to end, and the current fusion design needs a larger independently labelled validation set. It does not establish superiority of any architecture.
+**Full Hybrid did not outperform Ratios Only.** This is a negative, underpowered result. It is not evidence of predictive superiority or probability calibration, and most bootstrap intervals span `[0, 1]`.
 
-Artifacts:
+The separate v0.3.1 numeric corpus (90 observations, 30 companies) yields six labelled test observations from five held-out companies, with one positive endpoint. Every baseline missed that positive case (AUROC 0.100–0.200, FNR 1.0), so the confidence interval is deliberately reported as `CI_NOT_ESTIMABLE`.
 
-- [Interpretation and limitations](research/results.md)
-- [Machine-readable summary](research/results/public_v1/summary.json)
-- [Raw predictions](research/results/public_v1/predictions.csv)
-- [Per-company score decomposition](research/results/public_v1/score_decomposition.csv)
-- [Confusion matrices](research/results/public_v1/confusion_matrices.csv)
-- [Ablations](research/results/public_v1/ablations.csv)
-- [Robustness checks](research/results/public_v1/robustness.csv)
-- [Error analysis](research/error_analysis.md)
+Full detail, ablations, robustness checks and RQ-by-RQ status live in [Results](research/results.md) and [Error analysis](research/error_analysis.md).
 
 ### Research questions
 
@@ -302,102 +299,6 @@ Current evidence is diagnostic only: RQ3 is not supported by the pilot, RQ2 has 
 | **IMPLEMENTED, NOT EXTERNALLY VALIDATED** | XBRL/PDF reconciliation, temporal state/attribution, applicability routing, selective automation, constrained provider, critic/verifier, DecisionBundle, risk-case mitigation workflow, RBAC/API keys, PostgreSQL migrations and Workbench |
 | **PLANNED / NOT RUN** | Human-adjudicated document/evidence benchmark, paid-LLM evaluation, calibrated risk model, production identity/object storage/worker/telemetry deployment |
 
-FinRisk is a research and enterprise-architecture prototype. It does not claim production deployment, regulatory approval, SOC 2, ISO 27001, external model validation or real enterprise customers.
-
-## Quick start
-
-### Prerequisites
-
-- Python >=3.11; the release gate tests Python 3.11 and 3.12
-- Node.js 22+
-- npm 10+
-- Docker Desktop (optional)
-
-### Backend
-
-```bash
-python -m venv .venv
-```
-
-Windows PowerShell:
-
-```powershell
-.venv\Scripts\Activate.ps1
-python -m pip install -e ".[dev]"
-uvicorn finrisk.api:app --reload
-```
-
-macOS/Linux:
-
-```bash
-source .venv/bin/activate
-python -m pip install -e ".[dev]"
-uvicorn finrisk.api:app --reload
-```
-
-API documentation is available at `http://localhost:8000/docs`; health is at `http://localhost:8000/health`.
-
-### Frontend
-
-```bash
-cd frontend
-npm ci
-npm run dev
-```
-
-Open `http://localhost:3000`.
-
-### Docker Compose
-
-```bash
-docker compose up --build
-```
-
-The development compose file uses an explicitly development-only database password. For
-the production overlay, provide a non-default secret; migrations run as an explicit,
-one-shot service before the API starts, while runtime auto-migration and organization
-bootstrap remain disabled:
-
-```bash
-POSTGRES_PASSWORD='<strong-secret>' docker compose -f docker-compose.yml -f docker-compose.prod.yml up --build
-```
-
-The release CI includes a PostgreSQL-to-migration-to-API smoke test and asserts that
-`/health/ready` reports `PostgresEnterpriseRepository`. The same production-overlay
-path passed locally with Docker Desktop 29.7.2: migration exited successfully, the API
-ran as a non-root user, readiness probed the database, and a dedicated smoke record
-survived an API-container restart. This is runtime integration validation, not a claim
-of production deployment validation.
-
-### Run the synthetic offline demo
-
-```powershell
-$env:PYTHONPATH="backend"
-python scripts/run_demo.py
-```
-
-The included company fixture is explicitly `synthetic`. It validates mechanics, not real-world performance.
-
-### Reproduce the public pilot
-
-```powershell
-$env:PYTHONPATH="backend"
-python scripts/run_public_benchmark.py
-```
-
-This replays the pilot into `research/results/v0.3.1/public_pilot_replay`. The checked-in
-`research/results/public_v1` directory is the immutable v0.3.0 snapshot; the runner refuses
-to use it as an output directory.
-
-Rebuilding SEC snapshots separately requires an identifying User-Agent:
-
-```powershell
-$env:SEC_USER_AGENT="FinRisk-Agent your-email@example.com"
-python scripts/build_public_benchmark.py
-```
-
-The ingestion client includes cache, rate limiting, retry/backoff, accession provenance and content hashes. A previously recorded live Company Facts rebuild received HTTP 403; this is preserved as a real failure, not replaced with synthetic “live” data.
-
 ## API surface
 
 | Endpoint | Purpose |
@@ -407,23 +308,15 @@ The ingestion client includes cache, rate limiting, retry/backoff, accession pro
 | `POST /api/v1/xbrl/normalize` | Normalize SEC Company Facts with provenance |
 | `/api/v1/enterprise/*` | Tenant-scoped entities, cases, scenarios, policies, governance and audit |
 
-PDF uploads validate magic bytes and configurable limits from
-`FINRISK_MAX_UPLOAD_MB`, `FINRISK_MAX_PDF_PAGES`,
-`FINRISK_MAX_EXTRACTED_CHARS` and `FINRISK_ANALYSIS_TIMEOUT_SECONDS`. Opening,
-page counting and page-text scanning run in Starlette's bounded worker pool rather than
-the async event loop. Invalid, encrypted, oversized and timed-out inputs fail closed,
-and temporary files are removed. Internet-facing deployment still needs production
-identity, malware scanning, isolated workers and operational validation.
+PDF uploads validate magic bytes and configurable limits (`FINRISK_MAX_UPLOAD_MB`, `FINRISK_MAX_PDF_PAGES`, `FINRISK_MAX_EXTRACTED_CHARS`, `FINRISK_ANALYSIS_TIMEOUT_SECONDS`). Opening, page counting and page-text scanning run in Starlette's bounded worker pool rather than the async event loop.
 
-The default narrative provider is deterministic and offline. To enable the schema-constrained real provider, copy `.env.example`, set `FINRISK_LLM_PROVIDER=openai`, configure `OPENAI_API_KEY`, and pin model pricing if cost estimates are needed. Calls record prompt version, attempts, tokens, estimated cost, latency and schema status. Tests never require a live API.
+Invalid, encrypted, oversized or timed-out inputs fail closed, and temporary files are removed. Internet-facing deployment still needs production identity, malware scanning, isolated workers and operational validation.
+
+The default narrative provider is deterministic and offline. To enable the schema-constrained real provider, copy `.env.example`, set `FINRISK_LLM_PROVIDER=openai`, configure `OPENAI_API_KEY`, and pin model pricing if cost estimates are needed. Tests never require a live API.
 
 ## Financial reasoning
 
-### Metrics and trends
-
 Liquidity, leverage, debt service, profitability, cash flow, working capital and multi-period growth are calculated from normalized inputs. Where prior-year values exist, balance-based return and working-capital metrics use average balances; single-period proxies are labelled.
-
-### Traditional models
 
 | Model | Output | Guardrail |
 |---|---|---|
@@ -434,39 +327,11 @@ Liquidity, leverage, debt service, profitability, cash flow, working capital and
 
 Model mappings are configured in [config/model_scoring.json](config/model_scoring.json).
 
-### Expert rules and policy
+[rules/rules.json](rules/rules.json) contains 68 versioned rules covering single-factor and cross-factor patterns. Correlated rules carry family metadata so aggregation retains the strongest applicable family signal. Global baseline, sector and organization policy remain separable and versioned.
 
-[rules/rules.json](rules/rules.json) contains 68 versioned rules covering single-factor and cross-factor patterns. Correlated rules carry family metadata so aggregation retains the strongest applicable family signal instead of blindly summing overlapping thresholds. Global baseline, sector and organization policy remain separable and versioned.
-
-### Failure-aware decisions
-
-Missing evidence, low coverage, conflicting evidence, stale data, parser failure, unavailable LLMs, applicability failures and rule/model disagreement are first-class states. Depending on pinned policy, they reduce evidence sufficiency, increase review requirements or force abstention—never fabricated certainty.
+Missing evidence, low coverage, conflicting evidence, stale data, parser failure, unavailable LLMs, applicability failures and rule/model disagreement are all first-class states. Depending on pinned policy, they reduce evidence sufficiency, increase review requirements, or force abstention. They never produce fabricated certainty.
 
 The incident-style [Failure Lab](failure_lab/README.md) maps each injected failure to its impact, expected fail-closed response and regression test.
-
-## Verification
-
-Run the same gates used locally:
-
-```bash
-pytest --cov=finrisk --cov-report=term-missing --cov-fail-under=90
-ruff check backend tests scripts
-```
-
-```bash
-cd frontend
-npm audit --omit=dev --audit-level=high --registry=https://registry.npmjs.org
-npm test
-npm run typecheck
-npm run build
-```
-
-The release gate covers Python 3.11 and 3.12 with a 90% minimum coverage threshold,
-Ruff, frontend semantic tests, a CI-enforced official-registry production dependency audit (the full dependency audit is verified locally),
-TypeScript, the Next.js production build, prospective provenance validation and
-read-only E1/E2/E3 replay. PostgreSQL 17 migration/restart persistence and the
-production-overlay Docker smoke test pass locally and remain CI requirements.
-Production deployment is not claimed.
 
 ## Repository map
 
@@ -486,6 +351,23 @@ financial-risk-agent/
 └── PROJECT_STATUS.md
 ```
 
+## Verification
+
+```bash
+pytest --cov=finrisk --cov-report=term-missing --cov-fail-under=90
+ruff check backend tests scripts
+```
+
+```bash
+cd frontend
+npm audit --omit=dev --audit-level=high --registry=https://registry.npmjs.org
+npm test
+npm run typecheck
+npm run build
+```
+
+The release gate covers Python 3.11 and 3.12 with a 90% minimum coverage threshold, Ruff, frontend semantic tests, a CI-enforced official-registry production dependency audit, TypeScript, the Next.js production build, prospective provenance validation and read-only E1/E2/E3 replay.
+
 ## Security and governance
 
 - Organization-scoped repositories and service checks enforce tenant boundaries.
@@ -498,36 +380,11 @@ These are implemented controls in a prototype, not certification claims. Review 
 
 ## Limitations
 
-- The immutable v0.3.0 `public_v1` pilot contains three company-year observations and single-reviewer labels; the separate E3 numeric corpus contains 90 observations across 30 companies. Neither establishes predictive superiority.
-- No paid-provider LLM benchmark has been run; mock/offline semantics are for testing and pipeline reproduction.
-- PDF table reconstruction is conservative; complex geometry, OCR and cross-page headers need further work.
-- Live SEC Company Facts retrieval was blocked by HTTP 403 in the recorded environment, although offline ingestion tests pass.
-- The consistency engine covers six domains; breadth and contextual precision require independent annotation.
-- Rules, weights, fusion thresholds and evidence-coverage confidence are not externally calibrated.
-- Component telemetry records observed deltas and cost/latency metadata; it is not causal attribution or a Value-of-Information algorithm.
-- Traditional financial models have population and sector limitations, especially for financial institutions.
-- Evidence matching proves provenance, not the truth or completeness of corporate disclosure.
-- PostgreSQL, Docker, identity, object storage, worker and telemetry configurations have not been validated in a production environment.
+The public pilot covers three company-year observations with single-reviewer labels. The E3 numeric corpus covers 90 observations across 30 companies. Neither establishes predictive superiority, and no paid-provider LLM benchmark has been run.
 
-For a precise implemented/partial/not-implemented inventory, see [PROJECT_STATUS.md](PROJECT_STATUS.md).
+Rules, weights, fusion thresholds and evidence-coverage confidence are not externally calibrated. Component telemetry records observed deltas, not causal attribution. PostgreSQL, Docker, identity, object storage, worker and telemetry configurations have not been validated in a production environment.
 
-## Documentation
-
-| Topic | Document |
-|---|---|
-| Architecture and enterprise boundary | [Enterprise platform](docs/enterprise_platform.md) |
-| Decision trace, replay, governance and threat model | [Decision-grade controls](docs/decision_grade_controls.md) |
-| Three-layer migration | [Migration map](docs/three_layer_migration.md) |
-| Dataset and label provenance | [Dataset card](research/dataset_card.md) |
-| Evaluation design | [Evaluation protocol](research/evaluation_protocol.md) |
-| Results and negative findings | [Results](research/results.md) |
-| Error analysis | [Error analysis](research/error_analysis.md) |
-| Research limitations | [Limitations](research/limitations.md) |
-| Temporal risk design | [Temporal risk intelligence](docs/temporal_risk_intelligence.md) |
-| Capability truth table | [Capability maturity matrix](docs/capability_maturity_matrix.md) |
-| Flagship real-data walkthrough | [Case Study 001 — Intel FY2024](docs/case_study_001.md) |
-| Human–AI study | [Study protocol](research/human_ai_study_protocol.md) |
-| Risk Case lifecycle | [Enterprise workflow](docs/risk_case_workflow.md) |
+The complete list — including right-censoring, machine-review boundaries and model population limits — is in [research/limitations.md](research/limitations.md). For a precise implemented/partial/not-implemented inventory, see [PROJECT_STATUS.md](PROJECT_STATUS.md).
 
 ## Contributing
 

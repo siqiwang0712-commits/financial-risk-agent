@@ -5,6 +5,9 @@
 E1, E2 and E3 are historical v0.3.1 artifacts. Replay is deliberately read-only: it
 validates the forensic manifest hash and each recorded artifact hash, reports the
 original generation commit and the current replay commit, and performs no generation.
+The E1/E2/E3 manifests record original generation commit
+`1486cf8e2e86115bff27f3f0c8940e2237efaf10`; this provenance is preserved even though
+the working tree and released code have advanced.
 External-source re-verification is a separate status and is not implied by byte-level
 artifact integrity.
 
@@ -15,18 +18,29 @@ python scripts/replay_frozen_experiment.py v0.3.1-E3
 ```
 
 New experiments use a distinct v0.3.2 result directory, schema version and experiment
-manifest. Their metadata records the actual Git commit and clean/dirty state. A new run
+manifest. Their metadata records the actual Git commit and clean/dirty state. Manifests pin
+dataset, split, rules, models, fusion, prompt, labels, seed and git revision; incomplete
+inputs cannot create an immutable freeze. A new run
 never rewrites E1/E2/E3 or `research/results/public_v1`.
 
 Prospective provenance uses two explicit forms. Direct facts require accession, period,
 concept, unit, dimensional context, source hash and availability time. Derived facts
 require a formula and a cycle-free parent graph in which every parent reaches a valid
-direct fact. A missing parent makes a submitted derivation invalid. The narrowly scoped
+direct fact. A missing parent makes a submitted derivation invalid. During final closeout this correctly rejected 24 legacy corpus observations whose historical v1 `total_debt` derivation treated one missing component as zero; those frozen inputs and E3 outputs remain unchanged and are not silently upgraded to v2 provenance semantics. The narrowly scoped
 v1 compatibility migration removes the known unsupported `total_debt` value from the
 prospective feature view and records it as `UNAVAILABLE` before validation; it never
 converts an invalid derivation into a valid fact or coerces missing data to zero.
 Historical v1 artifacts are replayed under their frozen bytes, not regenerated or
 relabelled under this newer contract.
+
+## Auditability and fail-closed guarantees
+
+The empirical path is designed so that a future run is auditable and fails closed:
+
+- `PointInTimeGuard` rejects evidence made public after an observation cutoff, including later restatements.
+- Dataset integrity stops on company overlap, future leakage, duplicate filings, invalid hashes, schema errors or system-generated labels.
+- Forward labels are frozen independently of FinRisk output: an objective 12-month distress endpoint and a secondary rule-defined deterioration endpoint.
+- Statistical tooling includes ranking/classification metrics, selective coverage and company-clustered bootstrap deltas. Case-control samples are explicitly `RANKING_ONLY`, not population PD calibration.
 
 ## Environment chain
 

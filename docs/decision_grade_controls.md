@@ -6,6 +6,8 @@ Status: **IMPLEMENTED BUT NOT EXTERNALLY VALIDATED**, except where explicitly ma
 
 Each Agent result includes a decision trace and immutable analysis snapshot containing canonical input/output hashes, document hashes, rule/scoring hashes, provider/prompt identity, fusion version and frozen input/output. Replay comparison preserves the historical output and separately reports `IDENTICAL` or `DRIFT_DETECTED`; it never overwrites history. PostgreSQL stores snapshots and validation records. Risk cases cannot enter Accepted or Resolved without at least one verified decision path.
 
+Every decision also carries machine-readable reason codes, so a reviewer can tell why a result landed where it did rather than inferring it from the score. The current set includes `SEVERE_VERIFIED_SIGNAL`, `INSUFFICIENT_EVIDENCE`, `CLAIM_CONTEXT_INCOMPLETE`, `HIGH_MODEL_DISAGREEMENT`, `UNVALIDATED_RELIABILITY` and `CRITICAL_DIMENSION_ESCALATION`.
+
 ## Governance
 
 Model lifecycle transitions are Experimental → Validated → Approved → Deprecated. Validation and approval require a validation-record reference. Champion/challenger evaluation reports a recommendation but never auto-promotes. Drift checks cover score distribution and coverage; richer population-stability/calibration monitoring requires a real longitudinal dataset and is **PLANNED**. Human override remains reviewer-authorized, reason-required and append-only audited.
