@@ -80,6 +80,15 @@ def test_decision_trace_snapshot_replay_and_tenant_isolation():
             {
                 "rule_id": "LIQ_1",
                 "family": "liquidity",
+                "required_inputs": ["cash"],
+                "input_provenance": {"cash": [
+                    {
+                        "document": "10-K",
+                        "page": 8,
+                        "source_text": "Cash declined",
+                        "verification_status": "verified",
+                    }
+                ]},
                 "source_refs": [
                     {
                         "document": "10-K",
@@ -147,6 +156,26 @@ def test_located_or_noncontiguous_evidence_never_verifies_material_path():
     }
     trace = build_decision_trace(assessment, {"decision": "FLAG"})
     assert trace["paths"][0]["evidence_path_status"] == "UNVERIFIED"
+
+
+def test_material_path_requires_every_current_and_prior_input():
+    verified = {"verification_status": "verified", "fiscal_year": 2024}
+    assessment = {
+        "dimensions": {"profitability": {"key_drivers": ["PROF_GROWTH"], "coverage": .5}},
+        "triggered_rules": [{
+            "rule_id": "PROF_GROWTH",
+            "required_inputs": ["current:net_income", "prior:net_income"],
+            "input_provenance": {"current:net_income": [verified]},
+            "source_refs": [verified],
+        }],
+    }
+    trace = build_decision_trace(assessment, {"decision": "REVIEW"})
+    assert trace["paths"][0]["evidence_path_status"] == "UNVERIFIED"
+    assessment["triggered_rules"][0]["input_provenance"]["prior:net_income"] = [
+        {"verification_status": "verified", "fiscal_year": 2023}
+    ]
+    trace = build_decision_trace(assessment, {"decision": "FLAG"})
+    assert trace["paths"][0]["evidence_path_status"] == "VERIFIED"
 
 
 def test_snapshot_detaches_mutable_inputs_and_preserves_hash():

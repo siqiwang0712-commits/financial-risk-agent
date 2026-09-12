@@ -101,6 +101,8 @@ class RuleSignal:
     evidence: list[str]
     source_refs: list[Evidence] = field(default_factory=list)
     family: str | None = None
+    required_inputs: list[str] = field(default_factory=list)
+    input_provenance: dict[str, list[Evidence]] = field(default_factory=dict)
 
 
 @dataclass
@@ -142,6 +144,7 @@ class Assessment:
     confidence_components: dict[str, float] = field(default_factory=dict)
     evidence_graph: dict[str, Any] = field(default_factory=dict)
     evidence_quality: float = 0.0
+    evidence_coverage: float = 0.0
     reliability_status: str = "UNCALIBRATED"
     disclaimer: str = "Risk scores are heuristic assessment scores, not bankruptcy probabilities or investment advice."
 

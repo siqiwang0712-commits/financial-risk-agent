@@ -129,8 +129,14 @@ class PostgresEnterpriseRepository:
         return AnalysisSnapshot(row["id"],row["organization_id"],row["entity_id"],row["input_hash"],row["output_hash"],row["document_versions"],row["component_versions"],row["frozen_input"],row["frozen_output"],str(row["created_at"]))
 
     def save_risk_snapshot(self, organization_id: str, snapshot: RiskSnapshot) -> RiskSnapshot:
-        with self.connection.cursor() as cursor:
-            cursor.execute("INSERT INTO risk_snapshots (id,organization_id,entity_id,period,filing_id,risk_score,dimension_scores,metrics,evidence_paths,decision,coverage,reliability,calibration_status) VALUES (%s,%s,%s,%s,%s,%s,%s::jsonb,%s::jsonb,%s::jsonb,%s,%s,%s,%s)",(f"risk_{snapshot.entity_id}_{snapshot.period}",organization_id,snapshot.entity_id,snapshot.period,snapshot.filing_id,snapshot.risk_score,_json(snapshot.dimension_scores),_json(snapshot.metrics),_json(snapshot.evidence_paths),str(snapshot.decision),snapshot.coverage,snapshot.reliability,str(snapshot.calibration_status)))
+        try:
+            with self.connection.cursor() as cursor:
+                cursor.execute("INSERT INTO risk_snapshots (id,organization_id,entity_id,period,filing_id,risk_score,dimension_scores,metrics,evidence_paths,decision,coverage,reliability,calibration_status) VALUES (%s,%s,%s,%s,%s,%s,%s::jsonb,%s::jsonb,%s::jsonb,%s,%s,%s,%s)",(f"risk_{snapshot.entity_id}_{snapshot.period}",organization_id,snapshot.entity_id,snapshot.period,snapshot.filing_id,snapshot.risk_score,_json(snapshot.dimension_scores),_json(snapshot.metrics),_json(snapshot.evidence_paths),str(snapshot.decision),snapshot.coverage,snapshot.reliability,str(snapshot.calibration_status)))
+        except Exception as exc:
+            self.connection.rollback()
+            if getattr(exc, "sqlstate", None) == "23505" or exc.__class__.__name__ == "UniqueViolation":
+                raise ValueError(f"risk snapshot already exists for {snapshot.period}") from exc
+            raise
         self.connection.commit()
         return snapshot
 

@@ -33,3 +33,14 @@ def test_narrative_boolean_inherits_verified_source():
     signal=next(item for item in assessment.triggered_rules if item.rule_id=="ACC_005")
     assert signal.source_refs
     assert all(item.verification_status=="verified" for item in signal.source_refs)
+
+
+def test_going_concern_provider_to_verified_rule_chain():
+    assessment=FinRiskPipeline(ROOT).assess(
+        "Issuer",2025,{},pages={9:"The auditor identified substantial doubt about the issuer's ability to continue as a going concern."},document="10-K",
+    )
+    signal=next(item for item in assessment.triggered_rules if item.rule_id=="BUS_001")
+    assert signal.category=="business_going_concern"
+    assert signal.required_inputs==["going_concern_doubt"]
+    assert signal.input_provenance["going_concern_doubt"]
+    assert all(item.verification_status=="verified" for item in signal.input_provenance["going_concern_doubt"])

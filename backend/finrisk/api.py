@@ -180,7 +180,10 @@ if FastAPI:
             response = await call_next(request)
         except Exception as exc:  # noqa: BLE001 - public boundary must sanitize unknown failures
             structured_event(api_logger, "http.unhandled", error_type=type(exc).__name__)
-            response = JSONResponse(500, {"detail": "internal server error", "correlation_id": identifier})
+            response = JSONResponse(
+                {"detail": "internal server error", "correlation_id": identifier},
+                status_code=500,
+            )
         response.headers["X-Correlation-Id"] = identifier
         structured_event(
             api_logger,

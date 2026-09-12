@@ -106,7 +106,7 @@ Status date: 2026-09-11. This remains a research prototype. Predictive superiori
 
 - Python 3.11 and 3.12 are tested under a dependency-locked environment with a 90% minimum coverage gate.
 - CI runs the complete backend suite with PostgreSQL 17 plus an explicit production-overlay Docker smoke test.
-- Four frontend semantic tests, official-registry production/full npm audits, TypeScript checking and the Next.js standalone production build pass.
+- Four frontend semantic tests, the CI-enforced official-registry production npm audit, a locally verified full npm audit, TypeScript checking and the Next.js standalone production build pass.
 - Ruff, E1/E2/E3 read-only hash replay and `git diff --check` pass.
 - PostgreSQL 17 migration, repository selection and API-restart persistence passed locally through the production Compose overlay. The same smoke remains required in CI; production deployment remains unvalidated.
 - Independent v0.3.1 public-pilot and fusion replay artifacts generated under `research/results/v0.3.1`; the `public_v1` directory matches the v0.3.0 tag and the replay runner now refuses to overwrite it.

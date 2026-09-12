@@ -5,7 +5,7 @@ from pathlib import Path
 
 from .contradictions import detect_contradictions
 from .domain import Assessment, RuleSignal
-from .enterprise.applicability import enforce_applicability
+from .enterprise.applicability import MODEL_REQUIREMENTS, enforce_applicability
 from .evidence import EvidenceVerifier
 from .llm import NarrativeProvider, provider_from_env
 from .metrics import calculate_metrics, resolve_total_debt
@@ -32,6 +32,65 @@ class FinRiskPipeline:
                 for ev in source_map.get(key,[]):
                     identity=(ev.document,ev.page,ev.source_text)
                     if identity not in seen:metric.source_refs.append(ev);seen.add(identity)
+
+        def period_refs(raw_key: str, fiscal_year: int) -> list:
+            refs = list(source_map.get(raw_key, []))
+            return [ref for ref in refs if ref.fiscal_year == fiscal_year]
+
+        def debt_requirements(values: dict, fiscal_year: int) -> list[tuple[str, int]]:
+            _, parents = resolve_total_debt(values)
+            return [(parent, fiscal_year) for parent in parents]
+
+        def metric_requirements(name: str) -> list[tuple[str, int]]:
+            if name.endswith("_growth"):
+                base = name.removesuffix("_growth")
+                if base == "free_cash_flow":
+                    return [(key, period) for period in (year, year - 1) for key in ("operating_cash_flow", "capital_expenditure")]
+                if base == "total_debt":
+                    return debt_requirements(current, year) + debt_requirements(previous or {}, year - 1)
+                return [(base, year), (base, year - 1)]
+            aliases = {
+                "EBIT": "ebit" if current.get("ebit") is not None else "operating_income",
+                "EBITDA": "ebitda",
+                "assets_basis": "total_assets",
+                "equity_basis": "shareholder_equity",
+                "receivables_basis": "accounts_receivable",
+                "inventory_basis": "inventory",
+                "payables_basis": "accounts_payable",
+            }
+            requirements = []
+            metric = metrics[name]
+            for input_name in metric.inputs:
+                if input_name == "free_cash_flow":
+                    requirements.extend(metric_requirements("free_cash_flow"))
+                elif input_name == "COGS":
+                    requirements.extend((("revenue", year), ("gross_profit", year)))
+                elif input_name in {"total_debt", "short_term_debt", "long_term_debt"} and "debt" in metric.formula.casefold():
+                    requirements.extend(debt_requirements(current, year) if input_name == "total_debt" else [(input_name, year)])
+                else:
+                    raw = aliases.get(input_name, input_name)
+                    requirements.append((raw, year))
+                    if previous and input_name.endswith("_basis") and "average" in metric.formula:
+                        requirements.append((raw, year - 1))
+            return list(dict.fromkeys(requirements))
+
+        def complete_refs(requirements: list[tuple[str, int]]) -> list:
+            groups = [period_refs(key, period) for key, period in requirements]
+            refs = [ref for group in groups for ref in group]
+            return refs if groups and all(groups) else []
+
+        def fact_requirements(name: str) -> list[tuple[str, int]]:
+            if name in metrics:
+                return metric_requirements(name)
+            if name in {"accounts_receivable_growth_gap", "inventory_growth_gap"}:
+                base = name.removesuffix("_gap")
+                return metric_requirements(base) + metric_requirements("revenue_growth")
+            if name.endswith("_change") and name.removesuffix("_change") in metrics:
+                base = name.removesuffix("_change")
+                current_requirements = metric_requirements(base)
+                prior_requirements = [(key, period - 1) for key, period in current_requirements if period == year]
+                return list(dict.fromkeys(current_requirements + prior_requirements))
+            return [(name, year)]
         facts={k:m.value for k,m in metrics.items()}|current
         resolved_debt, debt_parents = resolve_total_debt(current)
         if current.get("total_debt") is None and resolved_debt is not None:
@@ -63,7 +122,7 @@ class FinRiskPipeline:
             ev=self.verifier.verify(claim.evidence,pages); verified.append(ev)
             if ev.verified: claim.evidence=ev; accepted.append(claim)
         narrative_signals = {
-            "going_concern_doubt": [c for c in accepted if c.risk_category=="going_concern" and c.polarity=="negative"],
+            "going_concern_doubt": [c for c in accepted if c.risk_category=="business_going_concern" and c.polarity=="negative"],
             "material_weakness": [c for c in accepted if "material weakness" in c.claim.lower() and c.polarity=="negative"],
             "refinancing_dependency": [c for c in accepted if "refinancing" in c.claim.lower() and c.polarity=="negative"],
         }
@@ -80,20 +139,66 @@ class FinRiskPipeline:
                 model=next(m for m in models if m.name==mapping["model"])
                 refs=[]
                 for key in model.inputs:refs.extend(source_map.get(key,[]))
-                signals.append(RuleSignal(mapping["id"],mapping["category"],"model",mapping["delta"],f'{mapping["model"]} crossed configured risk threshold; model limitations still apply.',[f'{mapping["metric"]}={value} {mapping["operator"]} {mapping["threshold"]}'],refs,family=f'model:{mapping["model"]}'))
+                model_key = {
+                    "Altman Z-Score": "altman",
+                    "Beneish M-Score": "beneish",
+                    "Piotroski F-Score": "piotroski",
+                    "Ohlson O-Score": "ohlson",
+                }[mapping["model"]]
+                base_required = sorted(MODEL_REQUIREMENTS[model_key])
+                if mapping["model"] in {"Beneish M-Score", "Piotroski F-Score"}:
+                    required = [f"current:{key}" for key in base_required] + [f"prior:{key}" for key in base_required]
+                else:
+                    required = base_required
+                provenance = {}
+                for key in required:
+                    period = year
+                    raw_key = key
+                    if key.startswith("current:"):
+                        raw_key = key.split(":", 1)[1]
+                    elif key.startswith("prior:"):
+                        raw_key = key.split(":", 1)[1]
+                        period = year - 1
+                    elif key == "prior_net_income":
+                        raw_key, period = "net_income", year - 1
+                    if raw_key in metrics and period == year:
+                        provenance[key] = complete_refs(metric_requirements(raw_key))
+                    else:
+                        provenance[key] = complete_refs([(raw_key, period)])
+                signals.append(RuleSignal(mapping["id"],mapping["category"],"model",mapping["delta"],f'{mapping["model"]} crossed configured risk threshold; model limitations still apply.',[f'{mapping["metric"]}={value} {mapping["operator"]} {mapping["threshold"]}'],refs,family=f'model:{mapping["model"]}',required_inputs=required,input_provenance=provenance))
         for signal in signals:
             keys=[item.split("=",1)[0] for item in signal.evidence]
             refs=list(signal.source_refs)
+            input_provenance = dict(signal.input_provenance)
             for key in keys:
                 refs.extend(source_map.get(key,[]))
-                if key in metrics:refs.extend(metrics[key].source_refs)
+                if key in metrics:
+                    refs.extend(metrics[key].source_refs)
+                    input_provenance[key] = complete_refs(fact_requirements(key))
+                else:
+                    input_provenance[key] = complete_refs(fact_requirements(key))
             signal.source_refs=list({(e.document,e.page,e.source_text):e for e in refs}.values())
+            signal.required_inputs = signal.required_inputs or keys
+            signal.input_provenance = {
+                key: input_provenance.get(key, list(source_map.get(key, [])))
+                for key in signal.required_inputs
+            }
         contradictions=detect_contradictions(accepted,facts)
         score,level,dimensions=aggregate(signals,contradictions,self.scoring)
         missing=[f"{m.name}: N/A — {m.missing_reason} Impact: assessment confidence reduced." for m in metrics.values() if m.value is None]
         numeric_evidence=[e for refs in source_map.values() for e in refs]
         conf=confidence(current,verified,models,previous is not None,numeric_evidence)
         components=confidence_components(current,verified,models,previous is not None,numeric_evidence)
+        material_groups = [
+            signal.input_provenance.get(name, [])
+            for signal in signals
+            for name in signal.required_inputs
+        ]
+        evidence_coverage = round(
+            sum(bool(refs) and all(ref.verification_status == "verified" for ref in refs) for refs in material_groups)
+            / len(material_groups),
+            3,
+        ) if material_groups else 0.0
         nodes=[];edges=[]
         for key,refs in source_map.items():
             for i,e in enumerate(refs):nodes.append({"id":f"value:{key}:{i}","type":"financial_value","label":key,"document":e.document,"page":e.page,"status":e.verification_status})
@@ -123,4 +228,4 @@ class FinRiskPipeline:
         for category in dimensions:nodes.append({"id":f"dimension:{category}","type":"dimension","label":category});edges.append({"from":f"dimension:{category}","to":"overall","relation":"weighted_into"})
         nodes.append({"id":"overall","type":"assessment","label":"overall risk"})
         graph={"nodes":nodes,"edges":edges}
-        return Assessment(company,str(year),score,level,conf,dimensions,metrics,models,signals,contradictions,missing,confidence_components=components,evidence_graph=graph,evidence_quality=conf,reliability_status="UNCALIBRATED")
+        return Assessment(company,str(year),score,level,conf,dimensions,metrics,models,signals,contradictions,missing,confidence_components=components,evidence_graph=graph,evidence_quality=conf,evidence_coverage=evidence_coverage,reliability_status="UNCALIBRATED")

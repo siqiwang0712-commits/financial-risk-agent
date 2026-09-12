@@ -1,10 +1,11 @@
 from __future__ import annotations
 
+import math
 from dataclasses import asdict
 from typing import Annotated
 
 from fastapi import APIRouter, Depends, Header, HTTPException
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 from .applicability import applicability_report
 from .calibration import selective_decision
@@ -32,6 +33,19 @@ from .security import (
 )
 from .service import EnterpriseRiskService
 from .temporal import RiskSnapshot, compare_risk_snapshots
+
+
+def _finite_mapping(values: dict, boolean_fields: set[str] | None = None) -> dict:
+    boolean_fields = boolean_fields or set()
+    for name, value in values.items():
+        if value is None:
+            continue
+        if isinstance(value, bool):
+            if name not in boolean_fields:
+                raise ValueError(f"boolean is not a financial numeric value: {name}")
+        elif not isinstance(value, (int, float)) or not math.isfinite(value):
+            raise ValueError(f"non-finite or invalid financial value: {name}")
+    return values
 
 
 class OrganizationCreate(BaseModel):
@@ -85,11 +99,21 @@ class FusionRequest(BaseModel):
     confidence: float = Field(ge=0, le=1)
     decision_policy: dict[str, float] = Field(default_factory=dict)
 
+    @field_validator("scores", "weights", "decision_policy", mode="before")
+    @classmethod
+    def finite_mappings(cls, values):
+        return _finite_mapping(values)
+
 
 class ScenarioRequest(BaseModel):
     year: int
     baseline: dict[str, float | None]
     shocks: dict[str, float]
+
+    @field_validator("baseline", "shocks", mode="before")
+    @classmethod
+    def finite_mappings(cls, values):
+        return _finite_mapping(values)
 
 
 class PolicyCreate(BaseModel):
@@ -122,10 +146,31 @@ class RiskSnapshotRequest(BaseModel):
     reliability: float | None = Field(default=None, ge=0, le=1)
     calibration_status: CalibrationStatus = CalibrationStatus.UNCALIBRATED
 
+    @field_validator("risk_score", "reliability", mode="before")
+    @classmethod
+    def finite_scalars(cls, value):
+        if value is not None and (
+            isinstance(value, bool)
+            or not isinstance(value, (int, float))
+            or not math.isfinite(value)
+        ):
+            raise ValueError("financial values must be finite numbers")
+        return value
+
+    @field_validator("dimension_scores", "metrics", mode="before")
+    @classmethod
+    def finite_financial_mappings(cls, values):
+        return _finite_mapping(values)
+
 
 class ApplicabilityRequest(BaseModel):
     industry: str
     facts: dict[str, float | str | bool | None]
+
+    @field_validator("facts", mode="before")
+    @classmethod
+    def finite_facts(cls, values):
+        return _finite_mapping(values, {"going_concern_doubt", "material_weakness", "refinancing_dependency"})
 
 
 class SelectiveDecisionRequest(BaseModel):

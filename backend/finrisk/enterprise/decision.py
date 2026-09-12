@@ -23,15 +23,20 @@ def build_decision_trace(
         for reason_code in dimension.get("key_drivers", []):
             signal = rules.get(reason_code, {})
             evidence = signal.get("source_refs", [])
-            verified = bool(evidence) and all(
-                item.get("verification_status", "").casefold() == "verified"
-                for item in evidence
+            required_inputs = signal.get("required_inputs", [])
+            provenance = signal.get("input_provenance", {})
+            verified = bool(required_inputs) and all(
+                provenance.get(name)
+                and all(item.get("verification_status", "").casefold() == "verified" for item in provenance[name])
+                for name in required_inputs
             )
             paths.append(
                 {
                     "reason_code": reason_code,
                     "risk_domain": domain,
                     "source_evidence": evidence,
+                    "required_inputs": required_inputs,
+                    "input_provenance": provenance,
                     "rule_or_model": signal.get("family") or reason_code,
                     "rule_version": component_versions.get("rules", "UNPINNED"),
                     "fusion_version": component_versions.get("fusion", "UNPINNED"),

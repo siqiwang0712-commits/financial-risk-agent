@@ -269,12 +269,16 @@ class _Connection:
         self.responses = list(responses)
         self.calls = []
         self.commits = 0
+        self.rollbacks = 0
 
     def cursor(self):
         return _Cursor(self)
 
     def commit(self):
         self.commits += 1
+
+    def rollback(self):
+        self.rollbacks += 1
 
 
 def test_postgres_repository_crud_contract_without_live_database():
@@ -295,6 +299,26 @@ def test_postgres_repository_crud_contract_without_live_database():
     assert connection.commits == 8
     with pytest.raises(TypeError):
         repository.save(object())
+
+
+def test_postgres_duplicate_risk_snapshot_rolls_back_and_maps_error():
+    class UniqueViolation(Exception):
+        sqlstate = "23505"
+
+    class DuplicateCursor(_Cursor):
+        def execute(self, sql, values=None):
+            raise UniqueViolation("duplicate")
+
+    class DuplicateConnection(_Connection):
+        def cursor(self):
+            return DuplicateCursor(self)
+
+    connection = DuplicateConnection()
+    repository = PostgresEnterpriseRepository(connection)
+    snapshot = RiskSnapshot("e", "2024", "f", 70, {}, {}, {}, "REVIEW", 0.8)
+    with pytest.raises(ValueError, match="already exists"):
+        repository.save_risk_snapshot("o", snapshot)
+    assert connection.rollbacks == 1 and connection.commits == 0
 
 
 def test_postgres_repository_reads_are_tenant_scoped():

@@ -157,7 +157,7 @@ def run_public_benchmark(
                     if baseline == "full_hybrid"
                     else 0,
                     "verified_claim_count": len(verified_claims),
-                    "evidence_coverage": assessment.confidence,
+                    "evidence_coverage": assessment.evidence_coverage,
                 }
             )
 

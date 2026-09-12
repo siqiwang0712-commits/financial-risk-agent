@@ -74,7 +74,7 @@ This hardening release makes the existing architecture stricter without adding n
 
 Machine-readable reason codes include `SEVERE_VERIFIED_SIGNAL`, `INSUFFICIENT_EVIDENCE`, `CLAIM_CONTEXT_INCOMPLETE`, `HIGH_MODEL_DISAGREEMENT`, `UNVALIDATED_RELIABILITY` and `CRITICAL_DIMENSION_ESCALATION`.
 
-The independently written replay artifacts live under [`research/results/v0.3.1`](research/results/v0.3.1). The frozen `public_v1` directory is not overwritten. **v0.3.1 improves decision integrity and research readiness, but does not establish real-world predictive superiority.**
+The independently written replay artifacts live under [`research/results/v0.3.1`](research/results/v0.3.1). The frozen `public_v1` directory is an immutable three-observation narrative pilot and is not overwritten; E3 is the separate 90-observation, 30-company numeric corpus. **v0.3.1 improves decision integrity and research readiness, but does not establish real-world predictive superiority.**
 
 ### Empirical Validation Foundation (local numeric run)
 

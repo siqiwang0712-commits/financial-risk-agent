@@ -29,5 +29,7 @@ class RuleEngine:
                 passed=actual is not None and c["operator"] in OPS and OPS[c["operator"]](actual,c["value"])
                 ok &= passed
                 if passed: matches.append(f'{c["metric"]}={actual} {c["operator"]} {c["value"]}')
-            if ok: out.append(RuleSignal(r["id"],r["category"],r["severity"],r["effect"]["score_delta"],r["rationale"],matches,family=r.get("family")))
+            if ok:
+                required = [condition["metric"] for condition in r["conditions"]]
+                out.append(RuleSignal(r["id"],r["category"],r["severity"],r["effect"]["score_delta"],r["rationale"],matches,family=r.get("family"),required_inputs=required))
         return out

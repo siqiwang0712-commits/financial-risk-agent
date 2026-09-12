@@ -4,6 +4,7 @@
 
 ## [0.3.2] - 2026-09-11
 
+- Closed remaining release-integrity gaps in required-input evidence completeness, canonical going-concern taxonomy, duplicate PostgreSQL snapshot handling, finite numeric API boundaries and evidence-only coverage semantics.
 - Corrected canonical Ohlson and Beneish formula semantics; explicitly marked the available Piotroski implementation as a limited proxy.
 - Hardened verified-evidence state transitions, complete material proof paths, final-decision synchronization, immutable snapshots/bundles, and domain-scoped RiskCase proof gates.
 - Added runtime frontend-to-API proxy verification and configurable Compose LLM provider wiring with CI pinned to mock execution.

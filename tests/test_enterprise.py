@@ -365,3 +365,15 @@ def test_enterprise_compute_endpoints_require_authentication():
     )
     assert fusion.status_code == 401
     assert scenario.status_code == 401
+
+
+def test_enterprise_financial_boundaries_reject_nonfinite_and_boolean_values():
+    client = TestClient(app)
+    org = client.post("/api/v1/enterprise/organizations", json={"name": "Boundary", "actor_id": "admin"}).json()
+    headers = {"X-API-Key": org["api_key"]}
+    entity = client.post("/api/v1/enterprise/entities", headers=headers, json={"name": "Issuer"}).json()
+    scenario = client.post("/api/v1/enterprise/scenarios", headers=headers, json={"year": 2025, "baseline": {"revenue": "NaN"}, "shocks": {"revenue_pct": 0.1}})
+    boolean_scenario = client.post("/api/v1/enterprise/scenarios", headers=headers, json={"year": 2025, "baseline": {"revenue": True}, "shocks": {"revenue_pct": 0.1}})
+    snapshot = client.post(f"/api/v1/enterprise/entities/{entity['id']}/risk-snapshots", headers=headers, json={"period": "2025", "filing_id": "f", "risk_score": "Infinity", "dimension_scores": {}, "metrics": {}, "evidence_paths": {}, "decision": "REVIEW", "coverage": 0.5})
+    metric_bool = client.post(f"/api/v1/enterprise/entities/{entity['id']}/risk-snapshots", headers=headers, json={"period": "2025", "filing_id": "f", "risk_score": 50, "dimension_scores": {}, "metrics": {"cash": False}, "evidence_paths": {}, "decision": "REVIEW", "coverage": 0.5})
+    assert {scenario.status_code, boolean_scenario.status_code, snapshot.status_code, metric_bool.status_code} == {422}

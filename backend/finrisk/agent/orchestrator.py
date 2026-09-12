@@ -129,11 +129,7 @@ class FinancialRiskAgent:
             state.risk_score = assessment.overall_score
             state.confidence = assessment.confidence
             components = assessment.confidence_components
-            state.evidence_coverage = (
-                round(sum(components.values()) / len(components), 3)
-                if components
-                else 0.0
-            )
+            state.evidence_coverage = assessment.evidence_coverage
             dimension_scores = {
                 name: value.get("score")
                 for name, value in state.assessment.get("dimensions", {}).items()
