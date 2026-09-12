@@ -108,7 +108,7 @@ export default function Page() {
       <main>
         {/* Pilot table */}
         <section className="portfolio">
-          <p className="eyebrow">Public pilot — 2021 filings</p>
+          <p className="eyebrow">Public pilot — FY2024 filings</p>
           <h2>Evidence-grounded risk assessment</h2>
           <p className="portfolioNote">
             A rule-hybrid agent that reads annual reports, computes metrics, evaluates models,
@@ -190,7 +190,11 @@ export default function Page() {
         {/* Footer */}
         <footer>
           <p>
-            FinRisk-Agent v0.3.0 · Un-calibrated research prototype · Not for production use.
+            FinRisk-Agent v0.3.2 · Un-calibrated research prototype · Not for production use.
+          </p>
+          <p className="muted">
+            {assessment?.disclaimer ||
+              "Risk scores are heuristic assessment scores, not bankruptcy probabilities or investment advice."}
           </p>
           <p className="muted">
             All decisions are provisional. Evidence coverage, model disagreement and reliability
