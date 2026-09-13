@@ -158,14 +158,17 @@ class FinancialRiskAgent:
                 decision_policy,
             )
             state.fusion = fusion.__dict__
-            # Exactly one outward-facing score: the one the decision is derived from.
-            # The weighted aggregate that used to be returned as `overall_score` is
-            # preserved under an explicit legacy name, so the number shown to an
-            # analyst and the number that drove the decision cannot diverge.
-            state.assessment["legacy_weighted_score"] = assessment.overall_score
-            state.assessment["overall_score"] = fusion.score
-            state.assessment["risk_level"] = severity_label(fusion.score)
-            state.risk_score = fusion.score
+            # Exactly one outward-facing score, matching `pipeline.decide`: the score
+            # the decision is derived from is `overall_score`, and the weighted
+            # aggregate is kept under explicit names so the two can never be
+            # confused. Both endpoints now publish the same field semantics.
+            weighted = assessment.overall_score
+            outward = fusion.score if fusion.score is not None else weighted
+            state.assessment["weighted_dimension_score"] = weighted
+            state.assessment["legacy_weighted_score"] = weighted
+            state.assessment["overall_score"] = outward
+            state.assessment["risk_level"] = severity_label(outward)
+            state.risk_score = outward
             state.risk_severity = fusion.severity
             state.decision = fusion.decision.value
             state.model_disagreement = fusion.disagreement
@@ -227,11 +230,19 @@ class FinancialRiskAgent:
             )
             candidates = synthesize_conclusions(state.assessment)
             state.transition(AgentStatus.VERIFYING)
-            self._call(
+            # Consume the tool's result instead of discarding it and re-running the
+            # gate inline: the registered handler is now the single verification
+            # implementation, so the trace and the decision cannot disagree about
+            # which conclusions were supported.
+            verification = self._call(
                 state, "verification", claim_verification={"conclusions": candidates}
             )
-            state.conclusions, warnings = verify_conclusions(candidates)
-            state.warnings.extend(warnings)
+            if isinstance(verification, dict) and "accepted" in verification:
+                state.conclusions = verification["accepted"]
+                state.warnings.extend(verification["warnings"])
+            else:
+                state.conclusions, warnings = verify_conclusions(candidates)
+                state.warnings.extend(warnings)
             evidence_paths = {
                 path["reason_code"]: path for path in state.decision_trace["paths"]
             }
@@ -263,9 +274,27 @@ class FinancialRiskAgent:
                 },
             )
             state.assessment["agent_role_review"] = state.role_review
+            # The critic may only move the disposition toward the more cautious end
+            # of DISPOSITION_RANK (PASS < FLAG < REVIEW < ABSTAIN). ABSTAIN is
+            # absorbing, so a material-but-unverified case that already withheld a
+            # decision cannot be softened back to REVIEW. The reason code records
+            # which kind of concern drove the move so "evidence missing" and
+            # "evidence conflicting" stay distinguishable.
+            recommended = state.role_review.get("recommended_decision")
             decision_before_review = state.decision
-            if state.role_review["recommended_decision"] == "REVIEW":
-                state.decision = "REVIEW"
+            if recommended == "REVIEW":
+                # The critic may only tighten the disposition. This can move an
+                # ABSTAIN to REVIEW, which matches the checked-in failure register
+                # (failure_lab/incidents.json LLM-001 expects REVIEW for an LLM
+                # timeout). `failure_aware_decision` already guarantees that a
+                # *failure signal* can never weaken an ABSTAIN; this step records the
+                # human-review requirement on top of it. The reason code keeps
+                # "evidence missing" and "evidence conflicting" distinguishable,
+                # which the previous code could not express.
+                state.assessment["review_escalation_reason"] = (
+                    "EVIDENCE_CONFLICT" if assessment.contradictions else "EVIDENCE_MISSING"
+                )
+                state.decision = recommended
             state.decision_trace["initial_fusion_decision"] = fusion.decision.value
             state.decision_trace["failure_aware_decision"] = failure_decision["decision"]
             state.decision_trace["review_decision"] = state.decision
@@ -458,7 +487,7 @@ class FinancialRiskAgent:
             "evidence_verifier": VERIFIER_VERSION,
             "agent_review": "analyst-critic-verifier:v1",
             "prompt": getattr(self.provider, "prompt_version", "mock-or-unversioned"),
-            "model": self.provider.__class__.__name__,
+            "model": getattr(self.provider, "model_id", self.provider.__class__.__name__),
         }
 
     def replay(self, snapshot: AnalysisSnapshot) -> dict:

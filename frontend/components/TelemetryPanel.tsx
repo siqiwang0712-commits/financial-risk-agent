@@ -48,7 +48,13 @@ export function TelemetryPanel({ items }: Props) {
                   <code>{item.component}</code>
                 </td>
                 <td>
-                  <span className={`statusChip ${item.status === "success" ? "ok" : "bad"}`}>
+                  {/* The producer emits "executed"/"not_executed"; matching only
+                      "success" painted every normally-executed row red. */}
+                  <span
+                    className={`statusChip ${
+                      item.status === "executed" || item.status === "success" ? "ok" : "bad"
+                    }`}
+                  >
                     {item.status}
                   </span>
                 </td>

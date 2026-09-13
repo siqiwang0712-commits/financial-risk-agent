@@ -1,11 +1,13 @@
 from __future__ import annotations
 
+from dataclasses import replace
 from pathlib import Path
 
 from ..agent.tool_registry import ToolRegistry, ToolSpec
+from ..agent.verification import verify_conclusions
 from ..contradictions import detect_contradictions
 from ..enterprise.applicability import applicability_report, enforce_applicability
-from ..evidence import EvidenceVerifier
+from ..evidence import EvidenceVerifier, claim_is_grounded
 from ..llm import NarrativeProvider
 from ..metrics import calculate_metrics
 from ..models import altman_z, beneish_m, ohlson_o, piotroski_f
@@ -57,10 +59,10 @@ def build_tool_registry(root: Path, provider: NarrativeProvider) -> ToolRegistry
         ToolSpec(
             "traditional_models",
             "Applicability-gated financial models",
-            lambda current, previous=None, entity_type="industrial", **_: _models(
-                current, previous, entity_type
+            lambda current, year, previous=None, entity_type="industrial", **_: _models(
+                current, year, previous, entity_type
             ),
-            ("current",),
+            ("current", "year"),
         )
     )
     registry.register(
@@ -112,7 +114,7 @@ def build_tool_registry(root: Path, provider: NarrativeProvider) -> ToolRegistry
         ToolSpec(
             "claim_verification",
             "Material claim evidence gate",
-            lambda conclusions, **_: conclusions,
+            lambda conclusions, **_: _verify(conclusions),
             ("conclusions",),
         )
     )
@@ -153,20 +155,28 @@ def build_tool_registry(root: Path, provider: NarrativeProvider) -> ToolRegistry
     return registry
 
 
-def _models(current: dict, previous: dict | None, entity_type: str):
-    metrics = calculate_metrics(current, 0, previous)
+def _verify(conclusions):
+    """Real evidence gate.
+
+    The registered handler used to be the identity function
+    (`lambda conclusions, **_: conclusions`), so the "verification" tool could
+    never reject anything. It now runs the actual gate and returns both the
+    admitted subset and the rejection reasons.
+    """
+    accepted, warnings = verify_conclusions(conclusions)
+    return {"accepted": accepted, "warnings": warnings}
+
+
+def _models(current: dict, year: int, previous: dict | None, entity_type: str):
+    metrics = calculate_metrics(current, year, previous)
+    ebit = current.get("ebit")
+    if ebit is None:
+        ebit = current.get("operating_income")
     inputs = current | {
         "working_capital": metrics["working_capital"].value,
-        "ebit": current.get("ebit", current.get("operating_income")),
+        "ebit": ebit,
     }
-    results = [
-        altman_z(
-            inputs,
-            "bank"
-            if entity_type in {"bank", "financial_institution"}
-            else "public_manufacturer",
-        )
-    ]
+    results = [altman_z(inputs, entity_type)]
     if previous:
         results += [beneish_m(current, previous), piotroski_f(current, previous)]
     results += [ohlson_o(inputs)]
@@ -180,10 +190,23 @@ def _claims(provider, verifier, pages, document, year):
     caller can hand both to the deterministic assessment, keeping
     `verified_claim_coverage`'s denominator (all extracted claims) intact while
     ensuring the provider is invoked exactly once per analysis.
+
+    A claim is admitted only when its quotation is on the page *and* the free-text
+    claim is supported by that quotation; a verified quote does not make an
+    unrelated assertion true.
     """
     accepted, verifications = [], []
     for claim in provider.extract(pages, document, year):
         evidence = verifier.verify(claim.evidence, pages)
+        if evidence.verified and not claim_is_grounded(
+            claim.claim, evidence.source_text, pages.get(evidence.page, "")
+        ):
+            evidence = replace(
+                evidence,
+                verified=False,
+                verification_status="unverified",
+                confidence=min(evidence.confidence, 0.25),
+            )
         verifications.append(evidence)
         if evidence.verified:
             claim.evidence = evidence

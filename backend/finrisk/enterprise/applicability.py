@@ -29,26 +29,42 @@ MODEL_REQUIREMENTS = {
     "piotroski": {"net_income", "operating_cash_flow", "total_assets", "long_term_debt", "current_assets", "current_liabilities", "shares_outstanding", "gross_profit", "revenue"},
     "ohlson": {"total_assets", "total_liabilities", "working_capital", "current_liabilities", "current_assets", "net_income", "funds_from_operations", "prior_net_income", "gnp_price_index"},
 }
+# Altman's other populations need a book-equity denominator instead of market
+# value, and Z'' drops the asset-turnover term entirely. Kept out of
+# MODEL_REQUIREMENTS so `applicability_report` still enumerates one entry per
+# model family.
+ALTMAN_VARIANT_REQUIREMENTS = {
+    "public_manufacturer": MODEL_REQUIREMENTS["altman"],
+    "private": {"working_capital", "total_assets", "retained_earnings", "ebit", "shareholder_equity", "total_liabilities", "revenue"},
+    "non_manufacturer": {"working_capital", "total_assets", "retained_earnings", "ebit", "shareholder_equity", "total_liabilities"},
+}
 FINANCIAL_INDUSTRIES = {"bank", "banking", "insurance", "financial_institution", "broker_dealer"}
 
 
-def route_model(model: str, industry: str, facts: dict[str, object]) -> ApplicabilityDecision:
+def route_model(model: str, industry: str, facts: dict[str, object], variant: str | None = None) -> ApplicabilityDecision:
     key = model.lower().replace("_score", "").replace("-", "_")
     if key not in MODEL_REQUIREMENTS:
         raise KeyError(f"unknown model: {model}")
-    missing = tuple(sorted(name for name in MODEL_REQUIREMENTS[key] if facts.get(name) is None))
+    requirements = MODEL_REQUIREMENTS[key]
+    if key == "altman" and variant in ALTMAN_VARIANT_REQUIREMENTS:
+        requirements = ALTMAN_VARIANT_REQUIREMENTS[variant]
+    missing = tuple(sorted(name for name in requirements if facts.get(name) is None))
     reasons = []
     normalized_industry = industry.lower().strip()
     if normalized_industry in FINANCIAL_INDUSTRIES:
         return ApplicabilityDecision(key, ApplicabilityStatus.NOT_APPLICABLE, ("regulated financial institutions have structurally different balance sheets",), missing)
-    if key == "altman" and normalized_industry not in {"manufacturing", "industrial", "public_manufacturer"}:
+    if key == "altman" and variant in (None, "public_manufacturer") and normalized_industry not in {"manufacturing", "industrial", "public_manufacturer"}:
         reasons.append("original public-manufacturer population does not match the supplied industry")
+    if key == "altman" and variant == "non_manufacturer":
+        reasons.append("non-manufacturer Z'' variant; original cut-offs do not apply")
+    if key == "altman" and variant == "private":
+        reasons.append("private-firm Z' variant; book equity replaces market value")
     if key == "piotroski":
         reasons.append("Piotroski-style proxy uses end-of-period asset denominators")
     if missing:
         reasons.append(f"missing {len(missing)} required component(s)")
     status = ApplicabilityStatus.APPLICABLE if not reasons else ApplicabilityStatus.LIMITED
-    if len(missing) == len(MODEL_REQUIREMENTS[key]):
+    if len(missing) == len(requirements):
         status = ApplicabilityStatus.NOT_APPLICABLE
     return ApplicabilityDecision(key, status, tuple(reasons or ("assumptions and required inputs satisfied",)), missing)
 
@@ -67,7 +83,10 @@ def enforce_applicability(
         "Ohlson O-Score": "ohlson",
     }
     for result in results:
-        decision = route_model(model_keys[result.name], industry, facts)
+        decision = route_model(
+            model_keys[result.name], industry, facts,
+            variant=result.derived_outputs.get("variant"),
+        )
         missing = sorted(
             set(result.missing_components) | set(decision.missing_components)
         )

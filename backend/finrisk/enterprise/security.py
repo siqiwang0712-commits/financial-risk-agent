@@ -136,15 +136,31 @@ class RateLimiter(Protocol):
 
 
 class SlidingWindowRateLimiter:
-    """Development fallback implementing the shared-store-ready limiter contract."""
+    """Development fallback implementing the shared-store-ready limiter contract.
 
-    def __init__(self, limit: int = 60, window_seconds: int = 60):
+    Keys are bounded so an attacker cannot grow `_events` without limit (e.g. by
+    creating unbounded organizations through the bootstrap endpoint). The least
+    recently active key is evicted once `max_keys` is reached.
+    """
+
+    def __init__(self, limit: int = 60, window_seconds: int = 60, max_keys: int = 10_000):
         self.limit = limit
         self.window_seconds = window_seconds
+        self.max_keys = max_keys
         self._events: dict[str, deque[float]] = defaultdict(deque)
+
+    def _evict_if_needed(self, key: str) -> None:
+        if key in self._events or len(self._events) < self.max_keys:
+            return
+        oldest = min(
+            self._events,
+            key=lambda candidate: self._events[candidate][-1] if self._events[candidate] else -1.0,
+        )
+        self._events.pop(oldest, None)
 
     def allow(self, key: str, now: float | None = None) -> bool:
         current = time.monotonic() if now is None else now
+        self._evict_if_needed(key)
         events = self._events[key]
         while events and events[0] <= current - self.window_seconds:
             events.popleft()

@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import math
+
 from .domain import Metric
 
 
@@ -15,12 +17,29 @@ def resolve_total_debt(values: dict[str, float | None]) -> tuple[float | None, t
 
 
 def _safe_div(a: float | None, b: float | None) -> float | None:
-    return None if a is None or b is None or b == 0 else a / b
+    """Return ``a / b``, or ``None`` when the result is undefined or non-finite.
+
+    Guarding only ``b == 0`` is not enough. A denormal denominator such as
+    ``1e-300`` produces ``inf``, which then leaks into rule comparisons
+    (silently non-triggering), into evidence strings, and finally into
+    ``json.dumps`` as the invalid token ``Infinity`` that both browser
+    ``JSON.parse`` and Postgres ``jsonb`` reject. A non-finite result is treated
+    as "not reliably computable" and surfaced as ``None`` (missing), never as a
+    number.
+    """
+    if a is None or b is None or b == 0:
+        return None
+    try:
+        result = a / b
+    except (ZeroDivisionError, OverflowError):
+        return None
+    return result if math.isfinite(result) else None
 
 
-def _metric(name, value, formula, inputs, year):
+def _metric(name, value, formula, inputs, year, reason=None):
     missing = [k for k, v in inputs.items() if v is None]
-    reason = f"Required input(s) not reliably identified: {', '.join(missing)}." if missing else ("Denominator is zero." if value is None else None)
+    if reason is None:
+        reason = f"Required input(s) not reliably identified: {', '.join(missing)}." if missing else ("Denominator is zero." if value is None else None)
     return Metric(name, value, formula, inputs, year, reason)
 
 
@@ -28,7 +47,33 @@ def calculate_metrics(v: dict[str, float | None], year: int, previous: dict[str,
     debt, debt_keys = resolve_total_debt(v)
     capex = v.get("capital_expenditure")
     fcf = None if v.get("operating_cash_flow") is None or capex is None else v["operating_cash_flow"] - abs(capex)
-    ebit = v.get("ebit", v.get("operating_income"))
+    # `dict.get(key, default)` only falls back when the key is *absent*. This
+    # codebase uses `None` for "missing", and a present-but-None `ebit` must not
+    # shadow a usable `operating_income`.
+    ebit = v.get("ebit")
+    if ebit is None:
+        ebit = v.get("operating_income")
+    # Cash conversion from earnings is undefined when reported earnings are not
+    # positive: a positive CFO over a negative NI yields a large negative ratio
+    # (false "weak conversion" for a company that is in fact converting cash),
+    # while two negatives yield a reassuring positive ratio. Neither is a
+    # meaningful signal, so the ratio is withheld.
+    net_income = v.get("net_income")
+    cfo_to_net_income = (
+        None
+        if net_income is None or net_income <= 0
+        else _safe_div(v.get("operating_cash_flow"), net_income)
+    )
+    # Non-positive EBITDA makes leverage unbounded, not low. Returning the raw
+    # negative ratio let the most leveraged companies slip under `SOL_006`
+    # (`debt_to_ebitda > 5.0`). The ratio is withheld as undefined and the adverse
+    # condition is surfaced as a boolean fact (`negative_ebitda_leverage`) so an
+    # explicit rule can fire instead of the company being silently exempt.
+    ebitda = v.get("ebitda")
+    if ebitda is None or ebitda <= 0:
+        debt_to_ebitda = None
+    else:
+        debt_to_ebitda = _safe_div(debt, ebitda)
     cogs = None if v.get("revenue") is None or v.get("gross_profit") is None else v["revenue"] - v["gross_profit"]
     def average_balance(key):
         current=v.get(key); prior=previous.get(key) if previous else None
@@ -49,13 +94,13 @@ def calculate_metrics(v: dict[str, float | None], year: int, previous: dict[str,
       "liabilities_to_assets": (_safe_div(v.get("total_liabilities"),v.get("total_assets")), "total_liabilities / total_assets", {"total_liabilities":v.get("total_liabilities"),"total_assets":v.get("total_assets")}),
       "net_debt": (None if debt is None or v.get("cash") is None else debt-v["cash"], "total_debt - cash", {**{key:v.get(key) for key in debt_keys},"cash":v.get("cash")}),
       "interest_coverage": (_safe_div(ebit, v.get("interest_expense")), "EBIT / interest_expense", {"EBIT":ebit,"interest_expense":v.get("interest_expense")}),
-      "debt_to_ebitda": (_safe_div(debt,v.get("ebitda")), "total_debt / EBITDA", {**{key:v.get(key) for key in debt_keys},"EBITDA":v.get("ebitda")}),
+      "debt_to_ebitda": (debt_to_ebitda, "total_debt / EBITDA", {**{key:v.get(key) for key in debt_keys},"EBITDA":ebitda}),
       "gross_margin": (_safe_div(v.get("gross_profit"),v.get("revenue")), "gross_profit / revenue", {"gross_profit":v.get("gross_profit"),"revenue":v.get("revenue")}),
       "operating_margin": (_safe_div(v.get("operating_income"),v.get("revenue")), "operating_income / revenue", {"operating_income":v.get("operating_income"),"revenue":v.get("revenue")}),
       "net_margin": (_safe_div(v.get("net_income"),v.get("revenue")), "net_income / revenue", {"net_income":v.get("net_income"),"revenue":v.get("revenue")}),
       "roa": (_safe_div(v.get("net_income"),avg_assets), "net_income / average_total_assets" if previous else "net_income / ending_total_assets (single-year proxy)", {"net_income":v.get("net_income"),"assets_basis":avg_assets}),
       "roe": (_safe_div(v.get("net_income"),avg_equity), "net_income / average_shareholder_equity" if previous else "net_income / ending_shareholder_equity (single-year proxy)", {"net_income":v.get("net_income"),"equity_basis":avg_equity}),
-      "cfo_to_net_income": (_safe_div(v.get("operating_cash_flow"),v.get("net_income")), "operating_cash_flow / net_income", {"operating_cash_flow":v.get("operating_cash_flow"),"net_income":v.get("net_income")}),
+      "cfo_to_net_income": (cfo_to_net_income, "operating_cash_flow / net_income", {"operating_cash_flow":v.get("operating_cash_flow"),"net_income":v.get("net_income")}),
       "free_cash_flow": (fcf, "operating_cash_flow - abs(capital_expenditure)", {"operating_cash_flow":v.get("operating_cash_flow"),"capital_expenditure":capex}),
       "fcf_margin": (_safe_div(fcf,v.get("revenue")), "free_cash_flow / revenue", {"free_cash_flow":fcf,"revenue":v.get("revenue")}),
       "receivable_days": (_safe_div(avg_ar,v.get("revenue"))*365 if _safe_div(avg_ar,v.get("revenue")) is not None else None, "average_accounts_receivable / revenue * 365" if previous else "ending_accounts_receivable / revenue * 365 (single-year proxy)", {"receivables_basis":avg_ar,"revenue":v.get("revenue")}),
@@ -63,6 +108,11 @@ def calculate_metrics(v: dict[str, float | None], year: int, previous: dict[str,
       "payable_days": (_safe_div(avg_ap,cogs)*365 if _safe_div(avg_ap,cogs) is not None else None, "average_accounts_payable / COGS * 365" if previous else "ending_accounts_payable / COGS * 365 (single-year proxy)", {"payables_basis":avg_ap,"COGS":cogs}),
     }
     for name,(value,formula,inputs) in specs.items(): m[name]=_metric(name,value,formula,inputs,year)
+    if ebitda is not None and ebitda <= 0 and debt_to_ebitda is None:
+        m["debt_to_ebitda"] = _metric(
+            "debt_to_ebitda", None, m["debt_to_ebitda"].formula, m["debt_to_ebitda"].inputs, year,
+            reason="EBITDA is non-positive; leverage is unbounded rather than low.",
+        )
     if all(m[x].value is not None for x in ("receivable_days","inventory_days","payable_days")):
         val=m["receivable_days"].value+m["inventory_days"].value-m["payable_days"].value
         m["cash_conversion_cycle"]=_metric("cash_conversion_cycle",val,"receivable_days + inventory_days - payable_days",{},year)
@@ -77,6 +127,9 @@ def calculate_metrics(v: dict[str, float | None], year: int, previous: dict[str,
                 if prev is None and previous.get("short_term_debt") is not None and previous.get("long_term_debt") is not None:
                     prev = previous["short_term_debt"] + previous["long_term_debt"]
             else: prev = previous.get(key)
-            value = None if current is None or prev in (None,0) else (current-prev)/abs(prev)
+            # Growth is undefined across a sign change: a prior-period loss closing
+            # from -100 to -50 is not "+50% growth". Dividing by |prev| silently
+            # reports improvement for two losses and flips rules such as PRO_006.
+            value = None if current is None or prev in (None,0) or prev < 0 else (current-prev)/abs(prev)
             m[f"{key}_growth"]=_metric(f"{key}_growth",value,f"({key}_current - {key}_prior) / abs({key}_prior)",{"current":current,"prior":prev},year)
     return m

@@ -1,10 +1,12 @@
 from __future__ import annotations
 
+import hmac
 import math
+import os
 from dataclasses import asdict
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, Header, HTTPException
+from fastapi import APIRouter, Depends, Header, HTTPException, Request
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 from .applicability import applicability_report
@@ -187,11 +189,24 @@ def enterprise_router(
     credentials: DurableCredentialStore | None = None,
     limiter: RateLimiter | None = None,
     bootstrap_enabled: bool = True,
+    bootstrap_token: str | None = None,
+    require_bootstrap_token: bool = False,
+    bootstrap_rate_limit: int | None = None,
 ) -> APIRouter:
     service = service or EnterpriseRiskService()
     router = APIRouter(prefix="/api/v1/enterprise", tags=["enterprise"])
     credentials = credentials or CredentialStore()
     limiter = limiter or SlidingWindowRateLimiter()
+    # The bootstrap route is the highest-privilege endpoint (it mints ADMIN keys)
+    # and is the only one that cannot require an API key, so it gets its own
+    # limiter keyed by client address. The shared `limiter` lives inside
+    # `principal()` and therefore never covered this route.
+    bootstrap_limiter = SlidingWindowRateLimiter(
+        limit=bootstrap_rate_limit
+        if bootstrap_rate_limit is not None
+        else int(os.getenv("FINRISK_BOOTSTRAP_RATE_LIMIT", "60")),
+        window_seconds=60,
+    )
 
     def principal(
         api_key: Annotated[str | None, Header(alias="X-API-Key")] = None,
@@ -209,9 +224,22 @@ def enterprise_router(
     principal_dependency = Depends(principal)
 
     @router.post("/organizations")
-    def create_organization(req: OrganizationCreate):
+    def create_organization(
+        req: OrganizationCreate,
+        request: Request,
+        x_bootstrap_token: Annotated[str | None, Header(alias="X-Bootstrap-Token")] = None,
+    ):
         if not bootstrap_enabled:
             raise HTTPException(403, "organization bootstrap is disabled")
+        client = request.client.host if request.client else "unknown"
+        if not bootstrap_limiter.allow(f"bootstrap:{client}"):
+            raise HTTPException(429, "bootstrap rate limit exceeded")
+        if bootstrap_token is not None or require_bootstrap_token:
+            expected = bootstrap_token or ""
+            supplied = x_bootstrap_token or ""
+            # Constant-time comparison; an unset expected token can never match.
+            if not expected or not hmac.compare_digest(supplied, expected):
+                raise HTTPException(403, "invalid bootstrap token")
         organization = service.create_organization(req.name, req.actor_id)
         raw, credential = issue_api_key(organization.id, req.actor_id, Role.ADMIN)
         credentials.register(credential)

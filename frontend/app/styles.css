@@ -340,14 +340,28 @@ h1 span {
 .upload {
   display: flex;
   flex-direction: column;
-  border: 1px dashed #777;
+  border: 1px dashed #767676;
   padding: 18px;
   width: 330px;
   cursor: pointer;
+  position: relative;
 }
 
+/*
+ * Visually hidden but still focusable. `display: none` removed the file input
+ * from the tab order entirely, so keyboard users could not reach the product's
+ * primary entry point and `.upload:focus-within` never fired.
+ */
 .upload input {
-  display: none;
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
 }
 
 .upload small {
@@ -1247,12 +1261,15 @@ button.ghost {
   text-transform: uppercase;
 }
 
-.terminalStatus.success {
+.terminalStatus.success,
+.terminalStatus.completed {
   background: var(--ok-bg);
   color: var(--ok);
 }
 
-.terminalStatus.failed {
+.terminalStatus.failed,
+.terminalStatus.review_required,
+.terminalStatus.insufficient_evidence {
   background: var(--bad-bg);
   color: var(--bad);
 }
@@ -1468,12 +1485,20 @@ button.ghost:hover:not(:disabled) {
   opacity: 1;
 }
 
-/* Input focus */
-.intakeForm input:focus,
+/* Input focus. `outline: none` removed the native focus ring with no replacement;
+   keyboard focus is now explicit and visible on every interactive control. */
+.intakeForm input:focus-visible,
 .upload:focus-within {
-  outline: none;
+  outline: 2px solid var(--rust);
+  outline-offset: 2px;
   border-color: var(--rust);
-  box-shadow: 0 0 0 2px rgba(212, 91, 62, 0.15);
+}
+
+button:focus-visible,
+a:focus-visible,
+[tabindex]:focus-visible {
+  outline: 2px solid var(--rust);
+  outline-offset: 2px;
 }
 
 .intakeForm input,
@@ -1622,4 +1647,55 @@ button.ghost:hover:not(:disabled) {
   .filterGroup {
     flex-wrap: wrap;
   }
+}
+
+/*
+ * Severity bands.
+ *
+ * `DimensionGrid` emits `band-<key>` and `DecisionSummary` emits
+ * `severity-<key>`, but no rule for either existed, so all eight risk-dimension
+ * cards rendered identically. Severity is encoded three ways on purpose - a
+ * colour, a left border thickness and the text label the component already
+ * prints - so it does not rely on colour alone.
+ */
+.dimensionCard.band-critical {
+  border-left: 6px solid #9b3d26;
+}
+
+.dimensionCard.band-high {
+  border-left: 6px solid #c0562f;
+}
+
+.dimensionCard.band-moderate {
+  border-left: 6px solid #a9822f;
+}
+
+.dimensionCard.band-low {
+  border-left: 4px solid #4f7d63;
+}
+
+.dimensionCard.band-very_low {
+  border-left: 4px solid #6f8f7d;
+}
+
+.dimensionCard.band-none {
+  border-left: 4px dashed var(--line);
+}
+
+.decisionSummary.severity-critical,
+.decisionSummary.severity-high {
+  border-top: 5px solid #9b3d26;
+}
+
+.decisionSummary.severity-moderate {
+  border-top: 5px solid #a9822f;
+}
+
+.decisionSummary.severity-low,
+.decisionSummary.severity-very_low {
+  border-top: 5px solid #4f7d63;
+}
+
+.decisionSummary.severity-unknown {
+  border-top: 5px dashed var(--line);
 }

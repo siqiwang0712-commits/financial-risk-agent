@@ -50,12 +50,26 @@ def ingest_pdf(path: Path, document: str, fiscal_year: int) -> dict:
         if len(usable) == 1:
             selected_value = usable.pop()
             target[key] = selected_value
-            if candidate_year == fiscal_year:
-                selected = next(item for item in ranked if item.value == selected_value)
-                sources[key] = [Evidence(
-                    selected.document, selected.page, selected.source_text,
-                    selected.fiscal_year, selected.confidence, False, "located",
-                )]
+            selected = next(item for item in ranked if item.value == selected_value)
+            # Evidence is recorded for the prior year as well. Every `*_growth` /
+            # `*_change` reference resolves `(key, fiscal_year - 1)` against this
+            # map, so only building the current year left those refs permanently
+            # empty and `complete_refs` always returned [].
+            # `value`/`unit` are carried through instead of being dropped, so the
+            # evidence carries the amount and currency it was read from.
+            sources.setdefault(key, []).append(
+                Evidence(
+                    selected.document,
+                    selected.page,
+                    selected.source_text,
+                    selected.fiscal_year,
+                    selected.confidence,
+                    False,
+                    "located",
+                    value=selected.value,
+                    unit=selected.currency,
+                )
+            )
         elif len(usable) > 1:
             review_issues.append(
                 {

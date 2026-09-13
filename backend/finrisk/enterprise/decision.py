@@ -71,6 +71,12 @@ def build_decision_trace(
                 "reason_code": f"DISCLOSURE_TENSION_{index + 1:03d}",
                 "risk_domain": contradiction.get("category", "disclosure_tension"),
                 "source_evidence": evidence,
+                # A contradiction path's input is the narrative claim itself, not a
+                # normalised metric, so there is no metric provenance. The keys are
+                # still present (empty) because the frontend iterates them and an
+                # undefined value crashed the Decision paths tab.
+                "required_inputs": [],
+                "input_provenance": {},
                 "rule_or_model": "narrative_numeric_consistency",
                 "rule_version": component_versions.get("rules", "UNPINNED"),
                 "fusion_version": component_versions.get("fusion", "UNPINNED"),

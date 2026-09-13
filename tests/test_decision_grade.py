@@ -210,13 +210,28 @@ def test_risk_case_rejects_same_tenant_cross_entity_snapshot():
 
 def test_failure_policy_sensitivity_and_final_case_proof_gate():
     result = hierarchical_escalation({"liquidity": 70, "cash_flow": 30}, 0.8, 0.8)
+    assert result.decision == "FLAG"
     assert (
         failure_aware_decision(result, {"parser_failure": True})["decision"]
         == "ABSTAIN"
     )
+    # A review-level failure escalates a FLAG to REVIEW (REVIEW ranks above FLAG).
     assert (
         failure_aware_decision(result, {"llm_unavailable": True})["decision"]
         == "REVIEW"
+    )
+    # It still escalates a clean PASS to REVIEW, and it never weakens ABSTAIN.
+    quiet = hierarchical_escalation({"liquidity": 10}, 0.8, 0.8)
+    assert quiet.decision == "PASS"
+    assert (
+        failure_aware_decision(quiet, {"llm_unavailable": True})["decision"]
+        == "REVIEW"
+    )
+    withheld = hierarchical_escalation({"liquidity": 90}, 0.1, 0.8)
+    assert withheld.decision == "ABSTAIN"
+    assert (
+        failure_aware_decision(withheld, {"llm_unavailable": True})["decision"]
+        == "ABSTAIN"
     )
     assert sensitivity_analysis({"liquidity": 70, "cash_flow": 30}, result)
     strict = hierarchical_escalation({"liquidity": 55}, 0.8, 0.8, {"flag_score": 50})

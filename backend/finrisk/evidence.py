@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import re
 from collections.abc import Iterable
 from dataclasses import replace
 from typing import Protocol
@@ -42,3 +43,38 @@ class EvidenceVerifier:
             verified=exact,
             verification_status="verified" if exact else "unverified",
         )
+
+
+# Terms too common to distinguish one claim from another.
+_CLAIM_STOPWORDS = frozenset({
+    "that", "this", "with", "from", "have", "will", "been", "were", "they", "their",
+    "which", "there", "these", "those", "into", "over", "such", "also", "than",
+    "then", "when", "what", "while", "would", "could", "should", "about", "after",
+    "before", "under", "other", "some", "more", "most", "only", "very", "each",
+    "because", "however", "therefore", "company", "issuer", "financial",
+})
+
+
+def _claim_terms(value: str) -> set[str]:
+    return {
+        token
+        for token in re.findall(r"[a-z0-9]+", value.casefold())
+        if len(token) >= 4 and token not in _CLAIM_STOPWORDS
+    }
+
+
+def claim_is_grounded(claim_text: str, evidence_text: str, page_text: str = "") -> bool:
+    """True when a claim's distinctive terms actually appear in the text it cites.
+
+    Only `evidence_text` was ever checked against the page, so a `claim` (3-500
+    characters of free text) could assert anything at all: an injected pair of
+    matching `risk_category`/`polarity` values was enough to fire a +30
+    going-concern rule. This requires genuine lexical overlap between the claim and
+    the cited evidence before the claim is admitted.
+    """
+    terms = _claim_terms(claim_text)
+    if not terms:
+        return False
+    haystack = f"{evidence_text} {page_text}".casefold()
+    hits = sum(1 for term in terms if term in haystack)
+    return hits / len(terms) >= 0.6

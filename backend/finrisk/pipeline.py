@@ -1,19 +1,22 @@
 from __future__ import annotations
 
 import json
+from dataclasses import replace
 from pathlib import Path
 
 from .contradictions import detect_contradictions, evaluate_claim_consistency
 from .domain import Assessment, RuleSignal
 from .enterprise.applicability import MODEL_REQUIREMENTS, enforce_applicability
+from .enterprise.fusion import failure_aware_decision, hierarchical_escalation
 from .enterprise.tension import classify_tension
-from .evidence import PROOF_COVERED_STATUSES, EvidenceVerifier
+from .evidence import PROOF_COVERED_STATUSES, EvidenceVerifier, claim_is_grounded
 from .facts import build_facts, narrative_signals
 from .llm import NarrativeProvider, provider_from_env
 from .metrics import calculate_metrics, resolve_total_debt
 from .models import altman_z, beneish_m, ohlson_o, piotroski_f
 from .rules import RuleEngine
 from .scoring import aggregate, confidence, confidence_components
+from .severity import severity_label
 
 
 class FinRiskPipeline:
@@ -23,6 +26,78 @@ class FinRiskPipeline:
         self.scoring=json.loads((self.root/"config"/"scoring.json").read_text(encoding="utf-8"))
         self.model_scoring=json.loads((self.root/"config"/"model_scoring.json").read_text(encoding="utf-8"))
         self.provider=provider or provider_from_env(); self.verifier=EvidenceVerifier()
+        self._assert_signals_are_not_double_counted()
+
+    def _assert_signals_are_not_double_counted(self) -> None:
+        """Fail fast when one risk signal can be produced twice for one dimension.
+
+        `rules.json` and `model_scoring.json` are independent registries that both
+        write into the same dimension. A `(metric, operator, threshold, category)`
+        signature present in both added its delta twice (Beneish scored +36 in the
+        accounting dimension instead of +18). Only *single-condition* rules are
+        compared: a multi-condition rule may legitimately reuse an atomic
+        comparison that another rule owns alone.
+        """
+        def signature(metric, operator, value, category):
+            return (metric, operator, value, category)
+
+        owners: dict[tuple, str] = {}
+        for rule in self.rules.rules:
+            if len(rule["conditions"]) != 1:
+                continue
+            condition = rule["conditions"][0]
+            key = signature(condition["metric"], condition["operator"], condition["value"], rule["category"])
+            if key in owners:
+                raise ValueError(
+                    f"duplicate risk signal {key}: {rule['id']} repeats {owners[key]}"
+                )
+            owners[key] = rule["id"]
+        for mapping in self.model_scoring["mappings"]:
+            key = signature(mapping["metric"], mapping["operator"], mapping["threshold"], mapping["category"])
+            if key in owners:
+                raise ValueError(
+                    f"duplicate risk signal {key}: model mapping {mapping['id']} repeats {owners[key]}"
+                )
+            owners[key] = mapping["id"]
+
+    def decide(self, assessment: Assessment) -> dict:
+        """Attach the single decision-bearing score to an assessment payload.
+
+        Both the deterministic endpoint and the agent path route through here, so
+        `overall_score` always means "the score the decision was derived from".
+        The weighted aggregate is preserved under an explicit legacy name instead
+        of being published as a second, differently-defined `overall_score`
+        (previously 44.1 on one endpoint and 74.0 on the other for the same input).
+        """
+        payload = assessment.to_dict()
+        dimension_scores = {
+            name: value.get("score")
+            for name, value in payload.get("dimensions", {}).items()
+        }
+        policy = json.loads(
+            (self.root / "config" / "decision_policy.json").read_text(encoding="utf-8")
+        )
+        fusion = hierarchical_escalation(
+            dimension_scores,
+            assessment.evidence_coverage,
+            assessment.confidence,
+            policy,
+        )
+        weighted = assessment.overall_score
+        score = fusion.score if fusion.score is not None else weighted
+        payload["weighted_dimension_score"] = weighted
+        payload["legacy_weighted_score"] = weighted
+        payload["overall_score"] = score
+        payload["risk_level"] = severity_label(score)
+        payload["final_decision"] = fusion.decision.value
+        # Kept in step with the agent path: the response contract declares
+        # `final_decision`, `failure_state` and `enterprise_fusion`, and this
+        # endpoint previously produced none of them, so the Workbench read
+        # `undefined` for all three.
+        payload["failure_state"] = failure_aware_decision(fusion, {})
+        payload["model_disagreement"] = fusion.disagreement
+        payload["enterprise_fusion"] = fusion.__dict__
+        return payload
 
     def assess(self,company:str,year:int,current:dict,previous:dict|None=None,pages:dict[int,str]|None=None,document="Annual Report",entity_type="industrial",source_map:dict|None=None,narrative_claims:list|None=None,claim_verifications:list|None=None) -> Assessment:
         pages=pages or {}
@@ -99,8 +174,8 @@ class FinRiskPipeline:
             source_map["total_debt"] = [
                 evidence for parent in debt_parents for evidence in source_map.get(parent, [])
             ]
-        model_input=current|{"working_capital":metrics["working_capital"].value,"ebit":current.get("ebit",current.get("operating_income"))}
-        models=[altman_z(model_input,"bank" if entity_type in {"bank","financial_institution"} else "public_manufacturer")]
+        model_input=current|{"working_capital":metrics["working_capital"].value,"ebit":current.get("ebit") if current.get("ebit") is not None else current.get("operating_income")}
+        models=[altman_z(model_input,entity_type)]
         if previous: models += [beneish_m(current,previous),piotroski_f(current,previous)]
         models += [ohlson_o(model_input)]
         models = enforce_applicability(models, entity_type, model_input | current)
@@ -108,7 +183,15 @@ class FinRiskPipeline:
             raw_claims=self.provider.extract(pages,document,year) if pages else []
             verified=[]; accepted=[]
             for claim in raw_claims:
-                ev=self.verifier.verify(claim.evidence,pages); verified.append(ev)
+                ev=self.verifier.verify(claim.evidence,pages)
+                if ev.verified and not claim_is_grounded(
+                    claim.claim, ev.source_text, pages.get(ev.page, "")
+                ):
+                    # The quote is on the page, but the free-text `claim` is not
+                    # supported by it. Left as-is this let an unrelated claim carry a
+                    # verified quotation into a +30 going-concern rule.
+                    ev=replace(ev,verified=False,verification_status="unverified",confidence=min(ev.confidence,0.25))
+                verified.append(ev)
                 if ev.verified: claim.evidence=ev; accepted.append(claim)
         else:
             # Supplied by the caller so narrative extraction runs exactly once per
