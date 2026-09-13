@@ -32,7 +32,11 @@ from .enterprise.api import enterprise_router
 from .enterprise.decision import create_snapshot
 from .enterprise.decision_bundle import build_decision_bundle
 from .enterprise.domain import Principal
-from .enterprise.observability import bind_correlation_id, structured_event
+from .enterprise.observability import (
+    bind_correlation_id,
+    configure_logging,
+    structured_event,
+)
 from .enterprise.postgres import PostgresEnterpriseRepository
 from .enterprise.repository import InMemoryEnterpriseRepository
 from .enterprise.security import (
@@ -98,6 +102,9 @@ def _inspect_pdf(data: bytes, max_pages: int, max_chars: int) -> None:
 if FastAPI:
 
     ROOT = Path(__file__).resolve().parents[2]
+    # Configure the root logger before anything logs; otherwise INFO events were
+    # dropped by logging.lastResort and production ran silently.
+    configure_logging()
 
     def runtime_components():
         database_url = os.getenv("DATABASE_URL")
@@ -169,8 +176,23 @@ if FastAPI:
     agent = FinancialRiskAgent(ROOT, pipeline.provider)
     enterprise_service, credential_store = runtime_components()
     api_limiter = SlidingWindowRateLimiter(limit=int(os.getenv("FINRISK_RATE_LIMIT", "60")))
-    bootstrap_enabled = os.getenv("FINRISK_ENABLE_ORG_BOOTSTRAP", "1") == "1" and os.getenv("FINRISK_ENV", "development") != "production"
-    app.include_router(enterprise_router(enterprise_service, credential_store, api_limiter, bootstrap_enabled))
+    # Case-insensitive environment check: `FINRISK_ENV=Production` previously read as
+    # "not production", which re-enabled the unauthenticated bootstrap endpoint.
+    finrisk_env = os.getenv("FINRISK_ENV", "development").strip().lower()
+    bootstrap_enabled = (
+        os.getenv("FINRISK_ENABLE_ORG_BOOTSTRAP", "1") == "1" and finrisk_env != "production"
+    )
+    bootstrap_token = os.getenv("FINRISK_BOOTSTRAP_TOKEN") or None
+    app.include_router(
+        enterprise_router(
+            enterprise_service,
+            credential_store,
+            api_limiter,
+            bootstrap_enabled,
+            bootstrap_token,
+            require_bootstrap_token=finrisk_env == "production",
+        )
+    )
     api_logger = logging.getLogger("finrisk.api")
 
     @app.middleware("http")
@@ -321,7 +343,7 @@ if FastAPI:
     @app.post("/api/v1/assess")
     def assess(req: AssessmentRequest, actor: Principal = protected):
         try:
-            return pipeline.assess(
+            assessment = pipeline.assess(
                 req.company,
                 req.fiscal_year,
                 req.current,
@@ -329,7 +351,11 @@ if FastAPI:
                 req.pages,
                 req.document,
                 req.entity_type,
-            ).to_dict()
+            )
+            # Both this endpoint and the agent path attach the decision-bearing
+            # score through the same helper, so `overall_score` has one meaning and
+            # `final_decision`/`enterprise_fusion` are present on both.
+            return pipeline.decide(assessment)
         except ValueError as exc:
             structured_event(api_logger, "assessment.rejected", error_type=type(exc).__name__)
             raise HTTPException(422, "assessment input was rejected") from exc

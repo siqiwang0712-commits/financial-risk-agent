@@ -63,7 +63,7 @@ export function DecisionSummary({ payload }: Props) {
         <Cell label="Evidence coverage" value={ratio(payload.evidence_coverage)} />
         <Cell label="Evidence quality" value={ratio(payload.evidence_quality)} />
         <Cell label="Model disagreement" value={ratio(agent?.model_disagreement)} />
-        <Cell label="Verified paths" value={`${agent?.decision_trace.verified_path_count ?? 0}/${agent?.decision_trace.material_path_count ?? 0}`} />
+        <Cell label="Verified paths" value={`${agent?.decision_trace?.verified_path_count ?? 0}/${agent?.decision_trace?.material_path_count ?? 0}`} />
       </div>
 
       {payload.legacy_weighted_score !== undefined && payload.legacy_weighted_score !== null ? (

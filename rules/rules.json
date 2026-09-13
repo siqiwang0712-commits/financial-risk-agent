@@ -19,6 +19,7 @@
     {"id":"SOL_006","category":"solvency_leverage","severity":"high","conditions":[{"metric":"debt_to_ebitda","operator":">","value":5.0}],"effect":{"score_delta":18},"rationale":"Debt burden is high relative to EBITDA."},
     {"id":"SOL_007","category":"solvency_leverage","severity":"medium","conditions":[{"metric":"total_debt_growth","operator":">","value":0.25}],"effect":{"score_delta":10},"rationale":"Debt increased rapidly."},
     {"id":"SOL_008","category":"solvency_leverage","severity":"critical","conditions":[{"metric":"shareholder_equity","operator":"<","value":0}],"effect":{"score_delta":25},"rationale":"Negative book equity is a severe solvency signal."},
+    {"id":"SOL_009","category":"solvency_leverage","severity":"high","conditions":[{"metric":"negative_ebitda_leverage","operator":"==","value":true}],"effect":{"score_delta":18},"rationale":"Debt is material while EBITDA is non-positive; leverage is unbounded rather than low."},
 
     {"id":"PRO_001","family":"loss_state","aggregation":"max","category":"profitability","severity":"high","conditions":[{"metric":"net_margin","operator":"<","value":0}],"effect":{"score_delta":15},"rationale":"The company is loss-making at net income level."},
     {"id":"PRO_002","category":"profitability","severity":"medium","conditions":[{"metric":"operating_margin","operator":"<","value":0.03}],"effect":{"score_delta":9},"rationale":"Operating profitability is thin."},
@@ -47,7 +48,6 @@
     {"id":"EQ_007","category":"earnings_quality","severity":"high","conditions":[{"metric":"net_income","operator":">","value":0},{"metric":"operating_cash_flow","operator":"<","value":0}],"effect":{"score_delta":18},"rationale":"Positive net income coincides with negative operating cash flow."},
     {"id":"EQ_008","category":"earnings_quality","severity":"medium","conditions":[{"metric":"cash_conversion_cycle_change","operator":">","value":20}],"effect":{"score_delta":12},"rationale":"The cash conversion cycle deteriorated substantially."},
 
-    {"id":"ACC_001","category":"accounting","severity":"high","conditions":[{"metric":"beneish_m_score","operator":">","value":-1.78}],"effect":{"score_delta":18},"rationale":"Beneish screening indicates elevated manipulation risk; it is not proof."},
     {"id":"ACC_002","category":"accounting","severity":"high","conditions":[{"metric":"restatement_detected","operator":"==","value":true}],"effect":{"score_delta":17},"rationale":"A financial restatement warrants additional accounting review."},
     {"id":"ACC_003","category":"accounting","severity":"medium","conditions":[{"metric":"accrual_ratio","operator":">","value":0.1}],"effect":{"score_delta":12},"rationale":"Accruals are high relative to assets."},
     {"id":"ACC_004","category":"accounting","severity":"medium","conditions":[{"metric":"non_gaap_adjustment_ratio","operator":">","value":0.3}],"effect":{"score_delta":10},"rationale":"Non-GAAP adjustments are large relative to GAAP earnings."},

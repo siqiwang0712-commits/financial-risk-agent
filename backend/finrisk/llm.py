@@ -22,6 +22,10 @@ class NarrativeProvider(Protocol):
 
 class MockNarrativeProvider:
     """Deterministic provider for tests and offline demos; never invents evidence."""
+    # Declared so `component_versions()` records which prompt produced a snapshot
+    # instead of falling back to a placeholder that cannot detect a change.
+    prompt_version: ClassVar[str] = "mock-narrative-v1"
+    model_id: ClassVar[str] = "mock"
     patterns: ClassVar[dict[str, tuple[str, str]]] = {"going concern":("business_going_concern","negative"),"substantial doubt":("business_going_concern","negative"),"refinancing":("liquidity","negative"),"customer concentration":("business_going_concern","negative"),"material weakness":("governance_audit","negative"),"liquidity remains strong":("liquidity","positive"),"sufficient sources of funding":("liquidity","positive"),"will be sufficient to satisfy":("liquidity","positive")}
     def extract(self,pages,document,year):
         claims=[]
@@ -97,6 +101,22 @@ class StructuredLLMProvider:
     """
 
     PROMPT_VERSION = "narrative-v1.1.0-claim-conditioned"
+
+    @property
+    def prompt_version(self) -> str:
+        """Lower-case alias for `PROMPT_VERSION`.
+
+        `component_versions()` read `getattr(provider, "prompt_version", ...)`, but
+        this class only ever defined the upper-case constant, so every real
+        provider was recorded as `mock-or-unversioned` and a prompt change was
+        never detected as a version mismatch.
+        """
+        return self.PROMPT_VERSION
+
+    @property
+    def model_id(self) -> str:
+        return self.model
+
     SCHEMA: ClassVar[dict[str, Any]] = {
         "name": "finrisk_narrative_claims",
         "strict": True,
@@ -158,9 +178,14 @@ class StructuredLLMProvider:
     def _record(self, log: LLMCallLog) -> None:
         self.call_logs.append(log)
         if self.log_path:
-            self.log_path.parent.mkdir(parents=True, exist_ok=True)
-            with self.log_path.open("a", encoding="utf-8") as handle:
-                handle.write(json.dumps(asdict(log), sort_keys=True) + "\n")
+            # A full or read-only disk must not turn a successful extraction into a
+            # silent zero-claim result: the in-memory log is already recorded.
+            try:
+                self.log_path.parent.mkdir(parents=True, exist_ok=True)
+                with self.log_path.open("a", encoding="utf-8") as handle:
+                    handle.write(json.dumps(asdict(log), sort_keys=True) + "\n")
+            except OSError:
+                pass
 
     def extract(self, pages: dict[int, str], document: str, year: int) -> list[NarrativeClaim]:
         payload = self._payload(pages, document, year)
@@ -180,7 +205,10 @@ class StructuredLLMProvider:
                 cost = (input_tokens * self.input_cost_per_million + output_tokens * self.output_cost_per_million) / 1_000_000
                 self._record(LLMCallLog(self.PROMPT_VERSION, "openai-compatible", self.model, attempt, input_tokens, output_tokens, round(cost, 8), int((time.perf_counter() - started) * 1000), "ok", input_hash, schema_hash, 0.0, self.max_tokens, f"exponential_backoff:{self.max_retries}", True))
                 return [NarrativeClaim(c.claim, c.risk_category, Evidence(document, c.page, c.evidence_text, year, c.confidence), c.polarity, c.claim_target, c.direction, c.time_horizon, c.basis, tuple(c.qualifiers), tuple(c.required_evidence_types)) for c in parsed.claims]
-            except (KeyError, TypeError, ValueError, ValidationError, urllib.error.URLError) as exc:
+            except (KeyError, TypeError, ValueError, ValidationError, urllib.error.URLError, OSError) as exc:
+                # `OSError` covers `socket.timeout`/`TimeoutError`. Without it a
+                # timeout escaped the retry loop entirely: no retry, no call log,
+                # no input hash.
                 last_error = exc
                 self._record(LLMCallLog(self.PROMPT_VERSION, "openai-compatible", self.model, attempt, input_tokens, output_tokens, 0.0, int((time.perf_counter() - started) * 1000), f"error:{type(exc).__name__}", input_hash, schema_hash, 0.0, self.max_tokens, f"exponential_backoff:{self.max_retries}", False))
                 if attempt <= self.max_retries:

@@ -7,6 +7,21 @@ from typing import ClassVar
 from .domain import FinancialValue
 from .normalization import normalize_line_item, parse_number
 
+# Statement-scale tokens as they actually appear in filing headers: "in thousands",
+# "amounts in $ millions", "millions of dollars", "(000s)", "in 000's", "US$ mm".
+# The old pattern only recognised "in|amounts in thousands|millions|billions", so
+# "(000s)" and "in $ thousands" fell through and a "thousands" table was read as
+# dollars — every absolute-amount threshold rule then mis-scales by 1000x while
+# ratio rules look fine.
+_SCALE_TOKENS = {
+    "thousand": "thousand", "thousands": "thousands", "000s": "thousands", "000": "thousands",
+    "million": "million", "millions": "millions", "mn": "millions", "mm": "millions",
+    "billion": "billion", "billions": "billions", "bn": "billions",
+}
+_SCALE_PATTERN = re.compile(
+    r"(thousands?|millions?|billions?|000s|000|mn|mm|bn)\b", re.IGNORECASE
+)
+
 
 class DocumentParser:
     """Extracts page text, sections, and conservative line-item candidates.
@@ -39,8 +54,8 @@ class DocumentParser:
             header=" ".join(text.splitlines()[:15])
             years=[int(y) for y in re.findall(r"\b20\d{2}\b",header)][:3] or [default_year]
             detected_currency="EUR" if "€" in text or re.search(r"\bEUR\b",header) else "GBP" if "£" in text or re.search(r"\bGBP\b",header) else "USD" if "$" in text or re.search(r"\bUSD\b",header) else currency
-            scale_match=re.search(r"(?:in|amounts in)\s+(thousands|millions|billions)",header,re.IGNORECASE)
-            detected_scale=scale_match.group(1) if scale_match else scale
+            scale_match=_SCALE_PATTERN.search(header)
+            detected_scale=_SCALE_TOKENS.get(scale_match.group(1).lower()) if scale_match else scale
             statement=next((name for name,pat in self.SECTION_PATTERNS.items() if name in {"balance_sheet","income_statement","cash_flow"} and re.search(pat,header,re.IGNORECASE)),"unknown")
             for line in text.splitlines():
                 m=line_re.match(line); key=normalize_line_item(m.group(1)) if m else None

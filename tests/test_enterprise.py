@@ -62,10 +62,15 @@ def test_fusion_is_failure_aware_and_not_probability():
         weighted_average(scores, {"liquidity": 1, "cash_flow": 1}, 0.8, 0.9).score == 55
     )
     assert max_severity(scores, 0.8, 0.9).score == 85
+    # High dispersion escalates to REVIEW ("human review required"), which ranks
+    # above FLAG in this codebase's disposition ordering.
     assert hierarchical_escalation(scores, 0.8, 0.9).decision == "REVIEW"
+    # FUS-01: non-compensatory baseline. The premium is added to the strongest
+    # supported dimension (70) rather than to a compensatory equal-weight average
+    # (65), so adding a risk-free dimension can no longer lower the score.
     assert (
         interaction_aware({"liquidity": 70, "solvency_leverage": 60}, 0.8, 0.9).score
-        == 73
+        == 78
     )
     assert max_severity(scores, 0.2, 0.9).decision == "ABSTAIN"
 

@@ -46,11 +46,30 @@ def roc_auc(y_true:list[int],probabilities:list[float])->float|None:
     return wins/(len(positives)*len(negatives))
 
 def average_precision(y_true:list[int],probabilities:list[float])->float|None:
-    if not any(y_true):return None
-    ranked=sorted(zip(probabilities,y_true),reverse=True);hits=0;total=0.0
-    for rank,(_,label) in enumerate(ranked,1):
-        if label:hits+=1;total+=hits/rank
-    return total/sum(y_true)
+    if len(y_true)!=len(probabilities):raise ValueError("inputs must have equal length")
+    positives=sum(y_true)
+    if not positives:return None
+    # Tied scores are handled as a single group. The previous implementation used
+    # `sorted(zip(probabilities, y_true), reverse=True)`, so a tuple comparison broke
+    # ties by *label* descending and pulled the positive verdict to rank 1. A
+    # constant-score baseline with zero discriminative power therefore reported
+    # AUPRC = 1.0 (a perfect score). Grouping makes the metric order-independent
+    # among equal scores.
+    groups: dict[float, list[int]] = {}
+    for probability, label in zip(probabilities, y_true):
+        entry = groups.setdefault(probability, [0, 0])
+        entry[0] += 1
+        entry[1] += int(label)
+    cumulative_tp = 0
+    cumulative_total = 0
+    total = 0.0
+    for probability in sorted(groups, reverse=True):
+        size, group_positives = groups[probability]
+        cumulative_tp += group_positives
+        cumulative_total += size
+        precision = cumulative_tp / cumulative_total
+        total += (group_positives / positives) * precision
+    return total
 
 def confusion_matrix(y_true:list[int],y_pred:list[int])->dict[str,int]:
     return {"tn":sum(a==0 and b==0 for a,b in zip(y_true,y_pred)),"fp":sum(a==0 and b==1 for a,b in zip(y_true,y_pred)),"fn":sum(a==1 and b==0 for a,b in zip(y_true,y_pred)),"tp":sum(a==1 and b==1 for a,b in zip(y_true,y_pred))}

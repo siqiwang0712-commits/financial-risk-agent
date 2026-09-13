@@ -21,7 +21,14 @@ export interface Failure {
   upstreamUnavailable: boolean;
 }
 
+/** A load either succeeds with data, or fails with a reason the UI must show. */
+export type LoadResult<T> =
+  | { ok: true; loaded: Loaded<T> }
+  | { ok: false; failure: Failure };
+
 export const OFFLINE_NOTE = DEMO_FIXTURE.notice;
+
+const PILOT_TIMEOUT_MS = 8000;
 
 function isUpstreamUnavailable(status: number): boolean {
   return status === 502 || status === 503;
@@ -39,20 +46,63 @@ function detailOf(body: unknown, fallback: string): string {
   return fallback;
 }
 
-/** Frozen v0.3.0 public pilot rows. Falls back to the bundled copy. */
-export async function loadPilot(): Promise<Loaded<PilotPayload>> {
+/**
+ * Minimal structural guard. A 200 response with a body that is not a pilot
+ * payload (empty object, an HTML error page) used to reach `payload.rows.map`
+ * and throw, blanking the page. The UI degrades instead.
+ */
+function isPilotPayload(body: unknown): body is PilotPayload {
+  if (!body || typeof body !== "object") return false;
+  const candidate = body as Partial<PilotPayload>;
+  return Array.isArray(candidate.rows) && typeof candidate.snapshot === "string";
+}
+
+/**
+ * Frozen v0.3.0 public pilot rows.
+ *
+ * The bundled sample is used only when the upstream is genuinely unreachable
+ * (502/503, a network error, or a timeout). Validation, auth and server errors
+ * are surfaced as failures, exactly as this module's contract promises; the
+ * previous implementation silently returned sample data for all of them.
+ */
+export async function loadPilot(): Promise<LoadResult<PilotPayload>> {
+  let response: Response;
   try {
-    const response = await fetch("/api/v1/public-pilot");
-    if (response.ok) {
-      return { payload: (await response.json()) as PilotPayload, origin: "live" };
-    }
-    if (isUpstreamUnavailable(response.status)) {
-      return { payload: DEMO_FIXTURE.pilot, origin: "offline-sample", note: OFFLINE_NOTE };
-    }
+    response = await fetch("/api/v1/public-pilot", {
+      signal: AbortSignal.timeout(PILOT_TIMEOUT_MS),
+    });
   } catch {
-    return { payload: DEMO_FIXTURE.pilot, origin: "offline-sample", note: OFFLINE_NOTE };
+    return {
+      ok: false,
+      failure: {
+        message: "The API upstream is unavailable. The bundled sample is still available.",
+        upstreamUnavailable: true,
+      },
+    };
   }
-  return { payload: DEMO_FIXTURE.pilot, origin: "offline-sample", note: OFFLINE_NOTE };
+  const body = await readJson(response);
+  if (response.ok) {
+    if (!isPilotPayload(body)) {
+      return {
+        ok: false,
+        failure: {
+          message: `Pilot data was not in the expected shape (HTTP ${response.status}).`,
+          upstreamUnavailable: false,
+        },
+      };
+    }
+    return { ok: true, loaded: { payload: body, origin: "live" } };
+  }
+  const unavailable = isUpstreamUnavailable(response.status);
+  return {
+    ok: false,
+    failure: {
+      message: unavailable
+        ? "The API upstream is unavailable. The bundled sample is still available."
+        : detailOf(body, `Loading pilot data failed (HTTP ${response.status}).`),
+      upstreamUnavailable: unavailable,
+    },
+  };
 }
 
 /** The bundled sample, requested explicitly by the user. */

@@ -37,6 +37,10 @@ def _final(
         decision = Decision.ABSTAIN
         reason_codes.append(DecisionReasonCode.INSUFFICIENT_EVIDENCE.value)
     elif disagreement >= policy["maximum_disagreement"]:
+        # REVIEW ("needs human review") is the escalation state, ranked above FLAG
+        # in `Decision`. High dispersion means the aggregate is not trustworthy
+        # enough to act on automatically, so it is deliberately escalated. See
+        # `DISPOSITION_RANK` in `failure_aware_decision` for the shared ordering.
         decision = Decision.REVIEW
         reason_codes.append(DecisionReasonCode.HIGH_MODEL_DISAGREEMENT.value)
     elif score >= policy["flag_score"]:
@@ -183,16 +187,22 @@ def interaction_aware(
     confidence: float,
     policy: dict[str, float] | None = None,
 ) -> FusionResult:
-    result = weighted_average(
-        scores, {key: 1 for key in scores}, coverage, confidence, policy
-    )
+    # Non-compensatory baseline. A weighted average let a supported adverse
+    # dimension be diluted by otherwise low dimensions: {liquidity:90,
+    # solvency_leverage:60} scored 83/FLAG, but adding cash_flow:0 (i.e. *no*
+    # cash-flow risk) pulled it to 58/REVIEW. The interaction premium is added to
+    # the strongest supported dimension instead, so extra dimensions can only
+    # raise the score.
     active = {key: value for key, value in scores.items() if value is not None}
+    effective = DEFAULT_DECISION_POLICY | (policy or {})
+    baseline = max(active.values()) if active else None
+    values = list(active.values())
+    disagreement = min(1.0, pstdev(values) / 50) if len(values) > 1 else 0.0
     interactions = [
         ("liquidity", "solvency_leverage"),
         ("profitability", "cash_flow"),
         ("earnings_quality", "accounting"),
     ]
-    effective = DEFAULT_DECISION_POLICY | (policy or {})
     interaction_threshold = effective.get("interaction_dimension_score", 50)
     # A pair is evaluable only when BOTH dimensions carry a supported score.
     # `active` already excludes unsupported dimensions, so a default of 0 would
@@ -212,9 +222,9 @@ def interaction_aware(
     ]
     score = (
         None
-        if result.score is None
+        if baseline is None
         else min(
-            100, result.score + effective.get("interaction_premium", 8) * len(triggered)
+            100, baseline + effective.get("interaction_premium", 8) * len(triggered)
         )
     )
     outcome = _final(
@@ -222,9 +232,9 @@ def interaction_aware(
         score,
         coverage,
         confidence,
-        result.disagreement,
-        triggered or result.drivers,
-        "Transparent pairwise interaction premiums applied after equal-weight baseline",
+        disagreement,
+        triggered or sorted(active, key=active.get, reverse=True)[:3],
+        "Transparent pairwise interaction premiums applied to the strongest supported dimension (non-compensatory baseline)",
         policy,
     )
     if indeterminate:
@@ -301,6 +311,20 @@ def fuse_verified_contributions(
     return result
 
 
+# Response strength of a disposition. A failure signal may only move a decision
+# *up* this scale; it may never weaken an already-stronger disposition.
+# Ordering: PASS < FLAG < REVIEW < ABSTAIN. REVIEW ("human review required") ranks
+# above FLAG because it is the more cautious response, and ABSTAIN (withhold) is
+# the most cautious of all. This matches `Decision`'s declaration order and the
+# escalation performed by `_final`.
+DISPOSITION_RANK = {
+    Decision.PASS: 0,
+    Decision.FLAG: 1,
+    Decision.REVIEW: 2,
+    Decision.ABSTAIN: 3,
+}
+
+
 def failure_aware_decision(
     result: FusionResult,
     failures: dict[str, bool],
@@ -320,8 +344,13 @@ def failure_aware_decision(
         )
         if failures.get(name)
     ]
-    decision = (
+    from_failures = (
         Decision.ABSTAIN if blocking else Decision.REVIEW if review else result.decision
+    )
+    decision = (
+        from_failures
+        if DISPOSITION_RANK[from_failures] >= DISPOSITION_RANK[result.decision]
+        else result.decision
     )
     return {
         "decision": decision.value,

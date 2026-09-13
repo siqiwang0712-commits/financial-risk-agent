@@ -40,10 +40,23 @@ const TAB_LABEL: Record<TabKey, string> = {
   telemetry: "Telemetry",
 };
 
+/** Shown when a tab has no data in this response, instead of a blank panel. */
+function EmptyPanel({ reason }: { reason: string }) {
+  return (
+    <section className="panel">
+      <p className="muted">{reason}</p>
+    </section>
+  );
+}
+
 export default function Page() {
   const [pilot, setPilot] = useState<Loaded<PilotPayload> | null>(null);
   const [assessment, setAssessment] = useState<AssessmentPayload | null>(null);
-  const [origin, setOrigin] = useState<DataOrigin>("offline-sample");
+  // The badge must not claim an origin before a request has happened, and the
+  // pilot and the assessment are separate results that must not overwrite each
+  // other's provenance.
+  const [pilotOrigin, setPilotOrigin] = useState<DataOrigin | null>(null);
+  const [assessmentOrigin, setAssessmentOrigin] = useState<DataOrigin | null>(null);
   const [loadingPilot, setLoadingPilot] = useState(true);
   const [loadingAnalysis, setLoadingAnalysis] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -52,10 +65,15 @@ export default function Page() {
 
   useEffect(() => {
     let cancelled = false;
-    loadPilot().then((res) => {
+    loadPilot().then((result) => {
       if (cancelled) return;
-      setPilot(res);
-      setOrigin(res.origin);
+      if (result.ok) {
+        setPilot(result.loaded);
+        setPilotOrigin(result.loaded.origin);
+      } else {
+        setError(result.failure.message);
+        setErrorIsUpstream(result.failure.upstreamUnavailable);
+      }
       setLoadingPilot(false);
     });
     return () => {
@@ -66,14 +84,12 @@ export default function Page() {
   const handleLoadSample = () => {
     setError(null);
     setErrorIsUpstream(false);
-    setLoadingAnalysis(true);
-    setTimeout(() => {
-      const res = loadSampleAssessment();
-      setAssessment(res.payload);
-      setOrigin(res.origin);
-      setLoadingAnalysis(false);
-      setActiveTab("overview");
-    }, 400);
+    // No artificial delay: the sample is synchronous, and a timer that outlives
+    // unmount would call setState on a dead component.
+    const res = loadSampleAssessment();
+    setAssessment(res.payload);
+    setAssessmentOrigin(res.origin);
+    setActiveTab("overview");
   };
 
   const handleAnalyze = async (opts: {
@@ -89,15 +105,18 @@ export default function Page() {
     setLoadingAnalysis(false);
     if (result.ok) {
       setAssessment(result.loaded.payload);
-      setOrigin(result.loaded.origin);
+      setAssessmentOrigin(result.loaded.origin);
       setActiveTab("overview");
     } else {
       setError(result.failure.message);
       setErrorIsUpstream(result.failure.upstreamUnavailable);
+      // A failed run must not leave a stale "live run" badge in place.
+      setAssessmentOrigin(null);
     }
   };
 
   const agent = assessment?.agent;
+  const origin = assessmentOrigin ?? pilotOrigin;
 
   return (
     <>
@@ -118,8 +137,13 @@ export default function Page() {
 
           {loadingPilot ? (
             <p className="muted">Loading pilot data…</p>
-          ) : (
+          ) : pilot ? (
             <PilotTable pilot={pilot} />
+          ) : (
+            <p className="muted">
+              Pilot data could not be loaded from the API upstream. Use “Load bundled sample”
+              below to inspect the offline sample.
+            </p>
           )}
         </section>
 
@@ -145,6 +169,10 @@ export default function Page() {
                 <button
                   key={key}
                   type="button"
+                  id={`tab-${key}`}
+                  role="tab"
+                  aria-selected={activeTab === key}
+                  aria-controls="tab-panel"
                   className={activeTab === key ? "active" : ""}
                   onClick={() => setActiveTab(key)}
                 >
@@ -153,36 +181,57 @@ export default function Page() {
               ))}
             </nav>
 
-            <div className="tabBody">
-              {activeTab === "overview" && (
+            <div
+              className="tabBody"
+              id="tab-panel"
+              role="tabpanel"
+              aria-labelledby={`tab-${activeTab}`}
+              aria-live="polite"
+              aria-busy={loadingAnalysis}
+            >
+              {activeTab === "overview" ? (
                 <WhyDecision payload={assessment} />
-              )}
+              ) : null}
 
-              {activeTab === "dimensions" && (
+              {activeTab === "dimensions" ? (
                 <DimensionGrid dimensions={assessment.dimensions} />
-              )}
+              ) : null}
 
-              {activeTab === "evidence" && (
-                <EvidenceTrail
-                  conclusions={agent?.conclusions ?? []}
-                />
-              )}
+              {activeTab === "evidence" ? (
+                agent?.conclusions?.length ? (
+                  <EvidenceTrail conclusions={agent.conclusions} />
+                ) : (
+                  <EmptyPanel reason="No verified conclusions in this response." />
+                )
+              ) : null}
 
-              {activeTab === "paths" && agent?.decision_trace && (
-                <DecisionPaths trace={agent.decision_trace} />
-              )}
+              {activeTab === "paths" ? (
+                agent?.decision_trace ? (
+                  <DecisionPaths trace={agent.decision_trace} />
+                ) : (
+                  <EmptyPanel reason="No decision trace in this response." />
+                )
+              ) : null}
 
-              {activeTab === "trace" && agent && (
-                <AgentTrace
-                  plan={agent.plan}
-                  trace={agent.trace}
-                  status={agent.status}
-                />
-              )}
+              {activeTab === "trace" ? (
+                agent ? (
+                  <AgentTrace
+                    plan={agent.plan}
+                    trace={agent.trace}
+                    status={agent.status}
+                  />
+                ) : (
+                  <EmptyPanel reason="No agent trace in this response." />
+                )
+              ) : null}
 
-              {activeTab === "telemetry" && agent?.component_telemetry && (
-                <TelemetryPanel items={agent.component_telemetry} />
-              )}
+              {activeTab === "telemetry" ? (
+                agent?.component_telemetry ? (
+                  <TelemetryPanel items={agent.component_telemetry} />
+                ) : (
+                  <EmptyPanel reason="No component telemetry in this response." />
+                )
+              ) : null}
             </div>
           </section>
         )}

@@ -82,6 +82,17 @@ def build_facts(
     if current.get("total_debt") is None and resolved_debt is not None:
         facts["total_debt"] = resolved_debt
 
+    # `debt_to_ebitda` is undefined (not low) when EBITDA is non-positive. Surface
+    # the adverse condition explicitly so a rule can fire instead of the most
+    # leveraged companies being exempt from the leverage rule.
+    ebitda = current.get("ebitda")
+    facts["negative_ebitda_leverage"] = bool(
+        ebitda is not None
+        and ebitda <= 0
+        and resolved_debt is not None
+        and resolved_debt > 0
+    )
+
     if previous:
         for key in ("short_term_debt",):
             facts[f"{key}_growth"] = (
@@ -89,10 +100,18 @@ def build_facts(
                 if current.get(key) is None or previous.get(key) in (None, 0)
                 else (current[key] - previous[key]) / abs(previous[key])
             )
+        # `*_change` must compare like with like. The reported `metrics` set was
+        # built with the prior year supplied, so its balance-sheet ratios use
+        # *average* balances; the prior year has no year-2 to average against and
+        # therefore falls back to *ending* balances. Subtracting the two produced a
+        # pure caliber artifact — two periods identical in structure reported
+        # `receivable_days_change = -10.95` instead of 0. Both sides of the change
+        # are therefore recomputed on the ending-balance caliber.
         prior_metrics = calculate_metrics(previous, year - 1)
+        current_metrics_ending = calculate_metrics(current, year)
         for key in CHANGE_METRICS:
             prior = prior_metrics.get(key)
-            now = metrics.get(key)
+            now = current_metrics_ending.get(key)
             facts[f"{key}_change"] = (
                 None
                 if not prior or not now or prior.value is None or now.value is None
@@ -111,7 +130,13 @@ def build_facts(
             )
 
     for model in models:
-        facts[MODEL_METRIC_NAMES[model.name]] = model.output
+        key = MODEL_METRIC_NAMES[model.name]
+        # Altman's non-manufacturing variants must not publish into the
+        # public-manufacturer fact key, or the 1.81/2.99 mapping would be applied
+        # to a Z'/Z'' value.
+        if model.name == "Altman Z-Score":
+            key = model.derived_outputs.get("fact_key", key)
+        facts[key] = model.output
     ohlson = next((model for model in models if model.name == "Ohlson O-Score"), None)
     facts["ohlson_probability"] = (
         ohlson.derived_outputs.get("probability") if ohlson is not None else None

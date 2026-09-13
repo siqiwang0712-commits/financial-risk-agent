@@ -46,7 +46,7 @@ export function DimensionGrid({ dimensions }: { dimensions: Record<string, Dimen
             </p>
 
             <i className="bar" aria-hidden="true">
-              <b style={{ width: `${unknown ? 0 : dimension.score}%` }} />
+              <b style={{ width: `${unknown || dimension.score === null ? 0 : Math.min(100, Math.max(0, dimension.score))}%` }} />
             </i>
 
             <p className="dimensionMeta">
