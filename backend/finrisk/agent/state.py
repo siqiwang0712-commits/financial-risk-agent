@@ -20,6 +20,33 @@ class AgentStatus(StrEnum):
     FAILED = "FAILED"
 
 
+# The workflow's legal edges, in the order `FinancialRiskAgent.run` performs them.
+#
+# An empty set marks a terminal state. `FAILED` is terminal too, but the
+# orchestrator's `except` handler assigns it directly rather than transitioning,
+# so a failure can always be recorded no matter how far the run got.
+LEGAL_TRANSITIONS: dict[AgentStatus, frozenset[AgentStatus]] = {
+    AgentStatus.UNDERSTANDING: frozenset({AgentStatus.PLANNING}),
+    AgentStatus.PLANNING: frozenset({AgentStatus.COLLECTING}),
+    AgentStatus.COLLECTING: frozenset({AgentStatus.ANALYZING, AgentStatus.CROSS_CHECKING}),
+    AgentStatus.ANALYZING: frozenset({AgentStatus.CROSS_CHECKING}),
+    AgentStatus.CROSS_CHECKING: frozenset({AgentStatus.SYNTHESIZING}),
+    AgentStatus.SYNTHESIZING: frozenset({AgentStatus.VERIFYING}),
+    AgentStatus.VERIFYING: frozenset({AgentStatus.REFLECTING}),
+    AgentStatus.REFLECTING: frozenset(
+        {
+            AgentStatus.COMPLETED,
+            AgentStatus.INSUFFICIENT_EVIDENCE,
+            AgentStatus.REVIEW_REQUIRED,
+        }
+    ),
+    AgentStatus.COMPLETED: frozenset(),
+    AgentStatus.INSUFFICIENT_EVIDENCE: frozenset(),
+    AgentStatus.REVIEW_REQUIRED: frozenset(),
+    AgentStatus.FAILED: frozenset(),
+}
+
+
 @dataclass(frozen=True)
 class PlanStep:
     id: str
@@ -78,14 +105,25 @@ class AgentState:
     component_telemetry: list[dict[str, Any]] = field(default_factory=list)
 
     def transition(self, target: AgentStatus) -> None:
-        terminal = {
-            AgentStatus.COMPLETED,
-            AgentStatus.INSUFFICIENT_EVIDENCE,
-            AgentStatus.REVIEW_REQUIRED,
-            AgentStatus.FAILED,
-        }
-        if self.status in terminal:
-            raise ValueError(f"cannot transition from terminal state {self.status}")
+        """Move to `target`, rejecting anything the workflow cannot do.
+
+        The previous guard only rejected *leaving* a terminal state, so any
+        non-terminal state could jump straight to any other - `UNDERSTANDING`
+        to `COMPLETED` was accepted, and with it every skip and backward move in
+        between. The published trace is a claim about the order in which the
+        Agent worked, so the order has to be enforced somewhere.
+
+        `ANALYZING` is reachable from `COLLECTING` even though nothing emits it
+        today, which records where it belongs instead of leaving it undefined.
+        """
+        allowed = LEGAL_TRANSITIONS[self.status]
+        if target not in allowed:
+            if not allowed:
+                raise ValueError(f"cannot transition from terminal state {self.status}")
+            raise ValueError(
+                f"illegal transition {self.status} -> {target}; "
+                f"allowed: {sorted(item.value for item in allowed)}"
+            )
         self.status = target
 
     def to_dict(self) -> dict[str, Any]:

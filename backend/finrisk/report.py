@@ -18,6 +18,20 @@ def render_text_report(a:Assessment)->str:
         lines.append(f"- {r.rule_id} [{r.severity}] {r.rationale} Evidence: {', '.join(r.evidence)}")
         lines.extend(f"  Source: {e.document}, page {e.page}: {e.source_text} [{e.verification_status}]" for e in r.source_refs)
     lines += ["","CONTRADICTIONS"]+[f"- {c.management_claim} | {'; '.join(c.conflicting_evidence)} | {c.interpretation}" for c in a.contradictions]
+    # The rule count is a public claim, so the reachable subset is published next
+    # to it rather than left for a reader to infer from the triggered list.
+    coverage = a.rule_coverage or {}
+    if coverage:
+        lines += [
+            "",
+            "RULE COVERAGE",
+            (
+                f"- {coverage.get('reachable_rules')} of {coverage.get('total_rules')} versioned rules "
+                f"are reachable from built-in extraction (ratio {coverage.get('reachable_ratio')})."
+            ),
+            f"- Unreachable rule ids: {', '.join(coverage.get('unreachable_rule_ids') or []) or 'none'}.",
+            "- Unreachable rules reference governance/audit/disclosure facts no extractor produces; they fire only when a caller supplies those facts.",
+        ]
     lines += ["","MISSING INFORMATION"]+(a.missing_information or ["- None identified."])
     return "\n".join(lines)
 

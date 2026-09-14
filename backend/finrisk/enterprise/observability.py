@@ -42,12 +42,82 @@ def bind_correlation_id(value: str | None = None) -> str:
     return identifier
 
 
+# Field names whose *values* must never reach the log. Compared after
+# `_normalize_field`, so `apiKey`, `api-key`, `API_KEY` and `api_key` all match.
+# The set previously held only 4 exact lower-case names, so `apiKey`, `secret`,
+# `token`, `password` and `header` were all emitted verbatim.
+_FORBIDDEN_FIELDS = frozenset(
+    {
+        "api_key",
+        "apikey",
+        "authorization",
+        "auth",
+        "bearer",
+        "cookie",
+        "credential",
+        "credentials",
+        "document_text",
+        "header",
+        "headers",
+        "password",
+        "passwd",
+        "private_key",
+        "prompt",
+        "raw_text",
+        "secret",
+        "session",
+        "signing_key",
+        "token",
+        "x_api_key",
+    }
+)
+
+# Suffixes that make a field credential-bearing whatever its prefix:
+# `access_token`, `client_secret`, `refresh_token`, `private_key`, `session_cookie`.
+# Redacting a harmless `cache_key` costs a log line; failing to redact an
+# `access_token` costs a credential, so this filter fails closed.
+_FORBIDDEN_SUFFIXES = (
+    "_bearer",
+    "_cookie",
+    "_credential",
+    "_credentials",
+    "_key",
+    "_passwd",
+    "_password",
+    "_prompt",
+    "_secret",
+    "_text",
+    "_token",
+)
+
+
+def _normalize_field(name: str) -> str:
+    """Fold a field name so camelCase / kebab-case / snake_case / SHOUTING match.
+
+    The previous version inserted `_` before every upper-case letter that was not
+    first, which turned `API_KEY` into `a_p_i__key` -- so the four *lower-case*
+    names it was built for were the only spellings it ever matched, and an
+    all-caps key was logged verbatim. This splits on the camel-case boundary only
+    (lower/digit followed by upper), then folds every non-alphanumeric run to `_`.
+    """
+    text = str(name).strip()
+    text = re.sub(r"(?<=[a-z0-9])(?=[A-Z])", "_", text)
+    text = re.sub(r"[^0-9A-Za-z]+", "_", text)
+    return text.strip("_").lower()
+
+
+def _is_forbidden(name: str) -> bool:
+    normalized = _normalize_field(name)
+    return normalized in _FORBIDDEN_FIELDS or normalized.endswith(_FORBIDDEN_SUFFIXES)
+
+
 def structured_event(
     logger: logging.Logger, event: str, level: int = logging.INFO, **safe_fields
 ) -> None:
-    forbidden = {"api_key", "authorization", "document_text", "prompt"}
     clean = {
-        key: value for key, value in safe_fields.items() if key.lower() not in forbidden
+        key: value
+        for key, value in safe_fields.items()
+        if not _is_forbidden(key)
     }
     logger.log(
         level,
@@ -64,14 +134,22 @@ def traced_stage(logger: logging.Logger, stage: str):
     try:
         yield
     except Exception as exc:
-        structured_event(
-            logger, "stage.failed", stage=stage, error_type=type(exc).__name__
-        )
-        raise
-    finally:
+        # The completion event must not also fire here. A dashboard counting
+        # `stage.completed` counted every failure as a success, because the old
+        # `finally` emitted it unconditionally after `stage.failed`. Latency is
+        # reported on the failure event instead so timing is not lost.
         structured_event(
             logger,
-            "stage.completed",
+            "stage.failed",
             stage=stage,
+            error_type=type(exc).__name__,
             latency_ms=round((time.perf_counter() - started) * 1000, 2),
         )
+        raise
+    structured_event(
+        logger,
+        "stage.completed",
+        stage=stage,
+        outcome="completed",
+        latency_ms=round((time.perf_counter() - started) * 1000, 2),
+    )

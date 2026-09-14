@@ -11,6 +11,7 @@ from .domain import (
     Organization,
     PolicyVersion,
     RiskCase,
+    RiskCaseStatus,
 )
 from .temporal import RiskSnapshot
 
@@ -21,6 +22,9 @@ class EnterpriseRepository(Protocol):
     """Tenant-scoped persistence contract shared by memory and PostgreSQL."""
 
     def save(self, item: T) -> T: ...
+    def save_case_transition(
+        self, case: RiskCase, expected_status: RiskCaseStatus
+    ) -> RiskCase: ...
     def get_case(self, organization_id: str, case_id: str) -> RiskCase: ...
     def get_entity(self, organization_id: str, entity_id: str) -> Entity: ...
     def list_cases(self, organization_id: str) -> list[RiskCase]: ...
@@ -48,19 +52,24 @@ class InMemoryEnterpriseRepository:
     def save(self, item):
         if isinstance(item, AnalysisSnapshot) and item.id in self.snapshots:
             raise ValueError(f"analysis snapshot already exists: {item.id}")
-        target = (
-            self.organizations
-            if isinstance(item, Organization)
-            else self.entities
-            if isinstance(item, Entity)
-            else self.policies
-            if isinstance(item, PolicyVersion)
-            else self.cases
-            if isinstance(item, RiskCase)
-            else self.snapshots
-            if isinstance(item, AnalysisSnapshot)
-            else self.models
-        )
+        if isinstance(item, Organization):
+            target = self.organizations
+        elif isinstance(item, Entity):
+            target = self.entities
+        elif isinstance(item, PolicyVersion):
+            target = self.policies
+        elif isinstance(item, RiskCase):
+            target = self.cases
+        elif isinstance(item, AnalysisSnapshot):
+            target = self.snapshots
+        elif isinstance(item, ModelRecord):
+            target = self.models
+        else:
+            # `PostgresEnterpriseRepository.save` raises `TypeError` here. The
+            # dispatch chain used to end in `self.models`, so an unsupported type
+            # (e.g. `ValidationRecord`) was silently filed among the model records
+            # -- present in memory, absent from PostgreSQL, and wrong in both.
+            raise TypeError(f"unsupported repository item: {type(item).__name__}")
         target[item.id] = deepcopy(item)
         return deepcopy(item)
 
@@ -69,6 +78,29 @@ class InMemoryEnterpriseRepository:
         if item is None or item.organization_id != organization_id:
             raise KeyError(case_id)
         return deepcopy(item)
+
+    def save_case_transition(
+        self, case: RiskCase, expected_status: RiskCaseStatus
+    ) -> RiskCase:
+        """Persist a status change only if the stored status is still `expected_status`.
+
+        `transition` reads a case, mutates it and saves it back with no
+        precondition, so two reviewers acting on the same case both succeeded and
+        the second write silently discarded the first -- and with it the state
+        machine: a case could end up in a state its own `TRANSITIONS` table
+        forbids, because the loser validated against a status that no longer
+        existed. Comparing against the status the caller read closes that window.
+        """
+        stored = self.cases.get(case.id)
+        if stored is None or stored.organization_id != case.organization_id:
+            raise KeyError(case.id)
+        if stored.status is not expected_status:
+            raise ValueError(
+                f"case {case.id} changed concurrently: expected {expected_status}, "
+                f"found {stored.status}"
+            )
+        self.cases[case.id] = deepcopy(case)
+        return deepcopy(case)
 
     def get_entity(self, organization_id: str, entity_id: str) -> Entity:
         item = self.entities.get(entity_id)

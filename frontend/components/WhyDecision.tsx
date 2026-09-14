@@ -1,3 +1,4 @@
+import { displayRatio } from "../lib/presentation.mjs";
 import type { AssessmentPayload } from "../lib/types";
 
 interface Props {
@@ -50,7 +51,7 @@ function verdictSentence(payload: AssessmentPayload): string {
   const material = trace?.material_path_count ?? 0;
 
   if (decision === "ABSTAIN") {
-    return `The system declined to decide. Evidence coverage is ${payload.evidence_coverage.toFixed(3)}, below the policy floor, so no conclusion is asserted.`;
+    return `The system declined to decide. Evidence coverage is ${displayRatio(payload.evidence_coverage)}, below the policy floor, so no conclusion is asserted.`;
   }
   if (decision === "REVIEW") {
     return `The system routed this to human review. ${material - verified} of ${material} material paths could not be fully verified, so the result is not presented as settled.`;
@@ -80,6 +81,14 @@ export function WhyDecision({ payload }: Props) {
   ];
 
   const rejected = verifier?.challenges?.filter((item) => item.severity === "blocking").length ?? 0;
+
+  // Every value below is read defensively: this panel is the default tab, so an
+  // unguarded dereference here is the difference between one degraded block and
+  // a blank page. `payload.missing_information` and `confidence_components` are
+  // guaranteed by `isAssessmentPayload`, but the panel must still render when it
+  // is mounted from the bundled sample or from a future caller.
+  const missing = payload.missing_information ?? [];
+  const components = Object.entries(payload.confidence_components ?? {});
 
   return (
     <section className="panel whyPanel">
@@ -147,9 +156,9 @@ export function WhyDecision({ payload }: Props) {
 
         <div className="whyBlock">
           <h3>What is missing</h3>
-          {payload.missing_information.length ? (
+          {missing.length ? (
             <ul className="missingList">
-              {payload.missing_information.map((item) => (
+              {missing.map((item) => (
                 <li key={item}>{item}</li>
               ))}
             </ul>
@@ -163,15 +172,18 @@ export function WhyDecision({ payload }: Props) {
           <div className="coverageBreakdown">
             <h4>Evidence quality composition</h4>
             <ul>
-              {Object.entries(payload.confidence_components).map(([key, value]) => (
-                <li key={key}>
-                  <span>{key.replace(/_/g, " ")}</span>
-                  <i className="miniBar">
-                    <b style={{ width: `${Math.round(value * 100)}%` }} />
-                  </i>
-                  <em>{value.toFixed(2)}</em>
-                </li>
-              ))}
+              {components.map(([key, value]) => {
+                const numeric = typeof value === "number" && Number.isFinite(value);
+                return (
+                  <li key={key}>
+                    <span>{key.replace(/_/g, " ")}</span>
+                    <i className="miniBar">
+                      <b style={{ width: numeric ? `${Math.round(Math.min(1, Math.max(0, value)) * 100)}%` : "0%" }} />
+                    </i>
+                    <em>{numeric ? value.toFixed(2) : "N/A"}</em>
+                  </li>
+                );
+              })}
             </ul>
             <p className="footnote">
               These components combine into the evidence-quality index. None of them is a

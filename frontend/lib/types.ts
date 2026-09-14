@@ -10,6 +10,38 @@ export type Decision = "PASS" | "FLAG" | "REVIEW" | "ABSTAIN";
 export type Severity = "critical" | "high" | "moderate" | "low" | "very_low" | "unknown";
 export type VerificationStatus = "verified" | "unverified" | "located" | "rejected";
 
+/**
+ * The 8 reason codes `enterprise/integrity.DecisionReasonCode` can emit.
+ *
+ * Declaring the closed set is what lets `tsc` notice a code that no longer
+ * exists; every `reason_code` used to be a bare `string`, so the backend could
+ * (and did) publish values from a different vocabulary unnoticed.
+ */
+export type DecisionReasonCode =
+  | "SEVERE_VERIFIED_SIGNAL"
+  | "INSUFFICIENT_EVIDENCE"
+  | "CLAIM_CONTEXT_INCOMPLETE"
+  | "HIGH_MODEL_DISAGREEMENT"
+  | "UNVALIDATED_RELIABILITY"
+  | "CRITICAL_DIMENSION_ESCALATION"
+  | "AGGREGATE_CRITICAL_SCORE"
+  | "DUPLICATE_EVIDENCE_SUPPRESSED";
+
+/**
+ * The 6 codes `contradictions.ClaimConsistencyReasonCode` can emit.
+ *
+ * A *separate* vocabulary from `DecisionReasonCode`, sharing three spellings.
+ * `NO_ADVERSE_CONFLICT` reports that nothing was found and could never be a
+ * reason for a decision, which is precisely why the two must not be merged.
+ */
+export type ClaimConsistencyReasonCode =
+  | "INSUFFICIENT_EVIDENCE"
+  | "CLAIM_CONTEXT_INCOMPLETE"
+  | "SEVERE_VERIFIED_SIGNAL"
+  | "PARTIAL_NUMERIC_TENSION"
+  | "CLAIM_NOT_OPTIMISTIC"
+  | "NO_ADVERSE_CONFLICT";
+
 export interface Evidence {
   source?: string | null;
   document: string;
@@ -79,7 +111,7 @@ export interface ClaimConsistencyEvaluation {
   supporting_evidence: string[];
   opposing_evidence: string[];
   classification: string;
-  reason_code: string;
+  reason_code: ClaimConsistencyReasonCode;
   policy_version: string;
   policy_hash: string;
 }
@@ -93,7 +125,7 @@ export interface DisclosureTension {
   confidence: number;
   source: Evidence;
   evidence_sufficiency: string;
-  reason_code: string;
+  reason_code: ClaimConsistencyReasonCode;
 }
 
 export interface Dimension {
@@ -172,7 +204,7 @@ export interface DecisionPath {
 
 export interface DecisionTrace {
   decision: string;
-  decision_reason_codes: string[];
+  decision_reason_codes: DecisionReasonCode[];
   initial_fusion_decision: string;
   failure_aware_decision: string;
   review_decision: string;
@@ -195,7 +227,7 @@ export interface FusionResult {
   evidence_quality: number;
   reliability: number | null;
   reliability_status: string;
-  reason_codes: string[];
+  reason_codes: DecisionReasonCode[];
 }
 
 export interface Epistemics {
@@ -213,9 +245,27 @@ export interface ReviewChallenge {
   message: string;
 }
 
+/**
+ * One Analyst judgement, mirroring `agent/review.StructuredJudgement`.
+ *
+ * The backend serialises the Analyst role as a *list* of these
+ * (`"analyst": [asdict(item) for item in judgements]`); it was previously typed
+ * as a single `{status, checked_claims}` object, so any future reader would have
+ * silently received `undefined`. Note the field is `risk_domain`, not
+ * `risk_category`, and that it carries no `status`/`checked_claims` - those
+ * belong to the verifier.
+ */
+export interface AnalystJudgement {
+  claim: string;
+  risk_domain: string;
+  strength: string;
+  evidence_path_ids: string[];
+  model?: string | null;
+}
+
 export interface RoleReview {
   recommended_decision: string;
-  analyst?: { status?: string; checked_claims?: number };
+  analyst?: AnalystJudgement[];
   critic: ReviewChallenge[];
   verifier: {
     status: string;
@@ -262,6 +312,16 @@ export interface AgentPayload {
   analysis_snapshot?: AnalysisSnapshotSummary;
 }
 
+/**
+ * The assessment payload the Workbench renders.
+ *
+ * This is the shape of `POST /api/v1/assess` and of
+ * `POST /api/v1/documents/analyze` (which returns the assessment with the agent
+ * state attached under `agent`). It is **not** the shape of
+ * `POST /api/v1/agent/assess`, which returns the raw `AgentState` with the
+ * assessment nested under `assessment` — `isAssessmentPayload` would reject it,
+ * so do not point `analyzeDocument` at that route without reshaping first.
+ */
 export interface AssessmentPayload {
   company: string;
   reporting_period: string;
@@ -272,6 +332,8 @@ export interface AssessmentPayload {
   evidence_quality: number;
   evidence_coverage: number;
   reliability_status: string;
+  /** Explains that `confidence` / `evidence_quality` are not probabilities. */
+  confidence_semantics?: string;
   final_decision: string;
   failure_state: FailureState;
   disclaimer: string;
@@ -283,6 +345,20 @@ export interface AssessmentPayload {
   disclosure_tensions: DisclosureTension[];
   missing_information: string[];
   confidence_components: Record<string, number>;
+  /**
+   * Declared vs reachable rule coverage.
+   *
+   * The rule set is published as "68 versioned expert rules"; the reachable
+   * subset is smaller because some conditions reference facts no extractor
+   * produces. Optional so the payload stays backwards-compatible.
+   */
+  rule_coverage?: {
+    total_rules: number;
+    reachable_rules: number;
+    reachable_ratio: number;
+    unreachable_rule_ids: string[];
+    unreachable_metrics: string[];
+  };
   enterprise_fusion: FusionResult;
   agent?: AgentPayload;
 }
@@ -291,7 +367,12 @@ export interface PilotRow {
   entity: string;
   decision: string;
   score: number | null;
-  coverage: number;
+  /**
+   * Per-company proof-gate coverage. `null` when the frozen artifact has no row
+   * for this filing - it is deliberately not backfilled with the dataset mean,
+   * which previously made the column identical for every company.
+   */
+  coverage: number | null;
   reliability: string;
   filing: string;
 }
@@ -300,6 +381,8 @@ export interface PilotPayload {
   snapshot: string;
   runtime: string;
   annotation_status: string;
+  /** Dataset-level mean, shown once in the panel note rather than per row. */
+  dataset_evidence_coverage?: number;
   rows: PilotRow[];
 }
 

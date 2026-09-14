@@ -37,6 +37,19 @@ class RiskDomain(StrEnum):
     DISCLOSURE_TENSION = "disclosure_tension"
 
 
+# Domains that no code path can currently produce.
+#
+# A decision path's `risk_domain` is either a `scoring.CATEGORIES` key or
+# `"disclosure_tension"`, and `llm.ALLOWED_CATEGORIES` is the same eight keys, so
+# these two members have no producer anywhere: no case can be opened in them, and
+# `service.transition` could never find a matching evidence path for one. They are
+# declared explicitly instead of being left as a silent gap in the enum, so that a
+# test can assert the reachable set and any future producer must update this set.
+UNPRODUCED_RISK_DOMAINS = frozenset({RiskDomain.COVENANT, RiskDomain.COUNTERPARTY})
+
+PRODUCED_RISK_DOMAINS = frozenset(RiskDomain) - UNPRODUCED_RISK_DOMAINS
+
+
 class Decision(StrEnum):
     PASS = "PASS"
     FLAG = "FLAG"

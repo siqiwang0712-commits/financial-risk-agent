@@ -16,9 +16,25 @@ def fixture():
     )
 
 
-def test_agent_state_rejects_transition_after_terminal():
+def test_agent_state_enforces_the_workflow_order():
     state = AgentState("Example", 2025)
-    state.transition(AgentStatus.COMPLETED)
+    # A skip straight to a terminal state is not a legal step: the trace is a
+    # claim about the order the Agent worked in, so the order is enforced here.
+    with pytest.raises(ValueError, match="illegal transition"):
+        state.transition(AgentStatus.COMPLETED)
+    with pytest.raises(ValueError, match="illegal transition"):
+        state.transition(AgentStatus.VERIFYING)
+    for status in (
+        AgentStatus.PLANNING,
+        AgentStatus.COLLECTING,
+        AgentStatus.CROSS_CHECKING,
+        AgentStatus.SYNTHESIZING,
+        AgentStatus.VERIFYING,
+        AgentStatus.REFLECTING,
+        AgentStatus.COMPLETED,
+    ):
+        state.transition(status)
+    assert state.status == AgentStatus.COMPLETED
     with pytest.raises(ValueError, match="terminal"):
         state.transition(AgentStatus.PLANNING)
 

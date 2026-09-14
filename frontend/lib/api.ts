@@ -13,6 +13,7 @@
  */
 
 import { DEMO_FIXTURE } from "./demoFixture";
+import { isAssessmentPayload, isPilotPayload } from "./guards.mjs";
 import type { AssessmentPayload, DataOrigin, Loaded, PilotPayload } from "./types";
 
 export interface Failure {
@@ -29,6 +30,13 @@ export type LoadResult<T> =
 export const OFFLINE_NOTE = DEMO_FIXTURE.notice;
 
 const PILOT_TIMEOUT_MS = 8000;
+/**
+ * Uploading a filing and running the Agent is a long request by design (PDF
+ * parsing, extraction, verification), so the ceiling is generous - but it must
+ * exist. Without it a hung upstream left `loadingAnalysis` true forever and the
+ * submit button permanently disabled, with no error and no way back.
+ */
+const ANALYZE_TIMEOUT_MS = 120_000;
 
 function isUpstreamUnavailable(status: number): boolean {
   return status === 502 || status === 503;
@@ -44,17 +52,6 @@ function detailOf(body: unknown, fallback: string): string {
     if (typeof detail === "string" && detail) return detail;
   }
   return fallback;
-}
-
-/**
- * Minimal structural guard. A 200 response with a body that is not a pilot
- * payload (empty object, an HTML error page) used to reach `payload.rows.map`
- * and throw, blanking the page. The UI degrades instead.
- */
-function isPilotPayload(body: unknown): body is PilotPayload {
-  if (!body || typeof body !== "object") return false;
-  const candidate = body as Partial<PilotPayload>;
-  return Array.isArray(candidate.rows) && typeof candidate.snapshot === "string";
 }
 
 /**
@@ -138,6 +135,7 @@ export async function analyzeDocument(input: AnalyzeInput): Promise<AnalyzeResul
       method: "POST",
       body,
       headers: { "X-API-Key": input.apiKey },
+      signal: AbortSignal.timeout(ANALYZE_TIMEOUT_MS),
     });
   } catch {
     return {
@@ -153,9 +151,22 @@ export async function analyzeDocument(input: AnalyzeInput): Promise<AnalyzeResul
   const payload = await readJson(response);
 
   if (response.ok) {
+    // `loadPilot` has always validated its payload; this path did not, so an
+    // HTTP 200 carrying `{}` or an HTML error page was handed to the panels as
+    // an `AssessmentPayload` and threw during render. A shape mismatch is a
+    // failure to report, not a reason to show the sample.
+    if (!isAssessmentPayload(payload)) {
+      return {
+        ok: false,
+        failure: {
+          message: `The analysis response was not in the expected shape (HTTP ${response.status}).`,
+          upstreamUnavailable: false,
+        },
+      };
+    }
     return {
       ok: true,
-      loaded: { payload: payload as AssessmentPayload, origin: "live" },
+      loaded: { payload, origin: "live" },
     };
   }
 

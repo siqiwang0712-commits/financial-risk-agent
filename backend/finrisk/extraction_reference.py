@@ -73,10 +73,26 @@ def load_pre_num_reference_rows(
 
 
 def _line(row: dict[str, str]) -> int:
+    """`line` as an int, sorted last when absent or unparseable.
+
+    `csv.DictReader` yields `None` -- not `""` -- for fields missing from a short
+    row, so `int(row.get("line", ""))` raised an uncaught `TypeError` on exactly
+    the malformed rows this fallback exists to tolerate.
+    """
     try:
-        return int(row.get("line", ""))
-    except ValueError:
+        return int(row.get("line") or "")
+    except (TypeError, ValueError):
         return 2**31 - 1
+
+
+def _text(value: object) -> str:
+    """A sortable string for a possibly-missing CSV field.
+
+    The sort key used `row.get("report", "")`, which returns `None` for a field
+    that is present-but-empty in a short row; comparing `str` to `None` then raised
+    `TypeError: '<' not supported between instances of 'str' and 'NoneType'`.
+    """
+    return "" if value is None else str(value)
 
 
 def construct_pre_num_reference(
@@ -107,7 +123,7 @@ def construct_pre_num_reference(
                 row for row in pre_by_adsh.get(adsh, [])
                 if row.get("tag") in aliases and row.get("stmt") in expected
             ]
-            candidates.sort(key=lambda row: (aliases.index(row["tag"]), _line(row), row.get("report", "")))
+            candidates.sort(key=lambda row: (aliases.index(row["tag"]), _line(row), _text(row.get("report"))))
             base = {
                 "observation_id": observation["observation_id"],
                 "field": field,

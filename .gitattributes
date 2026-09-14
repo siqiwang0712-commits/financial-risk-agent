@@ -1,5 +1,14 @@
 * text=auto
 
+# Binary artifacts must not be diffed as text. `* text=auto` above leaves the
+# tracked PDF and PNG eligible for text filters, which means (a) `git diff` reads
+# a PDF's xref table as lines and reports "trailing whitespace" on each one, so
+# CI's `git diff --check` fails on an artifact that has no text semantics, and
+# (b) a checkout can rewrite the bytes with CRLF. Declaring them binary fixes
+# both and leaves the file content untouched.
+*.pdf binary
+*.png binary
+
 # Reproducible research artifacts must have identical bytes on Windows and Linux.
 research/results/public_v1/*.csv text eol=lf
 research/results/public_v1/*.json text eol=lf

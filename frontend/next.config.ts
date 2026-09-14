@@ -5,6 +5,13 @@ import path from "path";
 // frameable and sniffable. `Content-Security-Policy` allows only same-origin
 // scripts/styles/images plus the inline styles the Workbench uses for the
 // server-rendered shell.
+//
+// `'unsafe-eval'` is granted in development only: React's dev-mode HMR and error
+// overlay need `eval`, and without the exception the page fails to boot under
+// `next dev` while looking fine in production. Production never gets it.
+const isDevelopment = process.env.NODE_ENV === "development";
+const scriptSrc = isDevelopment ? "script-src 'self' 'unsafe-inline' 'unsafe-eval'" : "script-src 'self' 'unsafe-inline'";
+
 const securityHeaders = [
   { key: "X-Content-Type-Options", value: "nosniff" },
   { key: "X-Frame-Options", value: "DENY" },
@@ -14,7 +21,7 @@ const securityHeaders = [
     key: "Content-Security-Policy",
     value: [
       "default-src 'self'",
-      "script-src 'self' 'unsafe-inline'",
+      scriptSrc,
       "style-src 'self' 'unsafe-inline'",
       "img-src 'self' data:",
       "connect-src 'self'",

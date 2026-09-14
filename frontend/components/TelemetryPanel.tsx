@@ -13,15 +13,18 @@ interface Props {
  * whether the component flipped the decision or added new evidence.
  */
 export function TelemetryPanel({ items }: Props) {
-  const totalLatency = items.reduce((s, i) => s + i.latency_ms, 0);
-  const totalCost = items.reduce((s, i) => s + i.estimated_cost_usd, 0);
-  const flipped = items.filter((i) => i.decision_changed).length;
+  // Every aggregate below is a `reduce` over this list; `undefined` would throw
+  // before the first row rendered.
+  const rows = items ?? [];
+  const totalLatency = rows.reduce((s, i) => s + (Number.isFinite(i.latency_ms) ? i.latency_ms : 0), 0);
+  const totalCost = rows.reduce((s, i) => s + (Number.isFinite(i.estimated_cost_usd) ? i.estimated_cost_usd : 0), 0);
+  const flipped = rows.filter((i) => i.decision_changed).length;
 
   return (
     <div>
       <div className="telemetryMeta">
         <p>
-          <b>{items.length}</b> components · <b>{flipped}</b> flipped decision ·{" "}
+          <b>{rows.length}</b> components · <b>{flipped}</b> flipped decision ·{" "}
           <b>{totalLatency.toLocaleString()}</b> ms total ·{" "}
           <b>${totalCost.toFixed(4)}</b> est. cost
         </p>
@@ -42,7 +45,7 @@ export function TelemetryPanel({ items }: Props) {
             </tr>
           </thead>
           <tbody>
-            {items.map((item) => (
+            {rows.map((item) => (
               <tr key={item.component}>
                 <td>
                   <code>{item.component}</code>
@@ -75,7 +78,9 @@ export function TelemetryPanel({ items }: Props) {
                     <span className="statusChip ok">no</span>
                   )}
                 </td>
-                <td>{item.latency_ms.toLocaleString()} ms</td>
+                <td>
+                  {Number.isFinite(item.latency_ms) ? `${item.latency_ms.toLocaleString()} ms` : "N/A"}
+                </td>
               </tr>
             ))}
           </tbody>
@@ -99,7 +104,8 @@ function Delta({ before, after }: { before: number | null; after: number | null 
   );
 }
 
-function DeltaPct({ before, after }: { before: number; after: number }) {
+function DeltaPct({ before, after }: { before: number | null; after: number | null }) {
+  if (before == null || after == null) return <span className="muted">—</span>;
   const diff = after - before;
   const sign = diff > 0 ? "+" : "";
   const cls = diff > 0 ? "ok" : diff < 0 ? "bad" : "muted";

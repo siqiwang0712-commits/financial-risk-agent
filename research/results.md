@@ -19,6 +19,19 @@ These results do not establish predictive superiority. Statistical power is inad
 
 The evaluated set is `n=3`, not the planned 30-company confirmatory corpus. Raw predictions, decompositions, confusion matrices and ablations are committed in `research/results/public_v1`.
 
+### Reproducibility caveat (2026-09-14)
+
+`research/results/public_v1` is **frozen at the v0.3.0 code and is no longer byte-reproducible from the current code**. Two Intel figures moved when the audit remediation landed:
+
+| Row | Frozen `public_v1` | Current code | Cause |
+|---|---:|---:|---|
+| `intc-2024` / `full_hybrid` risk probability | 0.427 | 0.391 | the model-mapping operator table was unified and the uncaught `StopIteration` path removed, which changed which model signals Intel triggers |
+| `intc-2024` / `without_trends` risk probability | 0.340 | 0.283 | same |
+
+Every other value is unchanged. The frozen files are kept as they are because they are the pilot口径 cited below and in `research/error_analysis.md`, and because CI verifies they are never rewritten. Regenerating them is a separate decision that would require re-issuing the pilot; the same drift is visible in `examples/intel_2024_sample_report.txt`, which *is* regenerable and has been brought back in step with the code (39.1/100, Low).
+
+Re-running `scripts/run_public_benchmark.py` today would therefore produce two different Intel numbers, not a corrupted run.
+
 | Baseline | Decisions | Accuracy | Balanced accuracy | Risk F1 | AUROC | AUPRC | Brier | ECE |
 |---|---:|---:|---:|---:|---:|---:|---:|---:|
 | LLM Only (mock) | 3/3 | .667 | .500 | .000 | .500 | 1.000 | .333 | .333 |

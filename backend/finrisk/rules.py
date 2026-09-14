@@ -1,11 +1,44 @@
 from __future__ import annotations
 
 import json
+from dataclasses import asdict, dataclass
 from pathlib import Path
 
 from .domain import RuleSignal
 
 OPS={"<":lambda a,b:a<b,"<=":lambda a,b:a<=b,">":lambda a,b:a>b,">=":lambda a,b:a>=b,"==":lambda a,b:a==b,"!=":lambda a,b:a!=b}
+
+
+@dataclass(frozen=True)
+class RuleCoverage:
+    """Declared rule count vs the rules the built-in producers can actually fire.
+
+    The rule set is a public claim ("68 versioned expert rules"); the reachable
+    subset is smaller, because 25 conditions reference governance / audit /
+    disclosure facts that no extractor in this repository produces. Those rules
+    are not *unreachable* in principle - a caller may supply the facts directly,
+    and `FinRiskPipeline.assess` merges the caller's `current` mapping into the
+    fact set - but they can never fire from a filing alone.
+
+    Publishing the two numbers side by side is the point: a reader who sees only
+    "68 rules" would reasonably assume all 68 are live.
+    """
+
+    total_rules: int
+    reachable_rules: int
+    unreachable_rule_ids: tuple[str, ...]
+    unreachable_metrics: tuple[str, ...]
+
+    @property
+    def reachable_ratio(self) -> float:
+        return self.reachable_rules / self.total_rules if self.total_rules else 0.0
+
+    def to_dict(self) -> dict:
+        payload = asdict(self)
+        payload["unreachable_rule_ids"] = list(self.unreachable_rule_ids)
+        payload["unreachable_metrics"] = list(self.unreachable_metrics)
+        payload["reachable_ratio"] = round(self.reachable_ratio, 4)
+        return payload
 
 
 class RuleEngine:
@@ -15,6 +48,7 @@ class RuleEngine:
         for rule in rules:
             if rule.get("aggregation","max") not in {"max","additive"}:raise ValueError(f'Invalid aggregation for {rule["id"]}')
         self.rules=rules
+        self.coverage = rule_coverage(rules)
 
     @classmethod
     def from_file(cls,path):
@@ -63,9 +97,9 @@ def producible_fact_names() -> set[str]:
 def unproducible_rule_conditions(rules: list[dict]) -> list[tuple[str, str]]:
     """`(rule_id, metric)` pairs whose metric has no producer in the codebase.
 
-    Such a rule can never fire. This is a diagnostic rather than a startup
-    assertion: the checked-in rule set contains a number of these and failing the
-    boot would be a bigger regression than the dead rules themselves.
+    Such a rule can never fire from a filing. This is a diagnostic rather than a
+    startup assertion: the checked-in rule set contains a number of these and
+    failing the boot would be a bigger regression than the dead rules themselves.
     """
     producible = producible_fact_names()
     return [
@@ -74,3 +108,20 @@ def unproducible_rule_conditions(rules: list[dict]) -> list[tuple[str, str]]:
         for condition in rule["conditions"]
         if condition["metric"] not in producible
     ]
+
+
+def rule_coverage(rules: list[dict]) -> RuleCoverage:
+    """Quantify the gap between the declared rule set and the reachable one.
+
+    The docstring above always admitted that dead rules exist; nothing said how
+    many, so "68 versioned expert rules" was the only number anyone could quote.
+    This turns the diagnostic into a published figure.
+    """
+    unreachable = unproducible_rule_conditions(rules)
+    unreachable_ids = tuple(sorted({rule_id for rule_id, _ in unreachable}))
+    return RuleCoverage(
+        total_rules=len(rules),
+        reachable_rules=len(rules) - len(unreachable_ids),
+        unreachable_rule_ids=unreachable_ids,
+        unreachable_metrics=tuple(sorted({metric for _, metric in unreachable})),
+    )

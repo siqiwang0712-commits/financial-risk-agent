@@ -37,9 +37,10 @@ export function DecisionSummary({ payload }: Props) {
           <small>Risk index · heuristic, not a probability</small>
           <div className="scoreValue">
             {displayScore(payload.overall_score)}
-            {payload.overall_score === null ? null : <span>/100</span>}
+            {/* `=== null` let `undefined` through, rendering the literal "N/A/100". */}
+            {payload.overall_score == null ? null : <span>/100</span>}
           </div>
-          <p className="heroLevel">{payload.risk_level}</p>
+          <p className="heroLevel">{payload.risk_level ?? "unknown"}</p>
         </div>
 
         <div className="heroDecision">
@@ -65,6 +66,16 @@ export function DecisionSummary({ payload }: Props) {
         <Cell label="Model disagreement" value={ratio(agent?.model_disagreement)} />
         <Cell label="Verified paths" value={`${agent?.decision_trace?.verified_path_count ?? 0}/${agent?.decision_trace?.material_path_count ?? 0}`} />
       </div>
+
+      {/* Two cells can show the same number. Saying so is better than letting a
+          reader infer that "coverage" and "quality" are interchangeable, or that
+          either is a probability. */}
+      <p className="footnote">
+        Evidence quality is the confidence index - the weighted composite of the evidence-quality
+        components below. It is the same number as the headline confidence, not a second
+        measurement, and it is not a probability. Evidence <i>coverage</i> is a separate quantity:
+        how much of the material input set carries verified provenance.
+      </p>
 
       {payload.legacy_weighted_score !== undefined && payload.legacy_weighted_score !== null ? (
         <p className="legacyNote">

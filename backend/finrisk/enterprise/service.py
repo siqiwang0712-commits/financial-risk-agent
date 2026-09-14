@@ -3,6 +3,7 @@ from __future__ import annotations
 from datetime import date
 
 from .auth import authorize
+from .decision import verified_paths_for_domain
 from .domain import (
     AuditEvent,
     Entity,
@@ -117,25 +118,14 @@ class EnterpriseRiskService:
                 raise ValueError("a server-side analysis snapshot is required")
             snapshot = self.repository.get_snapshot(case.organization_id, case.snapshot_id)
             trace = snapshot.frozen_output.get("agent", {}).get("decision_trace", {})
-            aliases = {
-                "accounting": "accounting_anomaly",
-                "governance": "governance_audit",
-                "going_concern": "business_going_concern",
-                "solvency": "solvency_leverage",
-            }
-            verified = [
-                path for path in trace.get("paths", [])
-                if path.get("evidence_path_status") == "VERIFIED"
-                and path.get("source_evidence")
-                and aliases.get(path.get("risk_domain"), path.get("risk_domain"))
-                == case.domain.value
-            ]
-            if not verified:
+            if not verified_paths_for_domain(trace, case.domain.value):
                 raise ValueError("a verified server-side evidence path is required")
         if target is RiskCaseStatus.RESOLVED and not case.resolution_evidence:
             raise ValueError("resolution evidence is required")
         previous, current = transition_case(case, target)
-        saved = self.repository.save(case)
+        # Compare-and-set against the status that was read, so a concurrent
+        # transition cannot be silently overwritten (see the repository contract).
+        saved = self.repository.save_case_transition(case, previous)
         self._audit(
             case.organization_id,
             principal.user_id,
@@ -169,8 +159,9 @@ class EnterpriseRiskService:
     def reopen(self, principal: Principal, case_id: str, reason: str) -> RiskCase:
         case = self.repository.get_case(principal.organization_id, case_id)
         authorize(principal, "review", case.organization_id)
+        previous = case.status
         payload = reopen_case(case, principal.user_id, reason)
-        saved = self.repository.save(case)
+        saved = self.repository.save_case_transition(case, previous)
         self._audit(case.organization_id, principal.user_id, "risk_case.reopened", "risk_case", case.id, payload)
         return saved
 

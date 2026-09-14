@@ -24,7 +24,7 @@ from ..enterprise.integrity import CalibrationStatus, epistemic_summary
 from ..enterprise.telemetry import component_delta
 from ..enterprise.temporal import classify_trajectory
 from ..evidence import VERIFIER_VERSION
-from ..facts import build_facts
+from ..facts import MODEL_NAMES_BY_KEY, build_facts
 from ..llm import NarrativeProvider, provider_from_env
 from ..scoring import aggregate
 from ..severity import severity_label
@@ -196,7 +196,11 @@ class FinancialRiskAgent:
                     and not state.decision_trace["verified_path_count"]
                 ),
                 "conflicting_evidence": bool(assessment.contradictions),
-                "llm_unavailable": bool(pages and not claims),
+                # "Unavailable" means the provider actually failed. It used to be
+                # `bool(pages and not claims)`, which also fired when the provider
+                # ran successfully and every extracted claim was rejected by the
+                # quote/grounding gate -- reporting a working LLM as an outage.
+                "llm_unavailable": semantic_failed,
                 "parser_failure": False,
                 "stale_data": False,
                 "rule_model_contradiction": False,
@@ -243,9 +247,20 @@ class FinancialRiskAgent:
             else:
                 state.conclusions, warnings = verify_conclusions(candidates)
                 state.warnings.extend(warnings)
-            evidence_paths = {
-                path["reason_code"]: path for path in state.decision_trace["paths"]
-            }
+            # Keyed by `reason_code` because that is the id the verifier is given,
+            # but a reason code is not guaranteed unique. Collapsing two paths onto
+            # one key dropped one of them from `evidence_paths` entirely - and with
+            # it from the verifier's view and from the judgements below. Disambiguate
+            # instead of losing a material path.
+            evidence_paths: dict[str, dict] = {}
+            for path in state.decision_trace["paths"]:
+                path_id = path["reason_code"]
+                if path_id in evidence_paths:
+                    suffix = 2
+                    while f"{path_id}#{suffix}" in evidence_paths:
+                        suffix += 1
+                    path_id = f"{path_id}#{suffix}"
+                evidence_paths[path_id] = path
             judgements = [
                 StructuredJudgement(
                     claim=item.claim,
@@ -260,18 +275,31 @@ class FinancialRiskAgent:
                 )
                 for item in candidates
                 for path_id, path in evidence_paths.items()
-                if path_id in item.claim
+                # Matched on the path's own `reason_code`, not on the dictionary
+                # key: a disambiguated key carries a `#n` suffix that by
+                # definition never appears in a claim, so matching on the key
+                # would silently drop exactly the path the suffix was added to
+                # preserve.
+                if path["reason_code"] in item.claim
             ]
+            # Model short key -> applicability status, from the one mapping in
+            # `facts`. The previous inline `else "Ohlson O-Score"` filed *any*
+            # unrecognised model under Ohlson's name, so the critic's
+            # MODEL_POPULATION_MISMATCH check was evaluated against the wrong model.
+            # An unmapped key is now surfaced as a warning instead.
+            applicability_by_model: dict[str, str] = {}
+            for item in applicability:
+                model_name = MODEL_NAMES_BY_KEY.get(item["model"])
+                if model_name is None:
+                    state.warnings.append(
+                        f"applicability reported for unknown model {item['model']!r}"
+                    )
+                    continue
+                applicability_by_model[model_name] = item["status"]
             state.role_review = three_role_review(
                 judgements,
                 evidence_paths,
-                {
-                    "Altman Z-Score" if item["model"] == "altman" else
-                    "Beneish M-Score" if item["model"] == "beneish" else
-                    "Piotroski F-Score" if item["model"] == "piotroski" else
-                    "Ohlson O-Score": item["status"]
-                    for item in applicability
-                },
+                applicability_by_model,
             )
             state.assessment["agent_role_review"] = state.role_review
             # The critic may only move the disposition toward the more cautious end

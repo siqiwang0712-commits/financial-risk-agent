@@ -106,9 +106,21 @@ if FastAPI:
     # dropped by logging.lastResort and production ran silently.
     configure_logging()
 
+    def _environment() -> str:
+        """Normalized `FINRISK_ENV`.
+
+        Three call sites used to normalize this differently -- two applied only
+        `.lower()` while one applied `.strip().lower()` -- so `FINRISK_ENV="production "`
+        (a trailing space from a shell export or a YAML scalar) disabled the
+        unauthenticated bootstrap endpoint but *skipped* the production
+        `DATABASE_URL` enforcement, silently falling back to in-memory storage in
+        what the operator believed was production.
+        """
+        return os.getenv("FINRISK_ENV", "development").strip().lower()
+
     def runtime_components():
         database_url = os.getenv("DATABASE_URL")
-        environment = os.getenv("FINRISK_ENV", "development").lower()
+        environment = _environment()
         if environment == "production" and (
             not database_url or "local-development-only" in database_url
         ):
@@ -176,9 +188,10 @@ if FastAPI:
     agent = FinancialRiskAgent(ROOT, pipeline.provider)
     enterprise_service, credential_store = runtime_components()
     api_limiter = SlidingWindowRateLimiter(limit=int(os.getenv("FINRISK_RATE_LIMIT", "60")))
-    # Case-insensitive environment check: `FINRISK_ENV=Production` previously read as
-    # "not production", which re-enabled the unauthenticated bootstrap endpoint.
-    finrisk_env = os.getenv("FINRISK_ENV", "development").strip().lower()
+    # Case-insensitive (and whitespace-tolerant) environment check:
+    # `FINRISK_ENV=Production` previously read as "not production", which
+    # re-enabled the unauthenticated bootstrap endpoint.
+    finrisk_env = _environment()
     bootstrap_enabled = (
         os.getenv("FINRISK_ENABLE_ORG_BOOTSTRAP", "1") == "1" and finrisk_env != "production"
     )
@@ -231,7 +244,7 @@ if FastAPI:
 
     def persist_agent_snapshot(state, actor: Principal, entity_id: str | None) -> None:
         if entity_id is None:
-            if os.getenv("FINRISK_ENV", "development").lower() == "production":
+            if _environment() == "production":
                 raise HTTPException(422, "entity_id is required for persisted production analysis")
             return
         generated = state.analysis_snapshot
@@ -315,16 +328,32 @@ if FastAPI:
         full_hybrid = next(
             item for item in payload["summaries"] if item["baseline"] == "full_hybrid"
         )
+        # `summary.json` only carries the dataset-level mean of `evidence_coverage`.
+        # Publishing that mean on every row made the "Evidence coverage" column
+        # identical for all companies (0.5833 each). The per-company value is in
+        # the frozen per-row predictions; join it on the example id.
+        per_company = {
+            row["example_id"]: row["evidence_coverage"]
+            for row in json.loads(
+                (ROOT / "research/results/public_v1/predictions.json").read_text(
+                    encoding="utf-8"
+                )
+            )
+            if row.get("baseline") == "full_hybrid"
+        }
         return {
             "snapshot": "v0.3.0 frozen public pilot",
             "runtime": "v0.3.2",
             "annotation_status": payload["annotation_status"],
+            # The dataset-level figure stays available under an explicit name so
+            # the two are never confused again.
+            "dataset_evidence_coverage": full_hybrid["evidence_coverage"],
             "rows": [
                 {
                     "entity": item["company"],
                     "decision": "FLAG" if item["prediction"] else "PASS",
                     "score": item["overall_score"],
-                    "coverage": full_hybrid["evidence_coverage"],
+                    "coverage": per_company.get(item["example_id"]),
                     "reliability": "UNCALIBRATED",
                     "filing": item["example_id"],
                 }

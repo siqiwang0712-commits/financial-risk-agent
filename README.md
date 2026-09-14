@@ -329,6 +329,8 @@ Model mappings are configured in [config/model_scoring.json](config/model_scorin
 
 [rules/rules.json](rules/rules.json) contains 68 versioned rules covering single-factor and cross-factor patterns. Correlated rules carry family metadata so aggregation retains the strongest applicable family signal. Global baseline, sector and organization policy remain separable and versioned.
 
+**Effective coverage: 43 of the 68 rules are reachable from a filing alone.** The other 25 depend on governance, audit and disclosure facts (`restatement_detected`, `adverse_audit_opinion`, `covenant_breach`, `related_party_material`, `material_litigation`, …) that no extractor in this repository produces, so they can only fire when a caller supplies those facts directly — `FinRiskPipeline.assess` merges the caller's `current` mapping into the fact set. They are retained rather than deleted because the conditions are correct and the rule set is versioned; the gap is in extraction, not in the rules. Every assessment publishes the two numbers together as `rule_coverage`, and `tests/test_batch2_guards.py` ratchets the count so it cannot grow unnoticed.
+
 Missing evidence, low coverage, conflicting evidence, stale data, parser failure, unavailable LLMs, applicability failures and rule/model disagreement are all first-class states. Depending on pinned policy, they reduce evidence sufficiency, increase review requirements, or force abstention. They never produce fabricated certainty.
 
 The incident-style [Failure Lab](failure_lab/README.md) maps each injected failure to its impact, expected fail-closed response and regression test.

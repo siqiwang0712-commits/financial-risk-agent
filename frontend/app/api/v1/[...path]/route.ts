@@ -1,15 +1,15 @@
 import { NextRequest, NextResponse } from "next/server";
+import {
+  ALLOWED_METHODS,
+  isValidSegment,
+  selectRequestHeaders,
+  selectResponseHeaders,
+} from "../../../../lib/proxy.mjs";
 
-// Reads and writes are the only methods the Workbench performs. DELETE/PUT/PATCH
-// were re-exported to the browser for no reason.
-const ALLOWED_METHODS = new Set(["GET", "POST"]);
-// Only the headers the upstream actually needs. Forwarding the client's whole
-// header set leaked `cookie`/`authorization` to the upstream and let a caller
-// influence it arbitrarily.
-const FORWARDED_REQUEST_HEADERS = ["content-type", "accept", "x-api-key", "x-correlation-id"];
-const FORWARDED_RESPONSE_HEADERS = ["content-type", "content-length"];
+// The allowlists and the `content-length` rule live in `lib/proxy.mjs` so they
+// can be unit-tested; see that module for why each entry is there.
+const ALLOWED = new Set(ALLOWED_METHODS);
 const UPSTREAM_TIMEOUT_MS = 10_000;
-const SEGMENT_PATTERN = /^[A-Za-z0-9._~-]+$/;
 
 function resolveUpstream(): URL | null {
   const upstream = process.env.FINRISK_API_UPSTREAM;
@@ -40,7 +40,7 @@ function resolveUpstream(): URL | null {
 function rebuildTarget(base: URL, segments: string[], search: string): URL | null {
   // Reject traversal and encoded separators before URL normalization can resolve
   // them away (`/api/v1/../../admin` used to reach an arbitrary upstream path).
-  if (segments.some((segment) => !segment || segment === "." || segment === ".." || !SEGMENT_PATTERN.test(segment))) {
+  if (segments.some((segment) => !isValidSegment(segment))) {
     return null;
   }
   const suffix = segments.join("/");
@@ -50,7 +50,7 @@ function rebuildTarget(base: URL, segments: string[], search: string): URL | nul
 }
 
 async function proxy(request: NextRequest, context: { params: Promise<{ path: string[] }> }) {
-  if (!ALLOWED_METHODS.has(request.method)) {
+  if (!ALLOWED.has(request.method)) {
     return NextResponse.json({ detail: "method not allowed" }, { status: 405 });
   }
   const base = resolveUpstream();
@@ -62,11 +62,7 @@ async function proxy(request: NextRequest, context: { params: Promise<{ path: st
   if (!target) {
     return NextResponse.json({ detail: "invalid upstream path" }, { status: 400 });
   }
-  const headers = new Headers();
-  for (const name of FORWARDED_REQUEST_HEADERS) {
-    const value = request.headers.get(name);
-    if (value) headers.set(name, value);
-  }
+  const headers = new Headers(selectRequestHeaders(request.headers));
   const body =
     request.method === "GET" || request.method === "HEAD"
       ? undefined
@@ -79,15 +75,20 @@ async function proxy(request: NextRequest, context: { params: Promise<{ path: st
       redirect: "manual",
       signal: AbortSignal.timeout(UPSTREAM_TIMEOUT_MS),
     });
-    const responseHeaders = new Headers();
-    for (const name of FORWARDED_RESPONSE_HEADERS) {
-      const value = response.headers.get(name);
-      if (value) responseHeaders.set(name, value);
-    }
     if (!response.ok) {
-      // Do not relay the upstream body or status-specific details to the browser.
-      return NextResponse.json({ detail: "upstream error" }, { status: response.status, headers: responseHeaders });
+      // The body is replaced, so the upstream's length must not be relayed.
+      const errorHeaders = new Headers(
+        selectResponseHeaders(response.headers, { bodyIsUnchanged: false }),
+      );
+      return NextResponse.json(
+        { detail: "upstream error" },
+        { status: response.status, headers: errorHeaders },
+      );
     }
+    // Body is streamed through byte-for-byte, so the upstream length is accurate.
+    const responseHeaders = new Headers(
+      selectResponseHeaders(response.headers, { bodyIsUnchanged: true }),
+    );
     return new NextResponse(response.body, { status: response.status, headers: responseHeaders });
   } catch {
     return NextResponse.json({ detail: "API upstream request failed" }, { status: 502 });

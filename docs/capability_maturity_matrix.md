@@ -16,6 +16,7 @@ caller actually reaches, not that it is broken.
 | PDF narrative extraction | Yes | Yes | Yes | Sample filing | Partial | No |
 | Traditional models | Yes | Yes | Yes | Pilot inputs incomplete | Formula tests | No |
 | 68-rule engine | Yes | Yes | Yes | Pilot | Not expert-validated | No |
+| ↳ *effective coverage* | 43/68 reachable from a filing; the other 25 need caller-supplied governance/audit facts (published as `rule_coverage`) | | | | | |
 | Evidence verification/decision trace | Yes | Yes | Yes | Pilot | Partial | No |
 | Correlated-evidence de-duplication | Yes | Yes | No | Fixture only | Monotonicity property test | No |
 | Temporal risk state/attribution | Yes | Yes | No | 30-company numeric trajectories | Executed; usefulness not validated | No |

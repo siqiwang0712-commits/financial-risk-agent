@@ -106,12 +106,29 @@ def drift_report(
     }
 
 
+# Metrics the promotion gate actually compares.
+GATE_METRICS: frozenset[str] = frozenset(
+    {
+        "f1",
+        "balanced_accuracy",
+        "false_negative_rate",
+        "calibration_error",
+        "coverage",
+        "evidence_verification_error",
+    }
+)
+
+# Metrics that are recorded and reported but never gate a promotion. They used to
+# sit in the same undifferentiated `required` set as the six above, so a caller
+# had to supply `latency_ms` and `cost_usd` to get a verdict those numbers had no
+# influence on. Naming the two groups makes the contract honest: all nine are
+# required (the report is a regression record), only six can block.
+REPORTED_METRICS: frozenset[str] = frozenset({"abstention_rate", "latency_ms", "cost_usd"})
+
+
 def compare_system_versions(champion: dict[str, float], challenger: dict[str, float], policy: dict[str, float] | None = None) -> dict:
     """Evidence-based promotion gate; a recommendation never deploys a system."""
-    required = {
-        "f1", "balanced_accuracy", "false_negative_rate", "calibration_error",
-        "coverage", "abstention_rate", "evidence_verification_error", "latency_ms", "cost_usd",
-    }
+    required = GATE_METRICS | REPORTED_METRICS
     if required - champion.keys() or required - challenger.keys():
         raise ValueError(f"both versions require metrics: {sorted(required)}")
     limits = {

@@ -11,7 +11,16 @@ TRANSITIONS = {
         RiskCaseStatus.RESOLVED,
     },
     RiskCaseStatus.MITIGATING: {RiskCaseStatus.UNDER_REVIEW, RiskCaseStatus.RESOLVED},
-    RiskCaseStatus.ACCEPTED: {RiskCaseStatus.UNDER_REVIEW, RiskCaseStatus.CLOSED},
+    # `OPEN` is a legal target from `ACCEPTED` because `reopen_case` accepts an
+    # accepted case and puts it back in the open queue. It used to assign
+    # `case.status = OPEN` directly, so the table said one thing and the function
+    # did another - two definitions of legality in one state machine. The table is
+    # now the single authority and `reopen_case` delegates to it.
+    RiskCaseStatus.ACCEPTED: {
+        RiskCaseStatus.UNDER_REVIEW,
+        RiskCaseStatus.CLOSED,
+        RiskCaseStatus.OPEN,
+    },
     RiskCaseStatus.RESOLVED: {RiskCaseStatus.CLOSED, RiskCaseStatus.OPEN},
     RiskCaseStatus.CLOSED: set(),
 }
@@ -74,14 +83,20 @@ def record_resolution_evidence(case: RiskCase, evidence_id: str) -> None:
 
 
 def reopen_case(case: RiskCase, actor_id: str, reason: str) -> dict:
+    """Reopen a closed-out case, through the state machine.
+
+    This used to assign `case.status = OPEN` directly, bypassing `TRANSITIONS`
+    entirely. A case could therefore reach a state its own transition table
+    forbade, and any consumer that trusted `TRANSITIONS` to describe reachability
+    was wrong. Delegating makes the table the single authority; `ACCEPTED -> OPEN`
+    is now declared there rather than performed behind its back.
+    """
     if case.status not in {RiskCaseStatus.RESOLVED, RiskCaseStatus.ACCEPTED}:
         raise ValueError("only accepted or resolved cases can be reopened")
     if not reason.strip():
         raise ValueError("reopen reason is required")
-    previous = case.status
-    case.status = RiskCaseStatus.OPEN
+    previous, _ = transition_case(case, RiskCaseStatus.OPEN)
     case.monitoring_state = "reopened"
-    event = {"kind": "case_reopened", "actor_id": actor_id, "from": previous, "reason": reason, "timestamp": now_iso()}
+    event = {"kind": "case_reopened", "actor_id": actor_id, "from": previous, "reason": reason, "timestamp": case.updated_at}
     case.comments.append(event)
-    case.updated_at = event["timestamp"]
     return event

@@ -143,13 +143,25 @@ class Assessment:
     missing_information: list[str]
     confidence_components: dict[str, float] = field(default_factory=dict)
     evidence_graph: dict[str, Any] = field(default_factory=dict)
+    # `evidence_quality` is *the same index* as `confidence`: the weighted
+    # composite of `confidence_components`. They are two names for one number and
+    # are always equal - a consumer must not read the pair as two independent
+    # measurements. `confidence_semantics` travels with them so the distinction
+    # that *is* real (`evidence_coverage` != `evidence_quality`) cannot be
+    # mistaken for this one, and so neither number is read as a probability.
     evidence_quality: float = 0.0
     evidence_coverage: float = 0.0
+    confidence_semantics: str = "EVIDENCE_QUALITY_INDEX_NOT_A_PROBABILITY"
     reliability_status: str = "UNCALIBRATED"
     # Computed once, on the same fact set that produced `contradictions`, so the
     # claim-level classification and the contradiction list cannot disagree.
     claim_consistency_evaluations: list[dict[str, Any]] = field(default_factory=list)
     disclosure_tensions: list[dict[str, Any]] = field(default_factory=list)
+    # Declared vs reachable rule coverage. The rule set is quoted publicly as "68
+    # versioned expert rules"; 25 of those reference facts no extractor here
+    # produces, so they can only fire when a caller supplies the facts directly.
+    # Published with every assessment so the two numbers travel together.
+    rule_coverage: dict[str, Any] = field(default_factory=dict)
     disclaimer: str = "Risk scores are heuristic assessment scores, not bankruptcy probabilities or investment advice."
 
     def to_dict(self) -> dict[str, Any]:

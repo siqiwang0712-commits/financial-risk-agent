@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import hmac
+import inspect
 import math
 import os
 from dataclasses import asdict
@@ -11,7 +12,7 @@ from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 from .applicability import applicability_report
 from .calibration import selective_decision
-from .decision import create_snapshot, replay_diff
+from .decision import create_snapshot, replay_diff, verified_paths_for_domain
 from .domain import (
     Decision,
     Principal,
@@ -23,7 +24,7 @@ from .domain import (
 )
 from .fusion import FUSION_METHODS
 from .integrity import CalibrationStatus
-from .policy import evaluate_kri
+from .policy import evaluate_kri, validate_thresholds
 from .portfolio import portfolio_overview
 from .scenario import Scenario, compare_scenario
 from .security import (
@@ -122,6 +123,15 @@ class PolicyCreate(BaseModel):
     name: str
     version: int = Field(ge=1)
     thresholds: dict[str, dict[str, float | str]]
+
+    @field_validator("thresholds")
+    @classmethod
+    def thresholds_are_evaluable(cls, values):
+        # Reject at the boundary what `evaluate_kri` cannot evaluate, so a
+        # malformed policy is a 422 instead of being stored and later raising
+        # `TypeError` (a 500) when the policy is applied.
+        validate_thresholds(values)
+        return values
 
 
 class SnapshotCreate(BaseModel):
@@ -260,19 +270,9 @@ def enterprise_router(
         output = snapshot.frozen_output
         agent_output = output.get("agent", {})
         trace = agent_output.get("decision_trace", {})
-        aliases = {
-            "accounting": "accounting_anomaly",
-            "governance": "governance_audit",
-            "going_concern": "business_going_concern",
-            "solvency": "solvency_leverage",
-        }
-        verified_paths = [
-            path for path in trace.get("paths", [])
-            if path.get("evidence_path_status") == "VERIFIED"
-            and path.get("source_evidence")
-            and aliases.get(path.get("risk_domain"), path.get("risk_domain"))
-            == req.domain.value
-        ]
+        # Same gate `service.transition` applies before ACCEPTED/RESOLVED, from the
+        # same function. The two used to be separate copies of the same alias map.
+        verified_paths = verified_paths_for_domain(trace, req.domain.value)
         case = RiskCase(
             new_id("case"),
             actor.organization_id,
@@ -373,14 +373,31 @@ def enterprise_router(
     @router.post("/policies/{policy_id}/evaluate")
     def evaluate_policy(
         policy_id: str,
-        metrics: dict[str, float | None],
+        # `float | bool | None`, not `float | None`: Pydantic coerces `true` to
+        # `1.0`, so a boolean KRI value passed the numeric guard unseen. Keeping
+        # the bool in the annotation lets `_finite_mapping` reject it, exactly as
+        # `AssessmentRequest.current` does on the core API.
+        metrics: dict[str, float | bool | None],
         actor: Principal = principal_dependency,
     ):
+        # `metrics` is a bare body parameter, so it never passed through the
+        # `_finite_mapping` guard every other numeric endpoint uses: a string,
+        # `NaN` or `Infinity` reached `evaluate_kri` and its comparisons.
+        try:
+            _finite_mapping(metrics)
+        except ValueError as exc:
+            raise HTTPException(422, str(exc)) from exc
         try:
             policy = service.repository.get_policy(actor.organization_id, policy_id)
         except KeyError:
             raise HTTPException(404, "policy not found")
-        return evaluate_kri(policy, metrics)
+        # `evaluate_kri` validates `risk_direction` and the limit bounds, so it can
+        # raise for a policy stored before those checks existed. Converting that to
+        # 422 keeps a malformed stored policy from surfacing as a 500.
+        try:
+            return evaluate_kri(policy, metrics)
+        except ValueError as exc:
+            raise HTTPException(422, str(exc)) from exc
 
     @router.post("/snapshots")
     def save_snapshot(req: SnapshotCreate, actor: Principal = principal_dependency):
@@ -471,12 +488,26 @@ def enterprise_router(
         method = FUSION_METHODS.get(req.method)
         if method is None:
             raise HTTPException(422, "unknown fusion method")
-        kwargs = (
-            (req.scores, req.weights, req.coverage, req.confidence, req.decision_policy)
-            if req.method == "weighted_average"
-            else (req.scores, req.coverage, req.confidence, req.decision_policy)
-        )
-        return asdict(method(*kwargs))
+        # Dispatch on the function's own signature rather than special-casing one
+        # method name by string. The old `req.method == "weighted_average"` test
+        # hard-coded the fact that exactly one method takes `weights`, so adding a
+        # method with a different arity produced a bare `TypeError` - a 500 for a
+        # request that should be a 422.
+        available = {
+            "scores": req.scores,
+            "weights": req.weights,
+            "coverage": req.coverage,
+            "confidence": req.confidence,
+            "policy": req.decision_policy,
+        }
+        parameters = list(inspect.signature(method).parameters)
+        missing = [name for name in parameters if name not in available]
+        if missing:
+            raise HTTPException(422, f"fusion method {req.method!r} requires {missing}")
+        try:
+            return asdict(method(**{name: available[name] for name in parameters}))
+        except (TypeError, ValueError) as exc:
+            raise HTTPException(422, str(exc)) from exc
 
     @router.post("/scenarios")
     def scenario(req: ScenarioRequest, actor: Principal = principal_dependency):

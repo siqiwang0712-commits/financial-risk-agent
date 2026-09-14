@@ -55,10 +55,20 @@ def parse_number(text: str, scale: str | None = None) -> float | None:
         # separators; ``1234,56`` / ``0,5`` are the European decimal convention.
         # Blindly deleting commas read ``1234,56`` as 123456 (a 100x error) and
         # ``0,5`` as 5.
-        if re.fullmatch(r"\d{1,3}(?:,\d{3})+", raw):
+        last_comma = raw.rfind(",")
+        last_dot = raw.rfind(".")
+        if last_dot > last_comma:
+            # Both separators present and the dot comes last: US/UK convention,
+            # so the comma groups thousands and the dot is the decimal point.
+            # `fullmatch` below cannot see a decimal point, so without this branch
+            # the most common US format -- ``1,234.56`` -- fell through to the
+            # European branch, produced ``1.234.56`` and returned `None`.
+            raw = raw.replace(",", "")
+        elif re.fullmatch(r"\d{1,3}(?:,\d{3})+", raw):
             raw = raw.replace(",", "")
         else:
-            raw = raw.replace(",", ".")
+            # European convention: any dot groups thousands, the comma is decimal.
+            raw = raw.replace(".", "").replace(",", ".")
     try:
         value = float(raw)
     except ValueError:

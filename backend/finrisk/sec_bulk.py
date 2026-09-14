@@ -13,6 +13,7 @@ from pathlib import Path
 from typing import Any
 
 from .metrics import calculate_metrics
+from .xbrl import CONCEPTS, INSTANT_ITEMS
 
 # Frozen registry identifiers. Values are SEC CIKs, not locally invented IDs.
 FROZEN_CIKS = {
@@ -29,36 +30,26 @@ FROZEN_CIKS = {
 }
 
 
+# The bulk corpora need a narrower field set than the online normaliser, but the
+# *aliases* must not diverge: this module used to carry its own copy of the concept
+# table, which disagreed with `xbrl.CONCEPTS` on both the alias set and the priority
+# order for `capital_expenditure` and `short_term_debt`. The same filing therefore
+# resolved to different tags -- and different numbers -- on the two paths.
+# `xbrl.CONCEPTS` is canonical; only the field selection lives here.
+BULK_FIELDS: tuple[str, ...] = (
+    "revenue", "net_income", "total_assets", "total_liabilities", "current_assets",
+    "current_liabilities", "cash", "operating_cash_flow", "capital_expenditure",
+    "shareholder_equity", "accounts_receivable", "inventory", "short_term_debt",
+    "long_term_debt", "total_debt", "gross_profit", "operating_income", "interest_expense",
+)
+
 CONCEPT_ALIASES: dict[str, tuple[str, ...]] = {
-    "revenue": ("RevenueFromContractWithCustomerExcludingAssessedTax", "SalesRevenueNet", "Revenues"),
-    "net_income": ("NetIncomeLoss", "ProfitLoss"),
-    "total_assets": ("Assets",),
-    "total_liabilities": ("Liabilities",),
-    "current_assets": ("AssetsCurrent",),
-    "current_liabilities": ("LiabilitiesCurrent",),
-    "cash": ("CashAndCashEquivalentsAtCarryingValue", "CashCashEquivalentsRestrictedCashAndRestrictedCashEquivalents"),
-    "operating_cash_flow": ("NetCashProvidedByUsedInOperatingActivities",),
-    "capital_expenditure": (
-        "PaymentsToAcquirePropertyPlantAndEquipment",
-        "PaymentsForAdditionsToPropertyPlantAndEquipment",
-        "PaymentsToAcquireProductiveAssets",
-    ),
-    "shareholder_equity": ("StockholdersEquity", "StockholdersEquityIncludingPortionAttributableToNoncontrollingInterest"),
-    "accounts_receivable": ("AccountsReceivableNetCurrent", "AccountsNotesAndLoansReceivableNetCurrent"),
-    "inventory": ("InventoryNet",),
-    "short_term_debt": ("ShortTermBorrowings", "LongTermDebtCurrent", "DebtCurrent"),
-    "long_term_debt": ("LongTermDebtNoncurrent",),
-    "total_debt": ("LongTermDebtAndFinanceLeaseObligations", "LongTermDebt"),
-    "gross_profit": ("GrossProfit",),
-    "operating_income": ("OperatingIncomeLoss",),
-    "interest_expense": ("InterestExpenseNonOperating", "InterestAndDebtExpense"),
+    field: CONCEPTS[field] for field in BULK_FIELDS
 }
 
-INSTANT_FIELDS = {
-    "total_assets", "total_liabilities", "current_assets", "current_liabilities", "cash",
-    "shareholder_equity", "accounts_receivable", "inventory", "short_term_debt",
-    "long_term_debt", "total_debt",
-}
+# Derived, so a change to `xbrl.INSTANT_ITEMS` cannot silently desynchronise the
+# bulk builder's instant/duration split.
+INSTANT_FIELDS = frozenset(INSTANT_ITEMS) & frozenset(BULK_FIELDS)
 
 
 def sha256_bytes(payload: bytes) -> str:
@@ -419,7 +410,14 @@ def build_reported_fcf_periods(
             "source_hash": filing.get("__archive_sha256"),
             "source_archive": filing.get("__archive_name"),
             "operating_cash_flow": ocf, "capital_expenditure": capex,
-            "free_cash_flow": ocf - capex if ocf is not None and capex is not None else None,
+            # SEC's `Payments*` tags carry a negative `value` (the `pre.txt`
+            # `negating` flag encodes the same convention), so the bare
+            # `ocf - capex` read as `ocf + |capex|` and overstated free cash flow
+            # by 2x|capex| -- which also biased the
+            # `FCF_NEGATIVE_TWO_SUBSEQUENT_PERIODS` label towards False. `abs()` is
+            # the convention `metrics.calculate_metrics` already uses, and it is a
+            # no-op for filers that report capex unsigned.
+            "free_cash_flow": ocf - abs(capex) if ocf is not None and capex is not None else None,
             "fact_provenance": {"operating_cash_flow": ocf_provenance, "capital_expenditure": capex_provenance},
         })
     return records
@@ -469,7 +467,7 @@ def build_reported_fcf_periods_v2(
                     previous_ytd[field] = float(value)
             copy.update(standalone)
             ocf, capex = standalone["operating_cash_flow"], standalone["capital_expenditure"]
-            copy["free_cash_flow"] = ocf - capex if ocf is not None and capex is not None else None
+            copy["free_cash_flow"] = ocf - abs(capex) if ocf is not None and capex is not None else None
             copy["methodology_version"] = "standalone-fcf-v2"
             output.append(copy)
     return sorted(output, key=lambda item: (item["ticker"], item["period_end"]))

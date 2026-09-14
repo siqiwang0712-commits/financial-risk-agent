@@ -2,7 +2,7 @@ from pathlib import Path
 
 from finrisk.research_eval import (
     ABLATIONS,
-    BASELINES,
+    PILOT_BASELINES,
     bootstrap_ci,
     run_public_benchmark,
     run_robustness_checks,
@@ -16,7 +16,7 @@ ROOT = Path(__file__).resolve().parents[1]
 def test_public_benchmark_is_company_disjoint_and_reproducible(tmp_path):
     manifest = ROOT / "research/benchmark/public_company_observations.json"
     rows, summary, ablations = run_public_benchmark(manifest, ROOT)
-    assert {r["baseline"] for r in rows} == set(BASELINES)
+    assert {r["baseline"] for r in rows} == set(PILOT_BASELINES)
     assert {r["split"] for r in rows} == {"train", "validation", "test"}
     assert {r["ablation"] for r in ablations} == set(ABLATIONS)
     assert summary["company_disjoint"] and summary["bootstrap_samples"] == 2000

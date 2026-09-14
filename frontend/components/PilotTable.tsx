@@ -1,4 +1,4 @@
-import { displayReliability, displayScore, normalizeDecision } from "../lib/presentation.mjs";
+import { displayRatio, displayReliability, displayScore, normalizeDecision } from "../lib/presentation.mjs";
 import type { Loaded, PilotPayload } from "../lib/types";
 import type { DataOrigin } from "../lib/types";
 
@@ -34,13 +34,17 @@ export function PilotTable({ pilot }: Props) {
   }
 
   const { payload, origin, note } = pilot;
+  const rows = payload.rows ?? [];
 
   return (
     <section className="panel pilotPanel">
       <PanelHeading
         kicker="Analyst workbench"
         title="Portfolio risk intelligence"
-        meta={`${payload.snapshot} · annotation: ${payload.annotation_status}`}
+        // `isPilotPayload` requires `annotation_status`, but the bundled sample
+        // bypasses that guard, and a missing field used to render the literal
+        // text "annotation: undefined".
+        meta={`${payload.snapshot ?? "unknown snapshot"} · annotation: ${payload.annotation_status ?? "not recorded"}`}
       />
 
       <div className="tableScroll">
@@ -55,16 +59,18 @@ export function PilotTable({ pilot }: Props) {
             </tr>
           </thead>
           <tbody>
-            {payload.rows.map((row) => {
+            {rows.map((row) => {
               const decision = normalizeDecision(row.decision);
               return (
-                <tr key={row.entity}>
+                // `filing` is the frozen artifact's unique row id; `entity` is not
+                // guaranteed unique across filings.
+                <tr key={row.filing || row.entity}>
                   <th scope="row">{row.entity}</th>
                   <td>
                     <span className={`riskPill ${decision.toLowerCase()}`}>{decision}</span>
                   </td>
                   <td className="numeric">{displayScore(row.score)}</td>
-                  <td className="numeric">{row.coverage}</td>
+                  <td className="numeric">{displayRatio(row.coverage)}</td>
                   <td className="uncalibrated">{displayReliability(row.reliability, null)}</td>
                   <td className="mono dim">{row.filing}</td>
                 </tr>
@@ -80,6 +86,9 @@ export function PilotTable({ pilot }: Props) {
           : ""}
         These rows are the immutable v0.3.0 pilot artifact, not current runtime decisions, and they
         are not externally validated. The pilot is three company-years with a single reviewer.
+        {typeof payload.dataset_evidence_coverage === "number"
+          ? ` Dataset mean evidence coverage: ${displayRatio(payload.dataset_evidence_coverage)}.`
+          : ""}
       </p>
       {note ? <p className="panelNote subtle">{note}</p> : null}
     </section>

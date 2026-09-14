@@ -23,14 +23,21 @@ const PHASE_LABEL: Record<string, string> = {
  * there is no "thinking" panel here.
  */
 export function AgentTrace({ plan, trace, status }: Props) {
-  const executed = new Set(trace.map((step) => step.step_id));
+  // Both lists are mapped directly. The panel is only mounted when the Agent
+  // payload exists, but a run that produced no plan (or no executed steps) is a
+  // legitimate state, and `undefined.map` is not a render error worth blanking
+  // the page for.
+  const declared = plan ?? [];
+  const executedSteps = trace ?? [];
+  const executed = new Set(executedSteps.map((step) => step.step_id));
+  const terminal = typeof status === "string" && status ? status : "unknown";
 
   return (
     <div className="traceLayout">
       <div className="traceColumn">
         <h3>Declared plan</h3>
         <ol className="planList">
-          {plan.map((step, index) => (
+          {declared.map((step, index) => (
             <li key={step.id} className={executed.has(step.id) ? "ran" : "skipped"}>
               <span className="planIndex">{String(index + 1).padStart(2, "0")}</span>
               <div>
@@ -47,10 +54,10 @@ export function AgentTrace({ plan, trace, status }: Props) {
       <div className="traceColumn">
         <h3>
           Executed steps
-          <span className={`terminalStatus ${status.toLowerCase()}`}>{status}</span>
+          <span className={`terminalStatus ${terminal.toLowerCase()}`}>{terminal}</span>
         </h3>
         <ol className="execList">
-          {trace.map((step, index) => (
+          {executedSteps.map((step, index) => (
             <li key={`${step.step_id}-${index}`} className={step.status === "success" ? "ok" : "failed"}>
               <span className="execIndex">{String(index + 1).padStart(2, "0")}</span>
               <div>

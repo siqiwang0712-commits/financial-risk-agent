@@ -4,6 +4,7 @@ import hashlib
 import json
 from collections.abc import Callable
 from dataclasses import asdict, dataclass
+from enum import StrEnum
 from pathlib import Path
 
 from .domain import Contradiction, NarrativeClaim
@@ -13,7 +14,34 @@ CONSISTENCY_POLICY = json.loads(_POLICY_PATH.read_text(encoding="utf-8"))
 CONSISTENCY_POLICY_HASH = hashlib.sha256(_POLICY_PATH.read_bytes()).hexdigest()
 
 
+class ClaimConsistencyReasonCode(StrEnum):
+    """The closed vocabulary of `ClaimConsistencyEvaluation.reason_code`.
+
+    Deliberately *not* `DecisionReasonCode`. These describe the outcome of
+    checking one narrative claim against the numeric evidence - including
+    `NO_ADVERSE_CONFLICT`, which reports the absence of a finding and could never
+    be a reason for a decision. Before this enum existed the producer emitted bare
+    strings, three of which (`PARTIAL_NUMERIC_TENSION`, `CLAIM_NOT_OPTIMISTIC`,
+    `NO_ADVERSE_CONFLICT`) were outside the declared decision vocabulary and no
+    type or test could tell.
+    """
+
+    INSUFFICIENT_EVIDENCE = "INSUFFICIENT_EVIDENCE"
+    CLAIM_CONTEXT_INCOMPLETE = "CLAIM_CONTEXT_INCOMPLETE"
+    SEVERE_VERIFIED_SIGNAL = "SEVERE_VERIFIED_SIGNAL"
+    PARTIAL_NUMERIC_TENSION = "PARTIAL_NUMERIC_TENSION"
+    CLAIM_NOT_OPTIMISTIC = "CLAIM_NOT_OPTIMISTIC"
+    NO_ADVERSE_CONFLICT = "NO_ADVERSE_CONFLICT"
+
+
 def _configured(metric: str) -> Callable[[float], bool]:
+    """Build the predicate for one configured threshold check.
+
+    An unrecognised operator used to fall through to `bool(value)`, i.e. "any
+    non-zero value is a breach" - a completely different test from the one the
+    config asked for, and one that could only be discovered by reading the
+    numbers. The vocabulary is closed, so a typo is now a startup error.
+    """
     rule = CONSISTENCY_POLICY["thresholds"][metric]
     operator = rule["operator"]
     threshold = rule.get("value")
@@ -21,7 +49,12 @@ def _configured(metric: str) -> Callable[[float], bool]:
         return lambda value: value < threshold
     if operator == ">":
         return lambda value: value > threshold
-    return lambda value: bool(value)
+    if operator == "truthy":
+        return lambda value: bool(value)
+    raise ValueError(
+        f"consistency policy: unknown operator {operator!r} for {metric!r}; "
+        f"supported: ['<', '>', 'truthy']"
+    )
 
 
 @dataclass(frozen=True)
@@ -42,7 +75,7 @@ class ClaimConsistencyEvaluation:
     supporting_evidence: tuple[str, ...]
     opposing_evidence: tuple[str, ...]
     classification: str
-    reason_code: str
+    reason_code: ClaimConsistencyReasonCode
     policy_version: str = CONSISTENCY_POLICY["version"]
     policy_hash: str = CONSISTENCY_POLICY_HASH
 
@@ -164,17 +197,17 @@ def evaluate_claim_consistency(
     )
     verified = claim.evidence.verification_status == "verified"
     if not verified:
-        classification, reason = "INSUFFICIENT_EVIDENCE", "INSUFFICIENT_EVIDENCE"
+        classification, reason = "INSUFFICIENT_EVIDENCE", ClaimConsistencyReasonCode.INSUFFICIENT_EVIDENCE
     elif missing:
-        classification, reason = "INCOMPLETE_CONTEXT", "CLAIM_CONTEXT_INCOMPLETE"
+        classification, reason = "INCOMPLETE_CONTEXT", ClaimConsistencyReasonCode.CLAIM_CONTEXT_INCOMPLETE
     elif claim.polarity != "positive" and claim.direction != "positive":
-        classification, reason = "NOT_APPLICABLE", "CLAIM_NOT_OPTIMISTIC"
+        classification, reason = "NOT_APPLICABLE", ClaimConsistencyReasonCode.CLAIM_NOT_OPTIMISTIC
     elif len(opposing) >= int(CONSISTENCY_POLICY["material_opposition_count"]):
-        classification, reason = "MATERIAL_CONTRADICTION", "SEVERE_VERIFIED_SIGNAL"
+        classification, reason = "MATERIAL_CONTRADICTION", ClaimConsistencyReasonCode.SEVERE_VERIFIED_SIGNAL
     elif opposing:
-        classification, reason = "TENSION", "PARTIAL_NUMERIC_TENSION"
+        classification, reason = "TENSION", ClaimConsistencyReasonCode.PARTIAL_NUMERIC_TENSION
     else:
-        classification, reason = "NO_CONTRADICTION", "NO_ADVERSE_CONFLICT"
+        classification, reason = "NO_CONTRADICTION", ClaimConsistencyReasonCode.NO_ADVERSE_CONFLICT
     return ClaimConsistencyEvaluation(
         claim.claim,
         claim.risk_category,

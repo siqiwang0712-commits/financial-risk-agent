@@ -41,6 +41,27 @@ Four fusion strategies share one interface: weighted-average baseline, max sever
 - Local document storage rejects traversal and returns a SHA-256 receipt; object storage can implement the same protocol.
 - PostgreSQL DDL covers enterprise records. The psycopg adapter and external database deployment remain **NOT VALIDATED** in this environment.
 
+## Persistence status (what is actually durable)
+
+`migrations/*.sql` declares 16 tables. Nine of them are read and written by the PostgreSQL adapters:
+
+`organizations`, `entities`, `policy_versions`, `risk_cases`, `audit_events`, `analysis_snapshots`, `risk_snapshots` and `model_registry` via `postgres.py`, and `api_credentials` via `security.PostgresCredentialStore`.
+
+The remaining seven are declared but **not referenced by any SQL statement**, so the capabilities they describe exist only in memory:
+
+| Table | Current implementation |
+|---|---|
+| `documents` | `LocalDocumentStorage` on the filesystem |
+| `jobs` | `JobQueue`, in-process |
+| `alerts` | `detect_alerts` returns a list |
+| `validation_records` | no persistence path at all |
+| `decision_bundles` | built in memory, returned in the response, not stored |
+| `temporal_evidence_nodes` / `temporal_evidence_edges` | `TemporalEvidenceGraph`, in memory |
+
+`model_registry` is written but never read back.
+
+This is a boundary statement, not a defect list: a `DecisionBundle` or an evidence graph that is returned to the caller and not written to PostgreSQL is still a reproducible artifact, because it is derived deterministically and hashed. What the schema must not do is imply durability that does not exist — so read this table before claiming that an audit artifact survives a restart. Wiring the remaining tables (or dropping them from the migration) is an open product decision.
+
 ## REST surface
 
 `/api/v1/enterprise` exposes organization bootstrap, tenant-scoped entities, risk cases, lifecycle transitions, override history, portfolio overview, audit events, deterministic scenarios and selectable fusion. Tenant routes require `X-Organization-Id`, `X-User-Id` and `X-Role` in the prototype.

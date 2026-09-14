@@ -98,6 +98,48 @@ class PostgresEnterpriseRepository:
     def get_case(self, organization_id: str, case_id: str) -> RiskCase:
         return self._case(self._one("SELECT * FROM risk_cases WHERE organization_id=%s AND id=%s", (organization_id, case_id)))
 
+    def save_case_transition(
+        self, case: RiskCase, expected_status: RiskCaseStatus
+    ) -> RiskCase:
+        """Persist a status change only if the stored status is still `expected_status`.
+
+        `transition` reads a case, mutates it and saves it back. The old
+        unconditional `ON CONFLICT ... DO UPDATE` meant two reviewers acting on the
+        same case both succeeded, the second silently discarding the first -- and
+        with it the state machine, since the loser validated against a status that
+        no longer existed. A single `UPDATE ... WHERE status = expected` is atomic
+        on its own, so no explicit row lock or long-lived transaction is needed.
+        """
+        with self.connection.cursor() as cursor:
+            cursor.execute(
+                """UPDATE risk_cases SET status=%s,updated_at=%s,owner_id=%s,reviewer_id=%s,
+                   due_date=%s,rationale=%s,evidence_ids=%s::jsonb,actions=%s::jsonb,
+                   comments=%s::jsonb,reason_codes=%s::jsonb,decision_trace=%s::jsonb,
+                   snapshot_id=%s,fusion_version=%s,resolution_evidence=%s::jsonb,
+                   monitoring_state=%s
+                   WHERE id=%s AND organization_id=%s AND status=%s""",
+                (
+                    case.status.value, case.updated_at, case.owner_id, case.reviewer_id,
+                    case.due_date, case.rationale, _json(case.evidence_ids), _json(case.actions),
+                    _json(case.comments), _json(case.reason_codes), _json(case.decision_trace),
+                    case.snapshot_id, case.fusion_version, _json(case.resolution_evidence),
+                    case.monitoring_state,
+                    case.id, case.organization_id, expected_status.value,
+                ),
+            )
+            # `rowcount` is the number of rows the UPDATE matched; psycopg always
+            # reports it for DML. The `1` default is for hand-written test doubles
+            # that omit the attribute - it is fail-open, so a double cannot
+            # demonstrate the guard; `tests/test_postgres_runtime.py` asserts the
+            # real behaviour against PostgreSQL.
+            if getattr(cursor, "rowcount", 1) == 0:
+                self.connection.rollback()
+                raise ValueError(
+                    f"case {case.id} changed concurrently: expected {expected_status.value}"
+                )
+        self.connection.commit()
+        return case
+
     def list_cases(self, organization_id: str) -> list[RiskCase]:
         with self.connection.cursor() as cursor:
             cursor.execute("SELECT * FROM risk_cases WHERE organization_id=%s ORDER BY created_at", (organization_id,))

@@ -18,9 +18,38 @@ _SCALE_TOKENS = {
     "million": "million", "millions": "millions", "mn": "millions", "mm": "millions",
     "billion": "billion", "billions": "billions", "bn": "billions",
 }
-_SCALE_PATTERN = re.compile(
-    r"(thousands?|millions?|billions?|000s|000|mn|mm|bn)\b", re.IGNORECASE
+# The two guards are per-branch, and that matters:
+#
+#   * Word tokens (`thousands`, `millions`, `mn`, `mm`, ...) need only word
+#     boundaries. `(?<!\w)` stops `column` matching the bare `mn` alternative and
+#     `immediate` matching `mm`; `(?!\w)` stops a token that runs on into a longer
+#     word. A comma must NOT be excluded here: `"(In Millions, Except Per Share
+#     Data)"` and `"Dollars in Thousands, except share data"` are among the
+#     commonest scale declarations in a 10-K header, and excluding `,` silently
+#     dropped them -- leaving the page unscaled, i.e. a 1,000x/1,000,000x
+#     *under*statement, the mirror image of the error this pattern exists to fix.
+#
+#   * The `000` shorthand additionally excludes commas on both sides. It means
+#     "thousands" only as a standalone token ("(000s)", "in 000's"); as the tail of
+#     a number it is just digits. Without the comma guards, a header containing
+#     "$1,000,000" matched the bare `000` and the page was scaled by 1000x.
+_SCALE_WORD_PATTERN = re.compile(
+    r"(?<!\w)(thousands?|millions?|billions?|000s|mn|mm|bn)(?!\w)",
+    re.IGNORECASE,
 )
+_SCALE_NUMERIC_PATTERN = re.compile(r"(?<![\w,])(000)(?![\w,])")
+
+
+def _scale_token(header: str) -> str | None:
+    """The scale token a filing header declares, lower-cased, or `None`.
+
+    Two patterns rather than one alternation, because the lookarounds differ per
+    branch and both branches must expose their token as `group(1)` for the
+    `_SCALE_TOKENS` lookup. Word tokens are tried first so that "in 000s" resolves
+    through `000s` (thousands) rather than the bare `000` shorthand.
+    """
+    match = _SCALE_WORD_PATTERN.search(header) or _SCALE_NUMERIC_PATTERN.search(header)
+    return match.group(1).lower() if match else None
 
 
 class DocumentParser:
@@ -54,8 +83,8 @@ class DocumentParser:
             header=" ".join(text.splitlines()[:15])
             years=[int(y) for y in re.findall(r"\b20\d{2}\b",header)][:3] or [default_year]
             detected_currency="EUR" if "€" in text or re.search(r"\bEUR\b",header) else "GBP" if "£" in text or re.search(r"\bGBP\b",header) else "USD" if "$" in text or re.search(r"\bUSD\b",header) else currency
-            scale_match=_SCALE_PATTERN.search(header)
-            detected_scale=_SCALE_TOKENS.get(scale_match.group(1).lower()) if scale_match else scale
+            scale_token=_scale_token(header)
+            detected_scale=_SCALE_TOKENS.get(scale_token) if scale_token else scale
             statement=next((name for name,pat in self.SECTION_PATTERNS.items() if name in {"balance_sheet","income_statement","cash_flow"} and re.search(pat,header,re.IGNORECASE)),"unknown")
             for line in text.splitlines():
                 m=line_re.match(line); key=normalize_line_item(m.group(1)) if m else None

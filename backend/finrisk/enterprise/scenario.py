@@ -24,12 +24,22 @@ def apply_scenario(values: dict[str, float], scenario: Scenario) -> dict[str, fl
     debt, debt_parents = resolve_total_debt(values)
     if debt is not None and debt_parents != ("total_debt",):
         stressed["total_debt"] = debt
-    if "revenue" in stressed:
-        stressed["revenue"] *= 1 + scenario.revenue_pct + scenario.fx_pct
-    if "gross_profit" in stressed:
-        stressed["gross_profit"] += values.get("revenue", 0) * scenario.margin_pp
-    if "operating_income" in stressed:
-        stressed["operating_income"] += values.get("revenue", 0) * scenario.margin_pp
+    revenue_factor = 1 + scenario.revenue_pct + scenario.fx_pct
+    revenue_shocked = "revenue" in stressed
+    if revenue_shocked:
+        stressed["revenue"] *= revenue_factor
+    # A revenue shock that leaves the cost base untouched is not a revenue
+    # scenario, it is a margin scenario: gross profit stays put while the
+    # denominator falls, so gross margin *improves* as revenue drops and every
+    # downstream rule keyed on margin moves the wrong way. The revenue-derived
+    # lines therefore follow revenue, and `margin_pp` is applied on top of the
+    # already-stressed revenue so it remains the only knob that moves the margin.
+    stressed_revenue = stressed.get("revenue", values.get("revenue", 0))
+    for key in ("gross_profit", "operating_income"):
+        if key in stressed:
+            if revenue_shocked:
+                stressed[key] *= revenue_factor
+            stressed[key] += stressed_revenue * scenario.margin_pp
     if "interest_expense" in stressed:
         if debt is None and (
             scenario.interest_rate_bp or scenario.refinancing_cost_pct

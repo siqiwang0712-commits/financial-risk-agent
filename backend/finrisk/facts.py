@@ -24,6 +24,23 @@ MODEL_METRIC_NAMES: dict[str, str] = {
     "Ohlson O-Score": "ohlson_o_score",
 }
 
+# Display name -> the short key `applicability.MODEL_REQUIREMENTS` is keyed by.
+#
+# This mapping had three separate copies: `enforce_applicability` kept the
+# forward direction, and the Agent orchestrator rebuilt the inverse inline with a
+# bare `else "Ohlson O-Score"` - so *any* unrecognised model was reported to the
+# critic under Ohlson's name and its applicability verdict was attributed to the
+# wrong model. Both now read the single table below, and the orchestrator skips
+# (with a warning) rather than mislabelling.
+MODEL_KEYS: dict[str, str] = {
+    "Altman Z-Score": "altman",
+    "Beneish M-Score": "beneish",
+    "Piotroski F-Score": "piotroski",
+    "Ohlson O-Score": "ohlson",
+}
+
+MODEL_NAMES_BY_KEY: dict[str, str] = {key: name for name, key in MODEL_KEYS.items()}
+
 # Metrics whose year-over-year *change* is a distinct rule input from the level.
 CHANGE_METRICS: tuple[str, ...] = (
     "gross_margin",

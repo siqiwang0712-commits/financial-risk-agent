@@ -7,6 +7,7 @@ import urllib.error
 import urllib.request
 from collections import defaultdict
 from dataclasses import asdict
+from datetime import date
 from pathlib import Path
 from typing import Any
 from urllib.parse import urlparse
@@ -26,7 +27,12 @@ CONCEPTS: dict[str, tuple[str, ...]] = {
     "total_assets": ("Assets",),
     "accounts_payable": ("AccountsPayableCurrent",),
     "current_liabilities": ("LiabilitiesCurrent",),
-    "short_term_debt": ("ShortTermBorrowings", "ShortTermDebtCurrent", "LongTermDebtCurrent"),
+    # Aggregates first, components last. `DebtCurrent` is the total current debt;
+    # `LongTermDebtCurrent` is only its long-term portion. Listing the component
+    # ahead of the aggregate let a filing that reports both resolve to the
+    # narrower figure, understating short-term debt. This list is the single
+    # source of truth for both the online normaliser and the bulk corpus builder.
+    "short_term_debt": ("ShortTermBorrowings", "ShortTermDebtCurrent", "DebtCurrent", "LongTermDebtCurrent"),
     "long_term_debt": ("LongTermDebtNoncurrent",),
     "total_debt": ("LongTermDebtAndFinanceLeaseObligations", "LongTermDebt"),
     "total_liabilities": ("Liabilities",),
@@ -39,7 +45,11 @@ CONCEPTS: dict[str, tuple[str, ...]] = {
     "pretax_income": ("IncomeLossFromContinuingOperationsBeforeIncomeTaxesExtraordinaryItemsNoncontrollingInterest",),
     "net_income": ("NetIncomeLoss", "ProfitLoss"),
     "operating_cash_flow": ("NetCashProvidedByUsedInOperatingActivities",),
-    "capital_expenditure": ("PaymentsToAcquirePropertyPlantAndEquipment",),
+    "capital_expenditure": (
+        "PaymentsToAcquirePropertyPlantAndEquipment",
+        "PaymentsForAdditionsToPropertyPlantAndEquipment",
+        "PaymentsToAcquireProductiveAssets",
+    ),
     "investing_cash_flow": ("NetCashProvidedByUsedInInvestingActivities",),
     "financing_cash_flow": ("NetCashProvidedByUsedInFinancingActivities",),
 }
@@ -189,12 +199,48 @@ class SecClient:
         raise LookupError(f"no supported filing found for {ticker}")
 
 
+# A fiscal year does not have to end in December: a filing labelled `fy=2023`
+# may close in January 2024. The period is therefore validated by its *shape*
+# rather than by a calendar guess -- an annual duration is 330-400 days.
+MIN_ANNUAL_DAYS = 330
+MAX_ANNUAL_DAYS = 400
+
+
+def _period(item: dict[str, Any]) -> tuple[str, str] | None:
+    """The fact's own reporting period, or `None` when it has no usable `end`."""
+    end = item.get("end")
+    if not isinstance(end, str) or not end:
+        return None
+    start = item.get("start")
+    return (start if isinstance(start, str) else "", end)
+
+
+def _is_annual_period(item: dict[str, Any], instant: bool) -> bool:
+    """Reject quarterly/partial periods so only annual facts reach selection."""
+    bounds = _period(item)
+    if bounds is None:
+        return False
+    start, end = bounds
+    if instant:
+        # An instant fact is a point in time; there is no duration to check.
+        return True
+    if not start:
+        return False
+    try:
+        span = (date.fromisoformat(end) - date.fromisoformat(start)).days
+    except ValueError:
+        return False
+    return MIN_ANNUAL_DAYS <= span <= MAX_ANNUAL_DAYS
+
+
 def _annual_candidates(entries: list[dict[str, Any]], fiscal_year: int, instant: bool) -> list[dict[str, Any]]:
     result = []
     for item in entries:
         if item.get("form") not in {"10-K", "10-K/A", "20-F", "20-F/A"} or item.get("fy") != fiscal_year:
             continue
         if not instant and item.get("fp") not in {"FY", None}:
+            continue
+        if not _is_annual_period(item, instant):
             continue
         result.append(item)
     return result
@@ -219,7 +265,7 @@ def parse_companyfacts(payload: dict[str, Any], fiscal_years: list[int] | None =
     for year in years:
         for line_item, aliases in CONCEPTS.items():
             selected: tuple[str, str, str, dict[str, Any], list[dict[str, Any]]] | None = None
-            selected_key: tuple[bool, str, str] | None = None
+            selected_key: tuple[bool, str, str, str] | None = None
             for taxonomy in taxonomies:
                 for concept_name in aliases:
                     concept = facts[taxonomy].get(concept_name)
@@ -228,12 +274,28 @@ def parse_companyfacts(payload: dict[str, Any], fiscal_years: list[int] | None =
                     for unit_name, entries in concept.get("units", {}).items():
                         candidates = _annual_candidates(entries, year, line_item in INSTANT_ITEMS)
                         if candidates:
-                            candidates.sort(key=lambda x: (x.get("filed", ""), x.get("accn", "")))
-                            candidate = candidates[-1]
+                            # A `fy=Y` filing reports the current year *and* the prior
+                            # year, and both carry identical `fy`/`fp`/`form`/`filed`/
+                            # `accn` -- the fields `_annual_candidates` filters on. The
+                            # only reliable discriminator is the fact's own period: the
+                            # current year is the latest period the filing reports.
+                            # Selecting by array order (`candidates[-1]`) returned the
+                            # prior-year comparative as the current year, so the same
+                            # document produced different numbers depending on the JSON
+                            # entry order.
+                            candidate = max(
+                                candidates,
+                                key=lambda x: (
+                                    x.get("end") or "",
+                                    x.get("filed") or "",
+                                    x.get("accn") or "",
+                                ),
+                            )
                             candidate_key = (
                                 unit_name == "USD",
-                                candidate.get("filed", ""),
-                                candidate.get("accn", ""),
+                                candidate.get("end") or "",
+                                candidate.get("filed") or "",
+                                candidate.get("accn") or "",
                             )
                             if selected_key is None or candidate_key > selected_key:
                                 selected = taxonomy, concept_name, unit_name, candidate, candidates
@@ -241,7 +303,15 @@ def parse_companyfacts(payload: dict[str, Any], fiscal_years: list[int] | None =
             if selected is None:
                 continue
             taxonomy, concept_name, unit_name, item, candidates = selected
-            values = {candidate.get("val") for candidate in candidates}
+            # `restated` must compare values reported for *this* period. Comparing
+            # every candidate lumped the prior-year comparative in with the current
+            # year and flagged an ordinary 10-K as a restatement.
+            period = _period(item)
+            values = {
+                candidate.get("val")
+                for candidate in candidates
+                if _period(candidate) == period
+            }
             accession = item.get("accn", "")
             cik = str(payload.get("cik", "")).lstrip("0")
             accession_path = accession.replace("-", "")

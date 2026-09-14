@@ -31,14 +31,19 @@ export function IntakePanel({
 }: Props) {
   const [file, setFile] = useState<File | null>(null);
   const [company, setCompany] = useState("");
-  const [year, setYear] = useState(new Date().getFullYear() - 1);
+  // Held as a string-or-number rather than a number: `Number("")` is `0`, so
+  // clearing the field used to silently write the year 0, which `min={1900}`
+  // then rejected at the browser level - the form could not be submitted and
+  // there was nothing on screen explaining why. An empty field stays empty.
+  const [year, setYear] = useState<number | "">(new Date().getFullYear() - 1);
   const [apiKey, setApiKey] = useState("");
 
-  const ready = Boolean(file) && Boolean(company) && Boolean(apiKey) && !busy;
+  const ready =
+    Boolean(file) && Boolean(company) && Boolean(apiKey) && typeof year === "number" && !busy;
 
   function submit(event: FormEvent) {
     event.preventDefault();
-    if (!file || !ready) return;
+    if (!file || !ready || typeof year !== "number") return;
     onAnalyze({ file, company, fiscalYear: year, apiKey });
   }
 
@@ -82,7 +87,11 @@ export function IntakePanel({
               min={1900}
               max={2100}
               value={year}
-              onChange={(event) => setYear(Number(event.target.value))}
+              onChange={(event) => {
+                const raw = event.target.value;
+                const parsed = Number(raw);
+                setYear(raw === "" || !Number.isFinite(parsed) ? "" : parsed);
+              }}
               required
             />
           </label>

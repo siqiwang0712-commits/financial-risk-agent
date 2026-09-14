@@ -40,6 +40,11 @@ def brier_score(y_true:list[int],probabilities:list[float])->float:
     return sum((p-y)**2 for y,p in zip(y_true,probabilities))/len(y_true) if y_true else 0.0
 
 def roc_auc(y_true:list[int],probabilities:list[float])->float|None:
+    # Every other metric in this module validates its inputs. Without this,
+    # `zip` silently truncated to the shorter list and returned a number computed
+    # from a subset of the data - a wrong answer presented as a valid one.
+    if len(y_true)!=len(probabilities):raise ValueError("inputs must have equal length")
+    if any(x not in (0,1) for x in y_true):raise ValueError("labels must be binary")
     positives=[p for y,p in zip(y_true,probabilities) if y==1];negatives=[p for y,p in zip(y_true,probabilities) if y==0]
     if not positives or not negatives:return None
     wins=sum(1 if p>n else .5 if p==n else 0 for p in positives for n in negatives)
@@ -72,4 +77,8 @@ def average_precision(y_true:list[int],probabilities:list[float])->float|None:
     return total
 
 def confusion_matrix(y_true:list[int],y_pred:list[int])->dict[str,int]:
+    # Same truncation hazard as `roc_auc`: a shorter `y_pred` produced a matrix
+    # whose cells summed to fewer rows than were passed in, with no indication.
+    if len(y_true)!=len(y_pred):raise ValueError("inputs must have equal length")
+    if any(x not in (0,1) for x in y_true+y_pred):raise ValueError("labels must be binary")
     return {"tn":sum(a==0 and b==0 for a,b in zip(y_true,y_pred)),"fp":sum(a==0 and b==1 for a,b in zip(y_true,y_pred)),"fn":sum(a==1 and b==0 for a,b in zip(y_true,y_pred)),"tp":sum(a==1 and b==1 for a,b in zip(y_true,y_pred))}

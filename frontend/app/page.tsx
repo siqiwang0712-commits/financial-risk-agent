@@ -11,6 +11,7 @@ import { EvidenceTrail } from "../components/EvidenceTrail";
 import { DecisionPaths } from "../components/DecisionPaths";
 import { AgentTrace } from "../components/AgentTrace";
 import { TelemetryPanel } from "../components/TelemetryPanel";
+import { PanelBoundary } from "../components/PanelBoundary";
 import {
   loadPilot,
   loadSampleAssessment,
@@ -189,49 +190,53 @@ export default function Page() {
               aria-live="polite"
               aria-busy={loadingAnalysis}
             >
-              {activeTab === "overview" ? (
-                <WhyDecision payload={assessment} />
-              ) : null}
+              {/* Keyed on the active tab so switching tabs clears a previous
+                  panel failure instead of showing the fallback forever. */}
+              <PanelBoundary key={activeTab} label={TAB_LABEL[activeTab]}>
+                {activeTab === "overview" ? (
+                  <WhyDecision payload={assessment} />
+                ) : null}
 
-              {activeTab === "dimensions" ? (
-                <DimensionGrid dimensions={assessment.dimensions} />
-              ) : null}
+                {activeTab === "dimensions" ? (
+                  <DimensionGrid dimensions={assessment.dimensions} />
+                ) : null}
 
-              {activeTab === "evidence" ? (
-                agent?.conclusions?.length ? (
-                  <EvidenceTrail conclusions={agent.conclusions} />
-                ) : (
-                  <EmptyPanel reason="No verified conclusions in this response." />
-                )
-              ) : null}
+                {activeTab === "evidence" ? (
+                  agent?.conclusions?.length ? (
+                    <EvidenceTrail conclusions={agent.conclusions} />
+                  ) : (
+                    <EmptyPanel reason="No verified conclusions in this response." />
+                  )
+                ) : null}
 
-              {activeTab === "paths" ? (
-                agent?.decision_trace ? (
-                  <DecisionPaths trace={agent.decision_trace} />
-                ) : (
-                  <EmptyPanel reason="No decision trace in this response." />
-                )
-              ) : null}
+                {activeTab === "paths" ? (
+                  agent?.decision_trace ? (
+                    <DecisionPaths trace={agent.decision_trace} />
+                  ) : (
+                    <EmptyPanel reason="No decision trace in this response." />
+                  )
+                ) : null}
 
-              {activeTab === "trace" ? (
-                agent ? (
-                  <AgentTrace
-                    plan={agent.plan}
-                    trace={agent.trace}
-                    status={agent.status}
-                  />
-                ) : (
-                  <EmptyPanel reason="No agent trace in this response." />
-                )
-              ) : null}
+                {activeTab === "trace" ? (
+                  agent ? (
+                    <AgentTrace
+                      plan={agent.plan}
+                      trace={agent.trace}
+                      status={agent.status}
+                    />
+                  ) : (
+                    <EmptyPanel reason="No agent trace in this response." />
+                  )
+                ) : null}
 
-              {activeTab === "telemetry" ? (
-                agent?.component_telemetry ? (
-                  <TelemetryPanel items={agent.component_telemetry} />
-                ) : (
-                  <EmptyPanel reason="No component telemetry in this response." />
-                )
-              ) : null}
+                {activeTab === "telemetry" ? (
+                  agent?.component_telemetry?.length ? (
+                    <TelemetryPanel items={agent.component_telemetry} />
+                  ) : (
+                    <EmptyPanel reason="No component telemetry in this response." />
+                  )
+                ) : null}
+              </PanelBoundary>
             </div>
           </section>
         )}

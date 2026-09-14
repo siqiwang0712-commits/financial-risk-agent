@@ -1,9 +1,11 @@
 from __future__ import annotations
 
+import re
 from dataclasses import asdict, dataclass
 from enum import StrEnum
 
 from ..domain import ModelResult
+from ..facts import MODEL_KEYS
 
 
 class ApplicabilityStatus(StrEnum):
@@ -41,8 +43,24 @@ ALTMAN_VARIANT_REQUIREMENTS = {
 FINANCIAL_INDUSTRIES = {"bank", "banking", "insurance", "financial_institution", "broker_dealer"}
 
 
+def model_key(model: str) -> str:
+    """The `MODEL_REQUIREMENTS` key for a model name in any of its spellings.
+
+    `"Altman Z-Score"` -> `"altman"`, `"altman_z_score"` -> `"altman"`,
+    `"Ohlson O-Score"` -> `"ohlson"`.
+
+    The previous `model.lower().replace("_score", "").replace("-", "_")` produced
+    `"altman z_score"`, `"altman_z"` and `"ohlson o_score"` respectively - none of
+    which is a key, so every real model name raised `KeyError` and only the bare
+    key `"altman"` worked. The `replace("_score", "")` was clearly meant to strip
+    the `_score` suffix; splitting on the first non-alphabetic run actually does
+    it, and also absorbs the `Z`/`M`/`F`/`O` variant letter.
+    """
+    return re.split(r"[^a-z]+", model.strip().lower())[0]
+
+
 def route_model(model: str, industry: str, facts: dict[str, object], variant: str | None = None) -> ApplicabilityDecision:
-    key = model.lower().replace("_score", "").replace("-", "_")
+    key = model_key(model)
     if key not in MODEL_REQUIREMENTS:
         raise KeyError(f"unknown model: {model}")
     requirements = MODEL_REQUIREMENTS[key]
@@ -76,15 +94,12 @@ def applicability_report(industry: str, facts: dict[str, object]) -> list[dict]:
 def enforce_applicability(
     results: list[ModelResult], industry: str, facts: dict[str, object]
 ) -> list[ModelResult]:
-    model_keys = {
-        "Altman Z-Score": "altman",
-        "Beneish M-Score": "beneish",
-        "Piotroski F-Score": "piotroski",
-        "Ohlson O-Score": "ohlson",
-    }
+    # Single source of truth for display-name -> short key (`facts.MODEL_KEYS`).
+    # This table used to be a private copy, so a renamed model silently raised
+    # `KeyError` here while `MODEL_METRIC_NAMES` kept working.
     for result in results:
         decision = route_model(
-            model_keys[result.name], industry, facts,
+            MODEL_KEYS[result.name], industry, facts,
             variant=result.derived_outputs.get("variant"),
         )
         missing = sorted(

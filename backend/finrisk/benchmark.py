@@ -6,7 +6,11 @@ from typing import Any
 
 from .pipeline import FinRiskPipeline
 
-BASELINES=("llm_only","ratios_only","rules_only","models_only","full_hybrid","hybrid_without_narrative","hybrid_without_trends")
+# Named for the dataset it belongs to. `research_eval` has a *different* set of
+# baselines (`rule_engine` / `traditional_models` instead of `rules_only` /
+# `models_only`); both used to be called `BASELINES`, so importing the wrong one
+# silently produced rows with baseline names the other module never emits.
+SMOKE_BASELINES=("llm_only","ratios_only","rules_only","models_only","full_hybrid","hybrid_without_narrative","hybrid_without_trends")
 
 def load_manifest(path:Path)->list[dict[str,Any]]:
     data=json.loads(path.read_text(encoding="utf-8"))
@@ -18,7 +22,7 @@ def run_manifest(manifest:Path,root:Path)->list[dict[str,Any]]:
     for entry in load_manifest(manifest):
         data=json.loads((root/entry["path"]).read_text(encoding="utf-8"))
         pages={int(k):v for k,v in data.get("pages",{}).items()}
-        for baseline in BASELINES:
+        for baseline in SMOKE_BASELINES:
             previous=None if baseline=="hybrid_without_trends" else data.get("previous")
             used_pages={} if baseline in {"ratios_only","rules_only","models_only","hybrid_without_narrative"} else pages
             assessment=pipeline.assess(data["company"],data["fiscal_year"],data["current"],previous,used_pages,"Synthetic fixture")
@@ -26,7 +30,12 @@ def run_manifest(manifest:Path,root:Path)->list[dict[str,Any]]:
             elif baseline=="ratios_only":output={"available_metric_count":sum(m.value is not None for m in assessment.metrics.values())}
             elif baseline=="rules_only":output={"rule_ids":[s.rule_id for s in assessment.triggered_rules if not s.rule_id.startswith("MODEL_")]}
             elif baseline=="models_only":output={"models":{m.name:m.output for m in assessment.models}}
-            else:output={"overall_score":assessment.overall_score,"risk_level":assessment.risk_level,"coverage":assessment.confidence}
+            # `coverage` used to carry `assessment.confidence`. Those are two
+            # different published quantities -- evidence *quality* vs the fraction
+            # of material inputs whose provenance is verified -- so a consumer
+            # reading `output["coverage"]` was reading the wrong number. Both are
+            # now published under their own names.
+            else:output={"overall_score":assessment.overall_score,"risk_level":assessment.risk_level,"evidence_quality":assessment.confidence,"evidence_coverage":assessment.evidence_coverage}
             rows.append({"dataset_kind":"synthetic_smoke","example_id":entry["id"],"baseline":baseline,"output":output})
     return rows
 

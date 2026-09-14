@@ -1,8 +1,20 @@
-import { evidenceLocator } from "../lib/presentation.mjs";
+import { displayRatio, evidenceLocator } from "../lib/presentation.mjs";
 import type { Conclusion, Evidence } from "../lib/types";
 
 interface Props {
   conclusions: Conclusion[];
+}
+
+/**
+ * A numeric field, formatted, or an explicit "N/A".
+ *
+ * `item.confidence.toFixed(2)` threw on `undefined`, and `verification_status`
+ * is rendered as a status label, so it must survive a missing value too - a
+ * citation whose status the backend did not report is exactly the case a reader
+ * most needs to see.
+ */
+function statusLabel(status: string | undefined): string {
+  return typeof status === "string" && status ? status.toUpperCase() : "UNKNOWN";
 }
 
 function EvidenceCard({ item }: { item: Evidence }) {
@@ -11,12 +23,12 @@ function EvidenceCard({ item }: { item: Evidence }) {
     <blockquote className={`evidenceCard ${verified ? "verified" : "unverified"}`}>
       <header>
         <span className={`statusDot ${verified ? "ok" : "bad"}`} aria-hidden="true" />
-        <b>{item.verification_status.toUpperCase()}</b>
+        <b>{statusLabel(item.verification_status)}</b>
         <span className="locator">{evidenceLocator(item)}</span>
       </header>
       <p>{item.quote || item.source_text || "(no quoted span)"}</p>
       <footer>
-        <span>confidence {item.confidence.toFixed(2)}</span>
+        <span>confidence {displayRatio(item.confidence, 2)}</span>
         {item.value !== null && item.value !== undefined ? <span>value {item.value}</span> : null}
         {item.unit ? <span>{item.unit}</span> : null}
       </footer>
@@ -33,7 +45,7 @@ function EvidenceCard({ item }: { item: Evidence }) {
  * evidence that the gate works.
  */
 export function EvidenceTrail({ conclusions }: Props) {
-  if (!conclusions.length) {
+  if (!conclusions?.length) {
     return (
       <div className="emptyState">
         <b>No evidence-supported material risk conclusion was admitted.</b>
@@ -64,7 +76,7 @@ export function EvidenceTrail({ conclusions }: Props) {
 
           <div className="trailEvidence">
             <small>Verified evidence</small>
-            {conclusion.evidence.length ? (
+            {conclusion.evidence?.length ? (
               conclusion.evidence.map((item, itemIndex) => (
                 <EvidenceCard key={`${item.document}-${item.page}-${itemIndex}`} item={item} />
               ))

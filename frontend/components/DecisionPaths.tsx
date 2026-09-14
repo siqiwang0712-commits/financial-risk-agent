@@ -20,13 +20,18 @@ type Filter = "all" | "verified" | "unverified";
 export function DecisionPaths({ trace }: Props) {
   const [filter, setFilter] = useState<Filter>("all");
 
+  // `trace.paths` is the root of every value below. Reading it once, defensively,
+  // keeps one missing array from taking down the whole panel - this component
+  // used to dereference it six times over.
+  const paths = trace?.paths ?? [];
+
   const counts = {
-    all: trace.paths.length,
-    verified: trace.paths.filter((path) => path.evidence_path_status === "VERIFIED").length,
-    unverified: trace.paths.filter((path) => path.evidence_path_status !== "VERIFIED").length,
+    all: paths.length,
+    verified: paths.filter((path) => path.evidence_path_status === "VERIFIED").length,
+    unverified: paths.filter((path) => path.evidence_path_status !== "VERIFIED").length,
   };
 
-  const visible = trace.paths.filter((path) =>
+  const visible = paths.filter((path) =>
     filter === "all" ? true : filter === "verified"
       ? path.evidence_path_status === "VERIFIED"
       : path.evidence_path_status !== "VERIFIED",
@@ -37,12 +42,12 @@ export function DecisionPaths({ trace }: Props) {
       <div className="pathsHeader">
         <div className="pathsSummary">
           <p>
-            <b>{trace.verified_path_count}</b> of <b>{trace.material_path_count}</b> material paths are
-            fully verified. Proof coverage <b>{trace.proof_coverage}</b>.
+            <b>{trace?.verified_path_count ?? 0}</b> of <b>{trace?.material_path_count ?? 0}</b> material paths are
+            fully verified. Proof coverage <b>{trace?.proof_coverage ?? "N/A"}</b>.
           </p>
           <p className="muted">
-            Initial fusion decision <code>{trace.initial_fusion_decision}</code> → failure-aware{" "}
-            <code>{trace.failure_aware_decision}</code> → final <code>{trace.decision}</code>.
+            Initial fusion decision <code>{trace?.initial_fusion_decision ?? "unknown"}</code> → failure-aware{" "}
+            <code>{trace?.failure_aware_decision ?? "unknown"}</code> → final <code>{trace?.decision ?? "unknown"}</code>.
           </p>
         </div>
 
@@ -75,19 +80,22 @@ export function DecisionPaths({ trace }: Props) {
 
 function PathRow({ path }: { path: DecisionPath }) {
   const verified = path.evidence_path_status === "VERIFIED";
-  const provenanceEntries = Object.entries(path.input_provenance);
+  const provenanceEntries = Object.entries(path.input_provenance ?? {});
+  const fusion = path.fusion_contribution;
+  const sourceEvidence = path.source_evidence ?? [];
+  const chain = path.path ?? [];
 
   return (
     <li className={`pathRow ${verified ? "verified" : "unverified"}`}>
       <details>
         <summary>
           <span className={`statusChip ${verified ? "ok" : "bad"}`}>
-            {path.evidence_path_status}
+            {path.evidence_path_status ?? "UNKNOWN"}
           </span>
           <b>{path.reason_code}</b>
           <span className="pathDomain">{path.risk_domain}</span>
           <span className="pathRole">
-            {path.fusion_contribution.role} · {path.fusion_contribution.dimension_score ?? "N/A"}
+            {fusion?.role ?? "unattributed"} · {fusion?.dimension_score ?? "N/A"}
           </span>
         </summary>
 
@@ -100,12 +108,12 @@ function PathRow({ path }: { path: DecisionPath }) {
             <p>
               <span>Fusion</span>
               <code>
-                {path.fusion_contribution.method} · {path.fusion_version}
+                {fusion?.method ?? "unknown"} · {path.fusion_version ?? "unknown"}
               </code>
             </p>
             <p>
               <span>Rule version</span>
-              <code>{path.rule_version.slice(0, 16)}…</code>
+              <code>{path.rule_version ? `${path.rule_version.slice(0, 16)}…` : "unknown"}</code>
             </p>
             <p>
               <span>Confidence · coverage · disagreement</span>
@@ -118,8 +126,8 @@ function PathRow({ path }: { path: DecisionPath }) {
           <div className="pathChain">
             <small>Chain</small>
             <ol>
-              {path.path.map((node) => (
-                <li key={node}>{node.replace(/_/g, " ")}</li>
+              {chain.map((node, index) => (
+                <li key={`${node}-${index}`}>{String(node).replace(/_/g, " ")}</li>
               ))}
             </ol>
           </div>
@@ -128,7 +136,10 @@ function PathRow({ path }: { path: DecisionPath }) {
             <small>Required inputs and their provenance</small>
             {provenanceEntries.length ? (
               <ul>
-                {provenanceEntries.map(([input, refs]) => {
+                {provenanceEntries.map(([input, rawRefs]) => {
+                  // A provenance entry is a list of evidence spans; a scalar or
+                  // `null` here would throw on `.length`/`.every`.
+                  const refs = Array.isArray(rawRefs) ? rawRefs : [];
                   const allVerified = refs.length > 0 && refs.every((ref) => ref.verification_status === "verified");
                   return (
                     <li key={input} className={allVerified ? "ok" : "bad"}>
@@ -154,8 +165,8 @@ function PathRow({ path }: { path: DecisionPath }) {
 
           <div className="pathEvidence">
             <small>Source evidence</small>
-            {path.source_evidence.length ? (
-              path.source_evidence.map((item, index) => (
+            {sourceEvidence.length ? (
+              sourceEvidence.map((item, index) => (
                 <blockquote key={index}>
                   <b>{item.verification_status}</b> · {evidenceLocator(item)}
                   <p>{item.quote || item.source_text || "(no quoted span)"}</p>

@@ -105,5 +105,14 @@ def temporal_trajectories(observations: list[dict[str, Any]]) -> list[dict[str, 
         if len(rows) < 2:
             continue
         points = [{"fiscal_year": row["fiscal_year"], "risk": temporal_risk_score(row["metrics"])} for row in rows]
-        result.append({"ticker": ticker, "points": points, "delta": points[-1]["risk"] - points[0]["risk"]})
+        # `temporal_risk_score` returns `None` when a period has no usable inputs,
+        # and `None - None` raised `TypeError` -- one incomplete period killed the
+        # whole trajectory report. The delta is withheld (`None`) instead, which is
+        # how this codebase represents "not computable".
+        first, last = points[0]["risk"], points[-1]["risk"]
+        result.append({
+            "ticker": ticker,
+            "points": points,
+            "delta": None if first is None or last is None else last - first,
+        })
     return result

@@ -156,8 +156,14 @@ def predict_logistic(model: dict, features: list[list[float]]) -> list[float]:
 def fit_decision_stump(features: list[list[float]], labels: list[int]) -> dict:
     if not features or len(features) != len(labels):
         raise ValueError("aligned training data required")
+    # `fit_logistic_baseline` rejects ragged input; this function did not, so
+    # `[[]]` raised `TypeError` on `features[0]` and a short row raised
+    # `IndexError` deep inside the loop.
+    width = len(features[0])
+    if width == 0 or any(len(row) != width for row in features):
+        raise ValueError("features must be a non-empty rectangular matrix")
     best = None
-    for feature in range(len(features[0])):
+    for feature in range(width):
         for threshold in sorted({row[feature] for row in features}):
             predictions = [int(row[feature] >= threshold) for row in features]
             errors = sum(
@@ -189,23 +195,42 @@ def selective_metrics(
         label == 0 and prediction == 1
         for (label, _), prediction in zip(decided, predictions, strict=True)
     )
+    decided_indices = [
+        index for index, probability in enumerate(probabilities) if probability is not None
+    ]
+    # Only a decided sample has a predicted risk to order by. An abstention has no
+    # prediction, so placing it on the risk scale asserts something the model did
+    # not say: `None` was keyed to `-1`, which sorts last in a descending ranking,
+    # so every abstention was reported as *least* risky and would never be
+    # reviewed -- the opposite of what abstaining is for. They are returned in
+    # their own list instead of being silently ranked.
     ranking = sorted(
-        range(len(probabilities)),
-        key=lambda index: (
-            probabilities[index] if probabilities[index] is not None else -1
-        ),
-        reverse=True,
+        decided_indices, key=lambda index: probabilities[index], reverse=True
     )
+    abstained = [
+        index for index, probability in enumerate(probabilities) if probability is None
+    ]
     return {
         "coverage": len(decided) / len(labels) if labels else 0.0,
         "false_negative_cost": false_negatives * false_negative_cost + false_positives,
         "risk_ranking": ranking,
+        "abstained": abstained,
     }
 
 
 def calibration_curve(
     labels: list[int], probabilities: list[float], bins: int = 10
 ) -> list[dict]:
+    if len(labels) != len(probabilities):
+        raise ValueError("aligned labels and probabilities are required")
+    if bins < 1:
+        raise ValueError("bins must be >= 1")
+    # A probability outside [0, 1] used to satisfy no bin's membership test and
+    # vanish, so the curve silently omitted rows instead of reporting them.
+    # `evaluation.expected_calibration_error` already rejects both of these; the
+    # two same-purpose helpers now agree on when input is invalid.
+    if any(not 0 <= probability <= 1 for probability in probabilities):
+        raise ValueError("probabilities must be within [0, 1]")
     result = []
     for index in range(bins):
         low, high = index / bins, (index + 1) / bins

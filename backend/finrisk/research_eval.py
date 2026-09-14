@@ -20,7 +20,11 @@ from .evaluation import (
 from .llm import MockNarrativeProvider
 from .pipeline import FinRiskPipeline
 
-BASELINES = (
+# Named for the dataset it belongs to. `benchmark` has a *different* set of
+# baselines (`rules_only` / `models_only` / `hybrid_without_*`) under the same
+# concept; both used to be called `BASELINES`, so importing the wrong one produced
+# rows whose baseline names this module never emits (and vice versa).
+PILOT_BASELINES = (
     "llm_only",
     "ratios_only",
     "rule_engine",
@@ -34,6 +38,26 @@ ABLATIONS = (
     "without_models",
     "without_trends",
 )
+
+# How each ablation is actually obtained.
+#
+# Three of the five are *arithmetic proxies*: they recombine the probabilities of
+# the other baselines instead of re-running the pipeline with the component
+# removed. `without_narrative` is identical to the `rule_engine` baseline by
+# construction (the arithmetic is exact, to within 1e-9), and the other two are
+# means of two baselines. Only `without_trends` genuinely re-runs the pipeline
+# with `previous=None`.
+#
+# Declared as data rather than left in a comment so that (a) a consumer of
+# `ablations.csv` cannot read a proxy as an independent measurement, and (b)
+# replacing a proxy with a real re-run means changing one entry here.
+ABLATION_METHODS: dict[str, str] = {
+    "full_hybrid": "baseline",
+    "without_narrative": "arithmetic_proxy",
+    "without_rules": "arithmetic_proxy",
+    "without_models": "arithmetic_proxy",
+    "without_trends": "rerun",
+}
 
 
 def bootstrap_ci(
@@ -137,7 +161,14 @@ def run_public_benchmark(
         verified_claims = [
             n for n in assessment.evidence_graph["nodes"] if n["type"] == "claim"
         ]
-        for baseline in BASELINES:
+        # Fraction of *extracted* claims that survived the quote/grounding gate.
+        # This is the denominator-correct quantity: the evidence graph only holds
+        # admitted claims, so counting graph nodes alone cannot express how many
+        # were rejected.
+        verified_claim_coverage = assessment.confidence_components.get(
+            "verified_claim_coverage", 0.0
+        )
+        for baseline in PILOT_BASELINES:
             raw_probability = _probability(baseline, assessment)
             probability = None if raw_probability is None else round(raw_probability, 6)
             rows.append(
@@ -157,12 +188,13 @@ def run_public_benchmark(
                     if baseline == "full_hybrid"
                     else 0,
                     "verified_claim_count": len(verified_claims),
+                    "verified_claim_coverage": verified_claim_coverage,
                     "evidence_coverage": assessment.evidence_coverage,
                 }
             )
 
     summaries = []
-    for baseline in BASELINES:
+    for baseline in PILOT_BASELINES:
         subset = [r for r in rows if r["baseline"] == baseline]
         covered = [r for r in subset if r["risk_prediction"] is not None]
         true = [r["risk_label"] for r in covered]
@@ -210,10 +242,21 @@ def run_public_benchmark(
                     ),
                     4,
                 ),
-                "unsupported_claim_rate": 0.0,
-                "evidence_precision": 1.0
-                if sum(r["verified_claim_count"] for r in subset)
-                else None,
+                # These two used to be hardcoded: `unsupported_claim_rate: 0.0` and
+                # `evidence_precision: 1.0 if <any claims> else None`. Neither
+                # measured anything. Only admitted claims reach the evidence graph,
+                # so "precision of published claims" is 1.0 by construction, and
+                # "rate of unsupported published claims" is 0.0 by construction --
+                # a tautology published as a benchmark result. `unsupported_claim_rate`
+                # is now the genuine complement of the coverage the pipeline
+                # measures, and the tautological `evidence_precision` is replaced by
+                # that measurement under its own name.
+                "unsupported_claim_rate": round(
+                    mean(1 - r["verified_claim_coverage"] for r in subset), 4
+                ),
+                "verified_claim_coverage": round(
+                    mean(r["verified_claim_coverage"] for r in subset), 4
+                ),
             }
         )
 
@@ -247,6 +290,10 @@ def run_public_benchmark(
                 {
                     "example_id": example["id"],
                     "ablation": name,
+                    # "baseline" / "arithmetic_proxy" / "rerun". See
+                    # `ABLATION_METHODS`: three of these five are recombinations of
+                    # other baselines, not independent experiments.
+                    "method": ABLATION_METHODS[name],
                     "risk_probability": None
                     if probability is None
                     else round(probability, 6),

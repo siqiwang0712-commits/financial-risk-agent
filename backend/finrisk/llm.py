@@ -205,7 +205,21 @@ class StructuredLLMProvider:
                 cost = (input_tokens * self.input_cost_per_million + output_tokens * self.output_cost_per_million) / 1_000_000
                 self._record(LLMCallLog(self.PROMPT_VERSION, "openai-compatible", self.model, attempt, input_tokens, output_tokens, round(cost, 8), int((time.perf_counter() - started) * 1000), "ok", input_hash, schema_hash, 0.0, self.max_tokens, f"exponential_backoff:{self.max_retries}", True))
                 return [NarrativeClaim(c.claim, c.risk_category, Evidence(document, c.page, c.evidence_text, year, c.confidence), c.polarity, c.claim_target, c.direction, c.time_horizon, c.basis, tuple(c.qualifiers), tuple(c.required_evidence_types)) for c in parsed.claims]
-            except (KeyError, TypeError, ValueError, ValidationError, urllib.error.URLError, OSError) as exc:
+            except (
+                KeyError,
+                TypeError,
+                ValueError,
+                ValidationError,
+                urllib.error.URLError,
+                OSError,
+                # A syntactically valid but structurally degraded response must
+                # retry like any other failure. `{"choices": []}` raised
+                # `IndexError` and `{"usage": null}` raised `AttributeError`;
+                # both escaped the loop with no retry, no call log and no cost
+                # record, so a broken upstream looked like a free, instant call.
+                IndexError,
+                AttributeError,
+            ) as exc:
                 # `OSError` covers `socket.timeout`/`TimeoutError`. Without it a
                 # timeout escaped the retry loop entirely: no retry, no call log,
                 # no input hash.
@@ -222,6 +236,11 @@ def provider_from_env() -> NarrativeProvider:
         return MockNarrativeProvider()
     if provider in {"openai", "openai-compatible"}:
         return StructuredLLMProvider(
+            # `StructuredLLMProvider` falls back to `OPENAI_API_KEY` on its own,
+            # but the documented `FINRISK_LLM_API_KEY` was never read here, so a
+            # deployment that set only the project-prefixed variable failed at
+            # request time with "OPENAI_API_KEY is not configured".
+            api_key=os.getenv("FINRISK_LLM_API_KEY") or None,
             model=os.getenv("FINRISK_LLM_MODEL", "gpt-4.1-mini"),
             endpoint=os.getenv("FINRISK_LLM_ENDPOINT", "https://api.openai.com/v1/chat/completions"),
             max_retries=int(os.getenv("FINRISK_LLM_MAX_RETRIES", "2")),

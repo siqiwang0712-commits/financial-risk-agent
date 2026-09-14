@@ -14,12 +14,25 @@ from .facts import build_facts, narrative_signals
 from .llm import NarrativeProvider, provider_from_env
 from .metrics import calculate_metrics, resolve_total_debt
 from .models import altman_z, beneish_m, ohlson_o, piotroski_f
-from .rules import RuleEngine
+from .rules import OPS, RuleEngine
 from .scoring import aggregate, confidence, confidence_components
 from .severity import severity_label
 
 
 class FinRiskPipeline:
+    @staticmethod
+    def _assert_known_operator(operator: str, owner: str) -> None:
+        """Reject an operator the dispatch table cannot evaluate.
+
+        Without this, a typo in `rules.json` / `model_scoring.json` reached the
+        `ops[...]` lookup at assessment time and escaped as an unhandled
+        `KeyError` -- a 500 for a configuration error that is knowable at startup.
+        """
+        if operator not in OPS:
+            raise ValueError(
+                f"{owner}: unknown operator {operator!r}; supported: {sorted(OPS)}"
+            )
+
     def __init__(self,root:Path|None=None,provider:NarrativeProvider|None=None):
         self.root=root or Path(__file__).resolve().parents[2]
         self.rules=RuleEngine.from_file(self.root/"rules"/"rules.json")
@@ -41,6 +54,16 @@ class FinRiskPipeline:
         def signature(metric, operator, value, category):
             return (metric, operator, value, category)
 
+        # Validate *every* rule's operators, not just the single-condition rules
+        # compared below. `RuleEngine.evaluate` treats an unrecognised operator as
+        # "condition not met", so a typo in one of the 12 multi-condition rules
+        # silently disabled that rule instead of failing - the condition was simply
+        # never satisfied. Checking all of them makes a config typo a startup error
+        # wherever it appears.
+        for rule in self.rules.rules:
+            for condition in rule["conditions"]:
+                self._assert_known_operator(condition["operator"], rule["id"])
+
         owners: dict[tuple, str] = {}
         for rule in self.rules.rules:
             if len(rule["conditions"]) != 1:
@@ -53,6 +76,7 @@ class FinRiskPipeline:
                 )
             owners[key] = rule["id"]
         for mapping in self.model_scoring["mappings"]:
+            self._assert_known_operator(mapping["operator"], mapping["id"])
             key = signature(mapping["metric"], mapping["operator"], mapping["threshold"], mapping["category"])
             if key in owners:
                 raise ValueError(
@@ -208,11 +232,25 @@ class FinRiskPipeline:
             if items:
                 source_map[key] = [item.evidence for item in items]
         signals=self.rules.evaluate(facts)
-        ops={"<":lambda a,b:a<b,"<=":lambda a,b:a<=b,">":lambda a,b:a>b,">=":lambda a,b:a>=b}
+        # Single operator table, shared with the rule engine, and validated at
+        # construction time by `_assert_known_operator`.
+        ops=OPS
         for mapping in self.model_scoring["mappings"]:
             value=facts.get(mapping["metric"])
             if value is not None and ops[mapping["operator"]](value,mapping["threshold"]):
-                model=next(m for m in models if m.name==mapping["model"])
+                # `facts` is `metrics | current`, so a caller can supply a model
+                # output key directly. When the model itself was never evaluated
+                # (Beneish/Piotroski need `previous`; any model can be absent) that
+                # key is not a model output at all, and `next(...)` used to raise an
+                # uncaught `StopIteration` -- an HTTP 500 on a malformed request.
+                model=next((m for m in models if m.name==mapping["model"]),None)
+                if model is None:
+                    raise ValueError(
+                        f"configured mapping {mapping['id']!r} is keyed on "
+                        f"{mapping['metric']!r} but model {mapping['model']!r} was "
+                        f"not evaluated for this period; supply the required "
+                        f"prior-period inputs or remove the derived value"
+                    )
                 refs=[]
                 for key in model.inputs:refs.extend(source_map.get(key,[]))
                 model_key = {
@@ -315,4 +353,4 @@ class FinRiskPipeline:
         for category in dimensions:nodes.append({"id":f"dimension:{category}","type":"dimension","label":category});edges.append({"from":f"dimension:{category}","to":"overall","relation":"weighted_into"})
         nodes.append({"id":"overall","type":"assessment","label":"overall risk"})
         graph={"nodes":nodes,"edges":edges}
-        return Assessment(company,str(year),score,level,conf,dimensions,metrics,models,signals,contradictions,missing,confidence_components=components,evidence_graph=graph,evidence_quality=conf,evidence_coverage=evidence_coverage,reliability_status="UNCALIBRATED",claim_consistency_evaluations=claim_evaluations,disclosure_tensions=tensions)
+        return Assessment(company,str(year),score,level,conf,dimensions,metrics,models,signals,contradictions,missing,confidence_components=components,evidence_graph=graph,evidence_quality=conf,evidence_coverage=evidence_coverage,reliability_status="UNCALIBRATED",claim_consistency_evaluations=claim_evaluations,disclosure_tensions=tensions,rule_coverage=self.rules.coverage.to_dict())
