@@ -1,11 +1,28 @@
 from __future__ import annotations
 
+import math
 from dataclasses import dataclass
 
 
 @dataclass
 class ClassificationMetrics:
     precision:float; recall:float; f1:float
+
+
+def _validate_binary(values: list[int], name: str) -> None:
+    if any(value not in (0, 1) for value in values):
+        raise ValueError(f"{name} must be binary")
+
+
+def _validate_probabilities(values: list[float]) -> None:
+    if any(
+        isinstance(value, bool)
+        or not isinstance(value, (int, float))
+        or not math.isfinite(value)
+        or not 0 <= value <= 1
+        for value in values
+    ):
+        raise ValueError("probabilities must be finite and within [0, 1]")
 
 def classification_metrics(y_true:list[int],y_pred:list[int])->ClassificationMetrics:
     if len(y_true)!=len(y_pred):raise ValueError("inputs must have equal length")
@@ -19,7 +36,9 @@ def unsupported_claim_rate(claims:list[dict])->float:
 
 def expected_calibration_error(confidences:list[float],correct:list[bool],bins=10)->float:
     if len(confidences)!=len(correct):raise ValueError("inputs must have equal length")
-    if bins<1 or any(c<0 or c>1 for c in confidences):raise ValueError("invalid confidence or bins")
+    if bins<1:raise ValueError("invalid confidence or bins")
+    _validate_probabilities(confidences)
+    if any(not isinstance(item, bool) for item in correct):raise ValueError("correct must contain booleans")
     if not confidences:return 0
     total=0
     for i in range(bins):
@@ -29,6 +48,8 @@ def expected_calibration_error(confidences:list[float],correct:list[bool],bins=1
 
 def balanced_accuracy(y_true:list[int],y_pred:list[int])->float:
     if len(y_true)!=len(y_pred):raise ValueError("inputs must have equal length")
+    _validate_binary(y_true, "labels")
+    _validate_binary(y_pred, "predictions")
     recalls=[]
     for label in (0,1):
         idx=[i for i,value in enumerate(y_true) if value==label]
@@ -37,6 +58,8 @@ def balanced_accuracy(y_true:list[int],y_pred:list[int])->float:
 
 def brier_score(y_true:list[int],probabilities:list[float])->float:
     if len(y_true)!=len(probabilities):raise ValueError("inputs must have equal length")
+    _validate_binary(y_true, "labels")
+    _validate_probabilities(probabilities)
     return sum((p-y)**2 for y,p in zip(y_true,probabilities))/len(y_true) if y_true else 0.0
 
 def roc_auc(y_true:list[int],probabilities:list[float])->float|None:
@@ -44,7 +67,8 @@ def roc_auc(y_true:list[int],probabilities:list[float])->float|None:
     # `zip` silently truncated to the shorter list and returned a number computed
     # from a subset of the data - a wrong answer presented as a valid one.
     if len(y_true)!=len(probabilities):raise ValueError("inputs must have equal length")
-    if any(x not in (0,1) for x in y_true):raise ValueError("labels must be binary")
+    _validate_binary(y_true, "labels")
+    _validate_probabilities(probabilities)
     positives=[p for y,p in zip(y_true,probabilities) if y==1];negatives=[p for y,p in zip(y_true,probabilities) if y==0]
     if not positives or not negatives:return None
     wins=sum(1 if p>n else .5 if p==n else 0 for p in positives for n in negatives)
@@ -52,6 +76,8 @@ def roc_auc(y_true:list[int],probabilities:list[float])->float|None:
 
 def average_precision(y_true:list[int],probabilities:list[float])->float|None:
     if len(y_true)!=len(probabilities):raise ValueError("inputs must have equal length")
+    _validate_binary(y_true, "labels")
+    _validate_probabilities(probabilities)
     positives=sum(y_true)
     if not positives:return None
     # Tied scores are handled as a single group. The previous implementation used

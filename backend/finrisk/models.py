@@ -24,7 +24,7 @@ def _logistic(x: float) -> float:
 def _missing(v, keys): return [k for k in keys if v.get(k) is None]
 
 def _invalid(v, keys, positive=()):
-    bad=[k for k in keys if v.get(k) is not None and (not isinstance(v[k],(int,float)) or not math.isfinite(v[k]))]
+    bad=[k for k in keys if v.get(k) is not None and (isinstance(v[k], bool) or not isinstance(v[k],(int,float)) or not math.isfinite(v[k]))]
     bad += [k for k in positive if v.get(k) is not None and v[k]<=0]
     return sorted(set(bad))
 

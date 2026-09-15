@@ -1,3 +1,4 @@
+import pytest
 from finrisk.numeric_benchmark import (
     LogisticBaseline,
     ratio_risk_score,
@@ -24,3 +25,20 @@ def test_logistic_baseline_and_trajectories():
     assert scores[1] > scores[0]
     trajectory_rows = [rows[0], {"ticker": "A", "fiscal_year": 2022, "metrics": {"current_ratio": 0.8, "debt_to_assets": 0.7}}]
     assert len(temporal_trajectories(trajectory_rows)) == 1
+
+
+def test_numeric_benchmark_treats_nonfinite_metrics_as_missing():
+    assert ratio_risk_score({"current_ratio": float("nan")}) is None
+    rows = [
+        {"metrics": {"current_ratio": float("nan")}},
+        {"metrics": {"current_ratio": 0.5}},
+    ]
+    scores = LogisticBaseline(iterations=2).fit(rows, [0, 1]).predict_scores(rows)
+    assert all(0 <= score <= 1 for score in scores)
+
+
+def test_numeric_benchmark_rejects_invalid_training_contracts():
+    with pytest.raises(ValueError, match="positive and finite"):
+        LogisticBaseline(learning_rate=float("nan"))
+    with pytest.raises(ValueError, match="both classes"):
+        LogisticBaseline(iterations=2).fit([{"metrics": {}}, {"metrics": {}}], [False, True])

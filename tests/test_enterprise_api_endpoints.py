@@ -190,7 +190,7 @@ def test_every_registered_fusion_method_dispatches(tenant):
                 "weights": {"liquidity": 1.0, "cash_flow": 1.0},
                 "coverage": 0.8,
                 "confidence": 0.7,
-                "decision_policy": {"critical_threshold": 0.8, "review_threshold": 0.5},
+                "decision_policy": {"flag_score": 60.0, "review_score": 40.0},
             },
         )
         assert response.status_code == 200, (method, response.text)
@@ -208,6 +208,18 @@ def test_every_registered_fusion_method_dispatches(tenant):
         ).status_code
         == 422
     )
+    malformed_policy = client.post(
+        "/api/v1/enterprise/fusion",
+        headers=headers,
+        json={
+            "method": "max_severity",
+            "scores": {"liquidity": 60.0},
+            "coverage": 0.8,
+            "confidence": 0.7,
+            "decision_policy": {"critical_threshold": 0.8},
+        },
+    )
+    assert malformed_policy.status_code == 422
 
 
 # --------------------------------------------------------------------------- #

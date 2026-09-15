@@ -39,8 +39,9 @@ export default function GlobalError({
         >
           <b>FinRisk-Agent could not start.</b>
           <p style={{ margin: "8px 0" }}>
-            The application shell failed to load. This is a client-side failure,
-            not a problem with the assessment service.
+            The application shell failed to load. The failure may have occurred
+            during server or browser rendering; use the reference below to find
+            the corresponding log entry.
           </p>
           <button type="button" onClick={() => reset()}>
             Retry

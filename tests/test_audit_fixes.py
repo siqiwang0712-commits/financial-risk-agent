@@ -70,7 +70,7 @@ from finrisk.facts import MODEL_KEYS, MODEL_NAMES_BY_KEY
 from finrisk.llm import StructuredLLMProvider
 from finrisk.normalization import parse_number
 from finrisk.numeric_benchmark import temporal_trajectories
-from finrisk.parser import _scale_token
+from finrisk.parser import DocumentParser, _scale_token
 from finrisk.pipeline import FinRiskPipeline
 from finrisk.research_eval import PILOT_BASELINES
 from finrisk.rules import producible_fact_names, rule_coverage
@@ -321,6 +321,22 @@ def test_parse_number_still_returns_none_for_genuinely_unparseable_text():
     assert parse_number("") is None
 
 
+def test_document_parser_preserves_a_european_decimal_as_one_scaled_value():
+    values = DocumentParser().extract_values(
+        {
+            1: (
+                "CONSOLIDATED INCOME STATEMENT\nIn millions\n2025\n"
+                "Revenue 1.234,56"
+            )
+        },
+        "annual-report.pdf",
+        2025,
+    )
+    assert [(item.line_item, item.value) for item in values] == [
+        ("revenue", pytest.approx(1_234_560_000.0))
+    ]
+
+
 def test_scale_pattern_does_not_read_a_body_number_as_a_scale():
     # `$1,000,000` used to match the bare `000` alternative and scale the whole
     # page by 1000x -- the exact error the pattern exists to prevent.
@@ -434,13 +450,22 @@ def test_the_pilot_summary_measures_claims_instead_of_publishing_constants():
     # `evidence_precision` was a tautology (only admitted claims reach the graph,
     # so it was 1.0 by construction) and has been replaced by the measurement.
     assert all("evidence_precision" not in item for item in summary["summaries"])
-    for item in summary["summaries"]:
-        assert "verified_claim_coverage" in item
-        # The two are complements of one another, not two independent constants.
-        # `abs` covers the rounding of both terms to four decimals.
+    summaries = {item["baseline"]: item for item in summary["summaries"]}
+    for baseline in ("llm_only", "full_hybrid"):
+        item = summaries[baseline]
         assert item["unsupported_claim_rate"] + item["verified_claim_coverage"] == pytest.approx(
             1.0, abs=2e-4
         )
+    for baseline in ("ratios_only", "rule_engine", "traditional_models"):
+        assert summaries[baseline]["unsupported_claim_rate"] is None
+        assert summaries[baseline]["verified_claim_coverage"] is None
+    no_claim_row = next(
+        row
+        for row in rows
+        if row["example_id"] == "msft-2024" and row["baseline"] == "full_hybrid"
+    )
+    assert no_claim_row["extracted_claim_count"] == 0
+    assert no_claim_row["verified_claim_coverage"] is None
 
     # `without_narrative` is the `rule_engine` baseline verbatim - the tautology
     # the audit found, now declared rather than hidden.
@@ -705,6 +730,18 @@ def test_validate_thresholds_rejects_what_evaluate_kri_cannot_evaluate():
         validate_thresholds({"debt": {"risk_direction": "higher_is_worse"}})
     with pytest.raises(ValueError, match="thresholds must be an object"):
         validate_thresholds(["debt"])
+    for malformed in (
+        {},
+        {"debt": {}},
+        {" debt ": {"critical": 0.8}},
+        {"debt": {"critcal": 0.8}},
+        {"debt": {"warning": float("nan")}},
+        {"debt": {"warning": float("inf")}},
+        {"debt": {"warning": 0.8, "critical": 0.5}},
+        {"coverage": {"warning": 0.4, "critical": 0.6, "risk_direction": "low"}},
+    ):
+        with pytest.raises(ValueError):
+            validate_thresholds(malformed)
     # A well-formed policy passes unchanged, including the upper-case spelling.
     validate_thresholds({"debt": {"warning": 0.5, "critical": 0.8}})
     validate_thresholds({"debt": {"warning": 0.5, "risk_direction": "LOW"}})
@@ -738,6 +775,7 @@ def test_a_trailing_space_in_finrisk_env_still_enforces_production_storage():
     environment = dict(os.environ)
     environment["FINRISK_ENV"] = "production "
     environment.pop("DATABASE_URL", None)
+    environment["PYTHONPATH"] = str(ROOT / "backend")
     result = subprocess.run(
         [sys.executable, "-c", "import finrisk.api"],
         cwd=ROOT,
@@ -757,6 +795,7 @@ def test_a_lower_case_environment_value_is_also_normalized():
     environment = dict(os.environ)
     environment["FINRISK_ENV"] = "  PRODUCTION  "
     environment.pop("DATABASE_URL", None)
+    environment["PYTHONPATH"] = str(ROOT / "backend")
     result = subprocess.run(
         [sys.executable, "-c", "import finrisk.api"],
         cwd=ROOT,
@@ -892,6 +931,22 @@ def test_a_concurrent_status_change_is_rejected_rather_than_overwritten():
         repository.save_case_transition(stale, RiskCaseStatus.OPEN)
 
 
+def test_a_concurrent_same_status_update_is_rejected_by_revision():
+    repository = InMemoryEnterpriseRepository()
+    repository.save(_case(RiskCaseStatus.OPEN))
+    stale = repository.get_case("org", "case_1")
+    fresh = repository.get_case("org", "case_1")
+    expected = fresh.updated_at
+    fresh.comments.append({"kind": "newer"})
+    fresh.updated_at = "2099-01-01T00:00:00+00:00"
+    repository.save_case_transition(fresh, RiskCaseStatus.OPEN, expected)
+    stale.comments.append({"kind": "stale"})
+    with pytest.raises(ValueError, match="changed concurrently"):
+        repository.save_case_transition(
+            stale, RiskCaseStatus.OPEN, stale.updated_at
+        )
+
+
 def test_save_case_transition_requires_the_case_to_exist():
     repository = InMemoryEnterpriseRepository()
     with pytest.raises(KeyError):
@@ -1013,6 +1068,15 @@ def test_a_revenue_shock_moves_the_margin_lines_with_revenue():
     assert stressed["gross_profit"] / stressed["revenue"] == pytest.approx(0.4)
 
 
+def test_scenario_rejects_non_finite_and_impossible_multipliers():
+    with pytest.raises(ValueError, match="finite"):
+        Scenario("bad", revenue_pct=float("nan"))
+    with pytest.raises(ValueError, match="revenue negative"):
+        Scenario("bad", revenue_pct=-0.8, fx_pct=-0.3)
+    with pytest.raises(ValueError, match="debt_pct"):
+        Scenario("bad", debt_pct=-1.01)
+
+
 def test_a_margin_shock_is_applied_to_the_stressed_revenue():
     values = {"revenue": 100.0, "gross_profit": 40.0}
     stressed = apply_scenario(
@@ -1020,6 +1084,15 @@ def test_a_margin_shock_is_applied_to_the_stressed_revenue():
     )
     # 40 * 0.5 = 20, plus 10% of the *stressed* revenue (50) = 25.
     assert stressed["gross_profit"] == pytest.approx(25.0)
+
+
+@pytest.mark.parametrize(("reported", "expected"), [(10.0, 12.0), (-10.0, -12.0)])
+def test_interest_stress_preserves_expense_sign_and_increases_magnitude(reported, expected):
+    stressed = apply_scenario(
+        {"total_debt": 100.0, "interest_expense": reported},
+        Scenario("rates", interest_rate_bp=200),
+    )
+    assert stressed["interest_expense"] == pytest.approx(expected)
 
 
 def test_storage_rejects_identifiers_that_pathlib_would_rewrite(tmp_path):
@@ -1032,6 +1105,13 @@ def test_storage_rejects_identifiers_that_pathlib_would_rewrite(tmp_path):
     stored = storage.put("org-a", "report.pdf", b"evidence")
     assert stored.object_id == "report.pdf"
     assert storage.get("org-a", "report.pdf") == b"evidence"
+
+
+def test_storage_rejects_windows_device_names_and_trailing_dots(tmp_path):
+    storage = LocalDocumentStorage(tmp_path)
+    for bad in ("NUL", "nul.txt", "CON", "COM1", "LPT9.log", "report."):
+        with pytest.raises(ValueError, match="unsafe storage identifier"):
+            storage.put("org", bad, b"x")
 
 
 def test_the_evidence_graph_follows_support_relations_only():
@@ -1054,6 +1134,19 @@ def test_tension_rejects_an_evidence_sufficiency_outside_the_vocabulary():
     assert classify_tension(claim, ["a"], []).evidence_sufficiency == "complete"
     with pytest.raises(ValueError, match="evidence_sufficiency"):
         classify_tension(claim, ["a"], [], evidence_sufficiency="unknown")
+
+
+def test_tension_rejects_a_reason_code_outside_the_claim_vocabulary():
+    with pytest.raises(ValueError):
+        classify_tension(_claim(), ["a"], [], reason_code="ARBITRARY")
+
+
+def test_review_recommendation_never_weakens_abstain():
+    from finrisk.agent.orchestrator import _review_adjusted_decision
+
+    assert _review_adjusted_decision("PASS", "REVIEW") == "REVIEW"
+    assert _review_adjusted_decision("FLAG", "REVIEW") == "REVIEW"
+    assert _review_adjusted_decision("ABSTAIN", "REVIEW") == "ABSTAIN"
 
 
 def test_a_tension_reason_code_is_derived_from_its_classification():
@@ -1191,3 +1284,37 @@ def test_governance_requires_both_gate_and_reported_metrics():
     assert result["automatic_promotion"] is False
     with pytest.raises(ValueError, match="require metrics"):
         compare_system_versions({}, {})
+
+
+def test_numeric_helpers_reject_nonfinite_and_out_of_domain_inputs():
+    from finrisk.benchmark_protocol import fit_logistic_baseline
+    from finrisk.enterprise.governance import champion_challenger, drift_report
+
+    with pytest.raises(ValueError, match="finite numeric"):
+        fit_logistic_baseline([[float("nan")]], [1])
+    with pytest.raises(ValueError, match="integer 0 or 1"):
+        fit_logistic_baseline([[1.0]], [2])
+    with pytest.raises(ValueError, match=r"within \[0, 1\]"):
+        selective_metrics([1], [float("nan")])
+    with pytest.raises(ValueError, match=r"within \[0, 1\]"):
+        calibration_curve([1], [float("nan")])
+    with pytest.raises(ValueError, match=r"within \[0, 1\]"):
+        champion_challenger([1.2], [0.8], [1])
+    with pytest.raises(ValueError, match="coverage"):
+        drift_report([], [], float("nan"), 0.5)
+
+
+def test_governance_gate_rejects_nan_typo_and_invalid_ranges():
+    from finrisk.enterprise.governance import compare_system_versions
+
+    metrics = {name: 0.5 for name in GATE_METRICS | REPORTED_METRICS}
+    with pytest.raises(ValueError, match="finite numeric"):
+        compare_system_versions(metrics, dict(metrics, f1=float("nan")))
+    with pytest.raises(ValueError, match="unknown comparison policy"):
+        compare_system_versions(metrics, metrics, {"minimum_coverge": 0.5})
+    with pytest.raises(ValueError, match=r"within \[0, 1\]"):
+        compare_system_versions(metrics, metrics, {"minimum_coverage": 1.1})
+
+
+def test_alerts_ignore_nan_instead_of_silently_comparing_it():
+    assert detect_alerts({"severity": float("nan")}) == []

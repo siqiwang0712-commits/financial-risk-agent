@@ -343,6 +343,19 @@ def test_selective_decision_failure_branches():
     )
     assert clean["decision"] == "PASS"
     assert clean["automation_allowed"] is True
+    with pytest.raises(ValueError, match="unknown selective policy"):
+        selective_decision("PASS", 0.9, 0.9, 0.0, {"min_coverage": 0.5})
+    with pytest.raises(ValueError, match="within"):
+        selective_decision(
+            "PASS",
+            0.9,
+            float("nan"),
+            0.0,
+            policy,
+            CalibrationStatus.VALIDATED_EXTERNAL,
+        )
+    with pytest.raises(ValueError, match="reliabilities"):
+        risk_coverage_curve([0], [0.5], [float("nan")])
 
 
 # --------------------------------------------------------------------------- #

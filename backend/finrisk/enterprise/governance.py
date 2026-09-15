@@ -1,9 +1,26 @@
 from __future__ import annotations
 
+import math
 from dataclasses import asdict, dataclass
 from datetime import UTC, datetime
 
 from .domain import ModelRecord
+
+
+def _finite_numbers(values, name: str) -> None:
+    if any(
+        isinstance(value, bool)
+        or not isinstance(value, (int, float))
+        or not math.isfinite(value)
+        for value in values
+    ):
+        raise ValueError(f"{name} must contain only finite numeric values")
+
+
+def _probabilities(values, name: str) -> None:
+    _finite_numbers(values, name)
+    if any(not 0 <= value <= 1 for value in values):
+        raise ValueError(f"{name} must be within [0, 1]")
 
 
 @dataclass(frozen=True)
@@ -65,6 +82,10 @@ def champion_challenger(
 ) -> dict:
     if not (len(champion) == len(challenger) == len(labels)) or not labels:
         raise ValueError("aligned non-empty predictions and labels are required")
+    _probabilities(champion, "champion predictions")
+    _probabilities(challenger, "challenger predictions")
+    if any(isinstance(label, bool) or label not in {0, 1} for label in labels):
+        raise ValueError("labels must contain only integer 0 or 1")
     champion_loss = sum(
         (score - label) ** 2 for score, label in zip(champion, labels, strict=True)
     ) / len(labels)
@@ -87,6 +108,9 @@ def drift_report(
     reference_coverage: float,
     current_coverage: float,
 ) -> dict:
+    _finite_numbers(reference, "reference")
+    _finite_numbers(current, "current")
+    _probabilities([reference_coverage, current_coverage], "coverage")
     if not reference or not current:
         return {
             "status": "INSUFFICIENT_DATA",
@@ -131,12 +155,38 @@ def compare_system_versions(champion: dict[str, float], challenger: dict[str, fl
     required = GATE_METRICS | REPORTED_METRICS
     if required - champion.keys() or required - challenger.keys():
         raise ValueError(f"both versions require metrics: {sorted(required)}")
+    _finite_numbers((champion[key] for key in required), "champion metrics")
+    _finite_numbers((challenger[key] for key in required), "challenger metrics")
+    rate_metrics = GATE_METRICS | {"abstention_rate"}
+    if any(
+        not 0 <= values[key] <= 1
+        for values in (champion, challenger)
+        for key in rate_metrics
+    ):
+        raise ValueError("rate metrics must be within [0, 1]")
+    if any(
+        values[key] < 0
+        for values in (champion, challenger)
+        for key in ("latency_ms", "cost_usd")
+    ):
+        raise ValueError("latency and cost must be non-negative")
+    allowed_policy = {
+        "maximum_fnr_increase",
+        "maximum_evidence_error",
+        "maximum_calibration_error",
+        "minimum_coverage",
+    }
+    if policy and set(policy) - allowed_policy:
+        raise ValueError(f"unknown comparison policy keys: {sorted(set(policy) - allowed_policy)}")
     limits = {
         "maximum_fnr_increase": 0.0,
         "maximum_evidence_error": 0.02,
         "maximum_calibration_error": 0.15,
         "minimum_coverage": 0.5,
     } | (policy or {})
+    _finite_numbers(limits.values(), "comparison policy")
+    if any(not 0 <= limits[key] <= 1 for key in allowed_policy):
+        raise ValueError("comparison policy limits must be within [0, 1]")
     blockers = []
     if challenger["false_negative_rate"] > champion["false_negative_rate"] + limits["maximum_fnr_increase"]:
         blockers.append("FALSE_NEGATIVE_REGRESSION")

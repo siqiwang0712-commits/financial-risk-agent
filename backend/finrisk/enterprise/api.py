@@ -122,7 +122,7 @@ class ScenarioRequest(BaseModel):
 class PolicyCreate(BaseModel):
     name: str
     version: int = Field(ge=1)
-    thresholds: dict[str, dict[str, float | str]]
+    thresholds: dict[str, dict[str, float | str | None]]
 
     @field_validator("thresholds")
     @classmethod

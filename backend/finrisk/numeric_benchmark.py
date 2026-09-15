@@ -7,6 +7,16 @@ from typing import Any
 FEATURES = ("current_ratio", "debt_to_assets", "net_margin", "cfo_to_net_income", "fcf_margin", "revenue_growth", "total_debt_growth")
 
 
+def _usable(value: Any) -> float | None:
+    if (
+        isinstance(value, bool)
+        or not isinstance(value, (int, float))
+        or not math.isfinite(value)
+    ):
+        return None
+    return float(value)
+
+
 def ratio_risk_score(metrics: dict[str, float | None]) -> float | None:
     checks = [
         ("current_ratio", lambda value: value < 1.0),
@@ -17,10 +27,10 @@ def ratio_risk_score(metrics: dict[str, float | None]) -> float | None:
     ]
     observed = []
     for name, test in checks:
-        value = metrics.get(name)
+        value = _usable(metrics.get(name))
         if value is None:
             continue
-        net_income = metrics.get("net_income")
+        net_income = _usable(metrics.get("net_income"))
         if name == "cfo_to_net_income" and net_income is not None and net_income <= 0:
             continue
         observed.append(float(test(value)))
@@ -37,7 +47,7 @@ def temporal_risk_score(metrics: dict[str, float | None]) -> float | None:
         ("total_debt_growth", lambda value: value >= 0.20),
         ("cash_growth", lambda value: value <= -0.20),
     ):
-        value = metrics.get(name)
+        value = _usable(metrics.get(name))
         if value is not None:
             observed += 1
             adverse += int(test(value))
@@ -50,6 +60,16 @@ class LogisticBaseline:
     """Small deterministic logistic baseline; preprocessing is fitted on train only."""
 
     def __init__(self, learning_rate: float = 0.1, iterations: int = 800):
+        if (
+            isinstance(learning_rate, bool)
+            or not isinstance(learning_rate, (int, float))
+            or not math.isfinite(learning_rate)
+            or learning_rate <= 0
+            or isinstance(iterations, bool)
+            or not isinstance(iterations, int)
+            or iterations < 1
+        ):
+            raise ValueError("learning rate and iterations must be positive and finite")
         self.learning_rate = learning_rate
         self.iterations = iterations
         self.means: list[float] = []
@@ -58,7 +78,7 @@ class LogisticBaseline:
 
     @staticmethod
     def _raw(row: dict[str, Any]) -> list[float | None]:
-        return [row.get("metrics", {}).get(name) for name in FEATURES]
+        return [_usable(row.get("metrics", {}).get(name)) for name in FEATURES]
 
     def _matrix(self, rows: list[dict[str, Any]], fit: bool) -> list[list[float]]:
         raw = [self._raw(row) for row in rows]
@@ -76,7 +96,12 @@ class LogisticBaseline:
         return [[1.0] + [((self.means[i] if value is None else float(value)) - self.means[i]) / self.scales[i] for i, value in enumerate(item)] for item in raw]
 
     def fit(self, rows: list[dict[str, Any]], labels: list[int]) -> LogisticBaseline:
-        if len(rows) != len(labels) or not rows or len(set(labels)) < 2:
+        if (
+            len(rows) != len(labels)
+            or not rows
+            or any(isinstance(label, bool) or label not in {0, 1} for label in labels)
+            or len(set(labels)) < 2
+        ):
             raise ValueError("logistic baseline requires aligned train rows with both classes")
         matrix = self._matrix(rows, fit=True)
         self.weights = [0.0] * len(matrix[0])

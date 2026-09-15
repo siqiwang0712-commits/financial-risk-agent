@@ -157,6 +157,10 @@ class Assessment:
     # claim-level classification and the contradiction list cannot disagree.
     claim_consistency_evaluations: list[dict[str, Any]] = field(default_factory=list)
     disclosure_tensions: list[dict[str, Any]] = field(default_factory=list)
+    # Nullable rates distinguish "no extracted claims" from "claims were
+    # extracted but none verified".  Conflating those states turns an empty
+    # denominator into a false 100% unsupported-claim result.
+    claim_verification_summary: dict[str, Any] = field(default_factory=dict)
     # Declared vs reachable rule coverage. The rule set is quoted publicly as "68
     # versioned expert rules"; 25 of those reference facts no extractor here
     # produces, so they can only fire when a caller supplies the facts directly.

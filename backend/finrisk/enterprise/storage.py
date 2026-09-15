@@ -16,6 +16,11 @@ from typing import Protocol
 #     file;
 #   * anything else the OS treats specially.
 _SAFE_IDENTIFIER = re.compile(r"[A-Za-z0-9][A-Za-z0-9._~-]{0,127}")
+_WINDOWS_DEVICE_NAMES = frozenset(
+    {"CON", "PRN", "AUX", "NUL"}
+    | {f"COM{index}" for index in range(1, 10)}
+    | {f"LPT{index}" for index in range(1, 10)}
+)
 
 
 @dataclass(frozen=True)
@@ -42,7 +47,13 @@ class LocalDocumentStorage:
 
     @staticmethod
     def _safe(value: str) -> str:
-        if not isinstance(value, str) or not _SAFE_IDENTIFIER.fullmatch(value):
+        stem = value.split(".", 1)[0].upper() if isinstance(value, str) else ""
+        if (
+            not isinstance(value, str)
+            or not _SAFE_IDENTIFIER.fullmatch(value)
+            or value.endswith(".")
+            or stem in _WINDOWS_DEVICE_NAMES
+        ):
             raise ValueError("unsafe storage identifier")
         return value
 

@@ -28,10 +28,13 @@ def configure_logging(level: str | None = None) -> None:
         return
     chosen = (level or os.getenv("FINRISK_LOG_LEVEL", "INFO")).upper()
     root = logging.getLogger()
-    handler = logging.StreamHandler()
-    handler.setFormatter(logging.Formatter("%(message)s"))
-    root.handlers = [handler]
-    root.setLevel(chosen)
+    # Respect logging owned by Uvicorn/Gunicorn, a test runner, or an embedding
+    # application.  Replacing root handlers silently disconnects their sinks.
+    if not root.handlers:
+        handler = logging.StreamHandler()
+        handler.setFormatter(logging.Formatter("%(message)s"))
+        root.addHandler(handler)
+        root.setLevel(chosen)
     _logging_configured = True
 
 

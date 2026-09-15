@@ -39,6 +39,17 @@ _SCALE_WORD_PATTERN = re.compile(
 )
 _SCALE_NUMERIC_PATTERN = re.compile(r"(?<![\w,])(000)(?![\w,])")
 
+# One financial number as it can appear in a filing table.  The parser and
+# `parse_number` must accept the same separator conventions; otherwise a value
+# such as `1.234,56` is correctly normalised in isolation but split into
+# `1.234` and `56` before the normaliser ever sees it.
+_NUMBER_TOKEN = (
+    r"[$€£]?\(?-?(?:"
+    r"\d{1,3}(?:[.,]\d{3})+(?:[.,]\d+)?"
+    r"|\d+(?:[.,]\d+)?"
+    r")\)?"
+)
+
 
 def _scale_token(header: str) -> str | None:
     """The scale token a filing header declares, lower-cased, or `None`.
@@ -77,8 +88,11 @@ class DocumentParser:
 
     def extract_values(self,pages:dict[int,str],document:str,default_year:int,currency="USD",scale=None)->list[FinancialValue]:
         out=[]
-        line_re=re.compile(r"^\s*([A-Za-z][A-Za-z '&-]{2,60})\s+((?:[$€£]?\(?[\d,]+(?:\.\d+)?\)?\s*){1,3})$")
-        number_re=re.compile(r"[$€£]?\(?[\d,]+(?:\.\d+)?\)?")
+        line_re=re.compile(
+            rf"^\s*([A-Za-z][A-Za-z '&-]{{2,60}})\s+"
+            rf"({_NUMBER_TOKEN}(?:\s+{_NUMBER_TOKEN}){{0,2}})\s*$"
+        )
+        number_re=re.compile(_NUMBER_TOKEN)
         for page,text in pages.items():
             header=" ".join(text.splitlines()[:15])
             years=[int(y) for y in re.findall(r"\b20\d{2}\b",header)][:3] or [default_year]

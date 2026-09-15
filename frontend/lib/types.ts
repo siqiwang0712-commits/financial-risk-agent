@@ -343,6 +343,13 @@ export interface AssessmentPayload {
   contradictions: Contradiction[];
   claim_consistency_evaluations: ClaimConsistencyEvaluation[];
   disclosure_tensions: DisclosureTension[];
+  claim_verification_summary?: {
+    extracted_claim_count: number;
+    verified_claim_count: number;
+    unsupported_claim_count: number;
+    verified_claim_coverage: number | null;
+    unsupported_claim_rate: number | null;
+  };
   missing_information: string[];
   confidence_components: Record<string, number>;
   /**

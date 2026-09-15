@@ -158,17 +158,12 @@ def run_public_benchmark(
         )
         assessments[example["id"]] = assessment
         contradiction_pred = int(bool(assessment.contradictions))
-        verified_claims = [
-            n for n in assessment.evidence_graph["nodes"] if n["type"] == "claim"
-        ]
-        # Fraction of *extracted* claims that survived the quote/grounding gate.
-        # This is the denominator-correct quantity: the evidence graph only holds
-        # admitted claims, so counting graph nodes alone cannot express how many
-        # were rejected.
-        verified_claim_coverage = assessment.confidence_components.get(
-            "verified_claim_coverage", 0.0
-        )
+        # Counts and nullable rates from the complete verification set.  A zero
+        # extracted-claim count has no rate; it is not 0% verified or 100%
+        # unsupported.
+        claim_summary = assessment.claim_verification_summary
         for baseline in PILOT_BASELINES:
+            uses_narrative = baseline in {"llm_only", "full_hybrid"}
             raw_probability = _probability(baseline, assessment)
             probability = None if raw_probability is None else round(raw_probability, 6)
             rows.append(
@@ -187,8 +182,18 @@ def run_public_benchmark(
                     "contradiction_prediction": contradiction_pred
                     if baseline == "full_hybrid"
                     else 0,
-                    "verified_claim_count": len(verified_claims),
-                    "verified_claim_coverage": verified_claim_coverage,
+                    "extracted_claim_count": (
+                        claim_summary["extracted_claim_count"] if uses_narrative else 0
+                    ),
+                    "verified_claim_count": (
+                        claim_summary["verified_claim_count"] if uses_narrative else 0
+                    ),
+                    "unsupported_claim_count": (
+                        claim_summary["unsupported_claim_count"] if uses_narrative else 0
+                    ),
+                    "verified_claim_coverage": (
+                        claim_summary["verified_claim_coverage"] if uses_narrative else None
+                    ),
                     "evidence_coverage": assessment.evidence_coverage,
                 }
             )
@@ -242,20 +247,26 @@ def run_public_benchmark(
                     ),
                     4,
                 ),
-                # These two used to be hardcoded: `unsupported_claim_rate: 0.0` and
-                # `evidence_precision: 1.0 if <any claims> else None`. Neither
-                # measured anything. Only admitted claims reach the evidence graph,
-                # so "precision of published claims" is 1.0 by construction, and
-                # "rate of unsupported published claims" is 0.0 by construction --
-                # a tautology published as a benchmark result. `unsupported_claim_rate`
-                # is now the genuine complement of the coverage the pipeline
-                # measures, and the tautological `evidence_precision` is replaced by
-                # that measurement under its own name.
-                "unsupported_claim_rate": round(
-                    mean(1 - r["verified_claim_coverage"] for r in subset), 4
+                # Aggregate claim counts before dividing. This weights every
+                # extracted claim equally, excludes companies with no denominator,
+                # and reports N/A for baselines that publish no narrative claims.
+                "unsupported_claim_rate": (
+                    round(
+                        sum(r["unsupported_claim_count"] for r in subset)
+                        / sum(r["extracted_claim_count"] for r in subset),
+                        4,
+                    )
+                    if sum(r["extracted_claim_count"] for r in subset)
+                    else None
                 ),
-                "verified_claim_coverage": round(
-                    mean(r["verified_claim_coverage"] for r in subset), 4
+                "verified_claim_coverage": (
+                    round(
+                        sum(r["verified_claim_count"] for r in subset)
+                        / sum(r["extracted_claim_count"] for r in subset),
+                        4,
+                    )
+                    if sum(r["extracted_claim_count"] for r in subset)
+                    else None
                 ),
             }
         )

@@ -63,6 +63,7 @@ export default function Page() {
   const [error, setError] = useState<string | null>(null);
   const [errorIsUpstream, setErrorIsUpstream] = useState(false);
   const [activeTab, setActiveTab] = useState<TabKey>("overview");
+  const [assessmentRevision, setAssessmentRevision] = useState(0);
 
   useEffect(() => {
     let cancelled = false;
@@ -89,6 +90,7 @@ export default function Page() {
     // unmount would call setState on a dead component.
     const res = loadSampleAssessment();
     setAssessment(res.payload);
+    setAssessmentRevision((value) => value + 1);
     setAssessmentOrigin(res.origin);
     setActiveTab("overview");
   };
@@ -106,6 +108,7 @@ export default function Page() {
     setLoadingAnalysis(false);
     if (result.ok) {
       setAssessment(result.loaded.payload);
+      setAssessmentRevision((value) => value + 1);
       setAssessmentOrigin(result.loaded.origin);
       setActiveTab("overview");
     } else {
@@ -163,7 +166,9 @@ export default function Page() {
         {/* Analysis result */}
         {assessment && (
           <section className="analysisSection">
-            <DecisionSummary payload={assessment} />
+            <PanelBoundary key={`summary-${assessmentRevision}`} label="Decision summary">
+              <DecisionSummary payload={assessment} />
+            </PanelBoundary>
 
             <nav className="tabBar" aria-label="Analysis sections">
               {(Object.keys(TAB_LABEL) as TabKey[]).map((key) => (
@@ -192,7 +197,10 @@ export default function Page() {
             >
               {/* Keyed on the active tab so switching tabs clears a previous
                   panel failure instead of showing the fallback forever. */}
-              <PanelBoundary key={activeTab} label={TAB_LABEL[activeTab]}>
+              <PanelBoundary
+                key={`${assessmentRevision}-${activeTab}`}
+                label={TAB_LABEL[activeTab]}
+              >
                 {activeTab === "overview" ? (
                   <WhyDecision payload={assessment} />
                 ) : null}

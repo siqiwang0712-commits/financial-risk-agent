@@ -23,7 +23,10 @@ class EnterpriseRepository(Protocol):
 
     def save(self, item: T) -> T: ...
     def save_case_transition(
-        self, case: RiskCase, expected_status: RiskCaseStatus
+        self,
+        case: RiskCase,
+        expected_status: RiskCaseStatus,
+        expected_updated_at: str | None = None,
     ) -> RiskCase: ...
     def get_case(self, organization_id: str, case_id: str) -> RiskCase: ...
     def get_entity(self, organization_id: str, entity_id: str) -> Entity: ...
@@ -80,9 +83,12 @@ class InMemoryEnterpriseRepository:
         return deepcopy(item)
 
     def save_case_transition(
-        self, case: RiskCase, expected_status: RiskCaseStatus
+        self,
+        case: RiskCase,
+        expected_status: RiskCaseStatus,
+        expected_updated_at: str | None = None,
     ) -> RiskCase:
-        """Persist a status change only if the stored status is still `expected_status`.
+        """Persist a case mutation only if the stored revision is unchanged.
 
         `transition` reads a case, mutates it and saves it back with no
         precondition, so two reviewers acting on the same case both succeeded and
@@ -98,6 +104,11 @@ class InMemoryEnterpriseRepository:
             raise ValueError(
                 f"case {case.id} changed concurrently: expected {expected_status}, "
                 f"found {stored.status}"
+            )
+        if expected_updated_at is not None and stored.updated_at != expected_updated_at:
+            raise ValueError(
+                f"case {case.id} changed concurrently: expected revision "
+                f"{expected_updated_at}, found {stored.updated_at}"
             )
         self.cases[case.id] = deepcopy(case)
         return deepcopy(case)

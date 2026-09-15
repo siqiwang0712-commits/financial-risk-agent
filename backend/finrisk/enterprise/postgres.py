@@ -99,9 +99,12 @@ class PostgresEnterpriseRepository:
         return self._case(self._one("SELECT * FROM risk_cases WHERE organization_id=%s AND id=%s", (organization_id, case_id)))
 
     def save_case_transition(
-        self, case: RiskCase, expected_status: RiskCaseStatus
+        self,
+        case: RiskCase,
+        expected_status: RiskCaseStatus,
+        expected_updated_at: str | None = None,
     ) -> RiskCase:
-        """Persist a status change only if the stored status is still `expected_status`.
+        """Persist a case mutation only if status and revision are unchanged.
 
         `transition` reads a case, mutates it and saves it back. The old
         unconditional `ON CONFLICT ... DO UPDATE` meant two reviewers acting on the
@@ -117,7 +120,8 @@ class PostgresEnterpriseRepository:
                    comments=%s::jsonb,reason_codes=%s::jsonb,decision_trace=%s::jsonb,
                    snapshot_id=%s,fusion_version=%s,resolution_evidence=%s::jsonb,
                    monitoring_state=%s
-                   WHERE id=%s AND organization_id=%s AND status=%s""",
+                   WHERE id=%s AND organization_id=%s AND status=%s
+                   AND (%s::timestamptz IS NULL OR updated_at=%s::timestamptz)""",
                 (
                     case.status.value, case.updated_at, case.owner_id, case.reviewer_id,
                     case.due_date, case.rationale, _json(case.evidence_ids), _json(case.actions),
@@ -125,6 +129,7 @@ class PostgresEnterpriseRepository:
                     case.snapshot_id, case.fusion_version, _json(case.resolution_evidence),
                     case.monitoring_state,
                     case.id, case.organization_id, expected_status.value,
+                    expected_updated_at, expected_updated_at,
                 ),
             )
             # `rowcount` is the number of rows the UPDATE matched; psycopg always
@@ -135,7 +140,8 @@ class PostgresEnterpriseRepository:
             if getattr(cursor, "rowcount", 1) == 0:
                 self.connection.rollback()
                 raise ValueError(
-                    f"case {case.id} changed concurrently: expected {expected_status.value}"
+                    f"case {case.id} changed concurrently: expected "
+                    f"{expected_status.value} at revision {expected_updated_at}"
                 )
         self.connection.commit()
         return case

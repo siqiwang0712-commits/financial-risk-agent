@@ -382,3 +382,19 @@ def test_enterprise_financial_boundaries_reject_nonfinite_and_boolean_values():
     snapshot = client.post(f"/api/v1/enterprise/entities/{entity['id']}/risk-snapshots", headers=headers, json={"period": "2025", "filing_id": "f", "risk_score": "Infinity", "dimension_scores": {}, "metrics": {}, "evidence_paths": {}, "decision": "REVIEW", "coverage": 0.5})
     metric_bool = client.post(f"/api/v1/enterprise/entities/{entity['id']}/risk-snapshots", headers=headers, json={"period": "2025", "filing_id": "f", "risk_score": 50, "dimension_scores": {}, "metrics": {"cash": False}, "evidence_paths": {}, "decision": "REVIEW", "coverage": 0.5})
     assert {scenario.status_code, boolean_scenario.status_code, snapshot.status_code, metric_bool.status_code} == {422}
+def test_fusion_rejects_invalid_numeric_domains_and_policy_typos():
+    with pytest.raises(ValueError, match="scores"):
+        max_severity({"liquidity": float("nan")}, 0.8, 0.9)
+    with pytest.raises(ValueError, match="weights"):
+        weighted_average({"liquidity": 60}, {"liquidity": -1}, 0.8, 0.9)
+    with pytest.raises(ValueError, match="unknown fusion policy"):
+        max_severity(
+            {"liquidity": 60}, 0.8, 0.9, {"critical_threshold": 0.8}
+        )
+    with pytest.raises(ValueError, match="review_score"):
+        max_severity(
+            {"liquidity": 60},
+            0.8,
+            0.9,
+            {"review_score": 80, "flag_score": 60},
+        )

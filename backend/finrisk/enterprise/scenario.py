@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import math
 from dataclasses import dataclass
 
 from ..metrics import calculate_metrics, resolve_total_debt
@@ -17,6 +18,30 @@ class Scenario:
     refinancing_cost_pct: float = 0.0
     debt_pct: float = 0.0
     fx_pct: float = 0.0
+
+    def __post_init__(self) -> None:
+        shocks = {
+            name: value
+            for name, value in self.__dict__.items()
+            if name != "name"
+        }
+        if any(
+            isinstance(value, bool)
+            or not isinstance(value, (int, float))
+            or not math.isfinite(value)
+            for value in shocks.values()
+        ):
+            raise ValueError("scenario shocks must be finite numbers")
+        if 1 + self.revenue_pct + self.fx_pct < 0:
+            raise ValueError("combined revenue and FX shock cannot make revenue negative")
+        for name in (
+            "cfo_pct",
+            "receivable_days_pct",
+            "inventory_days_pct",
+            "debt_pct",
+        ):
+            if 1 + shocks[name] < 0:
+                raise ValueError(f"{name} cannot make its stressed value negative")
 
 
 def apply_scenario(values: dict[str, float], scenario: Scenario) -> dict[str, float]:
@@ -46,9 +71,17 @@ def apply_scenario(values: dict[str, float], scenario: Scenario) -> dict[str, fl
         ):
             raise ValueError("total_debt is required for debt-cost stress")
         debt = debt or 0
-        stressed["interest_expense"] += (
+        incremental_cost = (
             debt * scenario.interest_rate_bp / 10_000
             + debt * scenario.refinancing_cost_pct
+        )
+        # Expense facts appear both as positive costs and parenthesized negatives.
+        # Stress the magnitude and preserve the source convention so a rate
+        # increase can never make a negative expense look less adverse.
+        original_interest = stressed["interest_expense"]
+        stressed_magnitude = max(0.0, abs(original_interest) + incremental_cost)
+        stressed["interest_expense"] = (
+            -stressed_magnitude if original_interest < 0 else stressed_magnitude
         )
     if "operating_cash_flow" in stressed:
         stressed["operating_cash_flow"] *= 1 + scenario.cfo_pct
@@ -80,4 +113,5 @@ def compare_scenario(values: dict[str, float], year: int, scenario: Scenario) ->
         "stressed_values": stressed,
         "metric_changes": changes,
         "calculation_mode": "deterministic",
+        "profit_response_assumption": "gross_profit_and_operating_income_scale_with_revenue_before_margin_shock",
     }

@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import math
 from collections.abc import Callable
 from dataclasses import dataclass
 from statistics import pstdev
@@ -14,6 +15,103 @@ DEFAULT_DECISION_POLICY = {
     "flag_score": 60.0,
     "review_score": 40.0,
 }
+
+FUSION_POLICY_KEYS = frozenset(
+    {
+        "minimum_coverage",
+        "maximum_disagreement",
+        "flag_score",
+        "review_score",
+        "severe_dimension_score",
+        "critical_dimension_score",
+        "elevated_dimension_score",
+        "interaction_dimension_score",
+        "interaction_premium",
+        "interaction_uplift_per_dimension",
+        "interaction_uplift_cap",
+    }
+)
+_POLICY_METADATA_KEYS = frozenset({"version", "status"})
+
+
+def validate_fusion_inputs(
+    scores: dict[str, float | None],
+    coverage: float,
+    confidence: float,
+    policy: dict[str, float] | None = None,
+    weights: dict[str, float] | None = None,
+) -> dict:
+    """Validate the numeric domain and ordering used by every fusion method."""
+    numeric_values = [value for value in scores.values() if value is not None]
+    if any(
+        isinstance(value, bool)
+        or not isinstance(value, (int, float))
+        or not math.isfinite(value)
+        or not 0 <= value <= 100
+        for value in numeric_values
+    ):
+        raise ValueError("fusion scores must be finite and within [0, 100]")
+    if any(
+        isinstance(value, bool)
+        or not isinstance(value, (int, float))
+        or not math.isfinite(value)
+        or not 0 <= value <= 1
+        for value in (coverage, confidence)
+    ):
+        raise ValueError("coverage and confidence must be finite and within [0, 1]")
+    if weights is not None and any(
+        isinstance(value, bool)
+        or not isinstance(value, (int, float))
+        or not math.isfinite(value)
+        or value < 0
+        for value in weights.values()
+    ):
+        raise ValueError("fusion weights must be finite and non-negative")
+
+    supplied = policy or {}
+    unknown = set(supplied) - FUSION_POLICY_KEYS - _POLICY_METADATA_KEYS
+    if unknown:
+        raise ValueError(f"unknown fusion policy keys: {sorted(unknown)}")
+    effective = DEFAULT_DECISION_POLICY | {
+        key: value for key, value in supplied.items() if key in FUSION_POLICY_KEYS
+    }
+    if any(
+        isinstance(value, bool)
+        or not isinstance(value, (int, float))
+        or not math.isfinite(value)
+        for value in effective.values()
+    ):
+        raise ValueError("fusion policy values must be finite numbers")
+    for key in ("minimum_coverage", "maximum_disagreement"):
+        if not 0 <= effective[key] <= 1:
+            raise ValueError(f"{key} must be within [0, 1]")
+    for key in (
+        "flag_score",
+        "review_score",
+        "severe_dimension_score",
+        "critical_dimension_score",
+        "elevated_dimension_score",
+        "interaction_dimension_score",
+    ):
+        if key in effective and not 0 <= effective[key] <= 100:
+            raise ValueError(f"{key} must be within [0, 100]")
+    if effective["review_score"] > effective["flag_score"]:
+        raise ValueError("review_score must not exceed flag_score")
+    ordered = [
+        effective.get("elevated_dimension_score", 50),
+        effective.get("severe_dimension_score", 70),
+        effective.get("critical_dimension_score", 80),
+    ]
+    if ordered != sorted(ordered):
+        raise ValueError("dimension thresholds must be elevated <= severe <= critical")
+    for key in (
+        "interaction_premium",
+        "interaction_uplift_per_dimension",
+        "interaction_uplift_cap",
+    ):
+        if key in effective and effective[key] < 0:
+            raise ValueError(f"{key} must be non-negative")
+    return effective
 
 
 def _severity(score: float | None) -> str:
@@ -78,6 +176,7 @@ def weighted_average(
     confidence: float,
     policy: dict[str, float] | None = None,
 ) -> FusionResult:
+    validate_fusion_inputs(scores, coverage, confidence, policy, weights)
     active = {
         key: value
         for key, value in scores.items()
@@ -109,6 +208,7 @@ def max_severity(
     confidence: float,
     policy: dict[str, float] | None = None,
 ) -> FusionResult:
+    validate_fusion_inputs(scores, coverage, confidence, policy)
     active = {key: value for key, value in scores.items() if value is not None}
     score = max(active.values()) if active else None
     return _final(
@@ -136,6 +236,7 @@ def hierarchical_escalation(
     confidence: float,
     policy: dict[str, float] | None = None,
 ) -> FusionResult:
+    validate_fusion_inputs(scores, coverage, confidence, policy)
     active = {key: value for key, value in scores.items() if value is not None}
     effective = DEFAULT_DECISION_POLICY | (policy or {})
     severe = [
@@ -187,6 +288,7 @@ def interaction_aware(
     confidence: float,
     policy: dict[str, float] | None = None,
 ) -> FusionResult:
+    validate_fusion_inputs(scores, coverage, confidence, policy)
     # Non-compensatory baseline. A weighted average let a supported adverse
     # dimension be diluted by otherwise low dimensions: {liquidity:90,
     # solvency_leverage:60} scored 83/FLAG, but adding cash_flow:0 (i.e. *no*

@@ -13,14 +13,14 @@ class TimeoutProvider(NarrativeProvider):
         raise TimeoutError("provider deadline exceeded")
 
 
-def test_external_failure_matrix_llm_timeout_degrades_to_review():
+def test_external_failure_matrix_llm_timeout_requires_review_without_weakening_abstain():
     state = FinancialRiskAgent(ROOT, TimeoutProvider()).run(
         "Failure Co",
         2025,
         {"current_assets": 80, "current_liabilities": 100, "cash": 10},
         pages={1: "Liquidity remains strong."},
     )
-    assert state.status == "REVIEW_REQUIRED"
-    assert state.decision == "REVIEW"
+    assert state.status == "INSUFFICIENT_EVIDENCE"
+    assert state.decision == "ABSTAIN"
     assert state.assessment["failure_state"]["review_failures"] == ["llm_unavailable"]
     assert any("Narrative provider unavailable" in warning for warning in state.warnings)

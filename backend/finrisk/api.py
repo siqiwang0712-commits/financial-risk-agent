@@ -99,6 +99,42 @@ def _inspect_pdf(data: bytes, max_pages: int, max_chars: int) -> None:
     except Exception as exc:
         raise PdfBoundaryError(422, "PDF could not be safely parsed") from exc
 
+
+def _run_document_with_cleanup(
+    agent: FinancialRiskAgent,
+    company: str,
+    fiscal_year: int,
+    path: Path,
+    filename: str,
+):
+    """Run blocking analysis while keeping its temporary input alive.
+
+    Python cannot safely kill a running worker thread.  A request timeout must
+    therefore return control to the caller without deleting a file that the
+    worker can still be reading; the worker owns cleanup when it eventually
+    exits.
+    """
+    try:
+        return agent.run_document(company, fiscal_year, path, filename)
+    finally:
+        path.unlink(missing_ok=True)
+
+
+def _consume_background_result(task: asyncio.Task) -> None:
+    """Retrieve a detached timed-out task result to avoid loop warnings."""
+    try:
+        task.result()
+    except asyncio.CancelledError:
+        return
+    except Exception as exc:  # noqa: BLE001 - detached task boundary
+        # The request already returned a generic timeout response, but retain a
+        # structured diagnostic instead of emitting an unhandled-task warning.
+        structured_event(
+            logging.getLogger("finrisk.api"),
+            "document.background_analysis_failed",
+            error_type=type(exc).__name__,
+        )
+
 if FastAPI:
 
     ROOT = Path(__file__).resolve().parents[2]
@@ -432,40 +468,43 @@ if FastAPI:
         with NamedTemporaryFile(suffix=".pdf", delete=False) as tmp:
             tmp.write(data)
             path = Path(tmp.name)
+        analysis_task = asyncio.create_task(
+            asyncio.to_thread(
+                _run_document_with_cleanup,
+                agent,
+                company,
+                fiscal_year,
+                path,
+                file.filename or "Annual Report",
+            )
+        )
         try:
-            try:
-                state = await asyncio.wait_for(
-                    run_in_threadpool(
-                        agent.run_document,
-                        company,
-                        fiscal_year,
-                        path,
-                        file.filename or "Annual Report",
-                    ),
-                    timeout=timeout_seconds,
-                )
-            except TimeoutError as exc:
-                structured_event(api_logger, "document.analysis_timeout")
-                raise HTTPException(504, "document analysis timed out") from exc
-            except HTTPException:
-                raise
-            except Exception as exc:
-                structured_event(api_logger, "document.analysis_failed", error_type=type(exc).__name__)
-                raise HTTPException(422, "document analysis could not be completed") from exc
-            if state.status == "FAILED":
-                raise HTTPException(
-                    422,
-                    "agent workflow could not be completed",
-                )
-            persist_agent_snapshot(state, actor, entity_id)
-            payload = state.assessment or {}
-            payload["agent"] = {
-                key: value
-                for key, value in state.to_dict().items()
-                if key != "assessment"
-            }
-            return payload
-        finally:
-            path.unlink(missing_ok=True)
+            state = await asyncio.wait_for(
+                asyncio.shield(analysis_task), timeout=timeout_seconds
+            )
+        except TimeoutError as exc:
+            analysis_task.add_done_callback(_consume_background_result)
+            structured_event(api_logger, "document.analysis_timeout")
+            raise HTTPException(504, "document analysis timed out") from exc
+        except HTTPException:
+            raise
+        except Exception as exc:
+            structured_event(
+                api_logger,
+                "document.analysis_failed",
+                error_type=type(exc).__name__,
+            )
+            raise HTTPException(422, "document analysis could not be completed") from exc
+        if state.status == "FAILED":
+            raise HTTPException(
+                422,
+                "agent workflow could not be completed",
+            )
+        persist_agent_snapshot(state, actor, entity_id)
+        payload = state.assessment or {}
+        payload["agent"] = {
+            key: value for key, value in state.to_dict().items() if key != "assessment"
+        }
+        return payload
 else:
     app = None

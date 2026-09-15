@@ -1,6 +1,6 @@
 [
   {"id":"SEC-001","failure":"SEC unavailable","impact":"authoritative facts unavailable","expected_response":"ABSTAIN","regression_test":"test_sec_acquisition_fails_closed"},
-  {"id":"LLM-001","failure":"LLM timeout","impact":"narrative coverage reduced","expected_response":"REVIEW","regression_test":"test_external_failure_matrix_llm_timeout_degrades_to_review"},
+  {"id":"LLM-001","failure":"LLM timeout","impact":"narrative coverage reduced","expected_response":"REVIEW_OR_STRICTER","regression_test":"test_external_failure_matrix_llm_timeout_requires_review_without_weakening_abstain"},
   {"id":"PDF-001","failure":"malformed PDF","impact":"document evidence unavailable","expected_response":"ABSTAIN","regression_test":"test_upload_rejects_non_pdf"},
   {"id":"XBRL-001","failure":"conflicting restatement","impact":"fact ambiguity","expected_response":"REVIEW","regression_test":"test_companyfacts_restated_and_provenance"},
   {"id":"MODEL-001","failure":"model population mismatch","impact":"invalid model inference","expected_response":"SUPPRESS","regression_test":"test_applicability_router"},

@@ -29,9 +29,8 @@ export default function Error({
       <div className="notice" role="alert">
         <b>This panel could not be rendered.</b>
         <p>
-          A rendering error was caught before it could blank the page. The
-          underlying assessment is unaffected — retry to re-render, or reload to
-          start a fresh request.
+          A rendering error was caught before it could blank the page. Retry to
+          render the current view again, or reload to start a fresh request.
         </p>
         <div className="intakeActions">
           <button type="button" onClick={() => reset()}>

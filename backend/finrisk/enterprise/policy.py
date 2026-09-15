@@ -1,9 +1,12 @@
 from __future__ import annotations
 
+import math
+
 from .domain import PolicyVersion
 
 RISK_DIRECTIONS = frozenset({"high", "low"})
 _LIMIT_KEYS = ("warning", "critical")
+_THRESHOLD_KEYS = frozenset({"warning", "critical", "risk_direction"})
 
 
 def normalize_direction(value: object) -> str:
@@ -40,22 +43,52 @@ def validate_thresholds(thresholds: object) -> None:
     """
     if not isinstance(thresholds, dict):
         raise ValueError("thresholds must be an object keyed by KRI name")  # noqa: TRY004
+    if not thresholds:
+        raise ValueError("at least one KRI threshold is required")
     for name, limits in thresholds.items():
+        if not isinstance(name, str) or not name.strip() or name != name.strip():
+            raise ValueError("KRI names must be non-empty strings without outer whitespace")
         if not isinstance(limits, dict):
             raise ValueError(f"{name}: limits must be an object")  # noqa: TRY004
-        normalize_direction(limits.get("risk_direction"))
+        unknown = set(limits) - _THRESHOLD_KEYS
+        if unknown:
+            raise ValueError(f"{name}: unknown threshold keys: {sorted(unknown)}")
+        direction = normalize_direction(limits.get("risk_direction"))
         for bound in _LIMIT_KEYS:
             value = limits.get(bound)
             if value is None:
                 continue
-            if isinstance(value, bool) or not isinstance(value, (int, float)):
-                raise ValueError(f"{name}.{bound} must be a number or null")  # noqa: TRY004
+            if (
+                isinstance(value, bool)
+                or not isinstance(value, (int, float))
+                or not math.isfinite(value)
+            ):
+                raise ValueError(f"{name}.{bound} must be a number or null")
+        warning = limits.get("warning")
+        critical = limits.get("critical")
+        if warning is None and critical is None:
+            raise ValueError(f"{name}: warning or critical threshold is required")
+        if warning is not None and critical is not None:
+            correctly_ordered = warning <= critical if direction == "high" else warning >= critical
+            if not correctly_ordered:
+                relation = "warning <= critical" if direction == "high" else "warning >= critical"
+                raise ValueError(f"{name}: {direction}-risk thresholds require {relation}")
 
 
 def evaluate_kri(policy: PolicyVersion, metrics: dict[str, float | None]) -> list[dict]:
+    # Policies can pre-date the API boundary validation or be constructed by a
+    # library caller.  Revalidate at evaluation time so malformed persisted data
+    # can never fail open as `within_appetite`.
+    validate_thresholds(policy.thresholds)
     results = []
     for name, limits in policy.thresholds.items():
         value = metrics.get(name)
+        if value is not None and (
+            isinstance(value, bool)
+            or not isinstance(value, (int, float))
+            or not math.isfinite(value)
+        ):
+            raise ValueError(f"{name}: metric must be a finite number or null")
         warning = limits.get("warning")
         critical = limits.get("critical")
         direction = normalize_direction(limits.get("risk_direction"))

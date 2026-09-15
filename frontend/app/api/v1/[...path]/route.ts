@@ -4,12 +4,12 @@ import {
   isValidSegment,
   selectRequestHeaders,
   selectResponseHeaders,
+  upstreamTimeoutMs,
 } from "../../../../lib/proxy.mjs";
 
 // The allowlists and the `content-length` rule live in `lib/proxy.mjs` so they
 // can be unit-tested; see that module for why each entry is there.
 const ALLOWED = new Set(ALLOWED_METHODS);
-const UPSTREAM_TIMEOUT_MS = 10_000;
 
 function resolveUpstream(): URL | null {
   const upstream = process.env.FINRISK_API_UPSTREAM;
@@ -73,7 +73,7 @@ async function proxy(request: NextRequest, context: { params: Promise<{ path: st
       headers,
       body,
       redirect: "manual",
-      signal: AbortSignal.timeout(UPSTREAM_TIMEOUT_MS),
+      signal: AbortSignal.timeout(upstreamTimeoutMs(path)),
     });
     if (!response.ok) {
       // The body is replaced, so the upstream's length must not be relayed.

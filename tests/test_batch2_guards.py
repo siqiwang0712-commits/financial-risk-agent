@@ -191,12 +191,43 @@ def test_providers_expose_prompt_version():
 
 
 # --- OPS-01: logging is configured --------------------------------------------
-def test_configure_logging_attaches_a_handler():
+def test_configure_logging_attaches_a_handler(monkeypatch):
     import logging
 
-    configure_logging("INFO")
+    from finrisk.enterprise import observability
+
     root = logging.getLogger()
-    assert root.handlers and root.level <= logging.INFO
+    original_handlers = list(root.handlers)
+    original_level = root.level
+    root.handlers = []
+    monkeypatch.setattr(observability, "_logging_configured", False)
+    try:
+        configure_logging("INFO")
+        assert len(root.handlers) == 1
+        assert root.level == logging.INFO
+    finally:
+        root.handlers = original_handlers
+        root.setLevel(original_level)
+
+
+def test_configure_logging_preserves_host_owned_handlers(monkeypatch):
+    import logging
+
+    from finrisk.enterprise import observability
+
+    root = logging.getLogger()
+    original_handlers = list(root.handlers)
+    original_level = root.level
+    host_handlers = [logging.NullHandler(), logging.NullHandler()]
+    root.handlers = host_handlers
+    monkeypatch.setattr(observability, "_logging_configured", False)
+    try:
+        configure_logging("DEBUG")
+        assert root.handlers == host_handlers
+        assert root.level == original_level
+    finally:
+        root.handlers = original_handlers
+        root.setLevel(original_level)
 
 
 # --- DAT-01 / DAT-02: prior-year evidence with value and unit ------------------

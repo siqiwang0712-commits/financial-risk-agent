@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import math
+
 
 def _numeric(source: dict, key: str) -> float | None:
     """Read a numeric field, treating `None` as absent.
@@ -12,7 +14,11 @@ def _numeric(source: dict, key: str) -> float | None:
     produced for an absent key, without the crash.
     """
     value = source.get(key)
-    if isinstance(value, bool) or not isinstance(value, (int, float)):
+    if (
+        isinstance(value, bool)
+        or not isinstance(value, (int, float))
+        or not math.isfinite(value)
+    ):
         return None
     return value
 

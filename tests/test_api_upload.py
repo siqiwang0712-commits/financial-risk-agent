@@ -155,6 +155,9 @@ def test_analysis_timeout_cleans_temporary_file(monkeypatch):
     )
     assert response.status_code == 504
     assert seen_paths
+    deadline = time.monotonic() + 1
+    while any(path.exists() for path in seen_paths) and time.monotonic() < deadline:
+        time.sleep(0.01)
     assert all(not path.exists() for path in seen_paths)
 
 

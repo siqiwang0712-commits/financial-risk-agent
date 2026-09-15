@@ -13,6 +13,18 @@
 
 /** Reads and writes are the only methods the Workbench performs. */
 export const ALLOWED_METHODS = Object.freeze(["GET", "POST"]);
+export const DEFAULT_UPSTREAM_TIMEOUT_MS = 10_000;
+export const ANALYSIS_UPSTREAM_TIMEOUT_MS = 125_000;
+
+/** Long-running document analysis must outlive the browser's 120s deadline. */
+export function upstreamTimeoutMs(segments) {
+  return Array.isArray(segments) &&
+    segments.length === 2 &&
+    segments[0] === "documents" &&
+    segments[1] === "analyze"
+    ? ANALYSIS_UPSTREAM_TIMEOUT_MS
+    : DEFAULT_UPSTREAM_TIMEOUT_MS;
+}
 
 /** Only the headers the upstream actually needs. */
 export const FORWARDED_REQUEST_HEADERS = Object.freeze([

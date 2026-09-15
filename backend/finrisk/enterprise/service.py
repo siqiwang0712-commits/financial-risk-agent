@@ -122,10 +122,9 @@ class EnterpriseRiskService:
                 raise ValueError("a verified server-side evidence path is required")
         if target is RiskCaseStatus.RESOLVED and not case.resolution_evidence:
             raise ValueError("resolution evidence is required")
+        expected_updated_at = case.updated_at
         previous, current = transition_case(case, target)
-        # Compare-and-set against the status that was read, so a concurrent
-        # transition cannot be silently overwritten (see the repository contract).
-        saved = self.repository.save_case_transition(case, previous)
+        saved = self.repository.save_case_transition(case, previous, expected_updated_at)
         self._audit(
             case.organization_id,
             principal.user_id,
@@ -143,16 +142,22 @@ class EnterpriseRiskService:
             raise ValueError("due_date must be an ISO calendar date") from exc
         case = self.repository.get_case(principal.organization_id, case_id)
         authorize(principal, "write", case.organization_id)
+        expected_updated_at = case.updated_at
         payload = add_mitigation_action(case, principal.user_id, description, owner_id, due_date)
-        saved = self.repository.save(case)
+        saved = self.repository.save_case_transition(
+            case, case.status, expected_updated_at
+        )
         self._audit(case.organization_id, principal.user_id, "risk_case.action_added", "risk_case", case.id, payload)
         return saved
 
     def add_resolution_evidence(self, principal: Principal, case_id: str, evidence_id: str) -> RiskCase:
         case = self.repository.get_case(principal.organization_id, case_id)
         authorize(principal, "review", case.organization_id)
+        expected_updated_at = case.updated_at
         record_resolution_evidence(case, evidence_id)
-        saved = self.repository.save(case)
+        saved = self.repository.save_case_transition(
+            case, case.status, expected_updated_at
+        )
         self._audit(case.organization_id, principal.user_id, "risk_case.resolution_evidence_added", "risk_case", case.id, {"evidence_id": evidence_id})
         return saved
 
@@ -160,8 +165,9 @@ class EnterpriseRiskService:
         case = self.repository.get_case(principal.organization_id, case_id)
         authorize(principal, "review", case.organization_id)
         previous = case.status
+        expected_updated_at = case.updated_at
         payload = reopen_case(case, principal.user_id, reason)
-        saved = self.repository.save_case_transition(case, previous)
+        saved = self.repository.save_case_transition(case, previous, expected_updated_at)
         self._audit(case.organization_id, principal.user_id, "risk_case.reopened", "risk_case", case.id, payload)
         return saved
 
@@ -214,8 +220,11 @@ class EnterpriseRiskService:
     ) -> RiskCase:
         case = self.repository.get_case(principal.organization_id, case_id)
         authorize(principal, "review", case.organization_id)
+        expected_updated_at = case.updated_at
         payload = record_override(case, principal.user_id, original, override, reason)
-        saved = self.repository.save(case)
+        saved = self.repository.save_case_transition(
+            case, case.status, expected_updated_at
+        )
         self._audit(
             case.organization_id,
             principal.user_id,

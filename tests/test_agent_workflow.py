@@ -116,14 +116,15 @@ def test_hallucinated_claim_is_rejected_before_contradiction():
     assert state.assessment["contradictions"] == []
 
 
-def test_malformed_provider_preserves_numeric_result_but_requires_review():
+def test_malformed_provider_does_not_weaken_an_existing_abstention():
     data = fixture()
     state = FinancialRiskAgent(ROOT, MalformedProvider()).run(
         "Example", 2025, data["current"], pages={1: "text"}
     )
-    assert state.status == AgentStatus.REVIEW_REQUIRED
-    assert state.decision == "REVIEW"
+    assert state.status == AgentStatus.INSUFFICIENT_EVIDENCE
+    assert state.decision == "ABSTAIN"
     assert "malformed structured LLM output" in state.warnings[0]
     assert state.assessment["failure_state"]["review_failures"] == [
         "llm_unavailable"
     ]
+    assert state.assessment["review_escalation_reason"] == "EVIDENCE_MISSING"

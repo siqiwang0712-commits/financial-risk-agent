@@ -31,12 +31,18 @@ test('pilot payload requires rows and annotation_status',()=>{
   assert.equal(isPilotPayload({snapshot:'v0.3.0',annotation_status:'pilot'}),false);
   assert.equal(isPilotPayload({}),false);
   assert.equal(isPilotPayload(null),false);
+  const goodRow={entity:'Northstar',decision:'FLAG',score:70,coverage:0.8,reliability:'UNCALIBRATED',filing:'n-2025'};
+  assert.equal(isPilotPayload({snapshot:'v',annotation_status:'pilot',rows:[goodRow]}),true);
+  assert.equal(isPilotPayload({snapshot:'v',annotation_status:'pilot',rows:[{...goodRow,entity:{}}]}),false);
+  assert.equal(isPilotPayload({snapshot:'v',annotation_status:'pilot',rows:[{...goodRow,score:Number.NaN}]}),false);
 });
 
 test('assessment payload rejects bodies that would crash a panel',()=>{
   const good={
-    company:'Northstar',risk_level:'Critical',dimensions:{},
-    confidence_components:{},missing_information:[],
+    company:'Northstar',reporting_period:'2025',overall_score:70,
+    risk_level:'Critical',final_decision:'FLAG',reliability_status:'UNCALIBRATED',
+    evidence_quality:0.8,evidence_coverage:0.7,dimensions:{},
+    confidence_components:{core_data_completeness:0.9},missing_information:[],
   };
   assert.equal(isAssessmentPayload(good),true);
   // `{}` - the body a swallowed error produces.
@@ -51,4 +57,9 @@ test('assessment payload rejects bodies that would crash a panel',()=>{
   assert.equal(isAssessmentPayload({...good,missing_information:null}),false);
   assert.equal(isAssessmentPayload({...good,company:undefined}),false);
   assert.equal(isAssessmentPayload({...good,risk_level:undefined}),false);
+  assert.equal(isAssessmentPayload({...good,reporting_period:{}}),false);
+  assert.equal(isAssessmentPayload({...good,evidence_coverage:Number.NaN}),false);
+  assert.equal(isAssessmentPayload({...good,confidence_components:{bad:'0.5'}}),false);
+  assert.equal(isAssessmentPayload({...good,missing_information:[{}]}),false);
+  assert.equal(isAssessmentPayload({...good,dimensions:{liquidity:null}}),false);
 });

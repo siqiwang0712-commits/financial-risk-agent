@@ -33,6 +33,16 @@ export function isPilotPayload(body) {
   if (!isRecord(body)) return false;
   return (
     Array.isArray(body.rows) &&
+    body.rows.every(
+      (row) =>
+        isRecord(row) &&
+        typeof row.entity === "string" &&
+        typeof row.decision === "string" &&
+        (row.score === null || isFiniteNumber(row.score)) &&
+        (row.coverage === null || isFiniteNumber(row.coverage)) &&
+        typeof row.reliability === "string" &&
+        typeof row.filing === "string",
+    ) &&
     typeof body.snapshot === "string" &&
     typeof body.annotation_status === "string"
   );
@@ -51,11 +61,31 @@ export function isPilotPayload(body) {
  */
 export function isAssessmentPayload(body) {
   if (!isRecord(body)) return false;
+  const dimensionsValid =
+    isRecord(body.dimensions) &&
+    Object.values(body.dimensions).every(
+      (dimension) =>
+        isRecord(dimension) &&
+        (dimension.score === null || isFiniteNumber(dimension.score)) &&
+        isFiniteNumber(dimension.coverage) &&
+        typeof dimension.level === "string" &&
+        typeof dimension.trend === "string" &&
+        Array.isArray(dimension.key_drivers) &&
+        dimension.key_drivers.every((item) => typeof item === "string"),
+    );
   return (
     typeof body.company === "string" &&
+    typeof body.reporting_period === "string" &&
+    (body.overall_score === null || isFiniteNumber(body.overall_score)) &&
     typeof body.risk_level === "string" &&
-    isRecord(body.dimensions) &&
+    typeof body.final_decision === "string" &&
+    typeof body.reliability_status === "string" &&
+    isFiniteNumber(body.evidence_quality) &&
+    isFiniteNumber(body.evidence_coverage) &&
+    dimensionsValid &&
     isRecord(body.confidence_components) &&
-    Array.isArray(body.missing_information)
+    Object.values(body.confidence_components).every(isFiniteNumber) &&
+    Array.isArray(body.missing_information) &&
+    body.missing_information.every((item) => typeof item === "string")
   );
 }

@@ -7,6 +7,9 @@ import {
   isValidSegment,
   selectRequestHeaders,
   selectResponseHeaders,
+  upstreamTimeoutMs,
+  ANALYSIS_UPSTREAM_TIMEOUT_MS,
+  DEFAULT_UPSTREAM_TIMEOUT_MS,
 } from '../lib/proxy.mjs';
 
 // --- P0 regression: the error branch must not relay content-length ----------
@@ -84,4 +87,11 @@ test('traversal and encoded separators are rejected',()=>{
 
 test('the request allowlist does not grow by accident',()=>{
   assert.deepEqual([...FORWARDED_REQUEST_HEADERS],['content-type','accept','x-api-key','x-correlation-id']);
+});
+
+test('document analysis receives the long upstream timeout',()=>{
+  assert.equal(upstreamTimeoutMs(['documents','analyze']),ANALYSIS_UPSTREAM_TIMEOUT_MS);
+  assert.ok(ANALYSIS_UPSTREAM_TIMEOUT_MS>120_000);
+  assert.equal(upstreamTimeoutMs(['public-pilot']),DEFAULT_UPSTREAM_TIMEOUT_MS);
+  assert.equal(upstreamTimeoutMs(null),DEFAULT_UPSTREAM_TIMEOUT_MS);
 });

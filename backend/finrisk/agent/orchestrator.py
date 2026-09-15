@@ -37,6 +37,13 @@ from .synthesis import synthesize_conclusions
 from .verification import verify_conclusions
 
 
+def _review_adjusted_decision(current: str, recommended: str | None) -> str:
+    """Apply a critic recommendation without weakening a stricter disposition."""
+    if recommended == "REVIEW" and current != "ABSTAIN":
+        return "REVIEW"
+    return current
+
+
 class FinancialRiskAgent:
     """Public orchestration boundary. Trace records actions and evidence, never hidden reasoning."""
 
@@ -311,18 +318,12 @@ class FinancialRiskAgent:
             recommended = state.role_review.get("recommended_decision")
             decision_before_review = state.decision
             if recommended == "REVIEW":
-                # The critic may only tighten the disposition. This can move an
-                # ABSTAIN to REVIEW, which matches the checked-in failure register
-                # (failure_lab/incidents.json LLM-001 expects REVIEW for an LLM
-                # timeout). `failure_aware_decision` already guarantees that a
-                # *failure signal* can never weaken an ABSTAIN; this step records the
-                # human-review requirement on top of it. The reason code keeps
-                # "evidence missing" and "evidence conflicting" distinguishable,
-                # which the previous code could not express.
                 state.assessment["review_escalation_reason"] = (
                     "EVIDENCE_CONFLICT" if assessment.contradictions else "EVIDENCE_MISSING"
                 )
-                state.decision = recommended
+                # REVIEW tightens PASS/FLAG but cannot weaken an existing
+                # ABSTAIN.  The review requirement is still recorded above.
+                state.decision = _review_adjusted_decision(state.decision, recommended)
             state.decision_trace["initial_fusion_decision"] = fusion.decision.value
             state.decision_trace["failure_aware_decision"] = failure_decision["decision"]
             state.decision_trace["review_decision"] = state.decision

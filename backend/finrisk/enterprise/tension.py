@@ -75,11 +75,11 @@ def classify_tension(
         classification, confidence = "Weakly Supported", 0.6
     else:
         classification, confidence = "Insufficient Evidence", 0.25
-    resolved_reason = (
+    resolved_reason = ClaimConsistencyReasonCode(
         reason_code
         if reason_code is not None
         else CLASSIFICATION_REASON_CODES[classification].value
-    )
+    ).value
     return DisclosureTension(
         claim.claim,
         supporting,

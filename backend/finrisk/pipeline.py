@@ -311,6 +311,23 @@ class FinRiskPipeline:
         numeric_evidence=[e for refs in source_map.values() for e in refs]
         conf=confidence(current,verified,models,previous is not None,numeric_evidence)
         components=confidence_components(current,verified,models,previous is not None,numeric_evidence)
+        extracted_claim_count = len(verified)
+        verified_claim_count = sum(item.verified for item in verified)
+        claim_verification_summary = {
+            "extracted_claim_count": extracted_claim_count,
+            "verified_claim_count": verified_claim_count,
+            "unsupported_claim_count": extracted_claim_count - verified_claim_count,
+            "verified_claim_coverage": (
+                round(verified_claim_count / extracted_claim_count, 3)
+                if extracted_claim_count
+                else None
+            ),
+            "unsupported_claim_rate": (
+                round((extracted_claim_count - verified_claim_count) / extracted_claim_count, 3)
+                if extracted_claim_count
+                else None
+            ),
+        }
         material_groups = [
             signal.input_provenance.get(name, [])
             for signal in signals
@@ -353,4 +370,4 @@ class FinRiskPipeline:
         for category in dimensions:nodes.append({"id":f"dimension:{category}","type":"dimension","label":category});edges.append({"from":f"dimension:{category}","to":"overall","relation":"weighted_into"})
         nodes.append({"id":"overall","type":"assessment","label":"overall risk"})
         graph={"nodes":nodes,"edges":edges}
-        return Assessment(company,str(year),score,level,conf,dimensions,metrics,models,signals,contradictions,missing,confidence_components=components,evidence_graph=graph,evidence_quality=conf,evidence_coverage=evidence_coverage,reliability_status="UNCALIBRATED",claim_consistency_evaluations=claim_evaluations,disclosure_tensions=tensions,rule_coverage=self.rules.coverage.to_dict())
+        return Assessment(company,str(year),score,level,conf,dimensions,metrics,models,signals,contradictions,missing,confidence_components=components,evidence_graph=graph,evidence_quality=conf,evidence_coverage=evidence_coverage,reliability_status="UNCALIBRATED",claim_consistency_evaluations=claim_evaluations,disclosure_tensions=tensions,claim_verification_summary=claim_verification_summary,rule_coverage=self.rules.coverage.to_dict())

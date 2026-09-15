@@ -44,6 +44,26 @@ def _metric(name, value, formula, inputs, year, reason=None):
 
 
 def calculate_metrics(v: dict[str, float | None], year: int, previous: dict[str, float | None] | None = None) -> dict[str, Metric]:
+    # Direct callers can bypass API validation. Invalid numerics are unavailable
+    # inputs, never NaN/Infinity values that silently disable comparisons or
+    # produce invalid JSON.
+    v = {
+        key: value
+        if not isinstance(value, bool)
+        and isinstance(value, (int, float))
+        and math.isfinite(value)
+        else None
+        for key, value in v.items()
+    }
+    if previous is not None:
+        previous = {
+            key: value
+            if not isinstance(value, bool)
+            and isinstance(value, (int, float))
+            and math.isfinite(value)
+            else None
+            for key, value in previous.items()
+        }
     debt, debt_keys = resolve_total_debt(v)
     capex = v.get("capital_expenditure")
     fcf = None if v.get("operating_cash_flow") is None or capex is None else v["operating_cash_flow"] - abs(capex)
@@ -53,6 +73,8 @@ def calculate_metrics(v: dict[str, float | None], year: int, previous: dict[str,
     ebit = v.get("ebit")
     if ebit is None:
         ebit = v.get("operating_income")
+    interest_expense = v.get("interest_expense")
+    interest_cost = None if interest_expense is None else abs(interest_expense)
     # Cash conversion from earnings is undefined when reported earnings are not
     # positive: a positive CFO over a negative NI yields a large negative ratio
     # (false "weak conversion" for a company that is in fact converting cash),
@@ -93,7 +115,7 @@ def calculate_metrics(v: dict[str, float | None], year: int, previous: dict[str,
       "debt_to_assets": (_safe_div(debt, v.get("total_assets")), "total_debt / total_assets", {**{key:v.get(key) for key in debt_keys},"total_assets":v.get("total_assets")}),
       "liabilities_to_assets": (_safe_div(v.get("total_liabilities"),v.get("total_assets")), "total_liabilities / total_assets", {"total_liabilities":v.get("total_liabilities"),"total_assets":v.get("total_assets")}),
       "net_debt": (None if debt is None or v.get("cash") is None else debt-v["cash"], "total_debt - cash", {**{key:v.get(key) for key in debt_keys},"cash":v.get("cash")}),
-      "interest_coverage": (_safe_div(ebit, v.get("interest_expense")), "EBIT / interest_expense", {"EBIT":ebit,"interest_expense":v.get("interest_expense")}),
+      "interest_coverage": (_safe_div(ebit, interest_cost), "EBIT / abs(interest_expense)", {"EBIT":ebit,"interest_expense":interest_expense}),
       "debt_to_ebitda": (debt_to_ebitda, "total_debt / EBITDA", {**{key:v.get(key) for key in debt_keys},"EBITDA":ebitda}),
       "gross_margin": (_safe_div(v.get("gross_profit"),v.get("revenue")), "gross_profit / revenue", {"gross_profit":v.get("gross_profit"),"revenue":v.get("revenue")}),
       "operating_margin": (_safe_div(v.get("operating_income"),v.get("revenue")), "operating_income / revenue", {"operating_income":v.get("operating_income"),"revenue":v.get("revenue")}),

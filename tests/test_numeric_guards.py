@@ -25,6 +25,14 @@ def test_ebit_falls_back_to_operating_income_when_ebit_is_present_but_none():
     assert metrics["interest_coverage"].value == 6.8
 
 
+def test_interest_coverage_is_independent_of_expense_sign_convention():
+    positive = calculate_metrics({"ebit": 60, "interest_expense": 10}, 2025)
+    negative = calculate_metrics({"ebit": 60, "interest_expense": -10}, 2025)
+    assert positive["interest_coverage"].value == 6
+    assert negative["interest_coverage"].value == 6
+    assert negative["interest_coverage"].formula == "EBIT / abs(interest_expense)"
+
+
 # --- FIN-07: a non-finite quotient must not leak as `inf` ---------------------
 def test_safe_div_rejects_non_finite_results():
     assert _safe_div(1e9, 1e-300) is None
@@ -160,3 +168,36 @@ def test_duplicate_signal_guard_rejects_a_reintroduced_duplicate():
             raise AssertionError("guard did not reject a duplicate signal")
     finally:
         pipeline.rules.rules.pop()
+
+
+def test_metric_calculation_never_emits_nonfinite_values_from_direct_inputs():
+    metrics = calculate_metrics(
+        {
+            "revenue": float("nan"),
+            "operating_cash_flow": float("inf"),
+            "capital_expenditure": 10,
+            "total_debt": True,
+        },
+        2025,
+    )
+    assert metrics["fcf_margin"].value is None
+    assert metrics["free_cash_flow"].value is None
+    assert metrics["debt_to_assets"].value is None
+
+
+def test_financial_models_reject_boolean_inputs_as_invalid():
+    result = ohlson_o(
+        {
+            "total_assets": True,
+            "total_liabilities": 10,
+            "working_capital": 5,
+            "current_liabilities": 5,
+            "current_assets": 10,
+            "net_income": 1,
+            "funds_from_operations": 1,
+            "prior_net_income": 1,
+            "gnp_price_index": 1,
+        }
+    )
+    assert result.output is None
+    assert result.interpretation == "Invalid input domain"

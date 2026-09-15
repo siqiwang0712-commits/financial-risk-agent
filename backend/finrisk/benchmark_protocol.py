@@ -6,6 +6,22 @@ from collections import defaultdict
 REVIEW_STATES = {"pending", "reviewer_1", "reviewer_2", "adjudicated"}
 
 
+def _validate_binary_labels(labels: list[int]) -> None:
+    if any(isinstance(label, bool) or label not in {0, 1} for label in labels):
+        raise ValueError("labels must contain only integer 0 or 1")
+
+
+def _validate_feature_matrix(features: list[list[float]]) -> None:
+    if any(
+        isinstance(value, bool)
+        or not isinstance(value, (int, float))
+        or not math.isfinite(value)
+        for row in features
+        for value in row
+    ):
+        raise ValueError("features must contain only finite numeric values")
+
+
 def validate_company_year_manifest(rows: list[dict]) -> dict:
     required = {
         "observation_id",
@@ -99,6 +115,20 @@ def fit_logistic_baseline(
         or len({len(row) for row in features}) != 1
     ):
         raise ValueError("aligned rectangular training data required")
+    if not features[0]:
+        raise ValueError("training data must contain at least one feature")
+    _validate_feature_matrix(features)
+    _validate_binary_labels(labels)
+    if (
+        isinstance(iterations, bool)
+        or not isinstance(iterations, int)
+        or iterations < 1
+        or isinstance(rate, bool)
+        or not isinstance(rate, (int, float))
+        or not math.isfinite(rate)
+        or rate <= 0
+    ):
+        raise ValueError("iterations and learning rate must be positive and finite")
     weights = [0.0] * len(features[0])
     intercept = 0.0
     for _ in range(iterations):
@@ -132,6 +162,18 @@ def fit_logistic_baseline(
 
 
 def predict_logistic(model: dict, features: list[list[float]]) -> list[float]:
+    weights = model.get("weights")
+    intercept = model.get("intercept")
+    if (
+        not isinstance(weights, list)
+        or not weights
+        or isinstance(intercept, bool)
+        or not isinstance(intercept, (int, float))
+        or not math.isfinite(intercept)
+        or any(len(row) != len(weights) for row in features)
+    ):
+        raise ValueError("model and feature dimensions must be aligned")
+    _validate_feature_matrix([weights, *features])
     return [
         1
         / (
@@ -162,6 +204,8 @@ def fit_decision_stump(features: list[list[float]], labels: list[int]) -> dict:
     width = len(features[0])
     if width == 0 or any(len(row) != width for row in features):
         raise ValueError("features must be a non-empty rectangular matrix")
+    _validate_feature_matrix(features)
+    _validate_binary_labels(labels)
     best = None
     for feature in range(width):
         for threshold in sorted({row[feature] for row in features}):
@@ -181,6 +225,27 @@ def selective_metrics(
     probabilities: list[float | None],
     false_negative_cost: float = 5.0,
 ) -> dict:
+    if len(labels) != len(probabilities):
+        raise ValueError("aligned labels and probabilities are required")
+    _validate_binary_labels(labels)
+    if (
+        isinstance(false_negative_cost, bool)
+        or not isinstance(false_negative_cost, (int, float))
+        or not math.isfinite(false_negative_cost)
+        or false_negative_cost < 0
+    ):
+        raise ValueError("false-negative cost must be finite and non-negative")
+    if any(
+        probability is not None
+        and (
+            isinstance(probability, bool)
+            or not isinstance(probability, (int, float))
+            or not math.isfinite(probability)
+            or not 0 <= probability <= 1
+        )
+        for probability in probabilities
+    ):
+        raise ValueError("probabilities must be None or finite values within [0, 1]")
     decided = [
         (label, probability)
         for label, probability in zip(labels, probabilities, strict=True)
@@ -229,7 +294,14 @@ def calibration_curve(
     # vanish, so the curve silently omitted rows instead of reporting them.
     # `evaluation.expected_calibration_error` already rejects both of these; the
     # two same-purpose helpers now agree on when input is invalid.
-    if any(not 0 <= probability <= 1 for probability in probabilities):
+    _validate_binary_labels(labels)
+    if any(
+        isinstance(probability, bool)
+        or not isinstance(probability, (int, float))
+        or not math.isfinite(probability)
+        or not 0 <= probability <= 1
+        for probability in probabilities
+    ):
         raise ValueError("probabilities must be within [0, 1]")
     result = []
     for index in range(bins):
