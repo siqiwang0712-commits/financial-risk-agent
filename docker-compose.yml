@@ -20,6 +20,7 @@ services:
       FINRISK_LLM_ENDPOINT: ${FINRISK_LLM_ENDPOINT:-https://api.openai.com/v1/chat/completions}
       FINRISK_LLM_MAX_RETRIES: ${FINRISK_LLM_MAX_RETRIES:-2}
       FINRISK_LLM_MAX_TOKENS: ${FINRISK_LLM_MAX_TOKENS:-1200}
+      FINRISK_ANALYSIS_TIMEOUT_SECONDS: ${FINRISK_ANALYSIS_TIMEOUT_SECONDS:-60}
       FINRISK_INPUT_COST_PER_MILLION: ${FINRISK_INPUT_COST_PER_MILLION:-0}
       FINRISK_OUTPUT_COST_PER_MILLION: ${FINRISK_OUTPUT_COST_PER_MILLION:-0}
       OPENAI_API_KEY: ${OPENAI_API_KEY:-}
@@ -30,10 +31,14 @@ services:
       postgres:
         condition: service_healthy
   web:
-    build: {context: frontend}
+    build:
+      context: frontend
+      args:
+        NEXT_PUBLIC_FINRISK_ANALYSIS_TIMEOUT_SECONDS: ${FINRISK_ANALYSIS_TIMEOUT_SECONDS:-60}
     ports: ["3000:3000"]
     depends_on: [api]
     environment:
       FINRISK_API_UPSTREAM: http://api:8000
+      FINRISK_ANALYSIS_TIMEOUT_SECONDS: ${FINRISK_ANALYSIS_TIMEOUT_SECONDS:-60}
 volumes:
   finrisk-postgres:

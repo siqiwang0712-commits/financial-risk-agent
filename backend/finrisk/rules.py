@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import math
 from pathlib import Path
 
 from .domain import RuleSignal
@@ -8,17 +9,47 @@ from .domain import RuleSignal
 OPS={"<":lambda a,b:a<b,"<=":lambda a,b:a<=b,">":lambda a,b:a>b,">=":lambda a,b:a>=b,"==":lambda a,b:a==b,"!=":lambda a,b:a!=b}
 
 
+def _disabled_rules() -> dict[str, str]:
+    path = Path(__file__).resolve().parents[2] / "rules" / "disabled_rules.json"
+    return json.loads(path.read_text(encoding="utf-8")).get("rules", {}) if path.exists() else {}
+
+
+DISABLED_RULES = _disabled_rules()
+
+
 class RuleEngine:
     def __init__(self, rules: list[dict]):
         ids=[r["id"] for r in rules]
         if len(ids)!=len(set(ids)): raise ValueError("Duplicate rule IDs")
+        required_rule = {"id", "category", "severity", "conditions", "effect", "rationale"}
         for rule in rules:
+            missing = required_rule - set(rule)
+            if missing: raise ValueError(f'Rule {rule.get("id", "<unknown>")} missing fields: {sorted(missing)}')
+            if not isinstance(rule["id"], str) or not rule["id"].strip(): raise ValueError("Rule ID must be a non-empty string")
             if rule.get("aggregation","max") not in {"max","additive"}:raise ValueError(f'Invalid aggregation for {rule["id"]}')
-        self.rules=rules
+            if not isinstance(rule["category"], str) or not rule["category"].strip(): raise ValueError(f'Invalid category for {rule["id"]}')
+            if not isinstance(rule["severity"], str) or not rule["severity"].strip(): raise ValueError(f'Invalid severity for {rule["id"]}')
+            if not isinstance(rule["conditions"], list) or not rule["conditions"]: raise ValueError(f'Rule {rule["id"]} requires conditions')
+            effect = rule["effect"]
+            delta = effect.get("score_delta") if isinstance(effect, dict) else None
+            if isinstance(delta, bool) or not isinstance(delta, (int, float)) or not math.isfinite(delta): raise ValueError(f'Invalid score_delta for {rule["id"]}')
+            for condition in rule["conditions"]:
+                if not isinstance(condition, dict) or set(condition) != {"metric", "operator", "value"}: raise ValueError(f'Invalid condition schema for {rule["id"]}')
+                if not isinstance(condition["metric"], str) or not condition["metric"]: raise ValueError(f'Invalid metric for {rule["id"]}')
+                if condition["operator"] not in OPS: raise ValueError(f'Invalid operator for {rule["id"]}')
+                value=condition["value"]
+                if isinstance(value, bool):
+                    if condition["operator"] not in {"==", "!="}: raise ValueError(f'Boolean condition requires equality operator for {rule["id"]}')
+                elif not isinstance(value,(int,float)) or not math.isfinite(value): raise ValueError(f'Invalid threshold for {rule["id"]}')
+        dead = unproducible_rule_conditions(rules)
+        if dead: raise ValueError(f"unproducible rule conditions: {dead}")
+        self.rules=[rule for rule in rules if rule.get("enabled", True) and rule["id"] not in DISABLED_RULES]
 
     @classmethod
     def from_file(cls,path):
-        return cls(json.loads(Path(path).read_text(encoding="utf-8"))["rules"])
+        path = Path(path)
+        rules = json.loads(path.read_text(encoding="utf-8"))["rules"]
+        return cls(rules)
 
     def evaluate(self, facts: dict[str,float|str|bool|None]) -> list[RuleSignal]:
         out=[]
@@ -63,14 +94,14 @@ def producible_fact_names() -> set[str]:
 def unproducible_rule_conditions(rules: list[dict]) -> list[tuple[str, str]]:
     """`(rule_id, metric)` pairs whose metric has no producer in the codebase.
 
-    Such a rule can never fire. This is a diagnostic rather than a startup
-    assertion: the checked-in rule set contains a number of these and failing the
-    boot would be a bigger regression than the dead rules themselves.
+    Disabled rules are retained solely as an explicit audit record.  Any enabled
+    rule without a producer is rejected at startup and in CI.
     """
     producible = producible_fact_names()
     return [
         (rule["id"], condition["metric"])
         for rule in rules
+        if rule.get("enabled", True) and rule["id"] not in DISABLED_RULES
         for condition in rule["conditions"]
         if condition["metric"] not in producible
     ]

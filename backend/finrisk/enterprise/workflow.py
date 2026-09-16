@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from .domain import RiskCase, RiskCaseStatus, now_iso
+from .domain import RiskCase, RiskCaseStatus, new_id, now_iso
 
 TRANSITIONS = {
     RiskCaseStatus.DETECTED: {RiskCaseStatus.OPEN, RiskCaseStatus.CLOSED},
@@ -50,7 +50,7 @@ def add_mitigation_action(
     if not description.strip() or not owner_id.strip() or not due_date.strip():
         raise ValueError("description, owner and due date are required")
     action = {
-        "id": f"action_{len(case.actions) + 1}",
+        "id": new_id("action"),
         "description": description,
         "owner_id": owner_id,
         "due_date": due_date,

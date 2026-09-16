@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import math
 from pathlib import Path
 
 from ..domain import Evidence
@@ -18,13 +19,18 @@ def ingest_pdf(path: Path, document: str, fiscal_year: int) -> dict:
             "No reliable financial line items were extracted; manual review is required"
         )
     current, previous, sources, candidates, review_issues = {}, {}, {}, {}, []
+    selected_verification: list[bool] = []
     for item in extracted:
         candidates.setdefault((item.fiscal_year, item.line_item), []).append(item)
     prior_year = max(
         (year for year, _ in candidates if year < fiscal_year), default=None
     )
+    # The deterministic trend / forensic models require consecutive periods.
+    # Retain the actual comparative year in provenance but do not silently treat
+    # (for example) FY2022 as FY2024's "previous" input.
+    comparable_prior_year = prior_year if prior_year == fiscal_year - 1 else None
     for (candidate_year, key), items in candidates.items():
-        if candidate_year not in {fiscal_year, prior_year}:
+        if candidate_year not in {fiscal_year, comparable_prior_year}:
             continue
         ranked = sorted(
             items,
@@ -51,6 +57,21 @@ def ingest_pdf(path: Path, document: str, fiscal_year: int) -> dict:
             selected_value = usable.pop()
             target[key] = selected_value
             selected = next(item for item in ranked if item.value == selected_value)
+            source_page = " ".join(pages.get(selected.page, "").split()).casefold()
+            source_row = " ".join(selected.source_text.split()).casefold()
+            # Numeric proof requires more than merely locating a page. The row
+            # must reconcile exactly to the extracted page, belong to a known
+            # statement, carry a finite value, and be the sole top-ranked value
+            # for this line item/year. Ambiguous candidates remain `located` and
+            # therefore cannot satisfy the proof gate.
+            verified = (
+                bool(source_row)
+                and source_row in source_page
+                and selected.statement != "unknown"
+                and selected.value is not None
+                and math.isfinite(selected.value)
+            )
+            selected_verification.append(verified)
             # Evidence is recorded for the prior year as well. Every `*_growth` /
             # `*_change` reference resolves `(key, fiscal_year - 1)` against this
             # map, so only building the current year left those refs permanently
@@ -64,8 +85,8 @@ def ingest_pdf(path: Path, document: str, fiscal_year: int) -> dict:
                     selected.source_text,
                     selected.fiscal_year,
                     selected.confidence,
-                    False,
-                    "located",
+                    verified,
+                    "verified" if verified else "located",
                     value=selected.value,
                     unit=selected.currency,
                 )
@@ -86,7 +107,9 @@ def ingest_pdf(path: Path, document: str, fiscal_year: int) -> dict:
     extraction = {
         "candidate_count": len(extracted),
         "prior_year": prior_year,
-        "review_required": True,
+        "previous_year": comparable_prior_year,
+        "previous_is_consecutive": comparable_prior_year is not None,
+        "review_required": bool(review_issues) or not all(selected_verification),
         "review_issues": review_issues,
         "sections": parser.identify_sections(pages),
     }

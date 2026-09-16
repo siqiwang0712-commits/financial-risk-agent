@@ -1,6 +1,7 @@
 "use client";
 
 import { FormEvent, useState } from "react";
+import { createEntity } from "../lib/api";
 import type { AnalyzeInput } from "../lib/api";
 
 interface Props {
@@ -33,13 +34,26 @@ export function IntakePanel({
   const [company, setCompany] = useState("");
   const [year, setYear] = useState(new Date().getFullYear() - 1);
   const [apiKey, setApiKey] = useState("");
+  const [entityId, setEntityId] = useState("");
+  const [entityBusy, setEntityBusy] = useState(false);
+  const [entityError, setEntityError] = useState<string | null>(null);
 
-  const ready = Boolean(file) && Boolean(company) && Boolean(apiKey) && !busy;
+  const ready = Boolean(file) && Boolean(company) && Boolean(apiKey) && Boolean(entityId) && !busy;
 
   function submit(event: FormEvent) {
     event.preventDefault();
     if (!file || !ready) return;
-    onAnalyze({ file, company, fiscalYear: year, apiKey });
+    onAnalyze({ file, company, fiscalYear: year, apiKey, entityId });
+  }
+
+  async function createForCompany() {
+    if (!apiKey || !company || entityBusy) return;
+    setEntityBusy(true);
+    setEntityError(null);
+    const result = await createEntity(apiKey, company);
+    setEntityBusy(false);
+    if (result.ok) setEntityId(result.entityId);
+    else setEntityError(result.failure.message);
   }
 
   return (
@@ -73,6 +87,26 @@ export function IntakePanel({
               onChange={(event) => setCompany(event.target.value)}
               required
             />
+          </label>
+
+          <label className="field">
+            <span>Entity ID</span>
+            <input
+              placeholder="ent_… (create it through the Enterprise API first)"
+              value={entityId}
+              onChange={(event) => setEntityId(event.target.value)}
+              required
+            />
+            <small>Analysis is tenant-scoped and is persisted only against an existing entity.</small>
+            <button
+              type="button"
+              className="ghost"
+              disabled={!apiKey || !company || entityBusy || busy}
+              onClick={createForCompany}
+            >
+              {entityBusy ? "Creating entity…" : "Create entity for this company"}
+            </button>
+            {entityError ? <small role="alert">{entityError}</small> : null}
           </label>
 
           <label className="field">

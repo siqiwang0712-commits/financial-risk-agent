@@ -21,6 +21,7 @@ def test_external_failure_matrix_llm_timeout_degrades_to_review():
         pages={1: "Liquidity remains strong."},
     )
     assert state.status == "REVIEW_REQUIRED"
-    assert state.decision == "REVIEW"
+    assert state.decision == "ABSTAIN"
+    assert state.assessment["human_review_required"] is True
     assert state.assessment["failure_state"]["review_failures"] == ["llm_unavailable"]
     assert any("Narrative provider unavailable" in warning for warning in state.warnings)

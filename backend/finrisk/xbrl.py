@@ -7,6 +7,7 @@ import urllib.error
 import urllib.request
 from collections import defaultdict
 from dataclasses import asdict
+from datetime import date
 from pathlib import Path
 from typing import Any
 from urllib.parse import urlparse
@@ -15,6 +16,7 @@ from .domain import FinancialValue, ReconciliationResult
 
 SEC_BASE = "https://data.sec.gov"
 SEC_ARCHIVES = "https://www.sec.gov/Archives/edgar/data"
+MAX_SEC_RESPONSE_BYTES = 100 * 1024 * 1024
 
 # Ordered aliases: the first reliably present concept wins. Values in SEC
 # companyfacts are already expressed in the stated unit (normally USD/shares).
@@ -63,6 +65,22 @@ class SecClient:
         self.max_retries=max_retries
         self._last_request_at=0.0
 
+    @staticmethod
+    def _read_bounded(response, limit: int = MAX_SEC_RESPONSE_BYTES) -> bytes:
+        declared = response.headers.get("Content-Length")
+        if declared:
+            try:
+                if int(declared) > limit:
+                    raise ValueError("SEC response exceeds configured size limit")
+            except ValueError as exc:
+                if str(exc) == "SEC response exceeds configured size limit":
+                    raise
+                raise ValueError("SEC response has an invalid Content-Length") from exc
+        raw = response.read(limit + 1)
+        if len(raw) > limit:
+            raise ValueError("SEC response exceeds configured size limit")
+        return raw
+
     def get_json(self, url: str, cache_key: str | None = None) -> dict[str, Any]:
         cache = self.cache_dir / f"{cache_key}.json" if self.cache_dir and cache_key else None
         if cache and cache.exists():
@@ -81,7 +99,8 @@ class SecClient:
             if delay>0:time.sleep(delay)
             try:
                 self._last_request_at=time.monotonic()
-                with urllib.request.urlopen(request, timeout=60) as response:payload=json.load(response)
+                with urllib.request.urlopen(request, timeout=60) as response:
+                    payload = json.loads(self._read_bounded(response))
                 break
             except urllib.error.HTTPError as exc:
                 if exc.code==403:raise RuntimeError("SEC rejected this network with HTTP 403; do not bypass Fair Access controls") from exc
@@ -124,7 +143,7 @@ class SecClient:
             try:
                 self._last_request_at = time.monotonic()
                 with urllib.request.urlopen(request, timeout=60) as response:
-                    raw = response.read()
+                    raw = self._read_bounded(response)
                 break
             except urllib.error.HTTPError as exc:
                 if exc.code == 403:
@@ -196,6 +215,25 @@ def _annual_candidates(entries: list[dict[str, Any]], fiscal_year: int, instant:
             continue
         if not instant and item.get("fp") not in {"FY", None}:
             continue
+        # SEC companyfacts attaches a filing's `fy` to comparative facts too.
+        # The period end, not that filing metadata, determines which fiscal-year
+        # observation this value represents.  Without this guard a prior-year
+        # balance or revenue repeated in the newest 10-K can replace the current
+        # value simply because it has the newest accession/filed date.
+        try:
+            period_end = date.fromisoformat(str(item["end"]))
+        except (KeyError, TypeError, ValueError):
+            continue
+        if period_end.year != fiscal_year:
+            continue
+        if not instant:
+            try:
+                period_start = date.fromisoformat(str(item["start"]))
+            except (KeyError, TypeError, ValueError):
+                continue
+            duration_days = (period_end - period_start).days
+            if not 300 <= duration_days <= 380:
+                continue
         result.append(item)
     return result
 

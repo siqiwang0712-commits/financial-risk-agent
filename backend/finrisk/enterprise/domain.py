@@ -132,6 +132,7 @@ class RiskCase:
     comments: list[dict[str, Any]] = field(default_factory=list)
     created_at: str = field(default_factory=now_iso)
     updated_at: str = field(default_factory=now_iso)
+    version: int = 0
 
     def to_dict(self) -> dict[str, Any]:
         return asdict(self)

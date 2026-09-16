@@ -38,7 +38,7 @@ from finrisk.enterprise.evidence_graph import (
 )
 from finrisk.enterprise.governance import compare_system_versions
 from finrisk.enterprise.integrity import CalibrationStatus
-from finrisk.enterprise.service import EnterpriseRiskService
+from finrisk.enterprise.service import EnterpriseRiskService, verified_evidence_ids
 from finrisk.enterprise.temporal import (
     EntityRiskState,
     RiskSnapshot,
@@ -173,16 +173,19 @@ def test_full_case_mitigation_resolution_and_reopen_loop():
         {"fusion": "v2"},
     )
     service.save_snapshot(analyst, snapshot)
-    case = RiskCase(new_id("case"), org.id, entity.id, RiskDomain.LIQUIDITY, "high", "deteriorating", 0.8, 0.9, snapshot_id=snapshot.id)
+    evidence_id = next(iter(verified_evidence_ids(snapshot, "liquidity")))
+    case = RiskCase(new_id("case"), org.id, entity.id, RiskDomain.LIQUIDITY, "high", "deteriorating", 0.8, 0.9, evidence_ids=[evidence_id], snapshot_id=snapshot.id)
     service.create_case(analyst, case)
-    service.add_action(analyst, case.id, "Extend maturity", "treasurer", "2027-01-01")
+    service.add_action(analyst, case.id, "Extend maturity", analyst.user_id, "2027-01-01")
     service.transition(reviewer, case.id, RiskCaseStatus.OPEN)
     service.transition(reviewer, case.id, RiskCaseStatus.UNDER_REVIEW)
     with pytest.raises(ValueError, match="resolution evidence"):
         service.transition(reviewer, case.id, RiskCaseStatus.RESOLVED)
-    service.add_resolution_evidence(reviewer, case.id, "evidence-1")
+    # Resolution evidence must be one of the verified, tenant-scoped evidence
+    # IDs persisted on the case, not an arbitrary caller-supplied string.
+    service.add_resolution_evidence(reviewer, case.id, evidence_id)
     resolved = service.transition(reviewer, case.id, RiskCaseStatus.RESOLVED)
-    assert resolved.resolution_evidence == ["evidence-1"]
+    assert resolved.resolution_evidence == [evidence_id]
     reopened = service.reopen(reviewer, case.id, "new filing breached limit")
     assert reopened.status is RiskCaseStatus.OPEN and reopened.monitoring_state == "reopened"
 

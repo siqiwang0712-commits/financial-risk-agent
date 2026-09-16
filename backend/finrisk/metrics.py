@@ -115,7 +115,17 @@ def calculate_metrics(v: dict[str, float | None], year: int, previous: dict[str,
         )
     if all(m[x].value is not None for x in ("receivable_days","inventory_days","payable_days")):
         val=m["receivable_days"].value+m["inventory_days"].value-m["payable_days"].value
-        m["cash_conversion_cycle"]=_metric("cash_conversion_cycle",val,"receivable_days + inventory_days - payable_days",{},year)
+        m["cash_conversion_cycle"]=_metric(
+            "cash_conversion_cycle",
+            val,
+            "receivable_days + inventory_days - payable_days",
+            {
+                "receivable_days": m["receivable_days"].value,
+                "inventory_days": m["inventory_days"].value,
+                "payable_days": m["payable_days"].value,
+            },
+            year,
+        )
     else: m["cash_conversion_cycle"]=_metric("cash_conversion_cycle",None,"receivable_days + inventory_days - payable_days",{"components":None},year)
     if previous:
         for key in ("revenue","net_income","operating_cash_flow","free_cash_flow","total_debt","cash","accounts_receivable","inventory"):

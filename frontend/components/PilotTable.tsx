@@ -10,7 +10,6 @@ const COLUMNS = [
   "Entity",
   "Decision",
   "Risk index",
-  "Evidence coverage",
   "Reliability",
   "Filing",
 ] as const;
@@ -64,7 +63,6 @@ export function PilotTable({ pilot }: Props) {
                     <span className={`riskPill ${decision.toLowerCase()}`}>{decision}</span>
                   </td>
                   <td className="numeric">{displayScore(row.score)}</td>
-                  <td className="numeric">{row.coverage}</td>
                   <td className="uncalibrated">{displayReliability(row.reliability, null)}</td>
                   <td className="mono dim">{row.filing}</td>
                 </tr>
@@ -80,6 +78,8 @@ export function PilotTable({ pilot }: Props) {
           : ""}
         These rows are the immutable v0.3.0 pilot artifact, not current runtime decisions, and they
         are not externally validated. The pilot is three company-years with a single reviewer.
+        Full-hybrid benchmark evidence coverage is {payload.benchmark_evidence_coverage}; it is an
+        aggregate statistic, not a per-entity measurement.
       </p>
       {note ? <p className="panelNote subtle">{note}</p> : null}
     </section>

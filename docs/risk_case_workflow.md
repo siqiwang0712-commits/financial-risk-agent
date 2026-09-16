@@ -12,4 +12,7 @@ Each case is organization- and entity-scoped. Mitigation actions require descrip
 
 Every mutation emits an append-only audit event. Human overrides require a reason and preserve the original and replacement decisions. AI output cannot silently close a case.
 
-Current limitations: notification delivery, calendar escalation, production identity, database transaction concurrency and long-running monitoring workers remain **NOT PRODUCTION VALIDATED**.
+Local PostgreSQL validation covers atomic mutation/audit writes and optimistic case
+versions; external load/failover behavior is not claimed. Notification delivery,
+calendar escalation, production identity and long-running monitoring workers remain
+**NOT PRODUCTION VALIDATED**.

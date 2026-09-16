@@ -1,0 +1,11 @@
+{
+  "version": "1.0.0",
+  "description": "Rules disabled because no production metric producer exists. They remain versioned for auditability and must not be re-enabled without a producer and regression fixture.",
+  "rules": {
+    "CFL_008": "No multi-year FCF producer.",
+    "ACC_002": "No verified restatement producer.", "ACC_003": "No accrual-ratio producer.", "ACC_004": "No normalized non-GAAP adjustment producer.", "ACC_006": "No verified auditor-adjustment producer.", "ACC_007": "No related-party balance producer.", "ACC_008": "No filing-timeliness producer.",
+    "GOV_001": "No verified audit-opinion producer.", "GOV_002": "No verified audit-opinion producer.", "GOV_003": "No verified auditor-change producer.", "GOV_004": "No verified auditor-resignation producer.", "GOV_005": "No verified related-party-materiality producer.", "GOV_006": "No verified executive-turnover producer.", "GOV_007": "No verified control-effectiveness producer.", "GOV_008": "No verified board-independence producer.",
+    "BUS_002": "No verified covenant-breach producer.", "BUS_004": "No customer-concentration producer.", "BUS_005": "No supplier-concentration producer.", "BUS_006": "No verified litigation producer.", "BUS_007": "No verified investigation producer.", "BUS_008": "No verified demand-weakness producer.",
+    "REF_001": "No debt-maturity schedule producer.", "REF_002": "No floating-rate debt producer.", "REF_003": "No unused-facility producer.", "REF_004": "No debt-maturity concentration producer."
+  }
+}

@@ -310,7 +310,10 @@ Current evidence is diagnostic only: RQ3 is not supported by the pilot, RQ2 has 
 
 PDF uploads validate magic bytes and configurable limits (`FINRISK_MAX_UPLOAD_MB`, `FINRISK_MAX_PDF_PAGES`, `FINRISK_MAX_EXTRACTED_CHARS`, `FINRISK_ANALYSIS_TIMEOUT_SECONDS`). Opening, page counting and page-text scanning run in Starlette's bounded worker pool rather than the async event loop.
 
-Invalid, encrypted, oversized or timed-out inputs fail closed, and temporary files are removed. Internet-facing deployment still needs production identity, malware scanning, isolated workers and operational validation.
+Invalid, encrypted, oversized or timed-out inputs fail closed, and temporary files are
+removed. Production-mode analysis runs in a killable subprocess so a timeout stops the
+expensive pipeline. Internet-facing deployment still needs production identity, malware
+scanning, a distributed worker system for scale and operational validation.
 
 The default narrative provider is deterministic and offline. To enable the schema-constrained real provider, copy `.env.example`, set `FINRISK_LLM_PROVIDER=openai`, configure `OPENAI_API_KEY`, and pin model pricing if cost estimates are needed. Tests never require a live API.
 
@@ -327,7 +330,12 @@ Liquidity, leverage, debt service, profitability, cash flow, working capital and
 
 Model mappings are configured in [config/model_scoring.json](config/model_scoring.json).
 
-[rules/rules.json](rules/rules.json) contains 68 versioned rules covering single-factor and cross-factor patterns. Correlated rules carry family metadata so aggregation retains the strongest applicable family signal. Global baseline, sector and organization policy remain separable and versioned.
+[rules/rules.json](rules/rules.json) contains 68 versioned definitions covering
+single-factor and cross-factor patterns. Runtime enables 43 with real producers; the 25
+legacy definitions lacking legitimate producers are explicitly disabled with reasons in
+[rules/disabled_rules.json](rules/disabled_rules.json). Startup and CI reject any other
+unproducible condition. Correlated rules carry family metadata so scoring and proof
+coverage both retain only the strongest applicable family signal.
 
 Missing evidence, low coverage, conflicting evidence, stale data, parser failure, unavailable LLMs, applicability failures and rule/model disagreement are all first-class states. Depending on pinned policy, they reduce evidence sufficiency, increase review requirements, or force abstention. They never produce fabricated certainty.
 

@@ -1,6 +1,6 @@
 import time
 
-import fitz
+import pymupdf as fitz
 from fastapi.testclient import TestClient
 from finrisk.api import agent, app
 
@@ -44,7 +44,7 @@ def test_pdf_upload_reaches_assessment_pipeline():
     body = response.json()
     assert body["company"] == "Synthetic API Co"
     assert body["extraction"]["candidate_count"] >= 2
-    assert body["extraction"]["review_required"] is True
+    assert body["extraction"]["review_required"] is False
     assert body["agent"]["trace"]
     assert body["agent"]["status"] in {
         "COMPLETED",
@@ -56,7 +56,7 @@ def test_pdf_upload_reaches_assessment_pipeline():
         for n in body["evidence_graph"]["nodes"]
         if n["type"] == "financial_value"
     }
-    assert statuses == {"located"}
+    assert statuses == {"verified"}
 
 
 def test_upload_rejects_non_pdf():
@@ -201,6 +201,19 @@ def test_pdf_upload_preserves_prior_year_for_trends():
     )
     assert response.status_code == 200
     assert response.json()["extraction"]["prior_year"] == 2024
+
+
+def test_document_analysis_rejects_missing_or_cross_tenant_entity_before_processing(monkeypatch):
+    monkeypatch.setenv("FINRISK_ENV", "production")
+    client, headers = authenticated_client()
+    response = client.post(
+        "/api/v1/documents/analyze",
+        data={"company": "X", "fiscal_year": "2025", "entity_id": "not-owned"},
+        files={"file": ("x.pdf", pdf_bytes("valid"), "application/pdf")},
+        headers=headers,
+    )
+    assert response.status_code == 422
+    assert response.json()["detail"] == "entity_id is not available to this tenant"
 
 
 def test_agent_analysis_persists_tenant_snapshot_for_risk_case():

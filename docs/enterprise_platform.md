@@ -8,14 +8,15 @@ FinRisk is an **enterprise financial-risk research prototype**, not a certified 
 |---|---|
 | PDF/XBRL provenance, reconciliation, finance formulas, rules/models, structured LLM, verifier, evidence graph, benchmark | Preserve |
 | One-shot assessment output | Refactor behind failure-aware fusion, decision, trajectory, coverage and disagreement |
-| Organization/entity/RBAC, versioned policy, risk cases, audit events, jobs, storage, scenarios and governance records | Add |
+| Organization/entity/RBAC, versioned policy, risk cases, audit events, scenarios and governance records | Add |
+| Jobs, document/object storage, alerts and temporal evidence graph | Library/schema only; not a public runtime capability |
 | ERP-specific connectors, SSO, distributed workers, external PostgreSQL validation, malware scanning, 90-observation gold benchmark | PLANNED / NOT VALIDATED |
 
 ## Dependency architecture
 
 ```text
 Enterprise Platform Layer
-  organization · entity · RBAC · storage · jobs · audit · REST · workbench
+  organization · entity · RBAC · persistence · audit · REST · workbench
                          ↓
 Risk Intelligence Layer
   deterministic finance · constrained LLM · verification · tension · fusion
@@ -34,16 +35,22 @@ Four fusion strategies share one interface: weighted-average baseline, max sever
 
 ## Tenant and governance controls
 
-- Every entity, policy, case, document, job, model record and alert carries `organization_id`.
+- Every persisted entity, policy, case, snapshot, bundle, credential and audit event carries `organization_id`.
 - RBAC distinguishes Admin, Risk Manager, Analyst, Reviewer and Viewer.
 - API keys are stored as hashes; a process-local limiter is supplied for development.
 - Audit events are append-only through the service interface; human overrides require actor, original value, replacement, reason and time.
 - Local document storage rejects traversal and returns a SHA-256 receipt; object storage can implement the same protocol.
-- PostgreSQL DDL covers enterprise records. The psycopg adapter and external database deployment remain **NOT VALIDATED** in this environment.
+- PostgreSQL DDL and the pooled psycopg adapter cover the wired runtime records and
+  are migration/restart/Docker tested locally. External production deployment remains
+  **NOT VALIDATED**. Reserved jobs/documents/alerts/temporal-graph tables are not
+  presented as connected runtime features.
 
 ## REST surface
 
-`/api/v1/enterprise` exposes organization bootstrap, tenant-scoped entities, risk cases, lifecycle transitions, override history, portfolio overview, audit events, deterministic scenarios and selectable fusion. Tenant routes require `X-Organization-Id`, `X-User-Id` and `X-Role` in the prototype.
+`/api/v1/enterprise` exposes token-gated organization bootstrap, tenant-scoped entities,
+risk cases, lifecycle transitions, override history, portfolio overview, audit events,
+deterministic scenarios and selectable fusion. Tenant identity and role come from the
+server-side hashed API credential; caller-supplied role headers are not trusted.
 
 ## Proof and decision ownership
 

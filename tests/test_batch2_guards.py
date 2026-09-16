@@ -201,7 +201,7 @@ def test_configure_logging_attaches_a_handler():
 
 # --- DAT-01 / DAT-02: prior-year evidence with value and unit ------------------
 def test_ingestion_records_prior_year_evidence_with_value_and_unit(tmp_path):
-    import fitz
+    import pymupdf as fitz
 
     document = fitz.open()
     page = document.new_page()
@@ -229,10 +229,7 @@ def test_dead_rule_count_does_not_grow():
 
     rules = json.loads((ROOT / "rules" / "rules.json").read_text(encoding="utf-8"))["rules"]
     dead_rules = {rule_id for rule_id, _ in unproducible_rule_conditions(rules)}
-    # 25 checked-in rules reference a metric with no producer anywhere in the
-    # codebase, so they can never fire. Repairing or deleting them is a product
-    # decision; this ratchet only stops the number from growing.
-    assert len(dead_rules) <= 25, sorted(dead_rules)
+    assert dead_rules == set()
     # The rule added for negative-EBITDA leverage does have a producer.
     assert "SOL_009" not in dead_rules
 

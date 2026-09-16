@@ -291,7 +291,6 @@ export interface PilotRow {
   entity: string;
   decision: string;
   score: number | null;
-  coverage: number;
   reliability: string;
   filing: string;
 }
@@ -300,6 +299,7 @@ export interface PilotPayload {
   snapshot: string;
   runtime: string;
   annotation_status: string;
+  benchmark_evidence_coverage: number;
   rows: PilotRow[];
 }
 

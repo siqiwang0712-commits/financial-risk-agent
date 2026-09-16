@@ -13,7 +13,7 @@ def test_rule_count_unique_and_cross_metric():
     assert "LIQ_007" in {x.rule_id for x in out}
 
 def test_aggregation_is_bounded():
-    rules=RuleEngine([{"id":"X","category":"liquidity","severity":"high","conditions":[{"metric":"x","operator":">","value":0}],"effect":{"score_delta":500},"rationale":"x"}]).evaluate({"x":1})
+    rules=RuleEngine([{"id":"X","category":"liquidity","severity":"high","conditions":[{"metric":"current_ratio","operator":"<","value":1}],"effect":{"score_delta":500},"rationale":"x"}]).evaluate({"current_ratio":.8})
     cfg=json.loads((ROOT/"config"/"scoring.json").read_text())
     cfg["minimum_dimension_coverage"]=1
     score,_,dims=aggregate(rules,[],cfg)

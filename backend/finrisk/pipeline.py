@@ -6,7 +6,11 @@ from pathlib import Path
 
 from .contradictions import detect_contradictions, evaluate_claim_consistency
 from .domain import Assessment, RuleSignal
-from .enterprise.applicability import MODEL_REQUIREMENTS, enforce_applicability
+from .enterprise.applicability import (
+    ALTMAN_VARIANT_REQUIREMENTS,
+    MODEL_REQUIREMENTS,
+    enforce_applicability,
+)
 from .enterprise.fusion import failure_aware_decision, hierarchical_escalation
 from .enterprise.tension import classify_tension
 from .evidence import PROOF_COVERED_STATUSES, EvidenceVerifier, claim_is_grounded
@@ -15,7 +19,7 @@ from .llm import NarrativeProvider, provider_from_env
 from .metrics import calculate_metrics, resolve_total_debt
 from .models import altman_z, beneish_m, ohlson_o, piotroski_f
 from .rules import RuleEngine
-from .scoring import aggregate, confidence, confidence_components
+from .scoring import aggregate, confidence, confidence_components, effective_signals
 from .severity import severity_label
 
 
@@ -138,7 +142,9 @@ class FinRiskPipeline:
             requirements = []
             metric = metrics[name]
             for input_name in metric.inputs:
-                if input_name == "free_cash_flow":
+                if input_name in metrics and input_name != name:
+                    requirements.extend(metric_requirements(input_name))
+                elif input_name == "free_cash_flow":
                     requirements.extend(metric_requirements("free_cash_flow"))
                 elif input_name == "COGS":
                     requirements.extend((("revenue", year), ("gross_profit", year)))
@@ -221,7 +227,11 @@ class FinRiskPipeline:
                     "Piotroski F-Score": "piotroski",
                     "Ohlson O-Score": "ohlson",
                 }[mapping["model"]]
-                base_required = sorted(MODEL_REQUIREMENTS[model_key])
+                if model_key == "altman":
+                    variant = model.derived_outputs.get("variant", "public_manufacturer")
+                    base_required = sorted(ALTMAN_VARIANT_REQUIREMENTS[variant])
+                else:
+                    base_required = sorted(MODEL_REQUIREMENTS[model_key])
                 if mapping["model"] in {"Beneish M-Score", "Piotroski F-Score"}:
                     required = [f"current:{key}" for key in base_required] + [f"prior:{key}" for key in base_required]
                 else:
@@ -273,9 +283,11 @@ class FinRiskPipeline:
         numeric_evidence=[e for refs in source_map.values() for e in refs]
         conf=confidence(current,verified,models,previous is not None,numeric_evidence)
         components=confidence_components(current,verified,models,previous is not None,numeric_evidence)
+        # A weaker member suppressed by family de-duplication cannot alter the
+        # decision and therefore cannot alter the proof gate either.
         material_groups = [
             signal.input_provenance.get(name, [])
-            for signal in signals
+            for signal in effective_signals(signals)
             for name in signal.required_inputs
         ]
         # Proof gate: a material input group counts as covered only when it is

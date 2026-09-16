@@ -14,7 +14,7 @@ from ..enterprise.decision import (
     replay_snapshot,
 )
 from ..enterprise.decision_bundle import build_decision_bundle
-from ..enterprise.domain import AnalysisSnapshot
+from ..enterprise.domain import AnalysisSnapshot, Decision
 from ..enterprise.fusion import (
     failure_aware_decision,
     hierarchical_escalation,
@@ -196,7 +196,9 @@ class FinancialRiskAgent:
                     and not state.decision_trace["verified_path_count"]
                 ),
                 "conflicting_evidence": bool(assessment.contradictions),
-                "llm_unavailable": bool(pages and not claims),
+                # An empty claim set is a valid semantic result.  Only an actual
+                # provider/tool failure is an LLM availability failure.
+                "llm_unavailable": semantic_failed,
                 "parser_failure": False,
                 "stale_data": False,
                 "rule_model_contradiction": False,
@@ -204,6 +206,9 @@ class FinancialRiskAgent:
             failure_decision = failure_aware_decision(fusion, failures)
             state.decision = failure_decision["decision"]
             state.assessment["failure_state"] = failure_decision
+            if failure_decision["review_failures"]:
+                state.assessment["human_review_required"] = True
+                state.assessment["human_review_reason"] = ",".join(failure_decision["review_failures"])
             state.assessment["sensitivity"] = sensitivity_analysis(
                 dimension_scores, fusion, policy=decision_policy
             )
@@ -283,24 +288,27 @@ class FinancialRiskAgent:
             recommended = state.role_review.get("recommended_decision")
             decision_before_review = state.decision
             if recommended == "REVIEW":
-                # The critic may only tighten the disposition. This can move an
-                # ABSTAIN to REVIEW, which matches the checked-in failure register
-                # (failure_lab/incidents.json LLM-001 expects REVIEW for an LLM
-                # timeout). `failure_aware_decision` already guarantees that a
-                # *failure signal* can never weaken an ABSTAIN; this step records the
-                # human-review requirement on top of it. The reason code keeps
-                # "evidence missing" and "evidence conflicting" distinguishable,
-                # which the previous code could not express.
+                # A critic raises a separate human-review requirement; it never
+                # downgrades the absorbing ABSTAIN disposition to REVIEW.
                 state.assessment["review_escalation_reason"] = (
                     "EVIDENCE_CONFLICT" if assessment.contradictions else "EVIDENCE_MISSING"
                 )
-                state.decision = recommended
+                state.assessment["human_review_required"] = True
+                state.assessment["human_review_reason"] = state.assessment["review_escalation_reason"]
+                from ..enterprise.fusion import DISPOSITION_RANK
+                if DISPOSITION_RANK[Decision(recommended)] > DISPOSITION_RANK[Decision(state.decision)]:
+                    state.decision = recommended
             state.decision_trace["initial_fusion_decision"] = fusion.decision.value
             state.decision_trace["failure_aware_decision"] = failure_decision["decision"]
             state.decision_trace["review_decision"] = state.decision
             state.decision_trace["decision"] = state.decision
             state.assessment["decision_trace"] = state.decision_trace
             state.assessment["final_decision"] = state.decision
+            # The final review escalation is part of the failure-aware outcome;
+            # snapshots, trace and DecisionBundle must not record competing final
+            # dispositions.
+            failure_decision["decision"] = state.decision
+            state.assessment["failure_state"] = failure_decision
             state.epistemics = epistemic_summary(
                 evidence_coverage=state.evidence_coverage,
                 evidence_quality=state.confidence,
@@ -318,9 +326,31 @@ class FinancialRiskAgent:
                 for item in assessment.triggered_rules
                 if not item.rule_id.startswith("MODEL_")
             ]
-            rule_score = aggregate(non_model_signals, [], scoring_config)[0]
-            model_score = aggregate(assessment.triggered_rules, [], scoring_config)[0]
-            narrative_score = assessment.overall_score
+            narrative_inputs = {
+                "going_concern_doubt",
+                "material_weakness",
+                "refinancing_dependency",
+            }
+            numeric_rule_signals = [
+                item
+                for item in non_model_signals
+                if not set(item.required_inputs) & narrative_inputs
+            ]
+            model_signals = [
+                item
+                for item in assessment.triggered_rules
+                if item.rule_id.startswith("MODEL_")
+            ]
+            narrative_signals = [
+                item for item in non_model_signals if item not in numeric_rule_signals
+            ]
+            rule_score = aggregate(numeric_rule_signals, [], scoring_config)[0]
+            model_score = aggregate(numeric_rule_signals + model_signals, [], scoring_config)[0]
+            narrative_score = aggregate(
+                numeric_rule_signals + model_signals + narrative_signals,
+                assessment.contradictions,
+                scoring_config,
+            )[0]
             latency = {
                 name: sum(t.latency_ms for t in state.trace if t.tool == name)
                 for name in (
@@ -356,7 +386,7 @@ class FinancialRiskAgent:
                     risk_after=rule_score,
                     coverage_before=components.get("numeric_provenance_coverage", 0.0),
                     coverage_after=components.get("numeric_provenance_coverage", 0.0),
-                    new_evidence=len(non_model_signals),
+                    new_evidence=len(numeric_rule_signals),
                     latency_ms=latency.get("risk_rules", 0),
                 ),
                 component_delta(
@@ -448,7 +478,7 @@ class FinancialRiskAgent:
             state.decision_bundle = bundle.to_dict()
             state.transition(AgentStatus.REFLECTING)
             state.reflection = reflect(state.assessment)
-            if assessment.contradictions:
+            if assessment.contradictions or state.assessment.get("human_review_required"):
                 state.transition(AgentStatus.REVIEW_REQUIRED)
             elif state.decision == "ABSTAIN":
                 state.transition(AgentStatus.INSUFFICIENT_EVIDENCE)

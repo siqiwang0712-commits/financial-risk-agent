@@ -166,6 +166,7 @@ def test_service_workflow_policy_and_tension_branches():
         "stable",
         0.7,
         0.8,
+        decision_trace={"decision": "FLAG"},
     )
     service.create_case(analyst, case)
     service.transition(reviewer, case.id, RiskCaseStatus.OPEN)
@@ -299,7 +300,7 @@ def test_enterprise_api_case_lifecycle_and_scenario():
         json={
             "name": "Board appetite",
             "version": 1,
-            "thresholds": {"debt": {"warning": 2, "critical": 4}},
+                "thresholds": {"debt": {"risk_direction": "high", "warning": 2, "critical": 4}},
         },
     )
     assert policy.status_code == 200

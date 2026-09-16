@@ -28,9 +28,11 @@ jobs:
           fetch-depth: 2
       - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7
         with: {python-version: "${{ matrix.python-version }}"}
-      - run: python -m pip install pip==25.2
+      - run: python -m pip install pip==26.2.0
       - run: python -m pip install -c requirements.lock -e ".[dev,postgres]"
       - run: python -m pip check
+      - run: python -m pip install pip-audit
+      - run: pip-audit --strict
       - run: ruff check backend tests scripts
       - run: git diff --check HEAD^ HEAD
       - run: python scripts/validate_postgres_migration.py
@@ -63,6 +65,7 @@ jobs:
     env:
       POSTGRES_PASSWORD: ci-only-strong-password-v032
       FINRISK_LLM_PROVIDER: mock
+      FINRISK_BOOTSTRAP_TOKEN: ci-only-bootstrap-token-v032
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
       - name: Build frontend production image
@@ -71,6 +74,10 @@ jobs:
         run: docker compose -f docker-compose.yml -f docker-compose.prod.yml up --build -d postgres migrate api web
       - name: Verify readiness and PostgreSQL repository selection
         run: python scripts/verify_docker_health.py
+      - name: Verify production timeout and explicit retry contract
+        run: |
+          FINRISK_ANALYSIS_TIMEOUT_SECONDS=0.001 docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d --force-recreate api web
+          python scripts/verify_docker_timeout.py
       - name: Show container logs on failure
         if: failure()
         run: docker compose -f docker-compose.yml -f docker-compose.prod.yml logs postgres migrate api web

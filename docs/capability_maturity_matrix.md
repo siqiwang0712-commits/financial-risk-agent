@@ -1,6 +1,6 @@
 # Capability Maturity Matrix
 
-Updated: 2026-09-12. `Production` means externally operated and validated; no row currently meets that standard.
+Updated: 2026-09-15. `Production` means externally operated and validated; no row currently meets that standard.
 
 `Wired` asks a different question from the other columns: is this capability reachable
 from a live entry point (`/api/v1/documents/analyze`, `/api/v1/agent/assess`, or the
@@ -17,11 +17,11 @@ caller actually reaches, not that it is broken.
 | Traditional models | Yes | Yes | Yes | Pilot inputs incomplete | Formula tests | No |
 | 68-rule engine | Yes | Yes | Yes | Pilot | Not expert-validated | No |
 | Evidence verification/decision trace | Yes | Yes | Yes | Pilot | Partial | No |
-| Correlated-evidence de-duplication | Yes | Yes | No | Fixture only | Monotonicity property test | No |
-| Temporal risk state/attribution | Yes | Yes | No | 30-company numeric trajectories | Executed; usefulness not validated | No |
+| Correlated-evidence de-duplication | Yes | Yes | Yes | Fixture only | Monotonicity property test | No |
+| Temporal risk state/attribution | Yes | Yes | Yes | 30-company numeric trajectories | Executed; usefulness not validated | No |
 | Temporal evidence graph | Yes | Yes | No | No | No | No |
 | Applicability Router | Yes | Yes | Yes | No sector validation | No | No |
-| Calibration/selective automation | Yes | Yes | No | n=3 diagnostic only | No | No |
+| Calibration/selective automation | Yes | Yes | Yes | n=3 diagnostic only | No | No |
 | Analyst–Critic–Verifier review | Yes | Yes | Yes | Offline semantics | No | No |
 | DecisionBundle/replay | Yes | Yes | Yes | Controlled fixture | Local only | No |
 | Risk Case mitigation lifecycle | Yes | Yes | Yes | Controlled fixture | Local only | No |
@@ -31,15 +31,11 @@ caller actually reaches, not that it is broken.
 
 `Wired: No` rows and why:
 
-- **Correlated-evidence de-duplication** — `fuse_verified_contributions` /
-  `deduplicate_contributions` are property-tested but the Agent decision path passes
-  per-dimension scores to `hierarchical_escalation` directly.
-- **Temporal risk state/attribution** — the Agent's `risk_trajectory` reads the current
-  run only; multi-period series come from the persisted snapshot/timeline API.
 - **Temporal evidence graph** — schema and traversal exist; no entry point populates it.
-- **Calibration/selective automation** — available through enterprise policy endpoints,
-  not applied to the default assessment response.
 - **Champion–Challenger gate**, **Human–AI study** — offline/analysis-only by design.
+
+Temporal risk state and selective automation are wired through explicit enterprise
+endpoints; they are not silently applied to the one-shot assessment contract.
 
 The matrix deliberately separates software existence from empirical validity, and now
 also separates both from reachability.

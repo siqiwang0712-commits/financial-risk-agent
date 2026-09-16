@@ -1,5 +1,6 @@
 import hashlib
 import json
+from typing import ClassVar
 
 import pytest
 from finrisk.domain import FinancialValue
@@ -88,3 +89,61 @@ def test_companyfacts_debt_component_is_not_aggregate_and_derives_only_complete_
     del unit["LongTermDebtNoncurrent"]
     incomplete = parse_companyfacts(payload, [2024])
     assert not any(value.line_item == "total_debt" for value in incomplete)
+
+
+def test_companyfacts_uses_period_end_not_comparative_filing_year():
+    payload = fixture()
+    entries = payload["facts"]["us-gaap"]["Assets"]["units"]["USD"]
+    entries.append({
+        "fy": 2024, "fp": "FY", "form": "10-K", "val": 70,
+        "filed": "2025-10-01", "accn": "new-comparative", "end": "2023-09-30",
+    })
+    revenue = payload["facts"]["us-gaap"]["RevenueFromContractWithCustomerExcludingAssessedTax"]["units"]["USD"]
+    revenue.extend([
+        {"fy": 2024, "fp": "FY", "form": "10-K", "val": 40, "filed": "2025-10-01", "accn": "new-comparative", "start": "2022-10-01", "end": "2023-09-30"},
+        {"fy": 2024, "fp": "FY", "form": "10-K", "val": 15, "filed": "2025-10-01", "accn": "quarter", "start": "2024-07-01", "end": "2024-09-30"},
+    ])
+    values = parse_companyfacts(payload, [2024])
+    assert next(value for value in values if value.line_item == "total_assets").value == 110
+    assert next(value for value in values if value.line_item == "revenue").value == 50
+
+
+def test_sec_response_reader_rejects_unbounded_payloads():
+    class Response:
+        def __init__(self):
+            self.headers = {}
+
+        def read(self, amount):
+            return b"x" * amount
+
+    with pytest.raises(ValueError, match="size limit"):
+        SecClient._read_bounded(Response(), 16)
+
+
+def test_sec_network_json_is_bounded_and_hash_cached(monkeypatch, tmp_path):
+    body = json.dumps({"ok": True}).encode()
+
+    class Response:
+        headers: ClassVar[dict[str, str]] = {"Content-Length": str(len(body))}
+
+        def __enter__(self):
+            return self
+
+        def __exit__(self, *_):
+            return None
+
+        def read(self, amount):
+            assert amount == 100 * 1024 * 1024 + 1
+            return body
+
+    monkeypatch.setattr("finrisk.xbrl.urllib.request.urlopen", lambda *_, **__: Response())
+    client = SecClient("FinRisk test@example.com", tmp_path, pause_seconds=0)
+    assert client.get_json("https://data.sec.gov/test", "remote") == {"ok": True}
+    assert (tmp_path / "remote.json").read_bytes() == b'{"ok":true}'
+    assert (tmp_path / "remote.sha256").exists()
+
+    class InvalidLength(Response):
+        headers: ClassVar[dict[str, str]] = {"Content-Length": "invalid"}
+
+    with pytest.raises(ValueError, match="invalid Content-Length"):
+        SecClient._read_bounded(InvalidLength())

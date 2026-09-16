@@ -7,6 +7,7 @@ import time
 import urllib.error
 import urllib.request
 from collections.abc import Callable
+from contextvars import ContextVar
 from dataclasses import asdict, dataclass
 from pathlib import Path
 from typing import Any, ClassVar, Protocol
@@ -101,6 +102,7 @@ class StructuredLLMProvider:
     """
 
     PROMPT_VERSION = "narrative-v1.1.0-claim-conditioned"
+    MAX_RESPONSE_BYTES = 10 * 1024 * 1024
 
     @property
     def prompt_version(self) -> str:
@@ -140,7 +142,7 @@ class StructuredLLMProvider:
         },
     }
 
-    def __init__(self, api_key: str | None = None, model: str = "gpt-4.1-mini", endpoint: str = "https://api.openai.com/v1/chat/completions", max_retries: int = 2, max_tokens: int = 1200, log_path: Path | None = None, transport: Callable[[dict[str, Any]], dict[str, Any]] | None = None, input_cost_per_million: float = 0.0, output_cost_per_million: float = 0.0):
+    def __init__(self, api_key: str | None = None, model: str = "gpt-4.1-mini", endpoint: str = "https://api.openai.com/v1/chat/completions", max_retries: int = 2, max_tokens: int = 1200, log_path: Path | None = None, transport: Callable[[dict[str, Any]], dict[str, Any]] | None = None, input_cost_per_million: float = 0.0, output_cost_per_million: float = 0.0, max_input_chars: int = 120_000, max_page_chars: int = 8_000):
         self.api_key = api_key or os.getenv("OPENAI_API_KEY")
         self.model = model
         self.endpoint = endpoint
@@ -150,17 +152,45 @@ class StructuredLLMProvider:
         self.transport = transport or self._http_transport
         self.input_cost_per_million = input_cost_per_million
         self.output_cost_per_million = output_cost_per_million
-        self.call_logs: list[LLMCallLog] = []
+        self.max_input_chars = max_input_chars
+        self.max_page_chars = max_page_chars
+        self._request_logs: ContextVar[tuple[LLMCallLog, ...]] = ContextVar(
+            f"llm_logs_{id(self)}", default=()
+        )
+
+    @property
+    def call_logs(self) -> list[LLMCallLog]:
+        return list(self._request_logs.get())
 
     def _http_transport(self, payload: dict[str, Any]) -> dict[str, Any]:
         if not self.api_key:
             raise RuntimeError("OPENAI_API_KEY is not configured; use MockNarrativeProvider for offline execution")
         request = urllib.request.Request(self.endpoint, data=json.dumps(payload).encode(), headers={"Authorization": f"Bearer {self.api_key}", "Content-Type": "application/json"})
         with urllib.request.urlopen(request, timeout=90) as response:
-            return json.load(response)
+            declared = response.headers.get("Content-Length")
+            if declared:
+                try:
+                    if int(declared) > self.MAX_RESPONSE_BYTES:
+                        raise ValueError("LLM response exceeds configured size limit")
+                except ValueError as exc:
+                    if str(exc) == "LLM response exceeds configured size limit":
+                        raise
+                    raise ValueError("LLM response has an invalid Content-Length") from exc
+            raw = response.read(self.MAX_RESPONSE_BYTES + 1)
+            if len(raw) > self.MAX_RESPONSE_BYTES:
+                raise ValueError("LLM response exceeds configured size limit")
+            return json.loads(raw)
 
     def _payload(self, pages: dict[int, str], document: str, year: int) -> dict[str, Any]:
-        source = "\n\n".join(f"[PAGE {page}]\n{text}" for page, text in sorted(pages.items()))
+        selected = []
+        remaining = self.max_input_chars
+        for page, text in sorted(pages.items()):
+            if remaining <= 0:
+                break
+            chunk = text[: min(self.max_page_chars, remaining)]
+            selected.append(f"[PAGE {page}]\n{chunk}")
+            remaining -= len(chunk)
+        source = "\n\n".join(selected)
         instructions = (
             "Extract only explicitly supported management/auditor risk claims. Copy evidence_text exactly from the supplied page. "
             "For each claim identify its target, direction, time horizon, basis, qualifiers, and the evidence constructs required to test it. "
@@ -176,7 +206,7 @@ class StructuredLLMProvider:
         return content, int(usage.get("prompt_tokens", 0)), int(usage.get("completion_tokens", 0))
 
     def _record(self, log: LLMCallLog) -> None:
-        self.call_logs.append(log)
+        self._request_logs.set((*self._request_logs.get(), log))
         if self.log_path:
             # A full or read-only disk must not turn a successful extraction into a
             # silent zero-claim result: the in-memory log is already recorded.
@@ -187,7 +217,18 @@ class StructuredLLMProvider:
             except OSError:
                 pass
 
+    def _estimated_cost(self, input_tokens: int, output_tokens: int) -> float:
+        return round(
+            (
+                input_tokens * self.input_cost_per_million
+                + output_tokens * self.output_cost_per_million
+            )
+            / 1_000_000,
+            8,
+        )
+
     def extract(self, pages: dict[int, str], document: str, year: int) -> list[NarrativeClaim]:
+        self._request_logs.set(())
         payload = self._payload(pages, document, year)
         input_hash = hashlib.sha256(json.dumps(payload, sort_keys=True).encode()).hexdigest()
         schema_hash = hashlib.sha256(json.dumps(self.SCHEMA, sort_keys=True).encode()).hexdigest()
@@ -202,13 +243,22 @@ class StructuredLLMProvider:
                 for claim in parsed.claims:
                     if claim.risk_category not in ALLOWED_CATEGORIES or claim.page not in pages:
                         raise ValueError("claim category/page is outside supplied evidence")
-                cost = (input_tokens * self.input_cost_per_million + output_tokens * self.output_cost_per_million) / 1_000_000
-                self._record(LLMCallLog(self.PROMPT_VERSION, "openai-compatible", self.model, attempt, input_tokens, output_tokens, round(cost, 8), int((time.perf_counter() - started) * 1000), "ok", input_hash, schema_hash, 0.0, self.max_tokens, f"exponential_backoff:{self.max_retries}", True))
+                cost = self._estimated_cost(input_tokens, output_tokens)
+                self._record(LLMCallLog(self.PROMPT_VERSION, "openai-compatible", self.model, attempt, input_tokens, output_tokens, cost, int((time.perf_counter() - started) * 1000), "ok", input_hash, schema_hash, 0.0, self.max_tokens, f"exponential_backoff:{self.max_retries}", True))
                 return [NarrativeClaim(c.claim, c.risk_category, Evidence(document, c.page, c.evidence_text, year, c.confidence), c.polarity, c.claim_target, c.direction, c.time_horizon, c.basis, tuple(c.qualifiers), tuple(c.required_evidence_types)) for c in parsed.claims]
-            except (KeyError, TypeError, ValueError, ValidationError, urllib.error.URLError, OSError) as exc:
-                # `OSError` covers `socket.timeout`/`TimeoutError`. Without it a
-                # timeout escaped the retry loop entirely: no retry, no call log,
-                # no input hash.
+            except (KeyError, TypeError, ValueError, ValidationError) as exc:
+                last_error = exc
+                self._record(LLMCallLog(self.PROMPT_VERSION, "openai-compatible", self.model, attempt, input_tokens, output_tokens, self._estimated_cost(input_tokens, output_tokens), int((time.perf_counter() - started) * 1000), f"error:{type(exc).__name__}", input_hash, schema_hash, 0.0, self.max_tokens, f"exponential_backoff:{self.max_retries}", False))
+                break
+            except urllib.error.HTTPError as exc:
+                last_error = exc
+                self._record(LLMCallLog(self.PROMPT_VERSION, "openai-compatible", self.model, attempt, input_tokens, output_tokens, 0.0, int((time.perf_counter() - started) * 1000), f"error:HTTP_{exc.code}", input_hash, schema_hash, 0.0, self.max_tokens, f"exponential_backoff:{self.max_retries}", False))
+                retryable = exc.code in {408, 409, 425, 429} or exc.code >= 500
+                if not retryable:
+                    break
+                if attempt <= self.max_retries:
+                    time.sleep(min(2 ** (attempt - 1), 4))
+            except (urllib.error.URLError, OSError) as exc:
                 last_error = exc
                 self._record(LLMCallLog(self.PROMPT_VERSION, "openai-compatible", self.model, attempt, input_tokens, output_tokens, 0.0, int((time.perf_counter() - started) * 1000), f"error:{type(exc).__name__}", input_hash, schema_hash, 0.0, self.max_tokens, f"exponential_backoff:{self.max_retries}", False))
                 if attempt <= self.max_retries:

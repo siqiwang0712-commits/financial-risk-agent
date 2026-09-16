@@ -7,7 +7,7 @@ from dataclasses import asdict
 from typing import Annotated
 
 from fastapi import APIRouter, Depends, Header, HTTPException, Request
-from pydantic import BaseModel, ConfigDict, Field, field_validator
+from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
 from .applicability import applicability_report
 from .calibration import selective_decision
@@ -33,7 +33,7 @@ from .security import (
     SlidingWindowRateLimiter,
     issue_api_key,
 )
-from .service import EnterpriseRiskService
+from .service import EnterpriseRiskService, verified_evidence_ids
 from .temporal import RiskSnapshot, compare_risk_snapshots
 
 
@@ -74,8 +74,8 @@ class TransitionRequest(BaseModel):
 
 
 class OverrideRequest(BaseModel):
-    original: str
-    override: str
+    original: Decision
+    override: Decision
     reason: str = Field(min_length=1)
 
 
@@ -94,6 +94,7 @@ class ReopenRequest(BaseModel):
 
 
 class FusionRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
     method: str
     scores: dict[str, float | None]
     weights: dict[str, float] = Field(default_factory=dict)
@@ -105,6 +106,31 @@ class FusionRequest(BaseModel):
     @classmethod
     def finite_mappings(cls, values):
         return _finite_mapping(values)
+
+    @model_validator(mode="after")
+    def validate_domains(self):
+        if any(value is not None and not 0 <= value <= 100 for value in self.scores.values()):
+            raise ValueError("fusion scores must be between 0 and 100")
+        if any(value < 0 or value > 1 for value in self.weights.values()):
+            raise ValueError("fusion weights must be between 0 and 1")
+        if self.method == "weighted_average" and not any(value > 0 for value in self.weights.values()):
+            raise ValueError("weighted_average requires at least one positive weight")
+        allowed_policy = {
+            "minimum_coverage", "maximum_disagreement", "flag_score",
+            "review_score", "critical_dimension_score", "severe_dimension_score",
+            "elevated_dimension_score", "interaction_uplift_cap",
+            "interaction_uplift_per_dimension", "interaction_dimension_score",
+            "interaction_premium",
+        }
+        if set(self.decision_policy) - allowed_policy:
+            raise ValueError("unknown decision policy field")
+        for key, value in self.decision_policy.items():
+            upper = 1 if key in {"minimum_coverage", "maximum_disagreement"} else 100
+            if not 0 <= value <= upper:
+                raise ValueError(f"decision policy value out of range: {key}")
+        if self.decision_policy.get("review_score", 40) > self.decision_policy.get("flag_score", 60):
+            raise ValueError("review_score cannot exceed flag_score")
+        return self
 
 
 class ScenarioRequest(BaseModel):
@@ -123,6 +149,24 @@ class PolicyCreate(BaseModel):
     version: int = Field(ge=1)
     thresholds: dict[str, dict[str, float | str]]
 
+    @field_validator("thresholds")
+    @classmethod
+    def valid_thresholds(cls, thresholds):
+        if not thresholds:
+            raise ValueError("at least one KRI threshold is required")
+        for name, limits in thresholds.items():
+            if not name.strip() or set(limits) - {"warning", "critical", "risk_direction"}:
+                raise ValueError("invalid KRI threshold fields")
+            direction = limits.get("risk_direction")
+            if direction not in {"high", "low"}:
+                raise ValueError("risk_direction must be 'high' or 'low'")
+            warning, critical = limits.get("warning"), limits.get("critical")
+            if any(isinstance(value, bool) or not isinstance(value, (int, float)) or not math.isfinite(value) for value in (warning, critical)):
+                raise ValueError("warning and critical thresholds must be finite numbers")
+            if (direction == "high" and warning > critical) or (direction == "low" and warning < critical):
+                raise ValueError("warning must be less severe than critical")
+        return thresholds
+
 
 class SnapshotCreate(BaseModel):
     entity_id: str
@@ -137,9 +181,9 @@ class ReplayRequest(BaseModel):
 
 
 class RiskSnapshotRequest(BaseModel):
-    period: str = Field(min_length=1)
+    period: str = Field(pattern=r"^(?:FY)?(?:19|20)\d{2}(?:-Q[1-4])?$")
     filing_id: str = Field(min_length=1)
-    risk_score: float | None
+    risk_score: float | None = Field(default=None, ge=0, le=100)
     dimension_scores: dict[str, float | None]
     metrics: dict[str, float | None]
     evidence_paths: dict[str, list[str]]
@@ -163,6 +207,18 @@ class RiskSnapshotRequest(BaseModel):
     @classmethod
     def finite_financial_mappings(cls, values):
         return _finite_mapping(values)
+
+    @field_validator("dimension_scores")
+    @classmethod
+    def bounded_dimension_scores(cls, values):
+        if any(value is not None and not 0 <= value <= 100 for value in values.values()):
+            raise ValueError("dimension scores must be between 0 and 100")
+        return values
+
+    @field_validator("period")
+    @classmethod
+    def canonical_period(cls, period):
+        return period.removeprefix("FY")
 
 
 class ApplicabilityRequest(BaseModel):
@@ -217,7 +273,7 @@ def enterprise_router(
             actor = credentials.authenticate(api_key)
         except PermissionError as exc:
             raise HTTPException(401, str(exc)) from exc
-        if not limiter.allow(actor.organization_id):
+        if not limiter.allow(f"{actor.organization_id}:{actor.user_id}"):
             raise HTTPException(429, "rate limit exceeded")
         return actor
 
@@ -283,12 +339,7 @@ def enterprise_router(
             float(agent_output.get("epistemics", {}).get("evidence_quality", 0.0)),
             float(agent_output.get("evidence_coverage", 0.0)),
             rationale=req.rationale,
-            evidence_ids=sorted({
-                str(evidence.get("source"))
-                for path in verified_paths
-                for evidence in path.get("source_evidence", [])
-                if evidence.get("source")
-            }),
+            evidence_ids=sorted(verified_evidence_ids(snapshot, req.domain.value)),
             reason_codes=sorted({str(path.get("reason_code")) for path in verified_paths}),
             decision_trace={**trace, "verified_path_count": len(verified_paths)},
             snapshot_id=snapshot.id,
@@ -322,7 +373,7 @@ def enterprise_router(
     ):
         try:
             return service.override(
-                actor, case_id, req.original, req.override, req.reason
+                actor, case_id, req.original.value, req.override.value, req.reason
             ).to_dict()
         except (KeyError, PermissionError, ValueError) as exc:
             raise HTTPException(422, "risk-case override rejected") from exc
@@ -480,6 +531,8 @@ def enterprise_router(
 
     @router.post("/scenarios")
     def scenario(req: ScenarioRequest, actor: Principal = principal_dependency):
+        if any(value is None for value in req.baseline.values()):
+            raise HTTPException(422, "scenario baseline values must be present")
         allowed = set(Scenario.__dataclass_fields__) - {"name"}
         unknown = set(req.shocks) - allowed
         if unknown:

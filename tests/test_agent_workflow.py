@@ -106,7 +106,10 @@ def test_malformed_provider_preserves_numeric_result_but_requires_review():
         "Example", 2025, data["current"], pages={1: "text"}
     )
     assert state.status == AgentStatus.REVIEW_REQUIRED
-    assert state.decision == "REVIEW"
+    # Provider failure requires a human review, but must not weaken an
+    # evidence-driven ABSTAIN into an actionable REVIEW disposition.
+    assert state.decision == "ABSTAIN"
+    assert state.assessment["human_review_required"] is True
     assert "malformed structured LLM output" in state.warnings[0]
     assert state.assessment["failure_state"]["review_failures"] == [
         "llm_unavailable"

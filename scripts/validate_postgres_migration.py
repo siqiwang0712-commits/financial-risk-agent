@@ -7,7 +7,7 @@ root = Path(__file__).resolve().parents[1]
 repository = PostgresEnterpriseRepository.connect(os.environ["DATABASE_URL"])
 for migration in sorted((root / "migrations").glob("*.sql")):
     repository.migrate(migration)
-with repository.connection.cursor() as cursor:
+with repository.connection_context() as connection, connection.cursor() as cursor:
     cursor.execute(
         "SELECT to_regclass('public.analysis_snapshots'), "
         "to_regclass('public.audit_events'), "
@@ -15,6 +15,7 @@ with repository.connection.cursor() as cursor:
         "to_regclass('public.decision_bundles')"
     )
     snapshots, audit, risk_snapshots, bundles = cursor.fetchone()
+repository.close()
 if not all((snapshots, audit, risk_snapshots, bundles)):
     raise SystemExit("enterprise migration did not create required tables")
 print("PostgreSQL enterprise migration validated")

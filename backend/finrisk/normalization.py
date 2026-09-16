@@ -5,6 +5,7 @@ import re
 ALIASES = {
     "cash and cash equivalents": "cash", "cash equivalents": "cash",
     "trade receivables": "accounts_receivable", "accounts receivable": "accounts_receivable",
+    "accounts receivable, net": "accounts_receivable",
     "inventories": "inventory", "total current assets": "current_assets",
     "total assets": "total_assets", "trade payables": "accounts_payable",
     "accounts payable": "accounts_payable", "total current liabilities": "current_liabilities",
@@ -36,7 +37,11 @@ ALIASES = {
 
 
 def normalize_line_item(label: str) -> str | None:
+    # Preserve meaningful accounting punctuation (notably commas) while dropping
+    # footnote markers that PDFs commonly glue to the label.
     cleaned = re.sub(r"\s+", " ", label.strip().lower().replace("–", "-").replace("—", "-"))
+    cleaned = re.sub(r"\s*[\*†‡]+$", "", cleaned)
+    cleaned = re.sub(r"\s+\(?[a-z]\)?$", "", cleaned)
     return ALIASES.get(cleaned)
 
 
@@ -44,12 +49,12 @@ def parse_number(text: str, scale: str | None = None) -> float | None:
     raw = text.strip()
     if not raw or raw.lower() in {"n/a", "na", "-", "—", "not available"}:
         return None
-    negative = raw.startswith("(") and raw.endswith(")")
+    negative = (raw.startswith("(") and raw.endswith(")")) or raw.startswith("-")
     # A trailing "%" means the token is a ratio, not a currency amount. It must be
     # divided by 100 and must never receive the statement scale (which would turn
     # "12.5%" into 12.5 and then into 12.5 million).
     percent = "%" in raw
-    raw = re.sub(r"[$€£%()\s]", "", raw)
+    raw = re.sub(r"[-$€£%()\s]", "", raw)
     if "," in raw:
         # Comma disambiguation. ``1,234`` / ``1,234,567`` use commas as thousands
         # separators; ``1234,56`` / ``0,5`` are the European decimal convention.

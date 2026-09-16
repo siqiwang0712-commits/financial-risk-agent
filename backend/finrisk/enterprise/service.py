@@ -1,10 +1,14 @@
 from __future__ import annotations
 
-from datetime import date
+import hashlib
+import json
+from datetime import UTC, date, datetime
 
 from .auth import authorize
+from .decision_bundle import DecisionBundle, verify_decision_bundle
 from .domain import (
     AuditEvent,
+    Decision,
     Entity,
     Organization,
     PolicyVersion,
@@ -24,13 +28,45 @@ from .workflow import (
 )
 
 
+def verified_evidence_ids(snapshot, risk_domain: str) -> set[str]:
+    """Stable IDs for verified evidence scoped to one snapshot and domain."""
+    aliases = {
+        "accounting": "accounting_anomaly",
+        "governance": "governance_audit",
+        "going_concern": "business_going_concern",
+        "solvency": "solvency_leverage",
+    }
+    paths = snapshot.frozen_output.get("agent", {}).get("decision_trace", {}).get("paths", [])
+    identifiers: set[str] = set()
+    for path in paths:
+        domain = aliases.get(path.get("risk_domain"), path.get("risk_domain"))
+        if path.get("evidence_path_status") != "VERIFIED" or domain != risk_domain:
+            continue
+        for evidence in path.get("source_evidence", []):
+            canonical = json.dumps(
+                {
+                    "snapshot_id": snapshot.id,
+                    "risk_domain": risk_domain,
+                    "document": evidence.get("document"),
+                    "page": evidence.get("page"),
+                    "source_text": evidence.get("source_text"),
+                    "period": evidence.get("period"),
+                    "value": evidence.get("value"),
+                },
+                sort_keys=True,
+                separators=(",", ":"),
+            )
+            identifiers.add(f"ev_{hashlib.sha256(canonical.encode()).hexdigest()[:24]}")
+    return identifiers
+
+
 class EnterpriseRiskService:
     def __init__(self, repository: EnterpriseRepository | None = None):
         self.repository = repository or InMemoryEnterpriseRepository()
 
     def create_organization(self, name: str, actor_id: str) -> Organization:
-        item = self.repository.save(Organization(new_id("org"), name))
-        self._audit(
+        item = Organization(new_id("org"), name)
+        event = self._event(
             item.id,
             actor_id,
             "organization.created",
@@ -38,7 +74,7 @@ class EnterpriseRiskService:
             item.id,
             {"name": name},
         )
-        return item
+        return self.repository.save(item, event)
 
     def create_entity(
         self,
@@ -50,10 +86,8 @@ class EnterpriseRiskService:
         authorize(principal, "write", principal.organization_id)
         if parent_id is not None:
             self.repository.get_entity(principal.organization_id, parent_id)
-        item = self.repository.save(
-            Entity(new_id("ent"), principal.organization_id, name, parent_id, sector)
-        )
-        self._audit(
+        item = Entity(new_id("ent"), principal.organization_id, name, parent_id, sector)
+        event = self._event(
             principal.organization_id,
             principal.user_id,
             "entity.created",
@@ -61,14 +95,13 @@ class EnterpriseRiskService:
             item.id,
             {"name": name},
         )
-        return item
+        return self.repository.save(item, event)
 
     def create_policy(
         self, principal: Principal, name: str, thresholds: dict, version: int
     ) -> PolicyVersion:
         authorize(principal, "configure", principal.organization_id)
-        item = self.repository.save(
-            PolicyVersion(
+        item = PolicyVersion(
                 new_id("pol"),
                 principal.organization_id,
                 version,
@@ -76,8 +109,7 @@ class EnterpriseRiskService:
                 thresholds,
                 principal.user_id,
             )
-        )
-        self._audit(
+        event = self._event(
             principal.organization_id,
             principal.user_id,
             "policy.version_created",
@@ -85,7 +117,7 @@ class EnterpriseRiskService:
             item.id,
             {"version": version, "thresholds": thresholds},
         )
-        return item
+        return self.repository.save(item, event)
 
     def create_case(self, principal: Principal, case: RiskCase) -> RiskCase:
         authorize(principal, "write", case.organization_id)
@@ -96,8 +128,7 @@ class EnterpriseRiskService:
                 raise PermissionError("snapshot organization does not match risk case")
             if snapshot.entity_id != case.entity_id:
                 raise ValueError("snapshot entity does not match risk case")
-        saved = self.repository.save(case)
-        self._audit(
+        event = self._event(
             case.organization_id,
             principal.user_id,
             "risk_case.created",
@@ -105,7 +136,7 @@ class EnterpriseRiskService:
             case.id,
             case.to_dict(),
         )
-        return saved
+        return self.repository.save(case, event)
 
     def transition(
         self, principal: Principal, case_id: str, target: RiskCaseStatus
@@ -135,8 +166,7 @@ class EnterpriseRiskService:
         if target is RiskCaseStatus.RESOLVED and not case.resolution_evidence:
             raise ValueError("resolution evidence is required")
         previous, current = transition_case(case, target)
-        saved = self.repository.save(case)
-        self._audit(
+        event = self._event(
             case.organization_id,
             principal.user_id,
             "risk_case.transitioned",
@@ -144,43 +174,51 @@ class EnterpriseRiskService:
             case.id,
             {"from": previous, "to": current},
         )
-        return saved
+        return self.repository.save(case, event)
 
     def add_action(self, principal: Principal, case_id: str, description: str, owner_id: str, due_date: str) -> RiskCase:
         try:
-            date.fromisoformat(due_date)
+            parsed_due_date = date.fromisoformat(due_date)
         except ValueError as exc:
             raise ValueError("due_date must be an ISO calendar date") from exc
+        if parsed_due_date < datetime.now(UTC).date():
+            raise ValueError("due_date cannot be in the past")
         case = self.repository.get_case(principal.organization_id, case_id)
         authorize(principal, "write", case.organization_id)
+        if owner_id != principal.user_id:
+            raise ValueError("action owner must match the authenticated user")
         payload = add_mitigation_action(case, principal.user_id, description, owner_id, due_date)
-        saved = self.repository.save(case)
-        self._audit(case.organization_id, principal.user_id, "risk_case.action_added", "risk_case", case.id, payload)
-        return saved
+        event = self._event(case.organization_id, principal.user_id, "risk_case.action_added", "risk_case", case.id, payload)
+        return self.repository.save(case, event)
 
     def add_resolution_evidence(self, principal: Principal, case_id: str, evidence_id: str) -> RiskCase:
         case = self.repository.get_case(principal.organization_id, case_id)
         authorize(principal, "review", case.organization_id)
+        if not case.snapshot_id:
+            raise ValueError("resolution evidence requires a server-side snapshot")
+        snapshot = self.repository.get_snapshot(case.organization_id, case.snapshot_id)
+        if (
+            evidence_id not in case.evidence_ids
+            or evidence_id not in verified_evidence_ids(snapshot, case.domain.value)
+        ):
+            raise ValueError("resolution evidence must be a verified case evidence ID")
         record_resolution_evidence(case, evidence_id)
-        saved = self.repository.save(case)
-        self._audit(case.organization_id, principal.user_id, "risk_case.resolution_evidence_added", "risk_case", case.id, {"evidence_id": evidence_id})
-        return saved
+        event = self._event(case.organization_id, principal.user_id, "risk_case.resolution_evidence_added", "risk_case", case.id, {"evidence_id": evidence_id})
+        return self.repository.save(case, event)
 
     def reopen(self, principal: Principal, case_id: str, reason: str) -> RiskCase:
         case = self.repository.get_case(principal.organization_id, case_id)
         authorize(principal, "review", case.organization_id)
         payload = reopen_case(case, principal.user_id, reason)
-        saved = self.repository.save(case)
-        self._audit(case.organization_id, principal.user_id, "risk_case.reopened", "risk_case", case.id, payload)
-        return saved
+        event = self._event(case.organization_id, principal.user_id, "risk_case.reopened", "risk_case", case.id, payload)
+        return self.repository.save(case, event)
 
     def save_risk_snapshot(
         self, principal: Principal, snapshot: RiskSnapshot
     ) -> RiskSnapshot:
         authorize(principal, "write", principal.organization_id)
         self.repository.get_entity(principal.organization_id, snapshot.entity_id)
-        saved = self.repository.save_risk_snapshot(principal.organization_id, snapshot)
-        self._audit(
+        event = self._event(
             principal.organization_id,
             principal.user_id,
             "risk_snapshot.created",
@@ -188,18 +226,30 @@ class EnterpriseRiskService:
             f"{snapshot.entity_id}:{snapshot.period}",
             {"filing_id": snapshot.filing_id, "decision": snapshot.decision},
         )
-        return saved
+        return self.repository.save_risk_snapshot(principal.organization_id, snapshot, event)
 
     def risk_timeline(self, principal: Principal, entity_id: str) -> list[RiskSnapshot]:
         authorize(principal, "read", principal.organization_id)
         self.repository.get_entity(principal.organization_id, entity_id)
         return self.repository.list_risk_snapshots(principal.organization_id, entity_id)
 
+    def save_decision_bundle(self, principal: Principal, bundle: DecisionBundle) -> DecisionBundle:
+        authorize(principal, "write", bundle.organization_id)
+        self.repository.get_entity(bundle.organization_id, bundle.entity_id)
+        if not verify_decision_bundle(bundle):
+            raise ValueError("decision bundle hash verification failed")
+        saved = self.repository.save_decision_bundle(bundle)
+        persisted = self.repository.get_decision_bundle(
+            bundle.organization_id, bundle.entity_id, bundle.bundle_id
+        )
+        if persisted.bundle_hash != bundle.bundle_hash:
+            raise ValueError("decision bundle persistence verification failed")
+        return saved
+
     def save_snapshot(self, principal: Principal, snapshot):
         authorize(principal, "write", snapshot.organization_id)
         self.repository.get_entity(snapshot.organization_id, snapshot.entity_id)
-        saved = self.repository.save(snapshot)
-        self._audit(
+        event = self._event(
             snapshot.organization_id,
             principal.user_id,
             "analysis.snapshot_created",
@@ -211,7 +261,7 @@ class EnterpriseRiskService:
                 "component_versions": snapshot.component_versions,
             },
         )
-        return saved
+        return self.repository.save(snapshot, event)
 
     def override(
         self,
@@ -223,9 +273,19 @@ class EnterpriseRiskService:
     ) -> RiskCase:
         case = self.repository.get_case(principal.organization_id, case_id)
         authorize(principal, "review", case.organization_id)
+        try:
+            original_decision, override_decision = Decision(original), Decision(override)
+        except ValueError as exc:
+            raise ValueError("override decisions must be valid Decision values") from exc
+        actual = case.decision_trace.get("decision")
+        if not actual:
+            raise ValueError("risk case has no recorded decision to override")
+        if original_decision.value != actual:
+            raise ValueError("override original does not match the recorded decision")
+        if original_decision == override_decision:
+            raise ValueError("override must change the recorded decision")
         payload = record_override(case, principal.user_id, original, override, reason)
-        saved = self.repository.save(case)
-        self._audit(
+        event = self._event(
             case.organization_id,
             principal.user_id,
             "risk_case.overridden",
@@ -233,19 +293,12 @@ class EnterpriseRiskService:
             case.id,
             payload,
         )
-        return saved
+        return self.repository.save(case, event)
 
-    def _audit(
-        self, organization_id, actor_id, action, object_type, object_id, payload
-    ):
-        self.repository.append_event(
-            AuditEvent(
-                new_id("evt"),
-                organization_id,
-                actor_id,
-                action,
-                object_type,
-                object_id,
-                payload,
-            )
+    @staticmethod
+    def _event(
+        organization_id, actor_id, action, object_type, object_id, payload
+    ) -> AuditEvent:
+        return AuditEvent(
+            new_id("evt"), organization_id, actor_id, action, object_type, object_id, payload
         )

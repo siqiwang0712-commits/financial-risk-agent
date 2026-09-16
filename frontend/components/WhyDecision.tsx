@@ -48,15 +48,29 @@ function verdictSentence(payload: AssessmentPayload): string {
   const trace = agent?.decision_trace;
   const verified = trace?.verified_path_count ?? 0;
   const material = trace?.material_path_count ?? 0;
+  const reasonCodes = new Set([
+    ...(trace?.decision_reason_codes ?? []),
+    ...(agent?.fusion?.reason_codes ?? []),
+  ]);
+  const blocking = payload.failure_state?.blocking_failures ?? [];
 
   if (decision === "ABSTAIN") {
-    return `The system declined to decide. Evidence coverage is ${payload.evidence_coverage.toFixed(3)}, below the policy floor, so no conclusion is asserted.`;
+    if (reasonCodes.has("INSUFFICIENT_EVIDENCE")) {
+      return `The system declined to decide because the effective evidence paths did not meet the policy proof floor. Evidence coverage is ${payload.evidence_coverage.toFixed(3)}.`;
+    }
+    if (blocking.length) {
+      return `The system declined to decide because blocking failure state(s) were recorded: ${blocking.join(", ")}. No conclusion is asserted.`;
+    }
+    return "The system declined to decide. Consult the recorded reason codes and failure states; no unsupported cause is inferred by the interface.";
   }
   if (decision === "REVIEW") {
-    return `The system routed this to human review. ${material - verified} of ${material} material paths could not be fully verified, so the result is not presented as settled.`;
+    return `The system routed this to human review. ${Math.max(0, material - verified)} of ${material} material paths could not be fully verified, or a recorded review condition prevented an automated disposition.`;
   }
   if (decision === "FLAG") {
-    return `The system flagged risk. ${verified} of ${material} material paths are verified, and at least one verified signal reached a severe band.`;
+    const basis = reasonCodes.has("SEVERE_VERIFIED_SIGNAL")
+      ? "at least one verified signal reached a severe band"
+      : "the recorded fusion policy crossed its flag threshold";
+    return `The system flagged risk. ${verified} of ${material} material paths are verified, and ${basis}.`;
   }
   return `No adverse signal cleared the review threshold across ${material} material path(s). This is a low-severity reading, not an assurance of safety.`;
 }

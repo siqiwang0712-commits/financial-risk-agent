@@ -97,9 +97,14 @@ export default function Page() {
     company: string;
     fiscalYear: number;
     apiKey: string;
+    entityId: string;
   }) => {
     setError(null);
     setErrorIsUpstream(false);
+    // Results are scoped to a specific filing.  Do not leave a prior decision
+    // visible while a new analysis is in flight or after it fails.
+    setAssessment(null);
+    setAssessmentOrigin(null);
     setLoadingAnalysis(true);
     const result = await analyzeDocument(opts);
     setLoadingAnalysis(false);
@@ -110,8 +115,6 @@ export default function Page() {
     } else {
       setError(result.failure.message);
       setErrorIsUpstream(result.failure.upstreamUnavailable);
-      // A failed run must not leave a stale "live run" badge in place.
-      setAssessmentOrigin(null);
     }
   };
 

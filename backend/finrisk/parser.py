@@ -35,7 +35,7 @@ class DocumentParser:
         path=Path(path)
         if path.suffix.lower()==".txt": return {1:path.read_text(encoding="utf-8")}
         try:
-            import fitz
+            import pymupdf as fitz
         except ImportError as exc: raise RuntimeError("PDF support requires PyMuPDF; install project dependencies.") from exc
         with fitz.open(path) as doc:return {i+1:p.get_text("text") for i,p in enumerate(doc)}
 
@@ -48,21 +48,44 @@ class DocumentParser:
 
     def extract_values(self,pages:dict[int,str],document:str,default_year:int,currency="USD",scale=None)->list[FinancialValue]:
         out=[]
-        line_re=re.compile(r"^\s*([A-Za-z][A-Za-z '&-]{2,60})\s+((?:[$€£]?\(?[\d,]+(?:\.\d+)?\)?\s*){1,3})$")
-        number_re=re.compile(r"[$€£]?\(?[\d,]+(?:\.\d+)?\)?")
+        # A financial row has a label followed by values.  Capture the complete
+        # label (including commas and "net") and postpone value selection until
+        # the table's local column header is known.  Page-global year zip mapping
+        # misread note numbers as values and unrelated narrative years as columns.
+        line_re=re.compile(r"^\s*([A-Za-z][A-Za-z ,.'&/()-]{2,90})\s+(.*?)\s*$")
+        number_re=re.compile(r"(?<![A-Za-z])(?:[-−]?[$€£]?\(?\d[\d,]*(?:\.\d+)?%?\)?)(?![A-Za-z])")
         for page,text in pages.items():
-            header=" ".join(text.splitlines()[:15])
-            years=[int(y) for y in re.findall(r"\b20\d{2}\b",header)][:3] or [default_year]
+            lines=text.splitlines()
+            header=" ".join(lines[:15])
             detected_currency="EUR" if "€" in text or re.search(r"\bEUR\b",header) else "GBP" if "£" in text or re.search(r"\bGBP\b",header) else "USD" if "$" in text or re.search(r"\bUSD\b",header) else currency
             scale_match=_SCALE_PATTERN.search(header)
             detected_scale=_SCALE_TOKENS.get(scale_match.group(1).lower()) if scale_match else scale
             statement=next((name for name,pat in self.SECTION_PATTERNS.items() if name in {"balance_sheet","income_statement","cash_flow"} and re.search(pat,header,re.IGNORECASE)),"unknown")
-            for line in text.splitlines():
+            active_years: list[int] = []
+            active_context = ""
+            for line_number, line in enumerate(lines):
+                header_years=[int(y) for y in re.findall(r"\b(?:19|20)\d{2}\b", line)]
+                # Only a local row containing at least two year headers opens a
+                # comparative table.  A sole date in prose is not a value column.
+                if len(header_years) >= 2:
+                    active_years=header_years
+                    active_context=" ".join(lines[max(0,line_number-3):line_number+1])
                 m=line_re.match(line); key=normalize_line_item(m.group(1)) if m else None
                 if key:
                     raws=number_re.findall(m.group(2))
-                    mapped_years=years if len(years)>=len(raws) else [default_year]*len(raws)
-                    for raw,year in zip(raws,mapped_years):
-                        value=parse_number(raw,detected_scale)
-                        out.append(FinancialValue(key,value,year,statement,currency=detected_currency,document=document,page=page,source_text=line.strip(),confidence=.8 if statement!="unknown" else .65,restated=bool(re.search(r"restated",header,re.IGNORECASE))))
+                    if not raws:
+                        continue
+                    # A leading Note column is metadata.  Values occupy the last
+                    # N numeric cells aligned to N local year columns, rather than
+                    # the first N numbers on the row.
+                    years = active_years[:len(raws)] if active_years and len(raws) <= len(active_years) else active_years
+                    values = raws[-len(years):] if years else raws[:1]
+                    mapped_years = years or [default_year]
+                    context = f"{active_context} {line}"
+                    local_currency="EUR" if "€" in context or re.search(r"\bEUR\b",context,re.IGNORECASE) else "GBP" if "£" in context or re.search(r"\bGBP\b",context,re.IGNORECASE) else detected_currency
+                    local_scale_match=_SCALE_PATTERN.search(context)
+                    local_scale=_SCALE_TOKENS.get(local_scale_match.group(1).lower()) if local_scale_match else detected_scale
+                    for raw,year in zip(values,mapped_years):
+                        value=parse_number(raw,local_scale)
+                        out.append(FinancialValue(key,value,year,statement,currency=local_currency,document=document,page=page,source_text=line.strip(),confidence=.8 if statement!="unknown" else .65,restated=bool(re.search(r"restated",context,re.IGNORECASE))))
         return out

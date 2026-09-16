@@ -5,8 +5,10 @@ import hmac
 import secrets
 import time
 from collections import defaultdict, deque
+from contextlib import contextmanager
 from dataclasses import dataclass
 from datetime import UTC, datetime
+from threading import Lock
 from typing import Protocol
 
 from .domain import Principal, Role
@@ -83,24 +85,37 @@ class DurableCredentialStore(Protocol):
 class PostgresCredentialStore:
     """Durable credentials; only hashes and non-secret identifiers are persisted."""
 
-    def __init__(self, connection):
-        self.connection = connection
+    def __init__(self, connection_or_repository):
+        self.resource = connection_or_repository
+
+    @contextmanager
+    def _connection(self):
+        if hasattr(self.resource, "connection_context"):
+            with self.resource.connection_context() as connection:
+                yield connection
+        else:
+            yield self.resource
 
     def register(self, credential: ApiCredential) -> None:
-        with self.connection.cursor() as cursor:
-            cursor.execute(
-                """INSERT INTO api_credentials
-                (id,credential_prefix,organization_id,user_id,role,secret_hash,active)
-                VALUES (%s,%s,%s,%s,%s,%s,%s)""",
-                (credential.id, credential.prefix, credential.organization_id,
-                 credential.user_id, credential.role.value, credential.key_hash,
-                 credential.active),
-            )
-        self.connection.commit()
+        with self._connection() as connection:
+            with connection.cursor() as cursor:
+                self._insert(cursor, credential)
+            connection.commit()
+
+    @staticmethod
+    def _insert(cursor, credential: ApiCredential) -> None:
+        cursor.execute(
+            """INSERT INTO api_credentials
+            (id,credential_prefix,organization_id,user_id,role,secret_hash,active)
+            VALUES (%s,%s,%s,%s,%s,%s,%s)""",
+            (credential.id, credential.prefix, credential.organization_id,
+             credential.user_id, credential.role.value, credential.key_hash,
+             credential.active),
+        )
 
     def authenticate(self, raw: str) -> Principal:
         prefix = "_".join(raw.split("_", 2)[:2])
-        with self.connection.cursor() as cursor:
+        with self._connection() as connection, connection.cursor() as cursor:
             cursor.execute(
                 "SELECT id,organization_id,secret_hash,user_id,role,active FROM api_credentials WHERE credential_prefix=%s",
                 (prefix,),
@@ -114,20 +129,22 @@ class PostgresCredentialStore:
         return Principal(credential.user_id, credential.organization_id, credential.role)
 
     def rotate(self, credential_id: str) -> tuple[str, ApiCredential]:
-        with self.connection.cursor() as cursor:
-            cursor.execute(
-                "SELECT organization_id,user_id,role FROM api_credentials WHERE id=%s AND active=true FOR UPDATE",
-                (credential_id,),
-            )
-            row = cursor.fetchone()
-            if row is None:
-                raise KeyError(credential_id)
-            cursor.execute(
-                "UPDATE api_credentials SET active=false,revoked_at=%s WHERE id=%s",
-                (datetime.now(UTC), credential_id),
-            )
-        raw, replacement = issue_api_key(row[0], row[1], Role(row[2]))
-        self.register(replacement)
+        with self._connection() as connection:
+            with connection.cursor() as cursor:
+                cursor.execute(
+                    "SELECT organization_id,user_id,role FROM api_credentials WHERE id=%s AND active=true FOR UPDATE",
+                    (credential_id,),
+                )
+                row = cursor.fetchone()
+                if row is None:
+                    raise KeyError(credential_id)
+                raw, replacement = issue_api_key(row[0], row[1], Role(row[2]))
+                cursor.execute(
+                    "UPDATE api_credentials SET active=false,revoked_at=%s WHERE id=%s",
+                    (datetime.now(UTC), credential_id),
+                )
+                self._insert(cursor, replacement)
+            connection.commit()
         return raw, replacement
 
 
@@ -148,6 +165,7 @@ class SlidingWindowRateLimiter:
         self.window_seconds = window_seconds
         self.max_keys = max_keys
         self._events: dict[str, deque[float]] = defaultdict(deque)
+        self._lock = Lock()
 
     def _evict_if_needed(self, key: str) -> None:
         if key in self._events or len(self._events) < self.max_keys:
@@ -159,12 +177,15 @@ class SlidingWindowRateLimiter:
         self._events.pop(oldest, None)
 
     def allow(self, key: str, now: float | None = None) -> bool:
-        current = time.monotonic() if now is None else now
-        self._evict_if_needed(key)
-        events = self._events[key]
-        while events and events[0] <= current - self.window_seconds:
-            events.popleft()
-        if len(events) >= self.limit:
-            return False
-        events.append(current)
-        return True
+        # The fallback is process-local by design, but it must still be correct
+        # under FastAPI's concurrent worker threads.
+        with self._lock:
+            current = time.monotonic() if now is None else now
+            self._evict_if_needed(key)
+            events = self._events[key]
+            while events and events[0] <= current - self.window_seconds:
+                events.popleft()
+            if len(events) >= self.limit:
+                return False
+            events.append(current)
+            return True

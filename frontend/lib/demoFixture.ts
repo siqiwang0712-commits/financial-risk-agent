@@ -21,12 +21,12 @@ export const DEMO_FIXTURE: DemoFixture = {
     "snapshot": "v0.3.0 frozen public pilot",
     "runtime": "v0.3.2",
     "annotation_status": "single-reviewer pilot; not a definitive financial-risk benchmark",
+    "benchmark_evidence_coverage": 0.5833,
     "rows": [
       {
         "entity": "Apple Inc.",
         "decision": "PASS",
         "score": null,
-        "coverage": 0.5833,
         "reliability": "UNCALIBRATED",
         "filing": "aapl-2024"
       },
@@ -34,7 +34,6 @@ export const DEMO_FIXTURE: DemoFixture = {
         "entity": "Microsoft Corporation",
         "decision": "PASS",
         "score": 24.0,
-        "coverage": 0.5833,
         "reliability": "UNCALIBRATED",
         "filing": "msft-2024"
       },
@@ -42,7 +41,6 @@ export const DEMO_FIXTURE: DemoFixture = {
         "entity": "Intel Corporation",
         "decision": "PASS",
         "score": 42.7,
-        "coverage": 0.5833,
         "reliability": "UNCALIBRATED",
         "filing": "intc-2024"
       }

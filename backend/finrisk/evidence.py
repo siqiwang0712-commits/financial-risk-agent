@@ -75,6 +75,8 @@ def claim_is_grounded(claim_text: str, evidence_text: str, page_text: str = "") 
     terms = _claim_terms(claim_text)
     if not terms:
         return False
-    haystack = f"{evidence_text} {page_text}".casefold()
+    # The page is accepted for API compatibility but deliberately excluded: a
+    # nearby, unrelated paragraph cannot ground the cited evidence span.
+    haystack = evidence_text.casefold()
     hits = sum(1 for term in terms if term in haystack)
     return hits / len(terms) >= 0.6

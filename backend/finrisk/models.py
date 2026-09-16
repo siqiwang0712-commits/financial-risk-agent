@@ -68,7 +68,8 @@ ALTMAN_VARIANTS: dict[str, dict] = {
 }
 
 _ALTMAN_PRIVATE_TYPES = {"private", "private_company", "private_manufacturer"}
-_ALTMAN_MANUFACTURING_TYPES = {"manufacturing", "industrial", "public_manufacturer", "public", ""}
+_ALTMAN_MANUFACTURING_TYPES = {"manufacturing", "industrial", "public_manufacturer", "public"}
+_ALTMAN_NON_MANUFACTURING_TYPES = {"non_manufacturer", "retail", "service"}
 _ALTMAN_FINANCIAL_TYPES = {"bank", "banking", "financial_institution"}
 
 
@@ -79,7 +80,9 @@ def altman_variant(entity_type: str) -> str:
         return "private"
     if key in _ALTMAN_MANUFACTURING_TYPES:
         return "public_manufacturer"
-    return "non_manufacturer"
+    if key in _ALTMAN_NON_MANUFACTURING_TYPES | _ALTMAN_FINANCIAL_TYPES:
+        return "non_manufacturer"
+    raise ValueError(f"unknown entity_type: {entity_type!r}")
 
 
 def altman_z(v: dict, entity_type="public_manufacturer") -> ModelResult:
