@@ -32,7 +32,11 @@ jobs:
       - run: python -m pip install -c requirements.lock -e ".[dev,postgres]"
       - run: python -m pip check
       - run: python -m pip install pip-audit
-      - run: pip-audit --strict
+      # Auditing the installed environment would always fail here: this project's
+      # own editable install is not on PyPI, so pip-audit marks it unauditable and
+      # `--strict` turns any such skip into a fatal error. requirements.lock is a
+      # complete resolution, so audit it directly instead.
+      - run: pip-audit --strict --no-deps -r requirements.lock
       - run: ruff check backend tests scripts
       - run: git diff --check HEAD^ HEAD
       - run: python scripts/validate_postgres_migration.py
