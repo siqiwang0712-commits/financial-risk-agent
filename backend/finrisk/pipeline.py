@@ -218,7 +218,12 @@ class FinRiskPipeline:
         for mapping in self.model_scoring["mappings"]:
             value=facts.get(mapping["metric"])
             if value is not None and ops[mapping["operator"]](value,mapping["threshold"]):
-                model=next(m for m in models if m.name==mapping["model"])
+                # A caller-supplied metric name can cross the threshold even when the
+                # model producing it was never evaluated (Beneish/Piotroski need a prior
+                # period), so the lookup must not raise StopIteration.
+                model=next((m for m in models if m.name==mapping["model"]),None)
+                if model is None:
+                    continue
                 refs=[]
                 for key in model.inputs:refs.extend(source_map.get(key,[]))
                 model_key = {
