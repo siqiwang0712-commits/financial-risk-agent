@@ -18,8 +18,11 @@ _SCALE_TOKENS = {
     "million": "million", "millions": "millions", "mn": "millions", "mm": "millions",
     "billion": "billion", "billions": "billions", "bn": "billions",
 }
+# The numeric-looking alternatives must not match the digit triple inside an
+# ordinary amount: "1,000" / "5,000" / "1,000,000" are values, not a "thousands"
+# declaration, and reading them as one scaled their row by 1000x.
 _SCALE_PATTERN = re.compile(
-    r"(thousands?|millions?|billions?|000s|000|mn|mm|bn)\b", re.IGNORECASE
+    r"(?<![0-9.,])(thousands?|millions?|billions?|000s|000|mn|mm|bn)\b", re.IGNORECASE
 )
 
 
