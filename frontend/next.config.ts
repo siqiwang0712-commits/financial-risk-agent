@@ -5,6 +5,15 @@ import path from "path";
 // frameable and sniffable. `Content-Security-Policy` allows only same-origin
 // scripts/styles/images plus the inline styles the Workbench uses for the
 // server-rendered shell.
+//
+// `next dev` compiles modules with `eval` (react-refresh / webpack HMR), so a
+// `script-src` without `'unsafe-eval'` blocks the client bundle outright: the
+// page renders the server shell, never hydrates, and every control stays inert
+// (`Load bundled sample` did nothing and the pilot panel sat on "Loading pilot
+// data…"). The relaxation is scoped to development; the shipped bundle does not
+// use `eval`, so production keeps the strict policy.
+const isDevelopment = process.env.NODE_ENV !== "production";
+
 const securityHeaders = [
   { key: "X-Content-Type-Options", value: "nosniff" },
   { key: "X-Frame-Options", value: "DENY" },
@@ -14,7 +23,7 @@ const securityHeaders = [
     key: "Content-Security-Policy",
     value: [
       "default-src 'self'",
-      "script-src 'self' 'unsafe-inline'",
+      `script-src 'self' 'unsafe-inline'${isDevelopment ? " 'unsafe-eval'" : ""}`,
       "script-src-attr 'none'",
       "style-src 'self' 'unsafe-inline'",
       "img-src 'self' data:",

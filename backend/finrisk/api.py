@@ -349,7 +349,27 @@ if FastAPI:
             epistemics=state.epistemics,
             component_telemetry=state.component_telemetry,
         )
-        enterprise_service.save_decision_bundle(actor, bundle)
+        try:
+            enterprise_service.save_decision_bundle(actor, bundle)
+        except ValueError as exc:
+            # Re-analysing the same filing for the same entity derives the same
+            # content-addressed bundle id, and both repositories reject a second
+            # write with `decision bundle already exists`. That raised straight
+            # out of this function, so every re-run of `/documents/analyze`
+            # returned 500 — a normal user action. An identical bundle is already
+            # on record; a different payload under the same id is a real
+            # conflict and stays a 422.
+            stored = None
+            try:
+                stored = enterprise_service.repository.get_decision_bundle(
+                    actor.organization_id, entity_id, bundle.bundle_id
+                )
+            except (KeyError, ValueError):
+                stored = None
+            if stored is None or stored.bundle_hash != bundle.bundle_hash:
+                structured_event(api_logger, "document.bundle_conflict")
+                raise HTTPException(422, "decision bundle persistence rejected") from exc
+            bundle = stored
         state.decision_bundle = bundle.to_dict()
 
     def validate_analysis_entity(actor: Principal, entity_id: str | None) -> None:

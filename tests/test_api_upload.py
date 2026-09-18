@@ -308,6 +308,38 @@ def test_entity_creation_with_an_unknown_parent_is_rejected_not_a_500():
     assert response.json()["detail"] == "entity creation rejected"
 
 
+def test_reanalysing_the_same_entity_is_idempotent_not_a_500():
+    """Re-running a filing for an existing entity used to return 500.
+
+    The decision bundle id is derived from the organisation, entity and document
+    versions, so the second analysis of the *same* filing produces the same id
+    and both repositories reject the duplicate write (`decision bundle already
+    exists`). That ValueError escaped `persist_agent_snapshot`, and the route
+    answered `500 internal server error` for a perfectly ordinary action.
+    """
+    client, headers = authenticated_client()
+    entity = client.post(
+        "/api/v1/enterprise/entities", headers=headers, json={"name": "Repeat entity"}
+    ).json()
+    pdf = pdf_bytes(
+        "BALANCE SHEET\nCash and cash equivalents 1,250\nTotal assets 5,000\n"
+        "Total liabilities 2,000\nRevenue 4,000\nNet income 300"
+    )
+    responses = [
+        client.post(
+            "/api/v1/documents/analyze",
+            headers=headers,
+            data={"company": "Repeat Co", "fiscal_year": "2025", "entity_id": entity["id"]},
+            files={"file": ("repeat.pdf", pdf, "application/pdf")},
+        )
+        for _ in range(3)
+    ]
+    for response in responses:
+        assert response.status_code == 200, response.text
+    decisions = {response.json()["agent"]["decision"] for response in responses}
+    assert len(decisions) == 1, decisions
+
+
 def test_caller_supplied_model_metric_does_not_crash_the_assess_endpoints():
     """A model metric in `current` can cross its threshold without the model
     having been evaluated (Beneish/Piotroski need a prior period). That lookup
