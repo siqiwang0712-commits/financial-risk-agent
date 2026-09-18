@@ -1,6 +1,8 @@
 FINRISK ASSESSMENT — Intel Corporation
 Reporting period: 2024
-Overall Risk: 39.1/100 (Low)
+Decision: ABSTAIN
+Decision-bearing risk score: 73.0/100 (High)
+Weighted dimension score: 39.1/100 (Low)
 Evidence quality index: 0.65 (UNCALIBRATED; not a probability)
 Risk scores are heuristic assessment scores, not bankruptcy probabilities or investment advice.
 

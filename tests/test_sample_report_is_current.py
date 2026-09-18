@@ -7,6 +7,12 @@ that it still matched the pipeline. It had drifted: it reported
 it still used the old `Confidence:` label. A reader of the repository saw a
 different risk band than the engine reports.
 
+The headline number later drifted a second way: `Assessment.overall_score` is the
+weighted dimension aggregate (39.1/Low) while the decision is derived from the
+fusion score (73.0/High), so a report that printed only `overall_score` stated a
+band the engine had not decided. The renderer now labels each number separately,
+which is why the guarded headline is `Decision-bearing risk score:`.
+
 The PDF is regenerated alongside it but cannot be byte-compared (reportlab stamps
 it with the creation time), so this guard covers the text artifact.
 """
@@ -22,12 +28,14 @@ from finrisk.report import render_text_report
 ROOT = Path(__file__).resolve().parents[1]
 ARTIFACT = ROOT / "examples" / "intel_2024_sample_report.txt"
 OBSERVATIONS = ROOT / "research" / "benchmark" / "public_company_observations.json"
+HEADLINE = "Decision-bearing risk score:"
 
 
 def _rendered_report() -> str:
     data = json.loads(OBSERVATIONS.read_text(encoding="utf-8"))
     example = next(x for x in data["examples"] if x["id"] == "intc-2024")
-    assessment = FinRiskPipeline(ROOT).assess(
+    pipeline = FinRiskPipeline(ROOT)
+    assessment = pipeline.assess(
         example["company"],
         example["fiscal_year"],
         example["current"],
@@ -35,7 +43,7 @@ def _rendered_report() -> str:
         {int(key): value for key, value in example["pages"].items()},
         example["filing_url"],
     )
-    return render_text_report(assessment)
+    return render_text_report(assessment, pipeline.decide(assessment))
 
 
 def test_rendering_the_sample_report_is_deterministic():
@@ -53,8 +61,18 @@ def test_committed_sample_report_matches_the_current_pipeline():
 def test_sample_report_states_the_score_the_engine_produces():
     """The headline number and band are the part a reader actually quotes."""
     committed = ARTIFACT.read_text(encoding="utf-8")
-    headline = next(line for line in committed.splitlines() if line.startswith("Overall Risk:"))
-    rendered = next(
-        line for line in _rendered_report().splitlines() if line.startswith("Overall Risk:")
-    )
+    rendered_report = _rendered_report()
+    headline = next(line for line in committed.splitlines() if line.startswith(HEADLINE))
+    rendered = next(line for line in rendered_report.splitlines() if line.startswith(HEADLINE))
     assert headline == rendered
+
+
+def test_sample_report_headline_is_not_the_weighted_aggregate():
+    """Guard the reason the headline was relabelled: the two scores differ."""
+    rendered = _rendered_report()
+    decision_score = next(line for line in rendered.splitlines() if line.startswith(HEADLINE))
+    weighted = next(
+        line for line in rendered.splitlines() if line.startswith("Weighted dimension score:")
+    )
+    assert decision_score != weighted
+    assert "Decision:" in rendered

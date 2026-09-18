@@ -19,9 +19,10 @@ def render_text_report(a:Assessment,decision:dict|None=None)->str:
     decision payload is supplied.
     """
     lines=[f"FINRISK ASSESSMENT — {a.company}",f"Reporting period: {a.reporting_period}"]
-    if decision:
-        lines.append(f"Decision: {decision['final_decision']}")
-        lines.append(f"Decision-bearing risk score: {decision['overall_score']}/100 ({decision['risk_level']})")
+    score=decision.get("overall_score") if decision else None
+    if decision and score is not None:
+        lines.append(f"Decision: {decision.get('final_decision','ABSTAIN')}")
+        lines.append(f"Decision-bearing risk score: {score}/100 ({decision.get('risk_level','Unknown')})")
     lines += [f"Weighted dimension score: {a.overall_score}/100 ({a.risk_level})",f"Evidence quality index: {a.confidence:.2f} (UNCALIBRATED; not a probability)",a.disclaimer,"","EIGHT RISK DIMENSIONS"]
     lines.append("Evidence-quality components: "+", ".join(f"{k}={v:.2f}" for k,v in a.confidence_components.items()))
     for name,d in a.dimensions.items():
