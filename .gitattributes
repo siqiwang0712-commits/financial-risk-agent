@@ -1,5 +1,11 @@
 * text=auto
 
+# PDFs are binary. Without this, `text=auto` treats a generated PDF as text: git
+# rewrites its line endings on checkout, which shifts the byte offsets the xref
+# table points at, and the `git diff --check HEAD^ HEAD` CI gate reports the
+# binary content as trailing whitespace.
+*.pdf binary
+
 # Reproducible research artifacts must have identical bytes on Windows and Linux.
 research/results/public_v1/*.csv text eol=lf
 research/results/public_v1/*.json text eol=lf
