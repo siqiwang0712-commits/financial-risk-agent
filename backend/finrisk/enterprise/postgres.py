@@ -46,7 +46,14 @@ class PostgresEnterpriseRepository:
             max_size=int(os.getenv("FINRISK_DB_POOL_MAX", "10")),
             open=True,
         )
-        pool.wait(timeout=10)
+        try:
+            pool.wait(timeout=10)
+        except Exception:
+            # The pool is already open here, so a failed readiness wait used to
+            # leave its connections and worker threads alive for the process to
+            # leak. Close it before reporting the failure.
+            pool.close()
+            raise
         return cls(pool=pool)
 
     @contextmanager

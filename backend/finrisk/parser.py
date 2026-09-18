@@ -7,6 +7,15 @@ from typing import ClassVar
 from .domain import FinancialValue
 from .normalization import normalize_line_item, parse_number
 
+# Currency and restatement markers are matched against every candidate line, so
+# they are compiled once here instead of on each row.
+_LINE_PATTERN = re.compile(r"^\s*([A-Za-z][A-Za-z ,.'&/()-]{2,90})\s+(.*?)\s*$")
+_NUMBER_PATTERN = re.compile(r"(?<![A-Za-z])(?:[-−]?[$€£]?\(?\d[\d,]*(?:\.\d+)?%?\)?)(?![A-Za-z])")
+_EUR_PATTERN = re.compile(r"\bEUR\b", re.IGNORECASE)
+_GBP_PATTERN = re.compile(r"\bGBP\b", re.IGNORECASE)
+_USD_PATTERN = re.compile(r"\bUSD\b", re.IGNORECASE)
+_RESTATED_PATTERN = re.compile(r"restated", re.IGNORECASE)
+
 # Statement-scale tokens as they actually appear in filing headers: "in thousands",
 # "amounts in $ millions", "millions of dollars", "(000s)", "in 000's", "US$ mm".
 # The old pattern only recognised "in|amounts in thousands|millions|billions", so
@@ -55,12 +64,10 @@ class DocumentParser:
         # label (including commas and "net") and postpone value selection until
         # the table's local column header is known.  Page-global year zip mapping
         # misread note numbers as values and unrelated narrative years as columns.
-        line_re=re.compile(r"^\s*([A-Za-z][A-Za-z ,.'&/()-]{2,90})\s+(.*?)\s*$")
-        number_re=re.compile(r"(?<![A-Za-z])(?:[-−]?[$€£]?\(?\d[\d,]*(?:\.\d+)?%?\)?)(?![A-Za-z])")
         for page,text in pages.items():
             lines=text.splitlines()
             header=" ".join(lines[:15])
-            detected_currency="EUR" if "€" in text or re.search(r"\bEUR\b",header) else "GBP" if "£" in text or re.search(r"\bGBP\b",header) else "USD" if "$" in text or re.search(r"\bUSD\b",header) else currency
+            detected_currency="EUR" if "€" in text or _EUR_PATTERN.search(header) else "GBP" if "£" in text or _GBP_PATTERN.search(header) else "USD" if "$" in text or _USD_PATTERN.search(header) else currency
             scale_match=_SCALE_PATTERN.search(header)
             detected_scale=_SCALE_TOKENS.get(scale_match.group(1).lower()) if scale_match else scale
             statement=next((name for name,pat in self.SECTION_PATTERNS.items() if name in {"balance_sheet","income_statement","cash_flow"} and re.search(pat,header,re.IGNORECASE)),"unknown")
@@ -73,9 +80,9 @@ class DocumentParser:
                 if len(header_years) >= 2:
                     active_years=header_years
                     active_context=" ".join(lines[max(0,line_number-3):line_number+1])
-                m=line_re.match(line); key=normalize_line_item(m.group(1)) if m else None
+                m=_LINE_PATTERN.match(line); key=normalize_line_item(m.group(1)) if m else None
                 if key:
-                    raws=number_re.findall(m.group(2))
+                    raws=_NUMBER_PATTERN.findall(m.group(2))
                     if not raws:
                         continue
                     # A leading Note column is metadata.  Values occupy the last
@@ -85,10 +92,10 @@ class DocumentParser:
                     values = raws[-len(years):] if years else raws[:1]
                     mapped_years = years or [default_year]
                     context = f"{active_context} {line}"
-                    local_currency="EUR" if "€" in context or re.search(r"\bEUR\b",context,re.IGNORECASE) else "GBP" if "£" in context or re.search(r"\bGBP\b",context,re.IGNORECASE) else detected_currency
+                    local_currency="EUR" if "€" in context or _EUR_PATTERN.search(context) else "GBP" if "£" in context or _GBP_PATTERN.search(context) else detected_currency
                     local_scale_match=_SCALE_PATTERN.search(context)
                     local_scale=_SCALE_TOKENS.get(local_scale_match.group(1).lower()) if local_scale_match else detected_scale
                     for raw,year in zip(values,mapped_years):
                         value=parse_number(raw,local_scale)
-                        out.append(FinancialValue(key,value,year,statement,currency=local_currency,document=document,page=page,source_text=line.strip(),confidence=.8 if statement!="unknown" else .65,restated=bool(re.search(r"restated",context,re.IGNORECASE))))
+                        out.append(FinancialValue(key,value,year,statement,currency=local_currency,document=document,page=page,source_text=line.strip(),confidence=.8 if statement!="unknown" else .65,restated=bool(_RESTATED_PATTERN.search(context))))
         return out

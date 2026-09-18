@@ -89,8 +89,14 @@ def enforce_applicability(
     results: list[ModelResult], industry: str, facts: dict[str, object]
 ) -> list[ModelResult]:
     for result in results:
+        key = MODEL_KEYS.get(result.name)
+        if key is None:
+            # Same failure mode the pipeline now rejects at construction time: an
+            # unregistered model name must name itself instead of surfacing as a
+            # bare KeyError in the middle of a request.
+            raise ValueError(f"unregistered model name: {result.name!r}")
         decision = route_model(
-            MODEL_KEYS[result.name], industry, facts,
+            key, industry, facts,
             variant=result.derived_outputs.get("variant"),
         )
         missing = sorted(

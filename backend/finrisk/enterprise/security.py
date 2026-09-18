@@ -4,7 +4,7 @@ import hashlib
 import hmac
 import secrets
 import time
-from collections import defaultdict, deque
+from collections import OrderedDict, deque
 from contextlib import contextmanager
 from dataclasses import dataclass
 from datetime import UTC, datetime
@@ -164,17 +164,15 @@ class SlidingWindowRateLimiter:
         self.limit = limit
         self.window_seconds = window_seconds
         self.max_keys = max_keys
-        self._events: dict[str, deque[float]] = defaultdict(deque)
+        # Insertion-ordered so eviction is O(1); a `min()` scan over every key ran
+        # on every request once `max_keys` was reached.
+        self._events: OrderedDict[str, deque[float]] = OrderedDict()
         self._lock = Lock()
 
     def _evict_if_needed(self, key: str) -> None:
         if key in self._events or len(self._events) < self.max_keys:
             return
-        oldest = min(
-            self._events,
-            key=lambda candidate: self._events[candidate][-1] if self._events[candidate] else -1.0,
-        )
-        self._events.pop(oldest, None)
+        self._events.popitem(last=False)
 
     def allow(self, key: str, now: float | None = None) -> bool:
         # The fallback is process-local by design, but it must still be correct
@@ -182,7 +180,10 @@ class SlidingWindowRateLimiter:
         with self._lock:
             current = time.monotonic() if now is None else now
             self._evict_if_needed(key)
-            events = self._events[key]
+            events = self._events.get(key)
+            if events is None:
+                events = self._events[key] = deque()
+            self._events.move_to_end(key)
             while events and events[0] <= current - self.window_seconds:
                 events.popleft()
             if len(events) >= self.limit:
