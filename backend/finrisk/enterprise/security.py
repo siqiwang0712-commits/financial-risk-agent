@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import hashlib
 import hmac
+import os
 import secrets
 import time
 from collections import OrderedDict, deque
@@ -80,6 +81,168 @@ class DurableCredentialStore(Protocol):
     def register(self, credential: ApiCredential) -> None: ...
     def authenticate(self, raw: str) -> Principal: ...
     def rotate(self, credential_id: str) -> tuple[str, ApiCredential]: ...
+
+
+class RateLimiterUnavailable(RuntimeError):
+    """The limiter could not decide, because its backing store is unavailable.
+
+    Callers must fail *closed*: an admission decision that cannot be made is not an
+    admission. Surfacing a distinct type lets the API answer a controlled 503
+    instead of letting a driver error escape as an unhandled 500 — and, crucially,
+    instead of silently letting the request through unthrottled.
+    """
+
+
+#: Advisory-lock key for the periodic retention sweep. Replicas compete for it so
+#: only one of them runs the sweep at a time.
+_SWEEP_LOCK_KEY = 4_242_001
+
+
+class PostgresRateLimiter:
+    """Shared sliding-window limiter backed by the database.
+
+    Same `allow(key)` contract as the in-process fallback, but the window lives in
+    `rate_limit_events`, so the bound survives a restart and is shared by every
+    replica. `SlidingWindowRateLimiter` remains for local/in-memory runs.
+
+    The per-key prune alone left the table growing forever: it only ever removed the
+    rows belonging to the key being checked, so an attacker who varied the key (the
+    bootstrap limiter keys on the client, so rotating source addresses does it) left
+    one stale row set per key behind. A bounded global retention runs alongside the
+    per-key window: expired rows are swept in bounded batches at most once per
+    window, and a hard row cap trims the oldest survivors.
+    """
+
+    def __init__(
+        self,
+        connection_or_repository,
+        limit: int = 60,
+        window_seconds: int = 60,
+        *,
+        max_rows: int | None = None,
+        retention_factor: float = 2.0,
+        sweep_batch_size: int = 1_000,
+        sweep_batches: int = 10,
+    ):
+        self.resource = connection_or_repository
+        self.limit = limit
+        self.window_seconds = window_seconds
+        # Anything older than two windows can never influence a decision, so it is
+        # always safe to drop; the cap bounds the pathological case where a flood of
+        # unique keys arrives inside a single window.
+        self.retention_seconds = max(float(window_seconds) * retention_factor, 1.0)
+        self.max_rows = (
+            max_rows
+            if max_rows is not None
+            else int(os.getenv("FINRISK_RATE_LIMIT_MAX_ROWS", "200000"))
+        )
+        self.sweep_batch_size = sweep_batch_size
+        self.sweep_batches = sweep_batches
+        self._last_sweep = 0.0
+        self._lock = Lock()
+
+    @contextmanager
+    def _connection(self):
+        if hasattr(self.resource, "connection_context"):
+            with self.resource.connection_context() as connection:
+                yield connection
+        else:
+            yield self.resource
+
+    def _sweep_due(self, current: float) -> bool:
+        if current - self._last_sweep < float(self.window_seconds):
+            return False
+        self._last_sweep = current
+        return True
+
+    def _sweep(self, cursor) -> None:
+        """Drop expired rows, then trim to the row cap. Both are bounded.
+
+        The cap is applied to the table *at sweep time*; requests admitted after the
+        sweep each add their own row, so the retained count is bounded by the cap plus
+        the number of in-flight admissions rather than by the cap exactly.
+        """
+        for _ in range(self.sweep_batches):
+            cursor.execute(
+                """DELETE FROM rate_limit_events
+                   WHERE ctid IN (
+                       SELECT ctid FROM rate_limit_events
+                       WHERE occurred_at < now() - make_interval(secs => %s)
+                       LIMIT %s
+                   )""",
+                (float(self.retention_seconds), self.sweep_batch_size),
+            )
+            if cursor.rowcount < self.sweep_batch_size:
+                break
+        if self.max_rows <= 0:
+            return
+        cursor.execute("SELECT count(*) FROM rate_limit_events")
+        excess = int(cursor.fetchone()[0]) - self.max_rows
+        if excess <= 0:
+            return
+        # Oldest first: the newest rows are the ones that still constrain clients.
+        cursor.execute(
+            """DELETE FROM rate_limit_events
+               WHERE ctid IN (
+                   SELECT ctid FROM rate_limit_events
+                   ORDER BY occurred_at ASC
+                   LIMIT %s
+               )""",
+            (min(excess, self.sweep_batch_size),),
+        )
+
+    def allow(self, key: str, now: float | None = None) -> bool:
+        # `now` is accepted for contract parity with the fallback; the shared window
+        # is anchored to the database clock so replicas cannot disagree about it.
+        scope = "api"
+        try:
+            with self._lock, self._connection() as connection:
+                with connection.cursor() as cursor:
+                    if self._sweep_due(time.monotonic()):
+                        # Best effort: if another replica holds the sweep lock, this
+                        # one skips it rather than queueing behind it.
+                        cursor.execute(
+                            "SELECT pg_try_advisory_xact_lock(%s)", (_SWEEP_LOCK_KEY,)
+                        )
+                        if cursor.fetchone()[0]:
+                            self._sweep(cursor)
+                    # Serialise per key so two replicas cannot both read "under the
+                    # limit" and both admit. The lock is transaction-scoped.
+                    cursor.execute(
+                        "SELECT pg_advisory_xact_lock(hashtext(%s))", (f"{scope}:{key}",)
+                    )
+                    # Prune and count as separate statements. A single statement with
+                    # a data-modifying CTE does *not* work here: every part of one
+                    # statement shares a snapshot, so the count would still see the
+                    # rows the DELETE just removed — the window would never drain and
+                    # the first request after a quiet period was wrongly rejected.
+                    cursor.execute(
+                        """DELETE FROM rate_limit_events
+                           WHERE scope = %s AND key = %s
+                             AND occurred_at < now() - make_interval(secs => %s)""",
+                        (scope, key, float(self.window_seconds)),
+                    )
+                    cursor.execute(
+                        "SELECT count(*) FROM rate_limit_events WHERE scope = %s AND key = %s",
+                        (scope, key),
+                    )
+                    admitted = cursor.fetchone()[0] < int(self.limit)
+                    if admitted:
+                        cursor.execute(
+                            "INSERT INTO rate_limit_events (scope, key, occurred_at) VALUES (%s, %s, now())",
+                            (scope, key),
+                        )
+                connection.commit()
+        except RateLimiterUnavailable:
+            raise
+        except Exception as exc:
+            # Fail closed and distinctly. Letting the driver error escape produced an
+            # unhandled 500; treating it as "allowed" would silently disable the only
+            # protection the unauthenticated bootstrap route has.
+            raise RateLimiterUnavailable(
+                f"rate limiter store unavailable: {type(exc).__name__}"
+            ) from exc
+        return bool(admitted)
 
 
 class PostgresCredentialStore:

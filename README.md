@@ -97,6 +97,23 @@ The development compose file uses an explicitly development-only database passwo
 POSTGRES_PASSWORD='<strong-secret>' docker compose -f docker-compose.yml -f docker-compose.prod.yml up --build
 ```
 
+`POSTGRES_PASSWORD` is only applied when the PostgreSQL volume is **first** initialised.
+Changing it afterwards does not change the password stored in the existing volume, so
+the containers stop authenticating. The PostgreSQL healthcheck authenticates over TCP,
+so this shows up as `unhealthy` (not as a healthy database plus a crashing API). To
+rotate the credential, change it inside the database first:
+
+```bash
+docker compose exec postgres psql -U finrisk -d finrisk -c "ALTER USER finrisk WITH PASSWORD '<new-secret>'"
+```
+
+or recreate the volume with `down -v`, which **destroys the stored data**.
+
+`Strict-Transport-Security` is sent only when the request actually arrives over TLS
+(`https`, or an `x-forwarded-proto: https` terminator). On a plain-HTTP stack the
+header is omitted rather than advertising a guarantee the deployment does not provide;
+put TLS in front and it takes effect automatically.
+
 ### Run the synthetic offline demo
 
 ```powershell

@@ -5,8 +5,14 @@ services:
   api:
     environment:
       FINRISK_ENV: production
-      FINRISK_ENABLE_ORG_BOOTSTRAP: "1"
-      FINRISK_BOOTSTRAP_TOKEN: ${FINRISK_BOOTSTRAP_TOKEN:?FINRISK_BOOTSTRAP_TOKEN is required}
+      FINRISK_ENABLE_ORG_BOOTSTRAP: ${FINRISK_ENABLE_ORG_BOOTSTRAP:-1}
+      # `<VAR>_FILE` wins over `<VAR>` when set, so the operator can mount these as
+      # secrets instead of exposing them through the process environment (which
+      # `docker inspect` prints in full, and every child process inherits).
+      FINRISK_BOOTSTRAP_TOKEN: ${FINRISK_BOOTSTRAP_TOKEN:-}
+      FINRISK_BOOTSTRAP_TOKEN_FILE: ${FINRISK_BOOTSTRAP_TOKEN_FILE:-}
+      DATABASE_URL_FILE: ${DATABASE_URL_FILE:-}
+      OPENAI_API_KEY_FILE: ${OPENAI_API_KEY_FILE:-}
       FINRISK_AUTO_MIGRATE: "0"
       DATABASE_URL: postgresql://finrisk:${POSTGRES_PASSWORD:?POSTGRES_PASSWORD is required}@postgres:5432/finrisk
     depends_on:

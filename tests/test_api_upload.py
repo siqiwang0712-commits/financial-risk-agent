@@ -1,8 +1,7 @@
-import time
-
 import pymupdf as fitz
 from fastapi.testclient import TestClient
-from finrisk.api import agent, app
+from finrisk import api
+from finrisk.api import app
 
 
 def authenticated_client() -> tuple[TestClient, dict[str, str]]:
@@ -138,14 +137,22 @@ def test_invalid_and_encrypted_pdfs_are_rejected():
 
 
 def test_analysis_timeout_cleans_temporary_file(monkeypatch):
+    """A timed-out analysis answers 504 and never leaks its temp file.
+
+    Every environment now runs the analysis in the killable child process, so the
+    injection point is `_run_document_isolated` rather than the module-level agent.
+    The previous version raced a 0.1s sleep against a 0.02s timeout on a wall clock.
+    """
     seen_paths = []
 
-    def slow_run(*args, **kwargs):
-        seen_paths.append(args[2])
-        time.sleep(0.1)
+    class _IsolatedTimeout(Exception):
+        pass
 
-    monkeypatch.setattr(agent, "run_document", slow_run)
-    monkeypatch.setenv("FINRISK_ANALYSIS_TIMEOUT_SECONDS", "0.02")
+    async def timed_out(root, company, year, path, document, timeout):
+        seen_paths.append(path)
+        raise TimeoutError("document analysis timed out")
+
+    monkeypatch.setattr(api, "_run_document_isolated", timed_out)
     client, headers = authenticated_client()
     response = client.post(
         "/api/v1/documents/analyze",
@@ -154,6 +161,7 @@ def test_analysis_timeout_cleans_temporary_file(monkeypatch):
         headers=headers,
     )
     assert response.status_code == 504
+    assert response.json()["detail"] == "document analysis timed out"
     assert seen_paths
     assert all(not path.exists() for path in seen_paths)
 
@@ -338,6 +346,68 @@ def test_reanalysing_the_same_entity_is_idempotent_not_a_500():
         assert response.status_code == 200, response.text
     decisions = {response.json()["agent"]["decision"] for response in responses}
     assert len(decisions) == 1, decisions
+
+
+def test_repeated_analysis_reuses_the_snapshot_but_keeps_the_execution_history():
+    """Deduplication must not erase the fact that a run happened.
+
+    The snapshot is content-addressed, so a second identical run reuses it instead of
+    growing storage — that part is intended. Round 7 stopped there, which meant a
+    genuinely separate execution left no record at all: the audit trail could not say
+    how many times an entity had been analysed, by whom, or with which versions. The
+    artefacts stay deduplicated; the run record does not.
+    """
+    client, _headers = authenticated_client()
+    organization = client.post(
+        "/api/v1/enterprise/organizations",
+        json={"name": "History tenant", "actor_id": "history-admin"},
+    ).json()
+    history_headers = {"X-API-Key": organization["api_key"]}
+    entity = client.post(
+        "/api/v1/enterprise/entities",
+        headers=history_headers,
+        json={"name": "History entity"},
+    ).json()
+    pdf = pdf_bytes(
+        "BALANCE SHEET\nCash and cash equivalents 1,250\nTotal assets 5,000\n"
+        "Total liabilities 2,000\nRevenue 4,000\nNet income 300"
+    )
+    for _ in range(2):
+        response = client.post(
+            "/api/v1/documents/analyze",
+            headers=history_headers,
+            data={"company": "History Co", "fiscal_year": "2025", "entity_id": entity["id"]},
+            files={"file": ("history.pdf", pdf, "application/pdf")},
+        )
+        assert response.status_code == 200, response.text
+
+    repository = api.enterprise_service.repository
+    events = repository.list_events(organization["id"])
+    runs = [event for event in events if event.action == "analysis.executed"]
+    assert len(runs) == 2, [event.action for event in events]
+
+    # The run record must be able to answer the provenance questions on its own.
+    for event in runs:
+        assert event.actor_id == "history-admin"
+        assert event.organization_id == organization["id"]
+        assert event.occurred_at
+        payload = event.payload
+        assert payload["entity_id"] == entity["id"]
+        assert payload["snapshot_id"]
+        assert payload["decision_bundle_id"]
+        assert payload["document_versions"] and payload["component_versions"]
+        assert payload["input_hash"] and payload["output_hash"]
+
+    # Two executions, but the expensive artefact is still stored once. Counted through
+    # the repository contract rather than an in-memory attribute, so the assertion also
+    # holds against PostgreSQL (where the row count is the same observable fact).
+    snapshots = repository.list_snapshots(organization["id"])
+    assert len(snapshots) == 1, f"snapshot deduplication regressed: {len(snapshots)} rows"
+
+    # The second run is the interesting one: it reused both artefacts and must still
+    # be recorded as a distinct execution.
+    assert runs[-1].payload["reused_snapshot"] is True
+    assert runs[0].payload["reused_snapshot"] is False
 
 
 def test_caller_supplied_model_metric_does_not_crash_the_assess_endpoints():

@@ -29,6 +29,10 @@ class EnterpriseRepository(Protocol):
     def append_event(self, event: AuditEvent) -> None: ...
     def list_events(self, organization_id: str) -> list[AuditEvent]: ...
     def get_snapshot(self, organization_id: str, snapshot_id: str) -> AnalysisSnapshot: ...
+    def find_snapshot(
+        self, organization_id: str, entity_id: str, input_hash: str, output_hash: str
+    ) -> AnalysisSnapshot | None: ...
+    def list_snapshots(self, organization_id: str) -> list[AnalysisSnapshot]: ...
     def save_risk_snapshot(self, organization_id: str, snapshot: RiskSnapshot, event: AuditEvent | None = None) -> RiskSnapshot: ...
     def list_risk_snapshots(self, organization_id: str, entity_id: str) -> list[RiskSnapshot]: ...
     def get_policy(self, organization_id: str, policy_id: str) -> PolicyVersion: ...
@@ -142,6 +146,34 @@ class InMemoryEnterpriseRepository:
         if item is None or item.organization_id != organization_id:
             raise KeyError(snapshot_id)
         return deepcopy(item)
+
+    def find_snapshot(
+        self, organization_id: str, entity_id: str, input_hash: str, output_hash: str
+    ) -> AnalysisSnapshot | None:
+        """Most recent snapshot of an identical frozen input/output, if any."""
+        matches = [
+            item
+            for item in self.snapshots.values()
+            if item.organization_id == organization_id
+            and item.entity_id == entity_id
+            and item.input_hash == input_hash
+            and item.output_hash == output_hash
+        ]
+        if not matches:
+            return None
+        return deepcopy(max(matches, key=lambda item: item.created_at))
+
+    def list_snapshots(self, organization_id: str) -> list[AnalysisSnapshot]:
+        """Every frozen analysis snapshot held for one tenant, oldest first.
+
+        Deduplication is content-addressed, so the row count is the observable proof
+        that repeated identical runs do not grow storage.
+        """
+        return [
+            deepcopy(item)
+            for item in self.snapshots.values()
+            if item.organization_id == organization_id
+        ]
 
     def save_risk_snapshot(
         self, organization_id: str, snapshot: RiskSnapshot, event: AuditEvent | None = None

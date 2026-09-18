@@ -3,6 +3,7 @@ from __future__ import annotations
 import asyncio
 import json
 import logging
+import math
 import multiprocessing
 import os
 import queue as queue_module
@@ -22,6 +23,8 @@ try:
         Request,
         UploadFile,
     )
+    from fastapi.encoders import jsonable_encoder
+    from fastapi.exceptions import RequestValidationError
     from fastapi.middleware.cors import CORSMiddleware
     from fastapi.responses import JSONResponse
     from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
@@ -38,6 +41,7 @@ from .enterprise.domain import Principal
 from .enterprise.observability import (
     bind_correlation_id,
     configure_logging,
+    correlation_id,
     structured_event,
 )
 from .enterprise.postgres import PostgresEnterpriseRepository
@@ -45,6 +49,8 @@ from .enterprise.repository import InMemoryEnterpriseRepository
 from .enterprise.security import (
     CredentialStore,
     PostgresCredentialStore,
+    PostgresRateLimiter,
+    RateLimiterUnavailable,
     SlidingWindowRateLimiter,
 )
 from .enterprise.service import EnterpriseRiskService
@@ -107,14 +113,95 @@ def _positive_env_number(name: str, default: str, cast):
     return value
 
 
+def _json_safe(value):
+    """Replace non-finite floats so the value survives `allow_nan=False` encoding.
+
+    `json.loads("1e400")` yields `float('inf')`, and FastAPI echoes the offending
+    input back inside its 422 body. Starlette serialises that body with
+    `json.dumps(..., allow_nan=False)`, which raises
+    `ValueError: Out of range float values are not JSON compliant` — so a request
+    that was *correctly rejected* by the model validator answered 500 instead of
+    422. Validation is right; the error path was the fragile part.
+    """
+    if isinstance(value, float):
+        return value if math.isfinite(value) else str(value)
+    if isinstance(value, dict):
+        return {key: _json_safe(item) for key, item in value.items()}
+    if isinstance(value, (list, tuple)):
+        return [_json_safe(item) for item in value]
+    return value
+
+
+def _env_or_file(name: str) -> str | None:
+    """Read a secret from `<NAME>_FILE` (Docker/K8s secret mount) or from the env.
+
+    Preferring the file form keeps secrets out of `docker inspect` output and out
+    of the process environment, which is visible to any child process.
+
+    Failure is *loud*, never silent: a configured-but-unreadable `<NAME>_FILE` raises
+    instead of quietly falling back to `<NAME>`, because a fallback would either
+    disable the protection (an unread bootstrap token) or connect to the wrong
+    database while appearing healthy. Only an absent variable or an empty file falls
+    back. Neither the path nor the content is logged.
+    """
+    path = os.getenv(f"{name}_FILE")
+    if path:
+        try:
+            content = Path(path).read_text(encoding="utf-8").strip()
+        except OSError as exc:
+            raise RuntimeError(
+                f"{name}_FILE is set but could not be read; refusing to fall back to {name}"
+            ) from exc
+        if content:
+            return content
+    value = os.getenv(name)
+    return value or None
+
+
+# Driver-level failures that mean "the datastore could not be reached", as opposed to
+# "the request was wrong" or "there is a bug here". Matched by class name across the
+# MRO so neither `psycopg` nor `psycopg_pool` has to be importable to classify them.
+_UNAVAILABLE_ERROR_NAMES = frozenset(
+    {
+        "OperationalError",
+        "InterfaceError",
+        "PoolClosed",
+        "PoolTimeout",
+        "TooManyRequests",
+        "AdminShutdown",
+        "CannotConnectNow",
+        "ConnectionDoesNotExist",
+    }
+)
+
+
+def _is_datastore_unavailable(exc: BaseException) -> bool:
+    return any(cls.__name__ in _UNAVAILABLE_ERROR_NAMES for cls in type(exc).__mro__)
+
+
+def max_upload_bytes() -> int:
+    """The upload ceiling, in bytes, shared with the Next proxy.
+
+    The proxy enforced `FINRISK_MAX_UPLOAD_BYTES` while the backend enforced
+    `FINRISK_MAX_UPLOAD_MB` — two names, two units, one of them undocumented, so
+    lowering the backend limit left the proxy accepting (and the user uploading)
+    far more than the backend would take. `*_BYTES` is now the single knob; the
+    historical `*_MB` name is still honoured so existing deployments and tests
+    keep working.
+    """
+    configured_bytes = os.getenv("FINRISK_MAX_UPLOAD_BYTES")
+    if configured_bytes:
+        return int(_positive_env_number("FINRISK_MAX_UPLOAD_BYTES", "52428800", int))
+    return int(_positive_env_number("FINRISK_MAX_UPLOAD_MB", "50", int)) * 1024 * 1024
+
+
 def _pdf_limits() -> tuple[int, int, int, float]:
-    upload_mb = _positive_env_number("FINRISK_MAX_UPLOAD_MB", "50", int)
     pages = _positive_env_number("FINRISK_MAX_PDF_PAGES", "500", int)
     chars = _positive_env_number("FINRISK_MAX_EXTRACTED_CHARS", "5000000", int)
     timeout = _positive_env_number(
         "FINRISK_ANALYSIS_TIMEOUT_SECONDS", "60", float
     )
-    return upload_mb * 1024 * 1024, pages, chars, timeout
+    return max_upload_bytes(), pages, chars, timeout
 
 
 def _inspect_pdf(data: bytes, max_pages: int, max_chars: int) -> None:
@@ -145,7 +232,7 @@ if FastAPI:
     configure_logging()
 
     def runtime_components():
-        database_url = os.getenv("DATABASE_URL")
+        database_url = _env_or_file("DATABASE_URL")
         environment = os.getenv("FINRISK_ENV", "development").lower()
         if environment == "production" and (
             not database_url or "local-development-only" in database_url
@@ -245,7 +332,19 @@ if FastAPI:
     pipeline = FinRiskPipeline(ROOT)
     agent = FinancialRiskAgent(ROOT, pipeline.provider)
     enterprise_service, credential_store = runtime_components()
-    api_limiter = SlidingWindowRateLimiter(limit=int(os.getenv("FINRISK_RATE_LIMIT", "60")))
+    # Rate limits must hold across restarts and replicas, so they live in the same
+    # store as the data whenever PostgreSQL is in use; the in-process window is only
+    # the local fallback.
+    api_limit = int(os.getenv("FINRISK_RATE_LIMIT", "60"))
+    bootstrap_limit = int(os.getenv("FINRISK_BOOTSTRAP_RATE_LIMIT", "60"))
+    if isinstance(enterprise_service.repository, PostgresEnterpriseRepository):
+        api_limiter = PostgresRateLimiter(enterprise_service.repository, limit=api_limit)
+        bootstrap_limiter = PostgresRateLimiter(
+            enterprise_service.repository, limit=bootstrap_limit
+        )
+    else:
+        api_limiter = SlidingWindowRateLimiter(limit=api_limit)
+        bootstrap_limiter = SlidingWindowRateLimiter(limit=bootstrap_limit)
     # Case-insensitive environment check: `FINRISK_ENV=Production` previously read as
     # "not production", which re-enabled the unauthenticated bootstrap endpoint.
     finrisk_env = os.getenv("FINRISK_ENV", "development").strip().lower()
@@ -254,7 +353,7 @@ if FastAPI:
     # the first administrator; enabling it without a token is rejected by the
     # router's production token requirement.
     bootstrap_enabled = os.getenv("FINRISK_ENABLE_ORG_BOOTSTRAP", "1") == "1"
-    bootstrap_token = os.getenv("FINRISK_BOOTSTRAP_TOKEN") or None
+    bootstrap_token = _env_or_file("FINRISK_BOOTSTRAP_TOKEN")
     app.include_router(
         enterprise_router(
             enterprise_service,
@@ -263,9 +362,49 @@ if FastAPI:
             bootstrap_enabled,
             bootstrap_token,
             require_bootstrap_token=finrisk_env == "production",
+            bootstrap_limiter=bootstrap_limiter,
         )
     )
     api_logger = logging.getLogger("finrisk.api")
+
+    @app.exception_handler(RequestValidationError)
+    async def validation_error_handler(request: Request, exc: RequestValidationError):
+        """Answer 422 with a body that is always serialisable.
+
+        Without this the default handler echoed the offending input verbatim, and
+        an out-of-range literal (`1e400` parses to `inf`) made Starlette's
+        `allow_nan=False` encoder raise — turning a correct rejection into a 500.
+        """
+        return JSONResponse(
+            status_code=422,
+            content={"detail": _json_safe(jsonable_encoder(exc.errors()))},
+        )
+
+    @app.exception_handler(RateLimiterUnavailable)
+    async def rate_limiter_unavailable_handler(
+        request: Request, exc: RateLimiterUnavailable
+    ):
+        """Fail closed with a controlled 503 when the limiter's store is down.
+
+        The limiter is the only bound on the unauthenticated bootstrap route, so
+        "cannot decide" must not mean "admit". Letting the driver error escape gave
+        an unhandled 500 with a traceback; admitting the request would have been
+        worse — it silently removed the rate limit for the duration of the outage.
+        """
+        structured_event(
+            api_logger,
+            "rate_limiter.unavailable",
+            path=request.url.path,
+            error_type=type(exc).__name__,
+        )
+        return JSONResponse(
+            status_code=503,
+            content={
+                "detail": "rate limiting is temporarily unavailable",
+                "correlation_id": correlation_id.get(),
+            },
+            headers={"Retry-After": "5"},
+        )
 
     @app.middleware("http")
     async def correlation_middleware(request: Request, call_next):
@@ -273,11 +412,32 @@ if FastAPI:
         try:
             response = await call_next(request)
         except Exception as exc:  # noqa: BLE001 - public boundary must sanitize unknown failures
-            structured_event(api_logger, "http.unhandled", error_type=type(exc).__name__)
-            response = JSONResponse(
-                {"detail": "internal server error", "correlation_id": identifier},
-                status_code=500,
-            )
+            if _is_datastore_unavailable(exc):
+                # A datastore outage is not an internal defect: the request was fine and
+                # the same call will work once the dependency is back, so 503 (with
+                # `Retry-After`) is what a client — and a load balancer — must see. It
+                # also used to be an unhandled 500 with a traceback in the log, which
+                # reads as "the service is broken" rather than "the database is down".
+                structured_event(
+                    api_logger,
+                    "http.datastore_unavailable",
+                    path=request.url.path,
+                    error_type=type(exc).__name__,
+                )
+                response = JSONResponse(
+                    {
+                        "detail": "the datastore is temporarily unavailable",
+                        "correlation_id": identifier,
+                    },
+                    status_code=503,
+                    headers={"Retry-After": "5"},
+                )
+            else:
+                structured_event(api_logger, "http.unhandled", error_type=type(exc).__name__)
+                response = JSONResponse(
+                    {"detail": "internal server error", "correlation_id": identifier},
+                    status_code=500,
+                )
         response.headers["X-Correlation-Id"] = identifier
         structured_event(
             api_logger,
@@ -326,11 +486,25 @@ if FastAPI:
             generated["document_versions"],
             generated["component_versions"],
         )
-        try:
-            saved = enterprise_service.save_snapshot(actor, snapshot)
-        except (KeyError, PermissionError, ValueError) as exc:
-            raise HTTPException(422, "analysis snapshot persistence rejected") from exc
-        state.analysis_snapshot = asdict(saved)
+        # Re-analysing an unchanged filing produced a byte-identical snapshot under
+        # a fresh random id, so `analysis_snapshots` (and the entity's risk
+        # timeline) grew without bound while the decision bundle — which *is*
+        # content-addressed — was correctly deduplicated. Reuse the frozen snapshot
+        # instead: same evidence, same id, no new row, no new audit event.
+        existing = enterprise_service.repository.find_snapshot(
+            actor.organization_id, entity_id, snapshot.input_hash, snapshot.output_hash
+        )
+        reused_snapshot = existing is not None
+        if reused_snapshot:
+            state.analysis_snapshot = asdict(existing)
+            snapshot = existing
+        else:
+            try:
+                saved = enterprise_service.save_snapshot(actor, snapshot)
+            except (KeyError, PermissionError, ValueError) as exc:
+                raise HTTPException(422, "analysis snapshot persistence rejected") from exc
+            state.analysis_snapshot = asdict(saved)
+            snapshot = saved
         prior_bundle = state.decision_bundle
         bundle = build_decision_bundle(
             actor.organization_id,
@@ -349,6 +523,7 @@ if FastAPI:
             epistemics=state.epistemics,
             component_telemetry=state.component_telemetry,
         )
+        reused_bundle = False
         try:
             enterprise_service.save_decision_bundle(actor, bundle)
         except ValueError as exc:
@@ -370,7 +545,31 @@ if FastAPI:
                 structured_event(api_logger, "document.bundle_conflict")
                 raise HTTPException(422, "decision bundle persistence rejected") from exc
             bundle = stored
+            reused_bundle = True
         state.decision_bundle = bundle.to_dict()
+        # Deduplication must not erase execution history. The snapshot and the bundle
+        # may be reused, but this run still happened, and provenance has to be able to
+        # say who ran it, when, against which entity/document, and with which engine /
+        # model / ruleset versions — otherwise the audit trail silently under-counts
+        # real analyses.
+        try:
+            enterprise_service.record_analysis_execution(
+                actor,
+                {
+                    "entity_id": entity_id,
+                    "snapshot_id": snapshot.id,
+                    "decision_bundle_id": bundle.bundle_id,
+                    "document_versions": dict(generated["document_versions"]),
+                    "component_versions": dict(generated["component_versions"]),
+                    "input_hash": snapshot.input_hash,
+                    "output_hash": snapshot.output_hash,
+                    "decision": state.decision,
+                    "reused_snapshot": reused_snapshot,
+                    "reused_decision_bundle": reused_bundle,
+                },
+            )
+        except (KeyError, PermissionError, ValueError) as exc:
+            raise HTTPException(422, "analysis execution could not be recorded") from exc
 
     def validate_analysis_entity(actor: Principal, entity_id: str | None) -> None:
         """Reject an invalid/cross-tenant entity before doing expensive analysis."""
@@ -405,16 +604,35 @@ if FastAPI:
     @app.get("/health/ready")
     def health_ready():
         repository = enterprise_service.repository
-        if isinstance(repository, PostgresEnterpriseRepository):
+        # `datastore` is reported so a deployment gate can assert that the process
+        # really selected PostgreSQL. It used to be impossible to tell from the
+        # outside: a wrong DATABASE_URL silently degraded to the in-memory
+        # repository and every external check still passed.
+        datastore = "postgres" if isinstance(repository, PostgresEnterpriseRepository) else "memory"
+        if datastore == "postgres":
             try:
                 if not repository.check_ready():
                     raise RuntimeError("unexpected database probe result")
             except Exception as exc:
+                # A stale credential is the one database failure that is *silent*:
+                # `POSTGRES_PASSWORD` is only applied when the volume is first
+                # initialised, so changing it against an existing volume leaves the
+                # server rejecting the new value while everything still looks
+                # configured. Say so explicitly instead of reporting a generic
+                # outage — the operator needs to know which of the two it is.
+                if "authentication failed" in str(exc).lower():
+                    structured_event(api_logger, "health.database_auth_failed")
+                    raise HTTPException(
+                        503,
+                        "database rejected the configured credentials: a pre-existing "
+                        "PostgreSQL volume keeps the password it was initialised with "
+                        "(rotate it inside the database, or recreate the volume)",
+                    ) from exc
                 structured_event(api_logger, "health.database_unavailable")
                 raise HTTPException(
                     503, "database readiness check failed"
                 ) from exc
-        return {"status": "ready"}
+        return {"status": "ready", "datastore": datastore}
 
     @app.get("/health", include_in_schema=False)
     def health_compatibility():
@@ -537,22 +755,16 @@ if FastAPI:
             path = Path(tmp.name)
         try:
             try:
-                if finrisk_env == "production":
-                    state = await _run_document_isolated(
-                        ROOT, company, fiscal_year, path,
-                        file.filename or "Annual Report", timeout_seconds,
-                    )
-                else:
-                    state = await asyncio.wait_for(
-                        run_in_threadpool(
-                            agent.run_document,
-                            company,
-                            fiscal_year,
-                            path,
-                            file.filename or "Annual Report",
-                        ),
-                        timeout=timeout_seconds,
-                    )
+                # Every environment runs the analysis in a killable child process.
+                # The development path used to run it on a worker thread, where
+                # `asyncio.wait_for` only stopped *waiting*: a runaway parse kept
+                # burning a thread and its memory after the request had already
+                # answered 504. Same code path everywhere also means the timeout
+                # contract is exercised locally, not only in production.
+                state = await _run_document_isolated(
+                    ROOT, company, fiscal_year, path,
+                    file.filename or "Annual Report", timeout_seconds,
+                )
             except TimeoutError as exc:
                 structured_event(api_logger, "document.analysis_timeout")
                 raise HTTPException(504, "document analysis timed out") from exc

@@ -263,6 +263,28 @@ class EnterpriseRiskService:
         )
         return self.repository.save(snapshot, event)
 
+    def record_analysis_execution(self, principal: Principal, payload: dict) -> AuditEvent:
+        """Log one real analysis execution, independent of snapshot deduplication.
+
+        Snapshots and decision bundles are content-addressed, so re-analysing an
+        unchanged filing reuses the stored artefacts — that is what keeps storage
+        bounded. Reuse alone, though, made a second genuine run completely invisible:
+        the audit trail could not answer "how many times was this entity analysed, by
+        whom, when, and with which engine/rule versions". The artefacts stay
+        deduplicated; the run record does not. It is a single small row per execution.
+        """
+        authorize(principal, "write", principal.organization_id)
+        event = self._event(
+            principal.organization_id,
+            principal.user_id,
+            "analysis.executed",
+            "analysis_snapshot",
+            payload["snapshot_id"],
+            payload,
+        )
+        self.repository.append_event(event)
+        return event
+
     def override(
         self,
         principal: Principal,

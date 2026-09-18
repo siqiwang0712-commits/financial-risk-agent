@@ -5,6 +5,7 @@ import hashlib
 import io
 import itertools
 import json
+import os
 import zipfile
 from collections import defaultdict
 from collections.abc import Iterable
@@ -72,10 +73,90 @@ def add_twelve_months(value: datetime) -> datetime:
         return value.replace(year=value.year + 1, day=28)
 
 
+# A zip member declares its uncompressed size in the central directory, so the
+# extraction budget can be checked *before* `archive.read` allocates. Without it a
+# crafted archive (a zip bomb) exhausts memory. These archives are operator-supplied
+# rather than API input, so this is defence in depth.
+#
+# The previous ceiling was 2 GiB, which is not a defence at all: the API container is
+# capped at 1 GiB, so a member anywhere near that limit killed the process before the
+# check could matter. The default is now a size a single worker can actually hold, and
+# it is configurable for operators who legitimately need larger members. Because the
+# declaration itself is attacker-controlled, the read is *also* streamed and aborted
+# the moment the real decompressed length crosses the budget, so a lying central
+# directory cannot force the allocation either.
+DEFAULT_MAX_ARCHIVE_MEMBER_BYTES = 256 * 1024 * 1024
+
+# Compression-ratio sanity bound. A member that claims to expand by more than this
+# multiple is treated as hostile. Real SEC statement data is repetitive numeric TSV and
+# measures around 21:1 (`num.txt`), so the bound leaves roughly 50x of headroom while
+# still catching a classic single-member zip bomb. Overridable, never a substitute for
+# the byte budget — it is only a second signal on top of it.
+DEFAULT_MAX_ARCHIVE_COMPRESSION_RATIO = 1_000
+
+_READ_CHUNK_BYTES = 1 << 20
+
+
+def max_archive_member_bytes() -> int:
+    """Per-member decompression budget, in bytes (`FINRISK_SEC_MAX_ARCHIVE_MEMBER_BYTES`)."""
+    return _positive_int_env(
+        "FINRISK_SEC_MAX_ARCHIVE_MEMBER_BYTES", DEFAULT_MAX_ARCHIVE_MEMBER_BYTES
+    )
+
+
+def max_archive_compression_ratio() -> int:
+    """Per-member expansion bound (`FINRISK_SEC_MAX_ARCHIVE_COMPRESSION_RATIO`)."""
+    return _positive_int_env(
+        "FINRISK_SEC_MAX_ARCHIVE_COMPRESSION_RATIO", DEFAULT_MAX_ARCHIVE_COMPRESSION_RATIO
+    )
+
+
+def _positive_int_env(name: str, default: int) -> int:
+    raw = os.getenv(name)
+    if not raw:
+        return default
+    try:
+        value = int(raw)
+    except ValueError as exc:
+        raise ValueError(f"{name} must be a positive integer") from exc
+    if value <= 0:
+        raise ValueError(f"{name} must be a positive integer")
+    return value
+
+
+def _checked_member(archive: zipfile.ZipFile, name: str) -> bytes:
+    limit = max_archive_member_bytes()
+    info = archive.getinfo(name)
+    if info.file_size > limit:
+        raise ValueError(
+            f"archive member exceeds the extraction limit: {name} ({info.file_size} bytes)"
+        )
+    ratio_limit = max_archive_compression_ratio()
+    if info.compress_size > 0 and info.file_size > info.compress_size * ratio_limit:
+        raise ValueError(f"archive member has an implausible compression ratio: {name}")
+    # Stream rather than `archive.read`: the declared size is unverified until the
+    # decompressor has actually produced the bytes, so allocation is bounded by the
+    # real length instead of by the header.
+    chunks: list[bytes] = []
+    total = 0
+    with archive.open(name) as member:
+        while True:
+            chunk = member.read(_READ_CHUNK_BYTES)
+            if not chunk:
+                break
+            total += len(chunk)
+            if total > limit:
+                raise ValueError(
+                    f"archive member exceeded the extraction limit while reading: {name}"
+                )
+            chunks.append(chunk)
+    return b"".join(chunks)
+
+
 def _read_tsv(
     archive: zipfile.ZipFile, name: str, predicate: Any | None = None
 ) -> list[dict[str, str]]:
-    raw = archive.read(name).decode("utf-8-sig", errors="replace")
+    raw = _checked_member(archive, name).decode("utf-8-sig", errors="replace")
     reader = csv.DictReader(io.StringIO(raw), delimiter="\t")
     return [row for row in reader if predicate is None or predicate(row)]
 
@@ -125,7 +206,7 @@ def load_companyfacts_archive(path: Path) -> tuple[dict[str, dict[str, Any]], di
         for name in archive.namelist():
             if not name.lower().endswith(".json"):
                 continue
-            raw = archive.read(name)
+            raw = _checked_member(archive, name)
             data = json.loads(raw)
             cik = str(data.get("cik", "")).zfill(10)
             companies[cik] = {"data": data, "member": name, "member_sha256": sha256_bytes(raw)}

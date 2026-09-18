@@ -23,13 +23,18 @@ def main() -> None:
             "SELECT to_regclass('public.analysis_snapshots'), "
             "to_regclass('public.audit_events'), "
             "to_regclass('public.risk_snapshots'), "
-            "to_regclass('public.decision_bundles')"
+            "to_regclass('public.decision_bundles'), "
+            "to_regclass('public.rate_limit_events')"
         )
-        snapshots, audit, risk_snapshots, bundles = cursor.fetchone()
+        snapshots, audit, risk_snapshots, bundles, rate_limit = cursor.fetchone()
+    # Migrations are idempotent, so a second pass must be a no-op rather than an
+    # error: the prod overlay runs this on every deploy.
+    for migration in sorted((root / "migrations").glob("*.sql")):
+        repository.migrate(migration)
     repository.close()
-    if not all((snapshots, audit, risk_snapshots, bundles)):
+    if not all((snapshots, audit, risk_snapshots, bundles, rate_limit)):
         raise SystemExit("enterprise migration did not create required tables")
-    print("PostgreSQL enterprise migration validated")
+    print("PostgreSQL enterprise migration validated (idempotent on re-run)")
 
 
 if __name__ == "__main__":

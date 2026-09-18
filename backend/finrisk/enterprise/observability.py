@@ -42,12 +42,39 @@ def bind_correlation_id(value: str | None = None) -> str:
     return identifier
 
 
+# Substring rules, not an exact-match set. The previous allowlist of four literal
+# names let `x-api-key`, `Authorization`, `openai_api_key`, `database_url`,
+# `password` and `token` through unredacted; today's call sites happen not to pass
+# them, which is luck rather than design.
+_SENSITIVE_MARKERS = (
+    "api_key",
+    "apikey",
+    "authorization",
+    "credential",
+    "database_url",
+    "document_text",
+    "password",
+    "prompt",
+    "secret",
+    "token",
+)
+_SENSITIVE_EXACT = {"key", "auth"}
+
+
+def is_sensitive_field(name: str) -> bool:
+    lowered = name.lower()
+    if lowered in _SENSITIVE_EXACT:
+        return True
+    return any(marker in lowered for marker in _SENSITIVE_MARKERS)
+
+
 def structured_event(
     logger: logging.Logger, event: str, level: int = logging.INFO, **safe_fields
 ) -> None:
-    forbidden = {"api_key", "authorization", "document_text", "prompt"}
     clean = {
-        key: value for key, value in safe_fields.items() if key.lower() not in forbidden
+        key: value
+        for key, value in safe_fields.items()
+        if not is_sensitive_field(key)
     }
     logger.log(
         level,

@@ -139,10 +139,21 @@ def main() -> None:
     )
     expect_http_status(unsupported, 415)
 
+    # The configured ceiling is a *file* size: the API compares the uploaded PDF bytes
+    # against it, and the proxy therefore has to tolerate the multipart framing on top
+    # of it. A declared body length of `limit + 1` is consequently ambiguous — it may
+    # well be a legal file plus framing — so an unambiguous oversized *request body* is
+    # used here. The "a file of exactly the limit is accepted, one byte more is not"
+    # boundary is covered by tests/test_upload_size_boundary.py against a small limit.
+    upload_limit = int(os.getenv("FINRISK_MAX_UPLOAD_BYTES", str(50 * 1024 * 1024)))
     oversized = Request(
         "http://127.0.0.1:3000/api/v1/documents/analyze",
         data=b"x",
-        headers={**headers, "Content-Type": "application/octet-stream", "Content-Length": str(50 * 1024 * 1024 + 1)},
+        headers={
+            **headers,
+            "Content-Type": "application/octet-stream",
+            "Content-Length": str(2 * upload_limit),
+        },
         method="POST",
     )
     expect_http_status(oversized, 413)

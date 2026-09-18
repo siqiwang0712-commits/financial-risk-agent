@@ -200,6 +200,23 @@ class PostgresEnterpriseRepository:
         row=self._one("SELECT * FROM analysis_snapshots WHERE organization_id=%s AND id=%s",(organization_id,snapshot_id))
         return AnalysisSnapshot(row["id"],row["organization_id"],row["entity_id"],row["input_hash"],row["output_hash"],row["document_versions"],row["component_versions"],row["frozen_input"],row["frozen_output"],str(row["created_at"]))
 
+    def find_snapshot(self, organization_id: str, entity_id: str, input_hash: str, output_hash: str) -> AnalysisSnapshot | None:
+        with self.connection_context() as connection, connection.cursor() as cursor:
+            cursor.execute("SELECT * FROM analysis_snapshots WHERE organization_id=%s AND entity_id=%s AND input_hash=%s AND output_hash=%s ORDER BY created_at DESC LIMIT 1",(organization_id,entity_id,input_hash,output_hash))
+            row = cursor.fetchone()
+            if row is None:
+                return None
+            columns = [item.name for item in cursor.description]
+        item = dict(zip(columns, row, strict=True))
+        return AnalysisSnapshot(item["id"],item["organization_id"],item["entity_id"],item["input_hash"],item["output_hash"],item["document_versions"],item["component_versions"],item["frozen_input"],item["frozen_output"],str(item["created_at"]))
+
+    def list_snapshots(self, organization_id: str) -> list[AnalysisSnapshot]:
+        with self.connection_context() as connection, connection.cursor() as cursor:
+            cursor.execute("SELECT * FROM analysis_snapshots WHERE organization_id=%s ORDER BY created_at",(organization_id,))
+            columns = [item.name for item in cursor.description]
+            rows = [dict(zip(columns, row, strict=True)) for row in cursor.fetchall()]
+        return [AnalysisSnapshot(row["id"],row["organization_id"],row["entity_id"],row["input_hash"],row["output_hash"],row["document_versions"],row["component_versions"],row["frozen_input"],row["frozen_output"],str(row["created_at"])) for row in rows]
+
     def save_risk_snapshot(self, organization_id: str, snapshot: RiskSnapshot, event: AuditEvent | None = None) -> RiskSnapshot:
         if event is not None and event.organization_id != organization_id:
             raise ValueError("mutation and audit event must belong to the same tenant")

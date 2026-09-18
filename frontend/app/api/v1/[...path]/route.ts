@@ -1,29 +1,21 @@
 import { NextRequest, NextResponse } from "next/server";
+import {
+  ALLOWED_METHODS,
+  FORWARDED_REQUEST_HEADERS,
+  FORWARDED_RESPONSE_HEADERS,
+  normalizeCorrelationId,
+  rebuildTarget,
+  resolveUpstream,
+  uploadEnvelopeLimit,
+  upstreamTimeoutMs,
+} from "../../../../lib/proxy.mjs";
 
-// Reads and writes are the only methods the Workbench performs. DELETE/PUT/PATCH
-// were re-exported to the browser for no reason.
-const ALLOWED_METHODS = new Set(["GET", "POST"]);
-// Only the headers the upstream actually needs. Forwarding the client's whole
-// header set leaked `cookie`/`authorization` to the upstream and let a caller
-// influence it arbitrarily.
-const FORWARDED_REQUEST_HEADERS = ["content-type", "accept", "x-api-key", "x-correlation-id"];
-const FORWARDED_RESPONSE_HEADERS = ["content-type", "x-correlation-id"];
-// All three layers derive from one seconds-based deployment setting. The proxy
-// waits two seconds beyond the backend deadline so it can relay the backend's
-// 504 instead of racing it with a client-side abort.
-const configuredAnalysisSeconds = Number.parseFloat(
-  process.env.FINRISK_ANALYSIS_TIMEOUT_SECONDS ?? "60",
-);
-const UPSTREAM_TIMEOUT_MS = (
-  Number.isFinite(configuredAnalysisSeconds) && configuredAnalysisSeconds > 0
-    ? configuredAnalysisSeconds
-    : 60
-) * 1_000 + 2_000;
-const MAX_UPLOAD_BYTES = Number.parseInt(
-  process.env.FINRISK_MAX_UPLOAD_BYTES ?? String(50 * 1024 * 1024),
-  10,
-);
-const SEGMENT_PATTERN = /^[A-Za-z0-9._~-]+$/;
+// The file limit is enforced by the backend against the uploaded PDF bytes; the proxy
+// bounds the *encoded body*, so it has to allow the multipart framing on top. Using
+// the bare file limit here made a PDF of exactly the configured size come back as 413
+// before the backend ever saw it.
+const MAX_UPLOAD_BYTES = uploadEnvelopeLimit(process.env);
+const UPSTREAM_TIMEOUT_MS = upstreamTimeoutMs(process.env);
 
 class BodyLimitError extends Error {}
 
@@ -32,44 +24,6 @@ function errorResponse(detail: string, status: number, correlationId: string) {
     { detail, correlation_id: correlationId },
     { status, headers: { "X-Correlation-Id": correlationId } },
   );
-}
-
-function resolveUpstream(): URL | null {
-  const upstream = process.env.FINRISK_API_UPSTREAM;
-  if (!upstream) return null;
-  let base: URL;
-  try {
-    base = new URL(upstream);
-  } catch {
-    return null;
-  }
-  if (base.protocol !== "http:" && base.protocol !== "https:") return null;
-  // Block cloud metadata / link-local addresses outright, and honour an explicit
-  // allowlist when one is configured. Without this, `FINRISK_API_UPSTREAM=
-  // http://169.254.169.254` turned the proxy into an unauthenticated reader of
-  // instance metadata.
-  const host = base.hostname.toLowerCase();
-  if (host.startsWith("169.254.") || host === "metadata.google.internal" || host === "[fd00:ec2::254]") {
-    return null;
-  }
-  const allowed = (process.env.FINRISK_API_ALLOWED_HOSTS ?? "")
-    .split(",")
-    .map((entry) => entry.trim().toLowerCase())
-    .filter(Boolean);
-  if (allowed.length && !allowed.includes(host)) return null;
-  return base;
-}
-
-function rebuildTarget(base: URL, segments: string[], search: string): URL | null {
-  // Reject traversal and encoded separators before URL normalization can resolve
-  // them away (`/api/v1/../../admin` used to reach an arbitrary upstream path).
-  if (segments.some((segment) => !segment || segment === "." || segment === ".." || !SEGMENT_PATTERN.test(segment))) {
-    return null;
-  }
-  const suffix = segments.join("/");
-  const target = new URL(`/api/v1/${suffix}${search}`, base);
-  if (target.origin !== base.origin || !target.pathname.startsWith("/api/v1/")) return null;
-  return target;
 }
 
 function boundedBody(stream: ReadableStream<Uint8Array> | null): ReadableStream<Uint8Array> | undefined {
@@ -101,11 +55,11 @@ function boundedBody(stream: ReadableStream<Uint8Array> | null): ReadableStream<
 }
 
 async function proxy(request: NextRequest, context: { params: Promise<{ path: string[] }> }) {
-  const correlationId = request.headers.get("x-correlation-id") || crypto.randomUUID();
+  const correlationId = normalizeCorrelationId(request.headers.get("x-correlation-id"));
   if (!ALLOWED_METHODS.has(request.method)) {
     return errorResponse("method not allowed", 405, correlationId);
   }
-  const base = resolveUpstream();
+  const base = resolveUpstream(process.env);
   if (!base) {
     return errorResponse("API upstream is unavailable", 503, correlationId);
   }

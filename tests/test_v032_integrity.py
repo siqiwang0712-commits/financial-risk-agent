@@ -405,11 +405,17 @@ def test_compose_llm_and_frontend_proxy_are_runtime_configurable():
     compose = (ROOT / "docker-compose.yml").read_text(encoding="utf-8")
     workflow = (ROOT / ".github/workflows/ci.yml").read_text(encoding="utf-8")
     route = (ROOT / "frontend/app/api/v1/[...path]/route.ts").read_text(encoding="utf-8")
+    proxy = (ROOT / "frontend/lib/proxy.mjs").read_text(encoding="utf-8")
     assert "FINRISK_LLM_PROVIDER: ${FINRISK_LLM_PROVIDER:-mock}" in compose
     assert "FINRISK_LLM_MAX_TOKENS" in compose and "OPENAI_API_KEY" in compose
     assert "FINRISK_LLM_PROVIDER: mock" in workflow
     assert "127.0.0.1:3000/api/v1/public-pilot" in (ROOT / "scripts/verify_docker_health.py").read_text(encoding="utf-8")
-    assert "process.env.FINRISK_API_UPSTREAM" in route
+    # The upstream is still runtime-configurable: the route hands the live process
+    # environment to the resolver on every request. The resolver itself now lives in
+    # `lib/proxy.mjs` so it can be unit-tested; `frontend/test/proxy.test.mjs`
+    # asserts the behaviour, this only checks the wiring.
+    assert "resolveUpstream(process.env)" in route
+    assert "env.FINRISK_API_UPSTREAM" in proxy
 
 
 def test_production_compose_has_explicit_safe_migration_contract():

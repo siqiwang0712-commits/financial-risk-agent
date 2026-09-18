@@ -61,6 +61,7 @@ jobs:
       - run: npm ci
       - name: Audit production dependencies (high and critical)
         run: npm audit --omit=dev --audit-level=high --registry=https://registry.npmjs.org
+      - run: npm run lint
       - run: npm run typecheck
       - run: npm test
       - run: npm run build
@@ -76,8 +77,19 @@ jobs:
         run: docker build -f frontend/Dockerfile -t finrisk-frontend:ci frontend
       - name: Build and start production PostgreSQL/API stack
         run: docker compose -f docker-compose.yml -f docker-compose.prod.yml up --build -d postgres migrate api web
-      - name: Verify readiness and PostgreSQL repository selection
+      - name: Verify deployed HTTP contracts (auth, limits, correlation id)
         run: python scripts/verify_docker_health.py
+      # The step above used to be named "... and PostgreSQL repository selection",
+      # but it never touched a database: a wrong DATABASE_URL degraded the API to the
+      # in-memory repository and every check still passed. These two steps assert the
+      # datastore the process actually selected, then restart the API and prove the
+      # tenant, credential and entity survived.
+      - name: Assert the API selected PostgreSQL
+        run: python scripts/verify_postgres_state.py --phase before --state-file .runtime/pg-state.json
+      - name: Restart the API and assert persistence
+        run: |
+          docker compose -f docker-compose.yml -f docker-compose.prod.yml restart api
+          python scripts/verify_postgres_state.py --phase after --state-file .runtime/pg-state.json
       - name: Verify production timeout and explicit retry contract
         run: |
           FINRISK_ANALYSIS_TIMEOUT_SECONDS=0.001 docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d --force-recreate api web

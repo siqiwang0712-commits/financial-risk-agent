@@ -1,3 +1,15 @@
+# Shared knobs (keep the api and web sides on the same value so the proxy and the
+# backend agree about how large an upload may be):
+#   FINRISK_MAX_UPLOAD_BYTES  default 52428800 (50 MiB)
+#   FINRISK_ANALYSIS_TIMEOUT_SECONDS  default 60
+#
+# Ports are published on the loopback interface only. The development stack enables
+# the unauthenticated organisation-bootstrap route, which mints ADMIN keys; binding
+# it to 0.0.0.0 turned a convenience default into a remote privilege-escalation
+# path on any shared network. Set FINRISK_ENABLE_ORG_BOOTSTRAP=1 for the UI intake
+# flow, and reach the stack through an explicit tunnel when it must be remote.
+x-upload-bytes: &upload-bytes ${FINRISK_MAX_UPLOAD_BYTES:-52428800}
+
 services:
   postgres:
     image: postgres:17-alpine
@@ -6,14 +18,30 @@ services:
       POSTGRES_USER: finrisk
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-local-development-only}
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U finrisk -d finrisk"]
+      # `pg_isready` alone only proves the socket accepts connections, not that the
+      # configured credentials work. `POSTGRES_PASSWORD` is applied when the volume is
+      # *first* initialised, so changing it against an existing volume leaves a server
+      # that happily reports "ready" and then rejects every application connection
+      # with `password authentication failed` — a mismatch that used to surface only
+      # as a traceback from migrate/api. Authenticating over TCP (the `host` rule the
+      # image installs) makes it an immediately visible `unhealthy` container instead.
+      test:
+        - CMD-SHELL
+        - 'PGPASSWORD="$$POSTGRES_PASSWORD" psql -h 127.0.0.1 -U finrisk -d finrisk -tAc "SELECT 1" | grep -q 1'
       interval: 5s
-      timeout: 3s
+      timeout: 5s
       retries: 10
+    # Loopback-only, so the integration tests in tests/test_postgres_runtime.py can
+    # be run locally against a real database instead of being skipped.
+    ports: ["127.0.0.1:55432:5432"]
     volumes: ["finrisk-postgres:/var/lib/postgresql/data"]
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits: {memory: 512M}
   api:
     build: {context: ., dockerfile: backend/Dockerfile}
-    ports: ["8000:8000"]
+    ports: ["127.0.0.1:8000:8000"]
     environment:
       FINRISK_LLM_PROVIDER: ${FINRISK_LLM_PROVIDER:-mock}
       FINRISK_LLM_MODEL: ${FINRISK_LLM_MODEL:-gpt-4.1-mini}
@@ -21,24 +49,79 @@ services:
       FINRISK_LLM_MAX_RETRIES: ${FINRISK_LLM_MAX_RETRIES:-2}
       FINRISK_LLM_MAX_TOKENS: ${FINRISK_LLM_MAX_TOKENS:-1200}
       FINRISK_ANALYSIS_TIMEOUT_SECONDS: ${FINRISK_ANALYSIS_TIMEOUT_SECONDS:-60}
+      FINRISK_MAX_UPLOAD_BYTES: *upload-bytes
       FINRISK_INPUT_COST_PER_MILLION: ${FINRISK_INPUT_COST_PER_MILLION:-0}
       FINRISK_OUTPUT_COST_PER_MILLION: ${FINRISK_OUTPUT_COST_PER_MILLION:-0}
       OPENAI_API_KEY: ${OPENAI_API_KEY:-}
       DATABASE_URL: postgresql://finrisk:${POSTGRES_PASSWORD:-local-development-only}@postgres:5432/finrisk
       FINRISK_ENV: development
       FINRISK_AUTO_MIGRATE: "1"
+      # Secure by default: the first administrator is provisioned only when the
+      # operator opts in (see README).
+      FINRISK_ENABLE_ORG_BOOTSTRAP: ${FINRISK_ENABLE_ORG_BOOTSTRAP:-0}
+      FINRISK_BOOTSTRAP_TOKEN: ${FINRISK_BOOTSTRAP_TOKEN:-}
     depends_on:
       postgres:
         condition: service_healthy
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits: {memory: 1G}
+    healthcheck:
+      # Readiness, not liveness. This container's health is what `web` gates its own
+      # start on (`depends_on: service_healthy`), and "the process is up" is the wrong
+      # signal for that: an API that has booted but cannot reach PostgreSQL answers 503
+      # to every real request, so gating on `/health/live` would start the web tier
+      # against a dependency that is not ready. `/health/live` stays available and
+      # unchanged as a pure process-liveness probe for anything that wants one.
+      #
+      # Note this does *not* make the container restart itself: Docker's healthcheck
+      # only sets the health status, it takes no corrective action. `restart:
+      # unless-stopped` acts on process exit, not on an unhealthy status.
+      test:
+        - CMD
+        - python
+        - -c
+        - 'import urllib.request; urllib.request.urlopen("http://127.0.0.1:8000/health/ready", timeout=3)'
+      interval: 10s
+      timeout: 5s
+      retries: 6
+      start_period: 20s
   web:
     build:
       context: frontend
       args:
         NEXT_PUBLIC_FINRISK_ANALYSIS_TIMEOUT_SECONDS: ${FINRISK_ANALYSIS_TIMEOUT_SECONDS:-60}
-    ports: ["3000:3000"]
-    depends_on: [api]
+    ports: ["127.0.0.1:3000:3000"]
+    # Wait for a *ready* API, not merely a started container: a web layer that comes
+    # up against a half-initialised backend answers 502 to the first user. The `api`
+    # healthcheck above is readiness-based precisely so this condition means what it
+    # says — it is evaluated when the stack starts, not continuously.
+    depends_on:
+      api:
+        condition: service_healthy
     environment:
       FINRISK_API_UPSTREAM: http://api:8000
       FINRISK_ANALYSIS_TIMEOUT_SECONDS: ${FINRISK_ANALYSIS_TIMEOUT_SECONDS:-60}
+      FINRISK_MAX_UPLOAD_BYTES: *upload-bytes
+      # Next's standalone server binds to `process.env.HOSTNAME` when set, and Docker
+      # sets that to the container id — so it listened only on the container IP and a
+      # loopback health probe (or any sidecar) could not reach it. Pin it to a real
+      # listen address.
+      HOSTNAME: 0.0.0.0
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits: {memory: 512M}
+    healthcheck:
+      test:
+        - CMD
+        - node
+        - -e
+        - 'fetch("http://127.0.0.1:3000/api/v1/public-pilot").then((r) => process.exit(r.ok ? 0 : 1)).catch(() => process.exit(1))'
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
 volumes:
   finrisk-postgres:

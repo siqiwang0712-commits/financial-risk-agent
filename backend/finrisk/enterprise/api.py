@@ -265,6 +265,7 @@ def enterprise_router(
     bootstrap_token: str | None = None,
     require_bootstrap_token: bool = False,
     bootstrap_rate_limit: int | None = None,
+    bootstrap_limiter: RateLimiter | None = None,
 ) -> APIRouter:
     service = service or EnterpriseRiskService()
     router = APIRouter(prefix="/api/v1/enterprise", tags=["enterprise"])
@@ -274,7 +275,9 @@ def enterprise_router(
     # and is the only one that cannot require an API key, so it gets its own
     # limiter keyed by client address. The shared `limiter` lives inside
     # `principal()` and therefore never covered this route.
-    bootstrap_limiter = SlidingWindowRateLimiter(
+    # The caller may inject a shared-store limiter; otherwise this falls back to the
+    # in-process window (fine for local runs, restart-resettable in a cluster).
+    bootstrap_limiter = bootstrap_limiter or SlidingWindowRateLimiter(
         limit=bootstrap_rate_limit
         if bootstrap_rate_limit is not None
         else int(os.getenv("FINRISK_BOOTSTRAP_RATE_LIMIT", "60")),

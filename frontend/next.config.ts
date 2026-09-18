@@ -18,7 +18,10 @@ const securityHeaders = [
   { key: "X-Content-Type-Options", value: "nosniff" },
   { key: "X-Frame-Options", value: "DENY" },
   { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
-  { key: "Strict-Transport-Security", value: "max-age=31536000; includeSubDomains" },
+  // `Strict-Transport-Security` is deliberately *not* here: it is only meaningful for
+  // a response that actually travelled over TLS, and this config is resolved at build
+  // time (standalone output), so it cannot know. `middleware.ts` sets it per request
+  // by inspecting the effective scheme. →
   {
     key: "Content-Security-Policy",
     value: [
