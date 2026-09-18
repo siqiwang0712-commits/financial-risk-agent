@@ -55,7 +55,18 @@ def parse_number(text: str, scale: str | None = None) -> float | None:
     # "12.5%" into 12.5 and then into 12.5 million).
     percent = "%" in raw
     raw = re.sub(r"[-$€£%()\s]", "", raw)
-    if "," in raw:
+    if "," in raw and "." in raw:
+        # Both separators present, so the convention is unambiguous: the last one
+        # is the decimal separator and the other groups thousands. ``1,234.56`` is
+        # the US form (and the most common way a filing writes a non-integer);
+        # ``1.234,56`` is the European one. Treating a comma as a thousands
+        # separator without this test made float() fail, so the value was dropped
+        # silently -- in the PDF path that just lowers evidence coverage.
+        if raw.rfind(",") > raw.rfind("."):
+            raw = raw.replace(".", "").replace(",", ".")
+        else:
+            raw = raw.replace(",", "")
+    elif "," in raw:
         # Comma disambiguation. ``1,234`` / ``1,234,567`` use commas as thousands
         # separators; ``1234,56`` / ``0,5`` are the European decimal convention.
         # Blindly deleting commas read ``1234,56`` as 123456 (a 100x error) and

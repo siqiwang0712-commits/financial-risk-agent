@@ -8,6 +8,7 @@ from .contradictions import detect_contradictions, evaluate_claim_consistency
 from .domain import Assessment, RuleSignal
 from .enterprise.applicability import (
     ALTMAN_VARIANT_REQUIREMENTS,
+    MODEL_KEYS,
     MODEL_REQUIREMENTS,
     enforce_applicability,
 )
@@ -31,6 +32,20 @@ class FinRiskPipeline:
         self.model_scoring=json.loads((self.root/"config"/"model_scoring.json").read_text(encoding="utf-8"))
         self.provider=provider or provider_from_env(); self.verifier=EvidenceVerifier()
         self._assert_signals_are_not_double_counted()
+        self._assert_model_names_are_known()
+
+    def _assert_model_names_are_known(self) -> None:
+        """Fail at construction when the config names a model the code cannot route.
+
+        `config/model_scoring.json` is a versioned artifact edited independently of
+        the code. An unknown name used to surface as a bare `KeyError` in the middle
+        of a request -- i.e. an unexplained 500 with no pointer to the config.
+        """
+        unknown = sorted(
+            {mapping["model"] for mapping in self.model_scoring["mappings"]} - set(MODEL_KEYS)
+        )
+        if unknown:
+            raise ValueError(f"model_scoring.json names unknown models: {unknown}")
 
     def _assert_signals_are_not_double_counted(self) -> None:
         """Fail fast when one risk signal can be produced twice for one dimension.
@@ -226,12 +241,7 @@ class FinRiskPipeline:
                     continue
                 refs=[]
                 for key in model.inputs:refs.extend(source_map.get(key,[]))
-                model_key = {
-                    "Altman Z-Score": "altman",
-                    "Beneish M-Score": "beneish",
-                    "Piotroski F-Score": "piotroski",
-                    "Ohlson O-Score": "ohlson",
-                }[mapping["model"]]
+                model_key = MODEL_KEYS[mapping["model"]]
                 if model_key == "altman":
                     variant = model.derived_outputs.get("variant", "public_manufacturer")
                     base_required = sorted(ALTMAN_VARIANT_REQUIREMENTS[variant])

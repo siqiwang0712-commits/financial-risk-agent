@@ -73,18 +73,24 @@ def applicability_report(industry: str, facts: dict[str, object]) -> list[dict]:
     return [route_model(model, industry, facts).to_dict() for model in MODEL_REQUIREMENTS]
 
 
+# Single source for the report label -> `MODEL_REQUIREMENTS` key mapping. The
+# pipeline looks a configured model name up in this registry, so it must be the
+# only copy: a second copy in another module is how a config rename turns into an
+# unexplained 500 mid-request.
+MODEL_KEYS: dict[str, str] = {
+    "Altman Z-Score": "altman",
+    "Beneish M-Score": "beneish",
+    "Piotroski F-Score": "piotroski",
+    "Ohlson O-Score": "ohlson",
+}
+
+
 def enforce_applicability(
     results: list[ModelResult], industry: str, facts: dict[str, object]
 ) -> list[ModelResult]:
-    model_keys = {
-        "Altman Z-Score": "altman",
-        "Beneish M-Score": "beneish",
-        "Piotroski F-Score": "piotroski",
-        "Ohlson O-Score": "ohlson",
-    }
     for result in results:
         decision = route_model(
-            model_keys[result.name], industry, facts,
+            MODEL_KEYS[result.name], industry, facts,
             variant=result.derived_outputs.get("variant"),
         )
         missing = sorted(

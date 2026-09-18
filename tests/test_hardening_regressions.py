@@ -1,10 +1,13 @@
 import asyncio
+import json
+import shutil
 from pathlib import Path
 
 import pytest
 from finrisk.api import AssessmentRequest, _run_document_isolated
 from finrisk.domain import RuleSignal
 from finrisk.enterprise.api import FusionRequest, RiskSnapshotRequest
+from finrisk.enterprise.applicability import MODEL_KEYS
 from finrisk.enterprise.domain import (
     AuditEvent,
     Entity,
@@ -19,6 +22,7 @@ from finrisk.evidence import claim_is_grounded
 from finrisk.models import altman_variant
 from finrisk.normalization import normalize_line_item, parse_number
 from finrisk.parser import DocumentParser
+from finrisk.pipeline import FinRiskPipeline
 from finrisk.rules import RuleEngine, unproducible_rule_conditions
 from finrisk.scoring import effective_signals
 from finrisk.tools.ingestion import ingest_pdf
@@ -63,6 +67,28 @@ def test_numeric_normalization_handles_explicit_negative_parentheses_and_percent
     assert parse_number("-12.5%") == -0.125
     assert normalize_line_item("Property, plant and equipment") == "ppe"
     assert normalize_line_item("Accounts receivable, net") == "accounts_receivable"
+
+
+def test_parse_number_handles_both_separator_conventions():
+    """A comma plus a dot is unambiguous: the last separator is the decimal one.
+
+    Only one convention used to be understood, so ``1,234.56`` -- the usual way a
+    US filing writes a non-integer -- fell through to float() and returned None,
+    which silently dropped the value from a PDF extraction.
+    """
+    assert parse_number("1,234.56") == 1234.56
+    assert parse_number("12,345.6") == 12345.6
+    assert parse_number("(1,234.56)") == -1234.56
+    assert parse_number("1,234.56%") == 12.3456
+    assert parse_number("1,234.56", "millions") == 1_234_560_000.0
+    # European convention: the dot groups thousands, the comma is the decimal.
+    assert parse_number("1.234,56") == 1234.56
+    # Single-separator behaviour is unchanged.
+    assert parse_number("1,234") == 1234.0
+    assert parse_number("1,234,567") == 1234567.0
+    assert parse_number("1234,56") == 1234.56
+    assert parse_number("0,5") == 0.5
+    assert parse_number("1.5") == 1.5
 
 
 def test_non_consecutive_document_comparative_is_not_used_as_previous(tmp_path):
@@ -188,3 +214,32 @@ def test_in_memory_mutation_and_audit_are_tenant_atomic():
         repository.save(entity, event)
     with pytest.raises(KeyError):
         repository.get_entity(organization.id, entity.id)
+
+
+def test_model_scoring_config_only_names_known_models():
+    """Every model named by the config must be routable by the code."""
+    config = json.loads((ROOT / "config" / "model_scoring.json").read_text(encoding="utf-8"))
+    assert {mapping["model"] for mapping in config["mappings"]} <= set(MODEL_KEYS)
+    FinRiskPipeline(ROOT)  # the construction-time assertion must hold
+
+
+def test_pipeline_rejects_a_config_with_an_unknown_model_name(tmp_path):
+    """A config typo must fail at construction, not as an unexplained 500."""
+    for item in ("rules", "config"):
+        shutil.copytree(ROOT / item, tmp_path / item)
+    config = json.loads((tmp_path / "config" / "model_scoring.json").read_text(encoding="utf-8"))
+    config["mappings"][0]["model"] = "Typo Z-Score"
+    (tmp_path / "config" / "model_scoring.json").write_text(json.dumps(config), encoding="utf-8")
+    with pytest.raises(ValueError, match="unknown models"):
+        FinRiskPipeline(tmp_path)
+
+
+def test_the_model_name_registry_has_a_single_source():
+    """The report-label -> key map must not be re-duplicated per module."""
+    literal = '"Altman Z-Score": "altman"'
+    carriers = [
+        path.name
+        for path in (ROOT / "backend").rglob("*.py")
+        if literal in path.read_text(encoding="utf-8")
+    ]
+    assert carriers == ["applicability.py"], carriers
