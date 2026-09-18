@@ -290,3 +290,34 @@ def test_assessment_rejects_nonfinite_and_boolean_numeric_inputs():
             json={"company": "Invalid", "fiscal_year": 2025, "current": {"cash": value}},
         )
         assert response.status_code == 422
+
+
+def test_entity_creation_with_an_unknown_parent_is_rejected_not_a_500():
+    """A caller-supplied parent_id used to raise KeyError out of the service.
+
+    `/entities` was the only enterprise route without the sibling error mapping,
+    so the catch-all middleware turned it into `500 internal server error`.
+    """
+    client, headers = authenticated_client()
+    response = client.post(
+        "/api/v1/enterprise/entities",
+        headers=headers,
+        json={"name": "Child", "parent_id": "does-not-exist"},
+    )
+    assert response.status_code == 422, response.text
+    assert response.json()["detail"] == "entity creation rejected"
+
+
+def test_caller_supplied_model_metric_does_not_crash_the_assess_endpoints():
+    """A model metric in `current` can cross its threshold without the model
+    having been evaluated (Beneish/Piotroski need a prior period). That lookup
+    used to raise StopIteration out of `/api/v1/assess` as a 500."""
+    client, headers = authenticated_client()
+    for metric in ("beneish_m_score", "piotroski_f_score", "altman_z_score", "ohlson_probability"):
+        for path in ("/api/v1/assess", "/api/v1/agent/assess"):
+            response = client.post(
+                path,
+                headers=headers,
+                json={"company": "Caller metric", "fiscal_year": 2025, "current": {metric: 0.5}},
+            )
+            assert response.status_code == 200, f"{path} with {metric}: {response.text}"

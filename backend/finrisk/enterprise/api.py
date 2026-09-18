@@ -303,7 +303,12 @@ def enterprise_router(
 
     @router.post("/entities")
     def create_entity(req: EntityCreate, actor: Principal = principal_dependency):
-        return asdict(service.create_entity(actor, req.name, req.sector, req.parent_id))
+        try:
+            return asdict(service.create_entity(actor, req.name, req.sector, req.parent_id))
+        except (KeyError, PermissionError, ValueError) as exc:
+            # An unknown `parent_id` raises KeyError inside the service; without
+            # this mapping it escaped to the catch-all middleware as a 500.
+            raise HTTPException(422, "entity creation rejected") from exc
 
     @router.post("/risk-cases")
     def create_case(req: CaseCreate, actor: Principal = principal_dependency):
