@@ -66,58 +66,67 @@ def multipart(fields: dict[str, str], content: bytes) -> tuple[bytes, str]:
     return b"".join(parts), boundary
 
 
-deadline = time.monotonic() + 60
-while time.monotonic() < deadline:
-    try:
-        with urlopen("http://127.0.0.1:8000/health/ready", timeout=3) as response:
-            if json.load(response).get("status") == "ready":
-                break
-    except (OSError, URLError, ValueError):
-        time.sleep(1)
-else:
-    raise SystemExit("timeout-smoke API readiness failed")
+def main() -> None:
+    """Verify the production proxy timeout and explicit retry contract.
 
-organization = request_json(
-    "http://127.0.0.1:8000/api/v1/enterprise/organizations",
-    {"name": "Timeout tenant", "actor_id": "timeout-admin"},
-    {"X-Bootstrap-Token": os.environ["FINRISK_BOOTSTRAP_TOKEN"]},
-)
-headers = {"X-API-Key": organization["api_key"]}
-entity = request_json(
-    "http://127.0.0.1:3000/api/v1/enterprise/entities",
-    {"name": "Timeout issuer"},
-    headers,
-)
-body, boundary = multipart(
-    {"company": "Timeout issuer", "fiscal_year": "2025", "entity_id": entity["id"]},
-    pdf_with_text("BALANCE SHEET\nCash and cash equivalents 100\nTotal assets 500"),
-)
-
-for attempt in (1, 2):
-    correlation_id = f"timeout-retry-{attempt}"
-    request = Request(
-        "http://127.0.0.1:3000/api/v1/documents/analyze",
-        data=body,
-        headers={
-            **headers,
-            "Content-Type": f"multipart/form-data; boundary={boundary}",
-            "X-Correlation-Id": correlation_id,
-        },
-        method="POST",
-    )
-    try:
-        urlopen(request, timeout=15)
-    except HTTPError as exc:
-        payload = json.load(exc)
-        response_correlation = exc.headers.get("X-Correlation-Id")
-        exc.close()
-        if exc.code != 504 or response_correlation != correlation_id:
-            raise SystemExit(
-                f"timeout attempt {attempt} returned HTTP {exc.code}, correlation={response_correlation!r}"
-            )
-        if "timed out" not in str(payload.get("detail", "")).lower():
-            raise SystemExit(f"timeout attempt {attempt} returned unsafe contract: {payload!r}")
+    Importing this module must not make any request.
+    """
+    deadline = time.monotonic() + 60
+    while time.monotonic() < deadline:
+        try:
+            with urlopen("http://127.0.0.1:8000/health/ready", timeout=3) as response:
+                if json.load(response).get("status") == "ready":
+                    break
+        except (OSError, URLError, ValueError):
+            time.sleep(1)
     else:
-        raise SystemExit(f"timeout attempt {attempt} unexpectedly succeeded")
+        raise SystemExit("timeout-smoke API readiness failed")
 
-print("production proxy timeout and explicit retry contracts passed (504 x2)")
+    organization = request_json(
+        "http://127.0.0.1:8000/api/v1/enterprise/organizations",
+        {"name": "Timeout tenant", "actor_id": "timeout-admin"},
+        {"X-Bootstrap-Token": os.environ["FINRISK_BOOTSTRAP_TOKEN"]},
+    )
+    headers = {"X-API-Key": organization["api_key"]}
+    entity = request_json(
+        "http://127.0.0.1:3000/api/v1/enterprise/entities",
+        {"name": "Timeout issuer"},
+        headers,
+    )
+    body, boundary = multipart(
+        {"company": "Timeout issuer", "fiscal_year": "2025", "entity_id": entity["id"]},
+        pdf_with_text("BALANCE SHEET\nCash and cash equivalents 100\nTotal assets 500"),
+    )
+
+    for attempt in (1, 2):
+        correlation_id = f"timeout-retry-{attempt}"
+        request = Request(
+            "http://127.0.0.1:3000/api/v1/documents/analyze",
+            data=body,
+            headers={
+                **headers,
+                "Content-Type": f"multipart/form-data; boundary={boundary}",
+                "X-Correlation-Id": correlation_id,
+            },
+            method="POST",
+        )
+        try:
+            urlopen(request, timeout=15)
+        except HTTPError as exc:
+            payload = json.load(exc)
+            response_correlation = exc.headers.get("X-Correlation-Id")
+            exc.close()
+            if exc.code != 504 or response_correlation != correlation_id:
+                raise SystemExit(
+                    f"timeout attempt {attempt} returned HTTP {exc.code}, correlation={response_correlation!r}"
+                )
+            if "timed out" not in str(payload.get("detail", "")).lower():
+                raise SystemExit(f"timeout attempt {attempt} returned unsafe contract: {payload!r}")
+        else:
+            raise SystemExit(f"timeout attempt {attempt} unexpectedly succeeded")
+
+    print("production proxy timeout and explicit retry contracts passed (504 x2)")
+
+
+if __name__ == "__main__":
+    main()
