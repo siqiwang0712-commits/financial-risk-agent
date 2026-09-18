@@ -38,8 +38,10 @@ def main() -> int:
             "sec_user_agent_configured": bool(os.getenv("SEC_USER_AGENT")),
             "openai_api_key_configured": bool(os.getenv("OPENAI_API_KEY")),
         }
-        REPORT.parent.mkdir(parents=True, exist_ok=True)
-        REPORT.write_text(json.dumps(report, indent=2), encoding="utf-8")
+        # Honour `--report`: this branch used to write the module constant, so the
+        # path CI passes was ignored and a tracked artifact was overwritten.
+        args.report.parent.mkdir(parents=True, exist_ok=True)
+        args.report.write_text(json.dumps(report, indent=2), encoding="utf-8")
         print(json.dumps(report, indent=2))
         return 0 if args.allow_not_available else 2
     rows = json.loads(args.manifest.read_text(encoding="utf-8"))

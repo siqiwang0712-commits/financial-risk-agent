@@ -55,7 +55,13 @@ def main() -> int:
         "dual_review_status": "COMPLETE_MACHINE_ONLY",
         "reviewer_pair_count": len(reviewer_pairs),
         "reviewer_pair_agreement_count": sum(row["agreement"] for row in reviewer_pairs),
-        "reviewer_pair_percent_agreement": sum(row["agreement"] for row in reviewer_pairs) / len(reviewer_pairs),
+        # An empty packet set divided by zero here and aborted the audit before it
+        # could report that there was nothing to compare.
+        "reviewer_pair_percent_agreement": (
+            sum(row["agreement"] for row in reviewer_pairs) / len(reviewer_pairs)
+            if reviewer_pairs
+            else None
+        ),
         "disagreement_count": len(disagreements),
         "adjudication_status": "NOT_REQUIRED_NO_DISAGREEMENTS" if not disagreements else "REQUIRED_NOT_RUN",
         "human_gold_status": "NOT_ADJUDICATED",

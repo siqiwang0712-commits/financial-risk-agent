@@ -75,7 +75,9 @@ export function DecisionPaths({ trace }: Props) {
 
 function PathRow({ path }: { path: DecisionPath }) {
   const verified = path.evidence_path_status === "VERIFIED";
-  const provenanceEntries = Object.entries(path.input_provenance);
+  // The backend emits this key for every path, but an older or hand-built payload
+  // may not: `Object.entries(undefined)` throws and used to blank the whole tab.
+  const provenanceEntries = Object.entries(path.input_provenance ?? {});
 
   return (
     <li className={`pathRow ${verified ? "verified" : "unverified"}`}>
@@ -105,7 +107,9 @@ function PathRow({ path }: { path: DecisionPath }) {
             </p>
             <p>
               <span>Rule version</span>
-              <code>{path.rule_version.slice(0, 16)}…</code>
+              {/* Model-driven paths carry no rule version; `undefined.slice()`
+                  threw here and took the entire page down with it. */}
+              <code>{path.rule_version ? `${path.rule_version.slice(0, 16)}…` : "—"}</code>
             </p>
             <p>
               <span>Confidence · coverage · disagreement</span>
@@ -154,9 +158,11 @@ function PathRow({ path }: { path: DecisionPath }) {
 
           <div className="pathEvidence">
             <small>Source evidence</small>
-            {path.source_evidence.length ? (
-              path.source_evidence.map((item, index) => (
-                <blockquote key={index}>
+            {(path.source_evidence ?? []).length ? (
+              (path.source_evidence ?? []).map((item, index) => (
+                /* Index alone is not stable across the all/verified/unverified
+                   filter; include the locator so rows are not reused wrongly. */
+                <blockquote key={`${item.document}-${item.page}-${index}`}>
                   <b>{item.verification_status}</b> · {evidenceLocator(item)}
                   <p>{item.quote || item.source_text || "(no quoted span)"}</p>
                 </blockquote>

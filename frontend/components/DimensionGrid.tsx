@@ -55,8 +55,10 @@ export function DimensionGrid({ dimensions }: { dimensions: Record<string, Dimen
 
             {dimension.key_drivers.length ? (
               <ul className="driverList">
-                {dimension.key_drivers.slice(0, 4).map((driver) => (
-                  <li key={driver}>{driver}</li>
+                {/* A driver id can appear more than once in a dimension; index
+                    alone is stable here because the list is a bounded slice. */}
+                {dimension.key_drivers.slice(0, 4).map((driver, index) => (
+                  <li key={`${driver}-${index}`}>{driver}</li>
                 ))}
                 {dimension.key_drivers.length > 4 ? (
                   <li className="more">+{dimension.key_drivers.length - 4} more</li>

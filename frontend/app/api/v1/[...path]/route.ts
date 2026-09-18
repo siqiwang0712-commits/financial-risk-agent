@@ -78,7 +78,16 @@ function boundedBody(stream: ReadableStream<Uint8Array> | null): ReadableStream<
   const reader = stream.getReader();
   return new ReadableStream({
     async pull(controller) {
-      const chunk = await reader.read();
+      // A client that disconnects mid-upload makes `read()` reject. Without this
+      // the reader is never released, so the stream stays locked and the request
+      // leaks until the socket times out.
+      let chunk: ReadableStreamReadResult<Uint8Array>;
+      try {
+        chunk = await reader.read();
+      } catch (cause) {
+        await reader.cancel(String(cause)).catch(() => undefined);
+        return controller.error(cause);
+      }
       if (chunk.done) return controller.close();
       received += chunk.value.byteLength;
       if (received > MAX_UPLOAD_BYTES) {

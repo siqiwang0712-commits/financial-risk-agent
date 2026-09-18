@@ -9,6 +9,7 @@ every script in a fresh interpreter and asserts nothing happened.
 
 from __future__ import annotations
 
+import ast
 import hashlib
 import os
 import subprocess
@@ -88,6 +89,42 @@ def test_importing_scripts_does_not_rewrite_committed_artifacts():
 
 @pytest.mark.parametrize("script", SCRIPTS, ids=lambda p: p.name)
 def test_script_declares_a_main_entry_point(script: Path):
-    text = script.read_text(encoding="utf-8")
-    assert "def main(" in text, f"{script.name} has no main()"
-    assert '__name__ == "__main__"' in text, f"{script.name} has no __main__ guard"
+    """The guard has to *guard* `main`, not merely appear in the file.
+
+    A substring check passes on `def main(` written inside a comment or on the
+    `__name__` comparison sitting anywhere, so this parses the module instead:
+    the top level must contain a `def main` and an `if __name__ == "__main__"`
+    block whose body actually calls it.
+    """
+    tree = ast.parse(script.read_text(encoding="utf-8"), filename=str(script))
+    has_main = any(
+        isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)) and node.name == "main"
+        for node in tree.body
+    )
+    assert has_main, f"{script.name} declares no top-level main()"
+
+    guarded = False
+    for node in tree.body:
+        if not isinstance(node, ast.If):
+            continue
+        test = node.test
+        if not (
+            isinstance(test, ast.Compare)
+            and isinstance(test.left, ast.Name)
+            and test.left.id == "__name__"
+            and isinstance(test.comparators[0], ast.Constant)
+            and test.comparators[0].value == "__main__"
+        ):
+            continue
+        guarded = True
+        # `raise SystemExit(main())` is the common shape here, so any call to
+        # `main` inside the guard counts, however it is wrapped.
+        calls_main = any(
+            isinstance(inner, ast.Call)
+            and isinstance(inner.func, ast.Name)
+            and inner.func.id == "main"
+            for statement in node.body
+            for inner in ast.walk(statement)
+        )
+        assert calls_main, f"{script.name} has a __main__ guard that does not call main()"
+    assert guarded, f"{script.name} has no __main__ guard"

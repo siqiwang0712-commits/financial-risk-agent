@@ -111,7 +111,8 @@ def main() -> None:
             method="POST",
         )
         try:
-            urlopen(request, timeout=15)
+            with urlopen(request, timeout=15) as response:
+                response.read(64 * 1024)
         except HTTPError as exc:
             payload = json.load(exc)
             response_correlation = exc.headers.get("X-Correlation-Id")

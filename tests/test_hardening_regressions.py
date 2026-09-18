@@ -12,20 +12,31 @@ from finrisk.enterprise.domain import (
     AuditEvent,
     Entity,
     Organization,
+    PolicyVersion,
     Principal,
     RiskCase,
     RiskDomain,
     Role,
 )
+from finrisk.enterprise.evidence_graph import (
+    EvidenceNode,
+    EvidenceRelation,
+    TemporalEvidenceGraph,
+)
+from finrisk.enterprise.policy import evaluate_kri
 from finrisk.enterprise.repository import InMemoryEnterpriseRepository
+from finrisk.enterprise.scenario import Scenario, apply_scenario
 from finrisk.evidence import claim_is_grounded
+from finrisk.metrics import calculate_metrics, growth_ratio
 from finrisk.models import altman_variant
 from finrisk.normalization import normalize_line_item, parse_number
+from finrisk.numeric_benchmark import temporal_trajectories
 from finrisk.parser import DocumentParser
 from finrisk.pipeline import FinRiskPipeline
 from finrisk.rules import RuleEngine, unproducible_rule_conditions
 from finrisk.scoring import effective_signals
 from finrisk.tools.ingestion import ingest_pdf
+from finrisk.xbrl import parse_companyfacts
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -243,3 +254,72 @@ def test_the_model_name_registry_has_a_single_source():
         if literal in path.read_text(encoding="utf-8")
     ]
     assert carriers == ["applicability.py"], carriers
+
+
+def test_a_denormal_prior_period_yields_no_growth_not_infinity():
+    """`inf` is not JSON: it serialises as the `Infinity` token and breaks clients.
+
+    `_safe_div` already rejected non-finite quotients, but the growth calculations
+    divided directly, so a prior of 1e-320 published `inf` as a growth rate.
+    """
+    assert growth_ratio(1.0, 1e-320) is None
+    assert growth_ratio(110.0, 100.0) == pytest.approx(0.1)
+    # A sign change is still "undefined", not growth.
+    assert growth_ratio(-50.0, -100.0) is None
+    metrics = calculate_metrics({"revenue": 1.0}, 2025, {"revenue": 1e-320})
+    assert metrics["revenue_growth"].value is None
+
+
+def test_parse_companyfacts_survives_a_malformed_caller_payload():
+    """`companyfacts` arrives from a public POST body with no schema behind it."""
+    assert parse_companyfacts({}) == []
+    assert parse_companyfacts({"facts": "not-a-dict"}) == []
+    assert parse_companyfacts({"facts": {"us-gaap": [1, 2]}}) == []
+    assert parse_companyfacts({"facts": {"us-gaap": {"Revenues": "oops"}}}) == []
+    assert parse_companyfacts(
+        {"facts": {"us-gaap": {"Revenues": {"units": {"USD": [{"val": "abc", "fy": 2024}]}}}}},
+        [2024],
+    ) == []
+
+
+def test_temporal_trajectory_delta_skips_unscored_endpoints():
+    """A filing with none of the growth inputs scores None; `None - None` crashed."""
+    sparse = [
+        {"ticker": "X", "fiscal_year": 2023, "metrics": {"current_ratio": None}},
+        {"ticker": "X", "fiscal_year": 2024, "metrics": {"current_ratio": None}},
+    ]
+    trajectory = temporal_trajectories(sparse)[0]
+    assert trajectory["delta"] is None
+    assert [point["risk"] for point in trajectory["points"]] == [None, None]
+
+
+def test_policy_evaluation_refuses_a_kri_without_a_direction():
+    """Reading a missing `risk_direction` as 'high' failed open."""
+    policy = PolicyVersion("p", "o", 1, "base", {"leverage": {"warning": 3.0}}, "u")
+    with pytest.raises(ValueError, match="risk_direction"):
+        evaluate_kri(policy, {"leverage": 4.0})
+    directed = PolicyVersion(
+        "p", "o", 1, "base", {"leverage": {"warning": 3.0, "risk_direction": "low"}}, "u"
+    )
+    assert evaluate_kri(directed, {"leverage": 4.0})[0]["status"] == "within_appetite"
+
+
+def test_a_margin_shock_is_priced_on_the_stressed_revenue():
+    stressed = apply_scenario(
+        {"revenue": 100.0, "gross_profit": 40.0},
+        Scenario("downside", revenue_pct=-0.1, margin_pp=-0.02),
+    )
+    assert stressed["revenue"] == pytest.approx(90.0)
+    assert stressed["gross_profit"] == pytest.approx(40.0 - 1.8)
+
+
+def test_path_enumeration_is_bounded():
+    """A densely linked DAG used to enumerate paths until the process OOMed."""
+    graph = TemporalEvidenceGraph()
+    graph.add_node(EvidenceNode("t", "claim", "2024", {"value": 1.0}))
+    for index in range(12):
+        graph.add_node(EvidenceNode(f"n{index}", "claim", "2024", {"value": 1.0}))
+        graph.link(f"n{index}", "t", EvidenceRelation.SUPPORTS, "because")
+    assert len(graph.paths_to("t", max_paths=5)) == 5
+    with pytest.raises(ValueError):
+        graph.paths_to("t", max_paths=0)

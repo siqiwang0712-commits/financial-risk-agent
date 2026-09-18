@@ -19,9 +19,12 @@ def request_json(url: str, payload: dict, headers: dict[str, str] | None = None)
 
 def expect_http_status(request: Request, expected: int) -> HTTPError:
     try:
-        urlopen(request, timeout=10)
+        with urlopen(request, timeout=10) as response:
+            response.read(64 * 1024)
     except HTTPError as exc:
         if exc.code != expected:
+            exc.read(64 * 1024)
+            exc.close()
             raise AssertionError(f"expected HTTP {expected}, received {exc.code}") from exc
         exc.read(64 * 1024)
         exc.close()
@@ -153,7 +156,10 @@ def main() -> None:
             method="POST",
         )
         try:
-            urlopen(request, timeout=10)
+            # 70 iterations: an unclosed success response leaks a socket each time,
+            # so the result is always drained and closed on both paths.
+            with urlopen(request, timeout=10) as response:
+                response.read(64 * 1024)
         except HTTPError as exc:
             exc.read(64 * 1024)
             exc.close()

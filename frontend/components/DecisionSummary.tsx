@@ -49,8 +49,10 @@ export function DecisionSummary({ payload }: Props) {
             {payload.company} · FY{payload.reporting_period}
           </p>
           <p className="heroReliability">
+            {/* Without a fallback the reliability line renders an empty string for
+                a payload that carries no calibration status. */}
             {displayReliability(
-              epistemics?.calibration_status ?? payload.reliability_status,
+              epistemics?.calibration_status ?? payload.reliability_status ?? "UNCALIBRATED",
               epistemics?.reliability ?? null,
             )}
           </p>

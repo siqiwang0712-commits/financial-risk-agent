@@ -28,6 +28,13 @@ OUTPUT = ROOT / "research/results/v0.3.2/empirical_numeric"
 FREEZE = OUTPUT / "experiment_manifest.json"
 
 
+def _git_commit() -> str:
+    try:
+        return subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=ROOT, text=True).strip()
+    except (OSError, subprocess.CalledProcessError):
+        return "NOT_AVAILABLE"
+
+
 def file_hash(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
@@ -61,7 +68,9 @@ def freeze_numeric_experiment(observations: list[dict], labels: list[dict]) -> d
         "label_schema_hash": file_hash(ROOT / "research/label_schema_v2.json"),
         "label_data_hash": canonical_hash(labels),
         "random_seed": 31,
-        "git_commit": subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=ROOT, text=True).strip(),
+        # Same fallback `prepare_empirical_foundation` already uses: the Docker
+        # image ships no `.git`, and an unguarded call aborted the run there.
+        "git_commit": _git_commit(),
         **prospective_experiment_metadata(ROOT),
     }
     frozen = freeze_experiment(configuration)

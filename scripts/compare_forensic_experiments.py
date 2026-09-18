@@ -44,7 +44,12 @@ def main() -> int:
         })
         predictions = json.loads((e2 / f"{baseline.lower()}_predictions.json").read_text(encoding="utf-8"))
         test = [row for row in predictions if row["split"] == "test"]
-        positive = next(row for row in test if row["label"] == 1)
+        # A test split with no positive used to abort the comparison with
+        # StopIteration; rank reporting is skipped for that baseline instead.
+        positive = next((row for row in test if row["label"] == 1), None)
+        if positive is None:
+            ranks[baseline] = {"score": None, "best_rank": None, "worst_rank": None}
+            continue
         higher = sum(float(row["score"]) > float(positive["score"]) for row in test)
         equal = sum(float(row["score"]) == float(positive["score"]) for row in test)
         ranks[baseline] = {"score": positive["score"], "best_rank": higher + 1, "worst_rank": higher + equal}
@@ -64,7 +69,7 @@ def main() -> int:
     comparison["comparison_hash"] = digest(comparison)
     (BASE / "e1_to_e2_comparison.json").write_text(json.dumps(comparison, indent=2), encoding="utf-8")
     with (BASE / "e1_to_e2_metrics.csv").open("w", encoding="utf-8", newline="") as handle:
-        writer = csv.DictWriter(handle, fieldnames=rows[0].keys())
+        writer = csv.DictWriter(handle, fieldnames=list(dict.fromkeys(key for row in rows for key in row)))
         writer.writeheader()
         writer.writerows(rows)
     print(json.dumps(comparison, indent=2))

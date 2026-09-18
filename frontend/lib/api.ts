@@ -230,7 +230,10 @@ function agentPayload(value: unknown): boolean {
       && (finite(item.risk_after) || item.risk_after === null)
       && finite(item.coverage_before) && finite(item.coverage_after)
       && finite(item.disagreement_before) && finite(item.disagreement_after)
-      && finite(item.estimated_cost_usd) && typeof item.decision_changed === "boolean")
+      && finite(item.estimated_cost_usd) && typeof item.decision_changed === "boolean"
+      // A component that was skipped reports no latency. The panel renders that
+      // as 0 rather than dropping the whole assessment.
+      && (finite(item.latency_ms) || item.latency_ms === undefined))
     && strings(trace.decision_reason_codes)
     && finite(trace.material_path_count) && finite(trace.verified_path_count)
     && finite(trace.proof_coverage)
@@ -261,7 +264,10 @@ function isAssessmentPayload(body: unknown): body is AssessmentPayload {
     && record(confidenceComponents) && Object.values(confidenceComponents).every(finite)
     && record(failure) && typeof failure.degraded === "boolean"
     && strings(failure.blocking_failures) && strings(failure.review_failures)
-    && agentPayload(candidate.agent)
+    // `agent` is optional in `AssessmentPayload`: the deterministic endpoint and
+    // any degraded run return the assessment without it. Requiring it here threw
+    // away an otherwise valid 200 and showed a shape error instead of the result.
+    && (candidate.agent == null || agentPayload(candidate.agent))
   );
 }
 

@@ -38,14 +38,16 @@ def main() -> int:
         for ordinal, row in enumerate(ordered, 1):
             rank = _rank(rows, row)
             table.append({"baseline": baseline, "ordinal": ordinal, **rank, **row})
-        positive = next(row for row in rows if row["label"] == 1)
+        # `next` without a default raised StopIteration and aborted the whole audit
+        # for a test split that happens to hold no positive. Report that instead.
+        positive = next((row for row in rows if row["label"] == 1), None)
         parser_scores[baseline] = {
             "semantics": "higher score = higher future deterioration risk",
-            "positive_observation": positive["observation_id"],
-            "positive_score": positive["score"],
-            "positive_prediction": positive["prediction"],
-            "positive_rank": _rank(rows, positive),
-            "polarity_verified": True,
+            "positive_observation": positive["observation_id"] if positive else None,
+            "positive_score": positive["score"] if positive else None,
+            "positive_prediction": positive["prediction"] if positive else None,
+            "positive_rank": _rank(rows, positive) if positive else None,
+            "polarity_verified": positive is not None,
         }
     polarity = {
         "label_semantics": "1 = future financial deterioration",
@@ -58,8 +60,10 @@ def main() -> int:
             "explanation": "NUE had strong contemporaneous liquidity, margins, cash flow and leverage at T. The frozen positive is caused by future FY2023 revenue and OCF declines, which are not available to PIT-safe T features. Low ranks are therefore a genuine sudden-deterioration false negative, not score inversion.",
         },
     }
-    (FORENSICS / "e1_polarity_audit.json").write_text(json.dumps(polarity, indent=2), encoding="utf-8")
-    with (FORENSICS / "e1_frozen_test_scores.csv").open("w", encoding="utf-8", newline="") as handle:
+    # The prefix tracks the phase: it used to be hardcoded to `e1_`, so an E2/E3
+    # run silently overwrote the frozen E1 audit with that phase's numbers.
+    (FORENSICS / f"{phase}_polarity_audit.json").write_text(json.dumps(polarity, indent=2), encoding="utf-8")
+    with (FORENSICS / f"{phase}_frozen_test_scores.csv").open("w", encoding="utf-8", newline="") as handle:
         fieldnames = list(dict.fromkeys(key for row in table for key in row))
         writer = csv.DictWriter(handle, fieldnames=fieldnames)
         writer.writeheader()
@@ -71,7 +75,10 @@ def main() -> int:
     observations = {row["observation_id"]: row for row in corpus}
     rows = []
     for label in labels:
-        observation = observations[label["observation_id"]]
+        observation = observations.get(label["observation_id"])
+        if observation is None:
+            print(f"warning: no corpus row for {label['observation_id']}; skipped")
+            continue
         reason_codes = [reason["code"] for reason in label.get("reason", [])]
         category = (
             reason_codes[0]
@@ -109,7 +116,10 @@ def main() -> int:
     }
     (FORENSICS / f"{phase}_label_coverage_report.json").write_text(json.dumps(report, indent=2), encoding="utf-8")
     with (FORENSICS / f"{phase}_label_coverage_rows.csv").open("w", encoding="utf-8", newline="") as handle:
-        writer = csv.DictWriter(handle, fieldnames=rows[0].keys())
+        # `rows[0]` raised IndexError for an empty corpus; the report is still
+        # worth writing in that case, just without a CSV body.
+        fieldnames = list(dict.fromkeys(key for row in rows for key in row))
+        writer = csv.DictWriter(handle, fieldnames=fieldnames)
         writer.writeheader()
         writer.writerows(rows)
     print(json.dumps({"polarity": polarity, "label_coverage": report}, indent=2))

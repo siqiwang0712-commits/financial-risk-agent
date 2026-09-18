@@ -65,17 +65,27 @@ export default function Page() {
 
   useEffect(() => {
     let cancelled = false;
-    loadPilot().then((result) => {
-      if (cancelled) return;
-      if (result.ok) {
-        setPilot(result.loaded);
-        setPilotOrigin(result.loaded.origin);
-      } else {
-        setError(result.failure.message);
-        setErrorIsUpstream(result.failure.upstreamUnavailable);
-      }
-      setLoadingPilot(false);
-    });
+    loadPilot()
+      .then((result) => {
+        if (cancelled) return;
+        if (result.ok) {
+          setPilot(result.loaded);
+          setPilotOrigin(result.loaded.origin);
+        } else {
+          setError(result.failure.message);
+          setErrorIsUpstream(result.failure.upstreamUnavailable);
+        }
+      })
+      .catch((cause: unknown) => {
+        // Without this the rejection is unhandled and the pilot panel stays on
+        // "Loading pilot data…" forever, with nothing telling the user why.
+        if (cancelled) return;
+        setError(cause instanceof Error ? cause.message : String(cause));
+        setErrorIsUpstream(true);
+      })
+      .finally(() => {
+        if (!cancelled) setLoadingPilot(false);
+      });
     return () => {
       cancelled = true;
     };
@@ -106,15 +116,23 @@ export default function Page() {
     setAssessment(null);
     setAssessmentOrigin(null);
     setLoadingAnalysis(true);
-    const result = await analyzeDocument(opts);
-    setLoadingAnalysis(false);
-    if (result.ok) {
-      setAssessment(result.loaded.payload);
-      setAssessmentOrigin(result.loaded.origin);
-      setActiveTab("overview");
-    } else {
-      setError(result.failure.message);
-      setErrorIsUpstream(result.failure.upstreamUnavailable);
+    try {
+      const result = await analyzeDocument(opts);
+      if (result.ok) {
+        setAssessment(result.loaded.payload);
+        setAssessmentOrigin(result.loaded.origin);
+        setActiveTab("overview");
+      } else {
+        setError(result.failure.message);
+        setErrorIsUpstream(result.failure.upstreamUnavailable);
+      }
+    } catch (cause: unknown) {
+      // A thrown request left `loadingAnalysis` true and the button stuck on
+      // "Agent is analysing…", with the failure never surfaced.
+      setError(cause instanceof Error ? cause.message : String(cause));
+      setErrorIsUpstream(true);
+    } finally {
+      setLoadingAnalysis(false);
     }
   };
 

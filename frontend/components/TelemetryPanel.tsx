@@ -13,8 +13,8 @@ interface Props {
  * whether the component flipped the decision or added new evidence.
  */
 export function TelemetryPanel({ items }: Props) {
-  const totalLatency = items.reduce((s, i) => s + i.latency_ms, 0);
-  const totalCost = items.reduce((s, i) => s + i.estimated_cost_usd, 0);
+  const totalLatency = items.reduce((s, i) => s + finite(i.latency_ms), 0);
+  const totalCost = items.reduce((s, i) => s + finite(i.estimated_cost_usd), 0);
   const flipped = items.filter((i) => i.decision_changed).length;
 
   return (
@@ -42,8 +42,10 @@ export function TelemetryPanel({ items }: Props) {
             </tr>
           </thead>
           <tbody>
-            {items.map((item) => (
-              <tr key={item.component}>
+            {items.map((item, index) => (
+              /* `component` is not guaranteed to be unique, and a duplicated React
+                 key makes row updates land on the wrong row. */
+              <tr key={`${item.component}-${index}`}>
                 <td>
                   <code>{item.component}</code>
                 </td>
@@ -67,7 +69,7 @@ export function TelemetryPanel({ items }: Props) {
                 <td>
                   <DeltaPct before={item.disagreement_before} after={item.disagreement_after} />
                 </td>
-                <td>{item.new_evidence}</td>
+                <td>{item.new_evidence ?? 0}</td>
                 <td>
                   {item.decision_changed ? (
                     <span className="statusChip bad">yes</span>
@@ -75,7 +77,7 @@ export function TelemetryPanel({ items }: Props) {
                     <span className="statusChip ok">no</span>
                   )}
                 </td>
-                <td>{item.latency_ms.toLocaleString()} ms</td>
+                <td>{finite(item.latency_ms).toLocaleString()} ms</td>
               </tr>
             ))}
           </tbody>
@@ -83,6 +85,15 @@ export function TelemetryPanel({ items }: Props) {
       </div>
     </div>
   );
+}
+
+/**
+ * Latency and cost are optional on the wire: a component that was skipped reports
+ * neither. Without this, `undefined.toLocaleString()` throws during render and
+ * takes the whole page down, and the totals silently become NaN.
+ */
+function finite(value: number | null | undefined): number {
+  return typeof value === "number" && Number.isFinite(value) ? value : 0;
 }
 
 function Delta({ before, after }: { before: number | null; after: number | null }) {

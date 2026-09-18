@@ -12,6 +12,8 @@ data/sec-bulk/
 data/sec-html/
 logs/
 .coverage
+# A run interrupted mid-way leaves per-process data files behind (.coverage.<host>.pid<n>.<rand>).
+.coverage.*
 htmlcov/
 .venv/
 .runtime/
