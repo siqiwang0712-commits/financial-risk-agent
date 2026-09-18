@@ -9,8 +9,9 @@ def main() -> None:
     """Print the synthetic demo report. Importing this module must not."""
     root=Path(__file__).resolve().parents[1]
     d=json.loads((root/"examples"/"synthetic_company.json").read_text())
-    a=FinRiskPipeline(root).assess(d["company"],d["fiscal_year"],d["current"],d["previous"],{int(k):v for k,v in d["pages"].items()},"Synthetic Annual Report")
-    print(render_text_report(a))
+    pipeline=FinRiskPipeline(root)
+    a=pipeline.assess(d["company"],d["fiscal_year"],d["current"],d["previous"],{int(k):v for k,v in d["pages"].items()},"Synthetic Annual Report")
+    print(render_text_report(a,pipeline.decide(a)))
 
 
 if __name__ == "__main__":
