@@ -2,6 +2,13 @@ from __future__ import annotations
 
 from .integrity import CalibrationStatus, DecisionReasonCode
 
+# Reliability floor applied when `selective_decision` is handed a policy that does
+# not set one. It is deliberately *not* read from `config/decision_policy.json`:
+# that file is content-hashed into the frozen experiment manifests, so adding a key
+# there would invalidate them. Documented here and settable per call through
+# `FusionRequest.decision_policy["minimum_reliability"]` instead.
+DEFAULT_MINIMUM_RELIABILITY = 0.6
+
 
 def brier_score(labels: list[int], probabilities: list[float]) -> float:
     _validate(labels, probabilities)
@@ -46,7 +53,7 @@ def selective_decision(proposed: str, coverage: float, reliability: float | None
         failures.append(DecisionReasonCode.UNVALIDATED_RELIABILITY.value)
     elif reliability is None:
         failures.append("MISSING_CALIBRATED_RELIABILITY")
-    elif reliability < policy.get("minimum_reliability", 0.6):
+    elif reliability < policy.get("minimum_reliability", DEFAULT_MINIMUM_RELIABILITY):
         failures.append("LOW_RELIABILITY")
     if disagreement >= policy.get("maximum_disagreement", 0.45):
         failures.append(DecisionReasonCode.HIGH_MODEL_DISAGREEMENT.value)

@@ -105,5 +105,11 @@ def temporal_trajectories(observations: list[dict[str, Any]]) -> list[dict[str, 
         if len(rows) < 2:
             continue
         points = [{"fiscal_year": row["fiscal_year"], "risk": temporal_risk_score(row["metrics"])} for row in rows]
-        result.append({"ticker": ticker, "points": points, "delta": points[-1]["risk"] - points[0]["risk"]})
+        # `temporal_risk_score` returns None when a filing carries none of the
+        # growth inputs, so the ends of a sparse series are not necessarily
+        # comparable. Comparing the first and last *observed* scores keeps the
+        # trajectory instead of crashing on `None - None`.
+        scored = [point["risk"] for point in points if point["risk"] is not None]
+        delta = scored[-1] - scored[0] if len(scored) >= 2 else None
+        result.append({"ticker": ticker, "points": points, "delta": delta})
     return result

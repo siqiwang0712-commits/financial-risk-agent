@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import math
 import time
 import urllib.error
 import urllib.request
@@ -238,6 +239,28 @@ def _annual_candidates(entries: list[dict[str, Any]], fiscal_year: int, instant:
     return result
 
 
+def _concepts_of(facts: dict[str, Any], taxonomy: str) -> list[dict[str, Any]]:
+    """Concepts of a taxonomy, or [] when the caller sent something else."""
+    concepts = facts.get(taxonomy)
+    if not isinstance(concepts, dict):
+        return []
+    return [concept for concept in concepts.values() if isinstance(concept, dict)]
+
+
+def _units_of(concept: dict[str, Any]) -> dict[str, Any]:
+    units = concept.get("units")
+    return units if isinstance(units, dict) else {}
+
+
+def _numeric_value(item: dict[str, Any]) -> float | None:
+    """`val` as a finite float, or None when it is absent or not a number."""
+    try:
+        value = float(item["val"])
+    except (KeyError, TypeError, ValueError):
+        return None
+    return value if math.isfinite(value) else None
+
+
 def parse_companyfacts(payload: dict[str, Any], fiscal_years: list[int] | None = None) -> list[FinancialValue]:
     """Normalize SEC companyfacts and resolve duplicate/restated facts deterministically.
 
@@ -246,12 +269,22 @@ def parse_companyfacts(payload: dict[str, Any], fiscal_years: list[int] | None =
     retained on the selected FinancialValue.
     """
     facts = payload.get("facts", {})
+    if not isinstance(facts, dict):
+        return []
     taxonomies = [name for name in ("us-gaap", "ifrs-full") if name in facts]
     available_years: set[int] = set()
     for taxonomy in taxonomies:
-        for concept in facts[taxonomy].values():
-            for values in concept.get("units", {}).values():
-                available_years.update(v.get("fy") for v in values if isinstance(v.get("fy"), int))
+        # `companyfacts` is accepted from a public POST body, so every level of it
+        # is caller-controlled: a taxonomy can be a list, a concept can be a
+        # string, and `units` can hold anything. Skipping the malformed branches
+        # keeps a bad payload from surfacing as a 500.
+        for concept in _concepts_of(facts, taxonomy):
+            for values in _units_of(concept).values():
+                if not isinstance(values, list):
+                    continue
+                available_years.update(
+                    v.get("fy") for v in values if isinstance(v, dict) and isinstance(v.get("fy"), int)
+                )
     years = fiscal_years or sorted(available_years)
     output: list[FinancialValue] = []
     for year in years:
@@ -259,11 +292,16 @@ def parse_companyfacts(payload: dict[str, Any], fiscal_years: list[int] | None =
             selected: tuple[str, str, str, dict[str, Any], list[dict[str, Any]]] | None = None
             selected_key: tuple[bool, str, str] | None = None
             for taxonomy in taxonomies:
+                taxonomy_facts = facts.get(taxonomy)
+                if not isinstance(taxonomy_facts, dict):
+                    continue
                 for concept_name in aliases:
-                    concept = facts[taxonomy].get(concept_name)
-                    if not concept:
+                    concept = taxonomy_facts.get(concept_name)
+                    if not isinstance(concept, dict):
                         continue
-                    for unit_name, entries in concept.get("units", {}).items():
+                    for unit_name, entries in _units_of(concept).items():
+                        if not isinstance(entries, list):
+                            continue
                         candidates = _annual_candidates(entries, year, line_item in INSTANT_ITEMS)
                         if candidates:
                             candidates.sort(key=lambda x: (x.get("filed", ""), x.get("accn", "")))
@@ -279,13 +317,18 @@ def parse_companyfacts(payload: dict[str, Any], fiscal_years: list[int] | None =
             if selected is None:
                 continue
             taxonomy, concept_name, unit_name, item, candidates = selected
+            numeric = _numeric_value(item)
+            if numeric is None:
+                # A fact without a usable `val` is not a fact; it used to raise
+                # KeyError/ValueError out of the public normalize endpoint.
+                continue
             values = {candidate.get("val") for candidate in candidates}
             accession = item.get("accn", "")
             cik = str(payload.get("cik", "")).lstrip("0")
             accession_path = accession.replace("-", "")
             filing_url = f"{SEC_ARCHIVES}/{cik}/{accession_path}/" if accession else None
             output.append(FinancialValue(
-                line_item=line_item, value=float(item["val"]), fiscal_year=year,
+                line_item=line_item, value=numeric, fiscal_year=year,
                 statement="xbrl", unit="currency" if unit_name != "shares" else "shares",
                 currency=unit_name if len(unit_name) == 3 else "USD",
                 document=f"SEC {item.get('form', 'filing')} {accession}", page=0,

@@ -402,34 +402,49 @@ if FastAPI:
 
     @app.get("/api/v1/public-pilot")
     def public_pilot():
-        payload = json.loads(
-            (ROOT / "research/results/public_v1/summary.json").read_text(encoding="utf-8")
-        )
+        # Unauthenticated and served on every request, so a missing or malformed
+        # snapshot has to be reported as "not available" rather than escaping as a
+        # FileNotFoundError/StopIteration 500.
+        try:
+            payload = json.loads(
+                (ROOT / "research/results/public_v1/summary.json").read_text(encoding="utf-8")
+            )
+        except (OSError, ValueError) as exc:
+            raise HTTPException(503, "public pilot snapshot is unavailable") from exc
         full_hybrid = next(
-            item for item in payload["summaries"] if item["baseline"] == "full_hybrid"
+            (item for item in payload.get("summaries", []) if item.get("baseline") == "full_hybrid"),
+            None,
         )
+        if full_hybrid is None:
+            raise HTTPException(503, "public pilot snapshot is missing the full_hybrid baseline")
         return {
             "snapshot": "v0.3.0 frozen public pilot",
             "runtime": "v0.3.2",
-            "annotation_status": payload["annotation_status"],
+            "annotation_status": payload.get("annotation_status"),
             # Benchmark-level only: copying this into every row incorrectly
             # represented one aggregate as three entity measurements.
             "benchmark_evidence_coverage": full_hybrid["evidence_coverage"],
             "rows": [
                 {
-                    "entity": item["company"],
-                    "decision": "FLAG" if item["prediction"] else "PASS",
-                    "score": item["overall_score"],
+                    "entity": item.get("company"),
+                    "decision": "FLAG" if item.get("prediction") else "PASS",
+                    "score": item.get("overall_score"),
                     "reliability": "UNCALIBRATED",
-                    "filing": item["example_id"],
+                    "filing": item.get("example_id"),
                 }
-                for item in payload["decompositions"]
+                for item in payload.get("decompositions", [])
             ],
         }
 
     @app.post("/api/v1/xbrl/normalize")
     def normalize_xbrl(req: XbrlNormalizeRequest, actor: Principal = protected):
-        values = parse_companyfacts(req.companyfacts, req.fiscal_years)
+        # `companyfacts` is caller-supplied JSON with no schema behind it, so the
+        # parser can still meet shapes it cannot normalize. Those are input
+        # problems, not server faults.
+        try:
+            values = parse_companyfacts(req.companyfacts, req.fiscal_years)
+        except (AttributeError, KeyError, TypeError, ValueError) as exc:
+            raise HTTPException(422, f"companyfacts could not be normalized: {exc}") from exc
         return {
             "values": [value.__dict__ for value in values],
             "by_year": values_by_year(values),

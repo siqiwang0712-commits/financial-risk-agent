@@ -36,6 +36,21 @@ def _safe_div(a: float | None, b: float | None) -> float | None:
     return result if math.isfinite(result) else None
 
 
+def growth_ratio(current: float | None, prior: float | None) -> float | None:
+    """Period-on-period growth, or ``None`` when it is not defined.
+
+    Shared by `calculate_metrics` and `facts.build_facts` so both derive growth
+    the same way. Growth is undefined when the prior value is missing or zero,
+    when it is negative (a prior-period loss closing from -100 to -50 is not
+    "+50% growth"; dividing by |prior| reports improvement for two losses and
+    flips rules such as PRO_006), and when the quotient is non-finite, which a
+    denormal prior such as 1e-320 would otherwise produce as `inf`.
+    """
+    if current is None or prior in (None, 0) or prior < 0:
+        return None
+    return _safe_div(current - prior, abs(prior))
+
+
 def _metric(name, value, formula, inputs, year, reason=None):
     missing = [k for k, v in inputs.items() if v is None]
     if reason is None:
@@ -137,9 +152,8 @@ def calculate_metrics(v: dict[str, float | None], year: int, previous: dict[str,
                 if prev is None and previous.get("short_term_debt") is not None and previous.get("long_term_debt") is not None:
                     prev = previous["short_term_debt"] + previous["long_term_debt"]
             else: prev = previous.get(key)
-            # Growth is undefined across a sign change: a prior-period loss closing
-            # from -100 to -50 is not "+50% growth". Dividing by |prev| silently
-            # reports improvement for two losses and flips rules such as PRO_006.
-            value = None if current is None or prev in (None,0) or prev < 0 else (current-prev)/abs(prev)
+            # See `growth_ratio`: undefined across a sign change or on a denormal
+            # prior, which would otherwise publish `inf` as a growth rate.
+            value = growth_ratio(current, prev)
             m[f"{key}_growth"]=_metric(f"{key}_growth",value,f"({key}_current - {key}_prior) / abs({key}_prior)",{"current":current,"prior":prev},year)
     return m

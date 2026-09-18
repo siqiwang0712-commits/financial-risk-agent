@@ -50,6 +50,19 @@ def _finite_mapping(values: dict, boolean_fields: set[str] | None = None) -> dic
     return values
 
 
+def _as_float(value, default: float = 0.0) -> float:
+    """Coerce a caller-supplied score to a finite float, falling back to `default`.
+
+    `float()` on a missing key raises KeyError/TypeError and on a non-numeric
+    string raises ValueError; both escaped the risk-case endpoint as 500s.
+    """
+    try:
+        number = float(value)
+    except (TypeError, ValueError):
+        return default
+    return number if math.isfinite(number) else default
+
+
 class OrganizationCreate(BaseModel):
     name: str = Field(min_length=1)
     actor_id: str = Field(min_length=1)
@@ -115,8 +128,12 @@ class FusionRequest(BaseModel):
             raise ValueError("fusion weights must be between 0 and 1")
         if self.method == "weighted_average" and not any(value > 0 for value in self.weights.values()):
             raise ValueError("weighted_average requires at least one positive weight")
+        # `minimum_reliability` is the reliability floor `calibration.selective_decision`
+        # applies. It was absent here, so a caller who sent it got a 422 and the
+        # threshold stayed at the hardcoded 0.6 with no way to express it.
         allowed_policy = {
-            "minimum_coverage", "maximum_disagreement", "flag_score",
+            "minimum_coverage", "maximum_disagreement", "minimum_reliability",
+            "flag_score",
             "review_score", "critical_dimension_score", "severe_dimension_score",
             "elevated_dimension_score", "interaction_uplift_cap",
             "interaction_uplift_per_dimension", "interaction_dimension_score",
@@ -125,7 +142,7 @@ class FusionRequest(BaseModel):
         if set(self.decision_policy) - allowed_policy:
             raise ValueError("unknown decision policy field")
         for key, value in self.decision_policy.items():
-            upper = 1 if key in {"minimum_coverage", "maximum_disagreement"} else 100
+            upper = 1 if key in {"minimum_coverage", "maximum_disagreement", "minimum_reliability"} else 100
             if not 0 <= value <= upper:
                 raise ValueError(f"decision policy value out of range: {key}")
         if self.decision_policy.get("review_score", 40) > self.decision_policy.get("flag_score", 60):
@@ -319,8 +336,10 @@ def enterprise_router(
         if snapshot.organization_id != actor.organization_id or snapshot.entity_id != req.entity_id:
             raise HTTPException(422, "analysis snapshot scope does not match risk case")
         output = snapshot.frozen_output
-        agent_output = output.get("agent", {})
-        trace = agent_output.get("decision_trace", {})
+        # `agent` is absent for snapshots produced before the agent path existed and
+        # can legitimately be `null`; both used to fail on `.get` below.
+        agent_output = output.get("agent") or {}
+        trace = agent_output.get("decision_trace") or {}
         aliases = {
             "accounting": "accounting_anomaly",
             "governance": "governance_audit",
@@ -341,8 +360,8 @@ def enterprise_router(
             req.domain,
             str(agent_output.get("risk_severity", output.get("risk_level", "unknown"))),
             str(agent_output.get("risk_trajectory", "insufficient_history")),
-            float(agent_output.get("epistemics", {}).get("evidence_quality", 0.0)),
-            float(agent_output.get("evidence_coverage", 0.0)),
+            _as_float((agent_output.get("epistemics") or {}).get("evidence_quality"), 0.0),
+            _as_float(agent_output.get("evidence_coverage"), 0.0),
             rationale=req.rationale,
             evidence_ids=sorted(verified_evidence_ids(snapshot, req.domain.value)),
             reason_codes=sorted({str(path.get("reason_code")) for path in verified_paths}),
@@ -350,7 +369,12 @@ def enterprise_router(
             snapshot_id=snapshot.id,
             fusion_version=snapshot.component_versions.get("fusion"),
         )
-        return service.create_case(actor, case).to_dict()
+        try:
+            return service.create_case(actor, case).to_dict()
+        except (KeyError, PermissionError, ValueError) as exc:
+            # Same mapping as the sibling enterprise endpoints: an unknown entity or
+            # a role without write access is a rejected request, not a server fault.
+            raise HTTPException(422, "risk-case creation rejected") from exc
 
     @router.get("/risk-cases")
     def list_cases(actor: Principal = principal_dependency):
@@ -422,9 +446,14 @@ def enterprise_router(
 
     @router.post("/policies")
     def create_policy(req: PolicyCreate, actor: Principal = principal_dependency):
-        return asdict(
-            service.create_policy(actor, req.name, req.thresholds, req.version)
-        )
+        try:
+            return asdict(
+                service.create_policy(actor, req.name, req.thresholds, req.version)
+            )
+        except (KeyError, PermissionError, ValueError) as exc:
+            # `authorize` rejects ANALYST/REVIEWER/VIEWER with PermissionError, which
+            # otherwise reached the catch-all middleware as a 500.
+            raise HTTPException(422, "policy creation rejected") from exc
 
     @router.post("/policies/{policy_id}/evaluate")
     def evaluate_policy(
@@ -436,7 +465,12 @@ def enterprise_router(
             policy = service.repository.get_policy(actor.organization_id, policy_id)
         except KeyError:
             raise HTTPException(404, "policy not found")
-        return evaluate_kri(policy, metrics)
+        try:
+            return evaluate_kri(policy, metrics)
+        except ValueError as exc:
+            # A stored policy written before `risk_direction` was required cannot be
+            # evaluated without guessing its direction; that is a 422, not a 500.
+            raise HTTPException(422, str(exc)) from exc
 
     @router.post("/snapshots")
     def save_snapshot(req: SnapshotCreate, actor: Principal = principal_dependency):
@@ -450,7 +484,12 @@ def enterprise_router(
             req.document_versions,
             req.component_versions,
         )
-        return asdict(service.save_snapshot(actor, snapshot))
+        try:
+            return asdict(service.save_snapshot(actor, snapshot))
+        except (KeyError, PermissionError, ValueError) as exc:
+            # An unknown entity or a role without write access is a rejected
+            # request; unmapped it became a 500.
+            raise HTTPException(422, "snapshot import rejected") from exc
 
     @router.post("/snapshots/{snapshot_id}/replay-diff")
     def compare_replay(
@@ -490,16 +529,21 @@ def enterprise_router(
     def risk_timeline(entity_id: str, actor: Principal = principal_dependency):
         try:
             timeline = service.risk_timeline(actor, entity_id)
-        except (KeyError, PermissionError) as exc:
+        except (KeyError, PermissionError, TypeError, ValueError) as exc:
             raise HTTPException(404, "entity not found") from exc
         output = []
         for index, item in enumerate(timeline):
             row = asdict(item)
-            row["delta"] = (
-                compare_risk_snapshots(timeline[index - 1], item).to_dict()
-                if index
-                else None
-            )
+            try:
+                row["delta"] = (
+                    compare_risk_snapshots(timeline[index - 1], item).to_dict()
+                    if index
+                    else None
+                )
+            except (TypeError, ValueError) as exc:
+                # Two snapshots that do not share a comparable metric set are a
+                # request the caller can fix, not a server fault.
+                raise HTTPException(422, "risk timeline is not comparable") from exc
             output.append(row)
         return output
 
@@ -542,6 +586,11 @@ def enterprise_router(
         unknown = set(req.shocks) - allowed
         if unknown:
             raise HTTPException(422, f"unknown scenario shock(s): {sorted(unknown)}")
-        return compare_scenario(req.baseline, req.year, Scenario("api", **req.shocks))
+        try:
+            return compare_scenario(req.baseline, req.year, Scenario("api", **req.shocks))
+        except (KeyError, TypeError, ValueError, ZeroDivisionError) as exc:
+            # A stress scenario that cannot be computed (missing `total_debt` for a
+            # debt-cost shock, or a zero denominator) is a rejected request.
+            raise HTTPException(422, f"scenario could not be computed: {exc}") from exc
 
     return router

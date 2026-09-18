@@ -48,9 +48,19 @@ class TemporalEvidenceGraph:
             raise ValueError("evidence relationship requires a reason")
         self.edges.append(EvidenceEdge(source, target, relation, reason))
 
-    def paths_to(self, target: str) -> list[list[str]]:
+    def paths_to(self, target: str, max_paths: int = 1000) -> list[list[str]]:
+        """Every acyclic path ending at `target`, capped at `max_paths`.
+
+        The number of paths through a DAG grows combinatorially with its edges, so
+        an unbounded walk over a densely linked graph enumerates millions of lists
+        and exhausts memory before it returns. `seen` already stops cycles, so the
+        only thing missing was a bound on the result; callers that need the full
+        enumeration can raise `max_paths`.
+        """
         if target not in self.nodes:
             raise KeyError(target)
+        if max_paths < 1:
+            raise ValueError("max_paths must be at least 1")
         incoming: dict[str, list[str]] = {}
         for edge in self.edges:
             incoming.setdefault(edge.target, []).append(edge.source)
@@ -63,7 +73,10 @@ class TemporalEvidenceGraph:
             for parent in parents:
                 if parent in seen:
                     continue
-                paths.extend(path + [node] for path in walk(parent, seen | {parent}))
+                for path in walk(parent, seen | {parent}):
+                    paths.append(path + [node])
+                    if len(paths) >= max_paths:
+                        return paths
             return paths
 
         return walk(target, frozenset({target}))

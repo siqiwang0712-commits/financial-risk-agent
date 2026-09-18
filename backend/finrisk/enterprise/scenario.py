@@ -26,10 +26,15 @@ def apply_scenario(values: dict[str, float], scenario: Scenario) -> dict[str, fl
         stressed["total_debt"] = debt
     if "revenue" in stressed:
         stressed["revenue"] *= 1 + scenario.revenue_pct + scenario.fx_pct
+    # A margin shock is a share of revenue, so it has to be applied to the
+    # *stressed* revenue. Using the pre-shock revenue priced a -10% revenue shock
+    # and a -2pp margin shock against two different bases, which understated the
+    # combined downside whenever both were set.
+    revenue_base = stressed.get("revenue", values.get("revenue", 0))
     if "gross_profit" in stressed:
-        stressed["gross_profit"] += values.get("revenue", 0) * scenario.margin_pp
+        stressed["gross_profit"] += revenue_base * scenario.margin_pp
     if "operating_income" in stressed:
-        stressed["operating_income"] += values.get("revenue", 0) * scenario.margin_pp
+        stressed["operating_income"] += revenue_base * scenario.margin_pp
     if "interest_expense" in stressed:
         if debt is None and (
             scenario.interest_rate_bp or scenario.refinancing_cost_pct

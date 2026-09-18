@@ -104,9 +104,21 @@ def test_temporal_scenario_policy_alerts_and_tension():
             Scenario("rate shock", interest_rate_bp=100),
         )
     policy = PolicyVersion(
-        "p", "org", 1, "base", {"leverage": {"warning": 3.0, "critical": 5.0}}, "u"
+        "p",
+        "org",
+        1,
+        "base",
+        {"leverage": {"warning": 3.0, "critical": 5.0, "risk_direction": "high"}},
+        "u",
     )
     assert evaluate_kri(policy, {"leverage": 4.0})[0]["status"] == "warning"
+    # A KRI that omits `risk_direction` must not silently default to "higher is
+    # worse": for a metric that is dangerous when low that reports within_appetite.
+    with pytest.raises(ValueError, match="risk_direction"):
+        evaluate_kri(
+            PolicyVersion("p2", "org", 1, "base", {"leverage": {"warning": 3.0}}, "u"),
+            {"leverage": 4.0},
+        )
     assert {
         item["type"] for item in detect_alerts({"severity": 70, "limit_breached": True})
     } == {"LIMIT_BREACHED", "NEW_RISK"}
@@ -154,7 +166,10 @@ def test_service_workflow_policy_and_tension_branches():
     reviewer = Principal("reviewer", org.id, Role.REVIEWER)
     entity = service.create_entity(analyst, "Subsidiary", "industrial")
     policy = service.create_policy(
-        admin, "Limits", {"debt": {"warning": 1, "critical": 2}}, 1
+        admin,
+        "Limits",
+        {"debt": {"warning": 1, "critical": 2, "risk_direction": "high"}},
+        1,
     )
     assert evaluate_kri(policy, {"debt": None})[0]["status"] == "missing"
     case = RiskCase(

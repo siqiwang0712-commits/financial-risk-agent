@@ -15,7 +15,7 @@ from __future__ import annotations
 from collections.abc import Callable, Iterable, Sequence
 
 from .domain import Metric, ModelResult, NarrativeClaim
-from .metrics import calculate_metrics, resolve_total_debt
+from .metrics import calculate_metrics, growth_ratio, resolve_total_debt
 
 MODEL_METRIC_NAMES: dict[str, str] = {
     "Altman Z-Score": "altman_z_score",
@@ -94,12 +94,11 @@ def build_facts(
     )
 
     if previous:
+        # Same definition as `calculate_metrics` uses: a denormal prior such as
+        # 1e-320 used to yield `inf` here, which escaped into the fact set and
+        # then into JSON as the invalid `Infinity` token.
         for key in ("short_term_debt",):
-            facts[f"{key}_growth"] = (
-                None
-                if current.get(key) is None or previous.get(key) in (None, 0)
-                else (current[key] - previous[key]) / abs(previous[key])
-            )
+            facts[f"{key}_growth"] = growth_ratio(current.get(key), previous.get(key))
         # `*_change` must compare like with like. The reported `metrics` set was
         # built with the prior year supplied, so its balance-sheet ratios use
         # *average* balances; the prior year has no year-2 to average against and
