@@ -141,16 +141,49 @@ put TLS in front and it takes effect automatically.
 Pre-built images live on GitHub Container Registry. No toolchain, no build step:
 
 ```bash
-cp .env.example .env            # then edit it — see the table below
+cp .env.release.example .env    # then edit it — see the table below
 docker compose -f docker-compose.release.yml pull
 docker compose -f docker-compose.release.yml up -d
 ```
+
+Use `.env.release.example`, **not** `.env.example`: the latter targets the source build
+and leaves organisation bootstrap disabled, which on a fresh database means there is no
+way to create the first administrator.
 
 The API answers on `http://127.0.0.1:8000`, the Workbench on `http://127.0.0.1:3000`.
 Every port is bound to loopback on purpose — put a TLS terminator in front for remote
 access. PostgreSQL runs as the official `postgres:17-alpine` image and is not
 repackaged; migrations run as a one-shot service from the API image before the API
 starts.
+
+**First run.** The stack starts in `FINRISK_ENV=production`, where the bootstrap route
+is token-gated. A fresh database has no organisation and no API key, and bootstrap is
+the only provisioning path, so you must set **both** `FINRISK_ENABLE_ORG_BOOTSTRAP=1`
+and a non-empty `FINRISK_BOOTSTRAP_TOKEN` before the first `up -d`:
+
+```bash
+curl -sS -X POST http://127.0.0.1:8000/api/v1/enterprise/organizations \
+  -H 'Content-Type: application/json' \
+  -H "X-Bootstrap-Token: $FINRISK_BOOTSTRAP_TOKEN" \
+  -d '{"name":"Acme","actor_id":"admin"}'      # returns api_key — store it, it is shown once
+```
+
+Then set `FINRISK_ENABLE_ORG_BOOTSTRAP=0`, clear the token and `up -d` again: the route
+mints ADMIN keys without an API key of its own and must not stay reachable.
+
+If you only want to run the stack and not develop it, two files are enough — no clone,
+no toolchain:
+
+```bash
+curl -O https://raw.githubusercontent.com/siqiwang0712-commits/financial-risk-agent/main/docker-compose.release.yml
+curl -o .env https://raw.githubusercontent.com/siqiwang0712-commits/financial-risk-agent/main/.env.release.example
+$EDITOR .env
+docker compose -f docker-compose.release.yml up -d
+```
+
+For a reproducible deployment pin the images rather than taking `main`'s defaults — see
+the **Image identity** note below, and
+[`docs/CONTAINER_RELEASE.md`](docs/CONTAINER_RELEASE.md) for the full release model.
 
 | variable | required | why |
 |---|---|---|

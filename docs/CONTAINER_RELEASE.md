@@ -166,6 +166,29 @@ otherwise would be an unverified platform claim.
   `<VAR>` when set.
 * The workflow authenticates with `GITHUB_TOKEN` only — no PAT, no extra secret.
 
+## Deploying (first run matters)
+
+`.env.release.example` is the template for this stack. Do **not** copy `.env.example`:
+that one targets the source build and sets `FINRISK_ENABLE_ORG_BOOTSTRAP=0`, which on a
+fresh database leaves no way to create the first administrator.
+
+The stack runs `FINRISK_ENV=production`, where the bootstrap route is token-gated and
+needs **both** `FINRISK_ENABLE_ORG_BOOTSTRAP=1` and a non-empty
+`FINRISK_BOOTSTRAP_TOKEN`. A missing first value returns 403 "organization bootstrap is
+disabled"; a missing second returns 403 "invalid bootstrap token" — an unset expected
+token can never match. In both cases the stack starts, reports healthy, and is
+unusable, which is why the ordering is called out in the template:
+
+1. Provision with bootstrap on and a token set; store the returned `api_key` (shown once).
+2. Set `FINRISK_ENABLE_ORG_BOOTSTRAP=0`, clear the token, `up -d` to recreate the API.
+
+There is no other provisioning path — no preset admin key, no CLI — so this is the only
+way in, and the route must not stay reachable afterwards because it mints ADMIN keys
+without an API key of its own.
+
+Only `docker-compose.release.yml` and an env file are needed; nothing mounts the source
+tree, and the migration script is baked into the API image.
+
 ## Permissions
 
 Workflow default is `contents: read`. Per job:
