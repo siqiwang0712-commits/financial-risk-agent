@@ -297,6 +297,97 @@ jobs:
         run: docker compose $COMPOSE_FILES down -v
 
   # ---------------------------------------------------------------------------
+  # The release Compose file is a deliverable in its own right: it is the file an
+  # operator actually runs, and the only stack definition here with no `build:`.
+  # The job above exercises the *development* stack with the candidate images
+  # swapped in, so this file would otherwise never be executed by CI — a broken
+  # healthcheck, a dropped `depends_on` condition or a reintroduced `build:`
+  # would ship unnoticed in a release that reports itself green.
+  #
+  # It runs the same candidate digests, so it still tests the exact artifact that
+  # gets promoted; nothing is rebuilt here either.
+  # ---------------------------------------------------------------------------
+  verify-release-compose:
+    name: Verify the release Compose file against the candidate digests
+    needs: [prepare, build-api, build-web]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: read
+    env:
+      POSTGRES_PASSWORD: ci-only-strong-password-v033
+      FINRISK_LLM_PROVIDER: mock
+      # `api.py` compares this with `== "1"`, so `true` would silently disable
+      # bootstrap and make the health script's first call return 403.
+      FINRISK_ENABLE_ORG_BOOTSTRAP: "1"
+      FINRISK_BOOTSTRAP_TOKEN: ci-only-bootstrap-token-v033
+      FINRISK_API_IMAGE: ghcr.io/siqiwang0712-commits/financial-risk-agent-api@${{ needs.build-api.outputs.digest }}
+      FINRISK_WEB_IMAGE: ghcr.io/siqiwang0712-commits/financial-risk-agent-web@${{ needs.build-web.outputs.digest }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      - name: Assert the release stack never builds locally
+        run: |
+          set -euo pipefail
+          # The operator's stack must pull published images only. A `build:` here
+          # would mean the release gates never saw the artifact being deployed.
+          if docker compose -f docker-compose.release.yml config | grep -qE '^[[:space:]]+build:'; then
+            echo "::error::docker-compose.release.yml contains a build: section"
+            exit 1
+          fi
+          echo "OK: docker-compose.release.yml has no build: section"
+      - uses: docker/login-action@dbcb813823bdd20940b903addbd779551569679f # v4.6.0
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Record the candidate image ids
+        run: |
+          set -euo pipefail
+          mkdir -p .runtime
+          for svc in api web; do
+            ref_var="FINRISK_$(echo "$svc" | tr '[:lower:]' '[:upper:]')_IMAGE"
+            ref="${!ref_var}"
+            docker pull --quiet "$ref" >/dev/null
+            id="$(docker image inspect "$ref" --format '{{.Id}}')"
+            [[ "$id" == sha256:* ]] || { echo "::error::$svc resolved to a non-digest id: $id"; exit 1; }
+            printf '%s\n' "$id" > ".runtime/${svc}-image-id.txt"
+            echo "$svc image ref=$ref id=$id"
+          done
+      - name: Start the release stack (migrate -> api -> web)
+        run: docker compose -f docker-compose.release.yml up -d postgres migrate api web
+      - name: Assert the release stack runs the candidate digests
+        run: |
+          set -euo pipefail
+          for svc in api web; do
+            got="$(docker inspect --format '{{.Image}}' "$(docker compose -f docker-compose.release.yml ps -q "$svc")")"
+            want="$(cat ".runtime/${svc}-image-id.txt")"
+            echo "$svc container image=$got candidate=$want"
+            [[ "$got" == "$want" ]] || { echo "::error::$svc is not running the candidate image"; exit 1; }
+          done
+          mig="$(docker inspect --format '{{.Image}}' "$(docker compose -f docker-compose.release.yml ps -q migrate -a)")"
+          echo "migrate container image=$mig"
+          [[ "$mig" == "$(cat .runtime/api-image-id.txt)" ]] || { echo "::error::migrate does not reuse the api image"; exit 1; }
+      - name: Wait for the API and web proxies to answer
+        run: |
+          set -euo pipefail
+          for i in $(seq 1 60); do
+            if curl -fsS http://127.0.0.1:8000/health/ready >/dev/null 2>&1 \
+               && curl -fsS http://127.0.0.1:3000/api/v1/public-pilot >/dev/null 2>&1; then
+              echo "release stack answered after ${i} polls"; exit 0
+            fi
+            sleep 5
+          done
+          echo "::error::release stack never became ready"; exit 1
+      - name: Verify deployed HTTP contracts on the release stack
+        run: python3 scripts/verify_docker_health.py
+      - name: Show container logs on failure
+        if: failure()
+        run: docker compose -f docker-compose.release.yml logs postgres migrate api web
+      - name: Stop the release stack
+        if: always()
+        run: docker compose -f docker-compose.release.yml down -v
+
+  # ---------------------------------------------------------------------------
   # Vulnerability + secret scanning of the same digest that was verified.
   # ---------------------------------------------------------------------------
   scan:
@@ -389,9 +480,10 @@ jobs:
   # verify and scan jobs already approved and adds release tags to it.
   # ---------------------------------------------------------------------------
   publish:
-    needs: [prepare, build-api, build-web, verify, scan]
+    needs: [prepare, build-api, build-web, verify, verify-release-compose, scan]
     if: >-
-      needs.verify.result == 'success' && needs.scan.result == 'success' &&
+      needs.verify.result == 'success' && needs.verify-release-compose.result == 'success' &&
+      needs.scan.result == 'success' &&
       (inputs.publish == true || startsWith(github.ref, 'refs/tags/v'))
     runs-on: ubuntu-latest
     permissions:
@@ -540,9 +632,10 @@ jobs:
   # When the run was a dry run, say so loudly instead of silently doing nothing.
   # ---------------------------------------------------------------------------
   dry-run:
-    needs: [prepare, build-api, build-web, verify, scan]
+    needs: [prepare, build-api, build-web, verify, verify-release-compose, scan]
     if: >-
-      needs.verify.result == 'success' && needs.scan.result == 'success' &&
+      needs.verify.result == 'success' && needs.verify-release-compose.result == 'success' &&
+      needs.scan.result == 'success' &&
       !(inputs.publish == true || startsWith(github.ref, 'refs/tags/v'))
     runs-on: ubuntu-latest
     steps:
