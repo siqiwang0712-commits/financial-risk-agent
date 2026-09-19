@@ -168,14 +168,14 @@ history. Supported for `DATABASE_URL`, `OPENAI_API_KEY` and `FINRISK_BOOTSTRAP_T
 
 ```bash
 docker compose -f docker-compose.release.yml up -d        # convenience
-FINRISK_VERSION=sha-c63fd5e36140286e788770c0f1680d129fa8ba7e ...   # source identity
-FINRISK_API_IMAGE=ghcr.io/siqiwang0712-commits/financial-risk-agent-api:v0.3.3@sha256:8b97ee51c48b3294b4024773e58c83d58a6b9b50e761bdfea93cc5cf01c2835f ...
+FINRISK_VERSION=sha-432732def9b9a947eadeee8edcd7c3e6a9cd7990 ...   # source identity
+FINRISK_API_IMAGE=ghcr.io/siqiwang0712-commits/financial-risk-agent-api:v0.3.3@sha256:44135b1d5faaa02336dd8e16f426d663cc61207c600f5f034d72e02539a70698 ...
 ```
 
 To verify what you pulled actually came from this repository's release workflow:
 
 ```bash
-gh attestation verify oci://ghcr.io/siqiwang0712-commits/financial-risk-agent-api@sha256:8b97ee51c48b3294b4024773e58c83d58a6b9b50e761bdfea93cc5cf01c2835f \
+gh attestation verify oci://ghcr.io/siqiwang0712-commits/financial-risk-agent-api@sha256:44135b1d5faaa02336dd8e16f426d663cc61207c600f5f034d72e02539a70698 \
   -R siqiwang0712-commits/financial-risk-agent
 ```
 

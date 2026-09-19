@@ -173,16 +173,16 @@ produce a mislabelled image.
 ## Verified release record
 
 The tags below were produced by `Container Release` run
-[35447634200](https://github.com/siqiwang0712-commits/financial-risk-agent/actions/runs/35447634200)
-from commit `c63fd5e36140286e788770c0f1680d129fa8ba7e`, all pointing at one digest per
+[35448112282](https://github.com/siqiwang0712-commits/financial-risk-agent/actions/runs/35448112282)
+from commit `432732def9b9a947eadeee8edcd7c3e6a9cd7990`, all pointing at one digest per
 image:
 
 | image | digest | size | user | platform |
 |---|---|---|---|---|
-| `financial-risk-agent-api` | `sha256:8b97ee51c48b3294b4024773e58c83d58a6b9b50e761bdfea93cc5cf01c2835f` | 100 MiB | `finrisk` (100) | linux/amd64 |
-| `financial-risk-agent-web` | `sha256:03675f2b854b6df359e2efea7d6c43f9b9bea48977cc5cd52dcee06f5ca5af5b` | 82 MiB | `node` (1000) | linux/amd64 |
+| `financial-risk-agent-api` | `sha256:44135b1d5faaa02336dd8e16f426d663cc61207c600f5f034d72e02539a70698` | 100 MiB | `finrisk` (100) | linux/amd64 |
+| `financial-risk-agent-web` | `sha256:cba0dd867a8e14903e164ec5388309ddbdbc37a26d08433fbbad125be3a1bfb2` | 82 MiB | `node` (1000) | linux/amd64 |
 
-`v0.3.3`, `sha-c63fd5e…` and `latest` on each image resolve to that image's digest,
+`v0.3.3`, `sha-432732de…` and `latest` on each image resolve to that image's digest,
 asserted by the run itself after publishing. The `api` digest also serves the `migrate`
 service, so the migration job and the server are the same artifact.
 
