@@ -409,6 +409,10 @@ jobs:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
+      # Every job starts from a fresh checkout, so the scratch directory the SBOM
+      # and attestation steps write into has to be created here too.
+      - name: Prepare the scratch directory
+        run: mkdir -p .runtime
       - name: Generate SBOMs for the verified digests
         uses: anchore/sbom-action@3ad7283483fc7af8ff2b4ea19663c2d5ca935e26 # v0.24.2
         with:
@@ -469,6 +473,12 @@ jobs:
               # one that was verified.
               push_out="$(docker push "${repo}:${tag}" 2>&1 | tee /dev/stderr)"
               pushed="$(printf '%s\n' "$push_out" | grep -o 'digest: sha256:[0-9a-f]\{64\}' | tail -1 | cut -d' ' -f2)"
+              if [[ -z "$pushed" ]]; then
+                # Some Docker versions report the push result differently; fall back to
+                # asking the registry what the tag actually serves rather than trusting
+                # stdout. The comparison against the tested digest stays mandatory.
+                pushed="$(docker buildx imagetools inspect "${repo}:${tag}" --format '{{.Manifest.Digest}}')"
+              fi
               if [[ "$pushed" != "$digest" ]]; then
                 echo "::error::${repo}:${tag} published manifest $pushed, tested digest is $digest"
                 exit 1
