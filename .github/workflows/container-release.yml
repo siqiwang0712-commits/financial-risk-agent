@@ -413,31 +413,6 @@ jobs:
       # and attestation steps write into has to be created here too.
       - name: Prepare the scratch directory
         run: mkdir -p .runtime
-      # `candidate-*` tags are the pointer the verify job pulled. Once the digest is
-      # promoted they are dead weight, and a failed run leaves one behind forever.
-      # Deleting the tag cannot affect the release: the digest and the sigstore
-      # attestations are separate content-addressed artifacts on the registry.
-      - name: Delete this run's candidate tags
-        env:
-          GHCR_USER: ${{ github.actor }}
-          GHCR_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          set -euo pipefail
-          candidate="candidate-${{ needs.prepare.outputs.short_sha || '' }}-${{ github.run_id }}"
-          for name in siqiwang0712-commits/financial-risk-agent-api \
-                      siqiwang0712-commits/financial-risk-agent-web; do
-            token="$(curl -fsS -u "${GHCR_USER}:${GHCR_TOKEN}" \
-                     "https://ghcr.io/token?scope=repository:${name}:pull,delete&service=ghcr.io" \
-                     | python3 -c 'import json,sys; print(json.load(sys.stdin)["token"])')"
-            code="$(curl -sS -o /dev/null -w '%{http_code}' -X DELETE \
-                    -H "Authorization: Bearer ${token}" \
-                    "https://ghcr.io/v2/${name}/manifests/${candidate}")"
-            echo "${name}:${candidate} -> HTTP ${code}"
-            case "$code" in
-              202|404) ;;
-              *) echo "::warning::could not delete ${name}:${candidate} (HTTP ${code})" ;;
-            esac
-          done
       - name: Generate SBOMs for the verified digests
         uses: anchore/sbom-action@3ad7283483fc7af8ff2b4ea19663c2d5ca935e26 # v0.24.2
         with:

@@ -192,10 +192,13 @@ service, so the migration job and the server are the same artifact.
   adding it without an arm64 runtime smoke test would mean advertising a platform the
   release gates never exercised.
 * `latest` is mutable and must never be used as a reproducibility reference.
-* `candidate-<sha>-<run-id>` tags are deleted once promote succeeds. A run that fails
-  *before* publish leaves its candidate tag on the registry, because the deletion step
-  lives in the publish job; such tags are never advertised, but they do accumulate and
-  need occasional manual cleanup (`Packages → the image → Delete version`).
+* `candidate-<sha>-<run-id>` tags accumulate. Every run publishes its build under a
+  unique candidate tag, and GitHub Container Registry rejects the OCI distribution
+  delete API (`DELETE /v2/<name>/manifests/<ref>` returns
+  `405 UNSUPPORTED`), so the pipeline cannot remove them — not even its own successful
+  run's. They are never advertised and are harmless, but the package's version list in
+  the GitHub UI grows. Prune them there (`Packages → the image → Delete version`) if the
+  list becomes noisy.
 * The pipeline verifies the images, not a Kubernetes/Helm deployment target; there is
   none in this repository.
 * Attestations live as OCI referrer manifests next to the image, not on
