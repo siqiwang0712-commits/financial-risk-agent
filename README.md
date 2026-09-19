@@ -168,12 +168,20 @@ history. Supported for `DATABASE_URL`, `OPENAI_API_KEY` and `FINRISK_BOOTSTRAP_T
 
 ```bash
 docker compose -f docker-compose.release.yml up -d        # convenience
-FINRISK_VERSION=sha-2ff500b37659155ab58a0e7bda70769698be34de ...   # source identity
-FINRISK_API_IMAGE=ghcr.io/siqiwang0712-commits/financial-risk-agent-api:v0.3.3@sha256:<digest> ...
+FINRISK_VERSION=sha-f09825f869e9467a64ac7c36129fff281cebd70e ...   # source identity
+FINRISK_API_IMAGE=ghcr.io/siqiwang0712-commits/financial-risk-agent-api:v0.3.3@sha256:49f0e1afad1cb29bc49f6d662f6c789921577d63c8a3ace4c2abd8ef0a756631 ...
+```
+
+To verify what you pulled actually came from this repository's release workflow:
+
+```bash
+gh attestation verify oci://ghcr.io/siqiwang0712-commits/financial-risk-agent-api@sha256:49f0e1afad1cb29bc49f6d662f6c789921577d63c8a3ace4c2abd8ef0a756631 \
+  -R siqiwang0712-commits/financial-risk-agent
 ```
 
 `latest` is convenience only and is never a reproducibility reference. How the images
-are built, verified and attested is documented in [`docs/CONTAINER_RELEASE.md`](docs/CONTAINER_RELEASE.md).
+are built, verified and attested is documented in [`docs/CONTAINER_RELEASE.md`](docs/CONTAINER_RELEASE.md),
+including the digests of the current verified release.
 
 ### Run the synthetic offline demo
 

@@ -34,9 +34,19 @@ Concretely:
    nothing is rebuilt — and runs the project's full runtime gate chain against it.
 3. `scan` runs Trivy against the same digest.
 4. `publish` attaches SBOM and build-provenance attestations to that digest and then
-   adds `v0.3.x`, `sha-<commit>` and `latest` to it. Promotion is a
-   `pull by digest → tag → push`, and the published manifest digest is compared with
-   the verified one; a mismatch fails the job.
+   adds `v0.3.x`, `sha-<commit>` and `latest` to it, and deletes the candidate tag.
+   Promotion is a registry-side copy: the manifest bytes for the verified digest are
+   `GET` under their own `Content-Type` and `PUT` under each tag, then the
+   `docker-content-digest` the registry computes for the tag is read back and required
+   to equal the verified digest.
+
+**Why promotion cannot use `docker tag`/`docker push`.** Buildx publishes an *OCI
+image manifest*; a local `docker pull` + `tag` + `push` re-encodes it as *Docker
+schema2*, which is a different document with a different digest. The first release run
+was stopped by exactly that mismatch (candidate `sha256:f3a4807…` came back as
+`sha256:e3113f8…`), which is the assertion doing its job — but it also meant no release
+tag could ever have matched the verified artifact. Copying the manifest bytes keeps the
+identity intact.
 
 Nothing is rebuilt after verification. The digest that passed the gates is, byte for
 byte, the digest the release tags point at.
@@ -160,11 +170,34 @@ to continue if the requested version does not match `pyproject.toml`,
 `frontend/package.json` and the newest `CHANGELOG.md` section, so a mistyped tag cannot
 produce a mislabelled image.
 
+## Verified release record
+
+The tags below were produced by `Container Release` run
+[35446367210](https://github.com/siqiwang0712-commits/financial-risk-agent/actions/runs/35446367210)
+from commit `f09825f869e9467a64ac7c36129fff281cebd70e`, all pointing at one digest per
+image:
+
+| image | digest | size | user | platform |
+|---|---|---|---|---|
+| `financial-risk-agent-api` | `sha256:49f0e1afad1cb29bc49f6d662f6c789921577d63c8a3ace4c2abd8ef0a756631` | 100 MiB | `finrisk` (100) | linux/amd64 |
+| `financial-risk-agent-web` | `sha256:03fd9d0e589b85922ad5e6f05ee74054515b2a17a9cf98c4665ed4032b07455f` | 82 MiB | `node` (1000) | linux/amd64 |
+
+`v0.3.3`, `sha-f09825f…` and `latest` on each image resolve to that image's digest,
+asserted by the run itself after publishing. The `api` digest also serves the `migrate`
+service, so the migration job and the server are the same artifact.
+
 ## Known limitations
 
-* Single architecture (`linux/amd64`).
+* Single architecture (`linux/amd64`). `linux/arm64` is deliberately not published:
+  adding it without an arm64 runtime smoke test would mean advertising a platform the
+  release gates never exercised.
 * `latest` is mutable and must never be used as a reproducibility reference.
-* Candidate tags (`candidate-<sha>-<run-id>`) stay in the registry after promotion;
-  they are never advertised and are retained for audit.
+* `candidate-<sha>-<run-id>` tags are deleted once promote succeeds. A run that fails
+  *before* publish leaves its candidate tag on the registry, because the deletion step
+  lives in the publish job; such tags are never advertised, but they do accumulate and
+  need occasional manual cleanup (`Packages → the image → Delete version`).
 * The pipeline verifies the images, not a Kubernetes/Helm deployment target; there is
   none in this repository.
+* Attestations live as OCI referrer manifests next to the image, not on
+  `api.github.com`. Verify them with `gh attestation verify oci://<ref> -R <repo>`;
+  the `/referrers/<digest>` endpoint on `ghcr.io` returns an empty list.
