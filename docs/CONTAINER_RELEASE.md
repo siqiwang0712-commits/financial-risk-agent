@@ -85,6 +85,28 @@ Run against the candidate images, not against the source tree:
 No assertion, timeout, security header or fail-closed behaviour is relaxed for the
 container path; it runs the same gates that `ci.yml` runs.
 
+## Verification chain (job `verify-release-compose`)
+
+The step above exercises the *development* stack with the candidate images swapped in.
+That leaves `docker-compose.release.yml` — the file an operator actually runs, and the
+only stack definition here with no `build:` — executed by nothing. It could rot
+silently: a broken healthcheck, a dropped `depends_on` condition or a reintroduced
+`build:` would ship inside a release that reported itself green.
+
+So a second job boots that file too, with `FINRISK_API_IMAGE` / `FINRISK_WEB_IMAGE`
+pointed at the same candidate digests:
+
+1. Asserts `docker-compose.release.yml` contains no `build:` section. (Checked in both
+   directions — the development stack *does* match the pattern, so the check is not
+   vacuous.)
+2. `up -d postgres migrate api web`, then asserts the `api` and `web` containers carry
+   the candidate image ids and that `migrate` carries the **same** id as `api`.
+3. `/health/ready` and the web proxy answer on the published loopback ports.
+4. `scripts/verify_docker_health.py` on that stack.
+
+It tests the same artifact — nothing is rebuilt — and `publish` and `dry-run` both
+require it, so a broken deployment file can no longer be promoted.
+
 ## Vulnerability and secret scanning (job `scan`)
 
 * Trivy, `--scanners vuln`, `CRITICAL,HIGH`, `--ignore-unfixed`.
@@ -198,12 +220,15 @@ service, so the migration job and the server are the same artifact.
   release gates never exercised.
 * `latest` is mutable and must never be used as a reproducibility reference.
 * `candidate-<sha>-<run-id>` tags accumulate. Every run publishes its build under a
-  unique candidate tag, and GitHub Container Registry rejects the OCI distribution
-  delete API (`DELETE /v2/<name>/manifests/<ref>` returns
-  `405 UNSUPPORTED`), so the pipeline cannot remove them — not even its own successful
+  unique candidate tag — including **dry runs**, which build and verify but publish no
+  release tag — and GitHub Container Registry rejects the OCI distribution delete API
+  (`DELETE /v2/<name>/manifests/<ref>` returns
+  `405 UNSUPPORTED`), so the pipeline cannot remove them, not even its own successful
   run's. They are never advertised and are harmless, but the package's version list in
-  the GitHub UI grows. Prune them there (`Packages → the image → Delete version`) if the
-  list becomes noisy.
+  the GitHub UI grows. Prune them there (`Packages → the image → Delete version`) if
+  the list becomes noisy. Note that a dry run's candidate digest differs from the
+  published one even when the image content is identical, because the build stamps
+  `org.opencontainers.image.revision` with the current commit.
 * The pipeline verifies the images, not a Kubernetes/Helm deployment target; there is
   none in this repository.
 * Attestations live as OCI referrer manifests next to the image, not on
