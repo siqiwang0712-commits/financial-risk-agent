@@ -454,45 +454,50 @@ jobs:
           sbom-path: .runtime/web.spdx.json
           push-to-registry: true
       - name: Promote the tested digest to the release tags
+        env:
+          GHCR_USER: ${{ github.actor }}
+          GHCR_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           set -euo pipefail
           version='${{ needs.prepare.outputs.version }}'
           commit='${{ needs.prepare.outputs.commit }}'
+          accept='application/vnd.oci.image.manifest.v1+json, application/vnd.oci.image.index.v1+json, application/vnd.docker.distribution.manifest.v2+json, application/vnd.docker.distribution.manifest.list.v2+json'
+          header() { tr -d '\r' < "$1" | awk -F': ' -v k="$2" 'tolower($1)==tolower(k){print $2; exit}'; }
           promote() {
-            repo="$1"; digest="$2"
-            # Pull by digest, then tag and push the identical manifest. No rebuild,
-            # no `latest`-first ordering: the release tags are created from the
-            # artifact that verify/scan approved.
-            docker pull --quiet "${repo}@${digest}" >/dev/null
-            tested_id="$(docker image inspect "${repo}@${digest}" --format '{{.Id}}')"
+            name="$1"; digest="$2"
+            token="$(curl -fsS -u "${GHCR_USER}:${GHCR_TOKEN}" \
+                     "https://ghcr.io/token?scope=repository:${name}:pull,push&service=ghcr.io" \
+                     | python3 -c 'import json,sys; print(json.load(sys.stdin)["token"])')"
+            # Copy the manifest through the registry API instead of re-pushing it.
+            # `docker pull` + `docker tag` + `docker push` re-encodes an OCI manifest
+            # as Docker schema2, which publishes a *different* digest than the one
+            # that was verified; the first release run was correctly stopped by that
+            # mismatch. A server-side PUT of the original bytes keeps the identity.
+            curl -fsS -o manifest.json -D manifest.headers \
+              -H "Authorization: Bearer ${token}" -H "Accept: ${accept}" \
+              "https://ghcr.io/v2/${name}/manifests/${digest}"
+            media="$(header manifest.headers content-type)"
+            echo "${name}: ${digest} is ${media} ($(wc -c < manifest.json) bytes)"
             for tag in "$version" "sha-${commit}" latest; do
-              docker tag "${repo}@${digest}" "${repo}:${tag}"
-              # `docker push` reports the manifest digest it actually published. That is
-              # the authoritative check: if re-tagging had produced a different manifest
-              # (an index, a rebuilt layer, ...) the printed digest would differ from the
-              # one that was verified.
-              push_out="$(docker push "${repo}:${tag}" 2>&1 | tee /dev/stderr)"
-              pushed="$(printf '%s\n' "$push_out" | grep -o 'digest: sha256:[0-9a-f]\{64\}' | tail -1 | cut -d' ' -f2)"
-              if [[ -z "$pushed" ]]; then
-                # Some Docker versions report the push result differently; fall back to
-                # asking the registry what the tag actually serves rather than trusting
-                # stdout. The comparison against the tested digest stays mandatory.
-                pushed="$(docker buildx imagetools inspect "${repo}:${tag}" --format '{{.Manifest.Digest}}')"
-              fi
-              if [[ "$pushed" != "$digest" ]]; then
-                echo "::error::${repo}:${tag} published manifest $pushed, tested digest is $digest"
+              curl -fsS -X PUT -o /dev/null \
+                -H "Authorization: Bearer ${token}" -H "Content-Type: ${media}" \
+                --data-binary @manifest.json \
+                "https://ghcr.io/v2/${name}/manifests/${tag}"
+              # The registry recomputes the digest from what it stored, so this is
+              # the authoritative check that the tag serves the tested artifact.
+              curl -fsS -D tag.headers -o /dev/null \
+                -H "Authorization: Bearer ${token}" -H "Accept: ${accept}" \
+                "https://ghcr.io/v2/${name}/manifests/${tag}"
+              published="$(header tag.headers docker-content-digest)"
+              if [[ "$published" != "$digest" ]]; then
+                echo "::error::${name}:${tag} serves ${published}, tested digest is ${digest}"
                 exit 1
               fi
-              got_id="$(docker image inspect "${repo}:${tag}" --format '{{.Id}}')"
-              if [[ "$got_id" != "$tested_id" ]]; then
-                echo "::error::${repo}:${tag} resolves to $got_id, tested image is $tested_id"
-                exit 1
-              fi
-              echo "${repo}:${tag} -> ${digest} (manifest ${pushed}, image id ${got_id})"
+              echo "${name}:${tag} -> ${digest} (${media})"
             done
           }
-          promote ghcr.io/siqiwang0712-commits/financial-risk-agent-api "$API_DIGEST"
-          promote ghcr.io/siqiwang0712-commits/financial-risk-agent-web "$WEB_DIGEST"
+          promote siqiwang0712-commits/financial-risk-agent-api "$API_DIGEST"
+          promote siqiwang0712-commits/financial-risk-agent-web "$WEB_DIGEST"
       - name: Re-verify the published tags resolve to the tested digest
         run: |
           set -euo pipefail
