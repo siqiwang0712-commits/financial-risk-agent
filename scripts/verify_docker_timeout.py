@@ -82,6 +82,22 @@ def main() -> None:
     else:
         raise SystemExit("timeout-smoke API readiness failed")
 
+    # The web proxy is recreated by the same `docker compose up --force-recreate` as
+    # the API, but every request below goes through it on :3000. Waiting only for the
+    # API left a window in which Next.js had not bound its port yet, so the proxy
+    # answered with a transport-level reset instead of an HTTP status. Waiting for the
+    # proxy as well removes the race without weakening any assertion.
+    proxy_deadline = time.monotonic() + 60
+    while time.monotonic() < proxy_deadline:
+        try:
+            with urlopen("http://127.0.0.1:3000/", timeout=3) as response:
+                if response.status == 200:
+                    break
+        except (OSError, URLError, ValueError):
+            time.sleep(1)
+    else:
+        raise SystemExit("timeout-smoke web proxy readiness failed")
+
     organization = request_json(
         "http://127.0.0.1:8000/api/v1/enterprise/organizations",
         {"name": "Timeout tenant", "actor_id": "timeout-admin"},
