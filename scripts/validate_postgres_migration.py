@@ -1,7 +1,7 @@
-import os
 from pathlib import Path
 
 from finrisk.enterprise.postgres import PostgresEnterpriseRepository
+from finrisk.secret_files import env_or_file
 
 
 def main() -> None:
@@ -11,10 +11,14 @@ def main() -> None:
     """
     root = Path(__file__).resolve().parents[1]
     # A bare KeyError told a contributor nothing about what to set; the gate still
-    # fails when the variable is absent.
-    dsn = os.environ.get("DATABASE_URL")
+    # fails when the variable is absent. The mounted-file form must be honoured
+    # too: this job is what gates a production deploy, so it has to resolve the
+    # secret exactly the way the API process does.
+    dsn = env_or_file("DATABASE_URL")
     if not dsn:
-        raise SystemExit("DATABASE_URL is not set; this check needs a PostgreSQL instance")
+        raise SystemExit(
+            "DATABASE_URL (or DATABASE_URL_FILE) is not set; this check needs a PostgreSQL instance"
+        )
     repository = PostgresEnterpriseRepository.connect(dsn)
     for migration in sorted((root / "migrations").glob("*.sql")):
         repository.migrate(migration)

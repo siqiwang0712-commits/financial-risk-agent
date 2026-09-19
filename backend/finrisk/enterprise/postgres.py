@@ -27,12 +27,132 @@ def _json(value: Any) -> str:
     return json.dumps(value, default=str, sort_keys=True)
 
 
+_READY_PROBE_TIMEOUT_DEFAULT = 5.0
+
+# Waiting on a connection is not the same as running a query, and an outage must
+# not turn into a queue: every pooled acquisition used to wait for psycopg_pool's
+# own 30 s default before failing, so a single database outage held each request
+# for half a minute and let them pile up behind each other. Acquisition is a
+# bounded wait for a free connection — normal operations take milliseconds, so a
+# short ceiling changes nothing in steady state while an outage now fails in
+# seconds with a retryable 503 instead of stacking requests.
+_OPERATION_TIMEOUT_DEFAULT = 5.0
+
+# How long one pool reconnection chain is allowed to run before it gives up and
+# lets the next request start a fresh attempt. Kept short on purpose; see
+# `_reconnect_timeout_seconds` for what the library default actually costs.
+_RECONNECT_TIMEOUT_DEFAULT = 5.0
+
+# Ceiling on one connection handshake, in whole seconds (libpq takes an integer).
+# See `_connect_timeout_seconds`: without it an unresponsive peer holds a pool
+# worker for as long as the OS allows.
+_CONNECT_TIMEOUT_DEFAULT = 5
+
+REQUIRED_SCHEMA_OBJECTS: tuple[str, ...] = (
+    # The smallest set that proves the v0.3.3 migration set has actually been
+    # applied to *this* database. It is deliberately not all 17 tables: one
+    # query, on every readiness probe, has to stay cheap. These cover the four
+    # things a deploy breaks on — tenant storage (organizations/entities), the
+    # analysis and audit record (analysis_snapshots/audit_events), and the shared
+    # rate limiter plus the two indexes migration 005/006 add for it. A database
+    # that answers `SELECT 1` but has none of them is reachable and useless.
+    "organizations",
+    "entities",
+    "analysis_snapshots",
+    "audit_events",
+    "rate_limit_events",
+    "idx_rate_limit_events_lookup",
+    "idx_rate_limit_events_expiry",
+)
+
+
+def _operation_timeout_seconds() -> float:
+    """`FINRISK_DATABASE_OPERATION_TIMEOUT_SECONDS`, falling back to the default.
+
+    Parsed defensively for the same reason as the readiness knob: this value
+    decides how long a request waits for the database, so a typo must not either
+    hang requests (`0`/negative) or crash the process while parsing. Anything
+    unparseable or non-positive keeps the documented default.
+    """
+    raw = os.getenv("FINRISK_DATABASE_OPERATION_TIMEOUT_SECONDS")
+    if raw is None:
+        return _OPERATION_TIMEOUT_DEFAULT
+    try:
+        value = float(raw)
+    except (TypeError, ValueError):
+        return _OPERATION_TIMEOUT_DEFAULT
+    return value if value > 0 else _OPERATION_TIMEOUT_DEFAULT
+
+
+def _connect_timeout_seconds() -> int:
+    """`FINRISK_DB_CONNECT_TIMEOUT_SECONDS`, falling back to the default.
+
+    Bounds the TCP handshake and startup a *single* connection attempt may spend,
+    which is not the same as waiting for a pooled one. A refused connection fails
+    at once, but an unresponsive peer — a firewall that drops packets, or a proxy
+    that accepts the socket and never answers — hangs until the operating system
+    gives up. Measured on a real outage: each attempt blocked for 130 s, so the
+    pool could not rejoin until two minutes after the database was healthy again,
+    even though every request had already been answered with a prompt 503.
+    """
+    raw = os.getenv("FINRISK_DB_CONNECT_TIMEOUT_SECONDS")
+    if raw is None:
+        return _CONNECT_TIMEOUT_DEFAULT
+    try:
+        value = int(float(raw))
+    except (TypeError, ValueError):
+        return _CONNECT_TIMEOUT_DEFAULT
+    return value if value > 0 else _CONNECT_TIMEOUT_DEFAULT
+
+
+def _reconnect_timeout_seconds() -> float:
+    """`FINRISK_DB_RECONNECT_TIMEOUT_SECONDS`, falling back to the default.
+
+    How long the pool keeps retrying a failed connection before it gives up and
+    lets the next request start a fresh attempt. The library default is 300 s,
+    and its backoff doubles on every attempt (1, 2, 4, 8 … 128 s) with the
+    deadline anchored to the *first* failure — while that chain runs, no request
+    can trigger a new attempt. Measured on a real outage: a burst of concurrent
+    requests took 127 s to come back after the database did, because the retries
+    were still scheduled minutes apart. A short window trades blind waiting for
+    prompt recovery: each new request starts a fresh attempt with a ~1 s delay,
+    and an idle pool sends nothing at all.
+    """
+    raw = os.getenv("FINRISK_DB_RECONNECT_TIMEOUT_SECONDS")
+    if raw is None:
+        return _RECONNECT_TIMEOUT_DEFAULT
+    try:
+        value = float(raw)
+    except (TypeError, ValueError):
+        return _RECONNECT_TIMEOUT_DEFAULT
+    return value if value > 0 else _RECONNECT_TIMEOUT_DEFAULT
+
+
+def _probe_timeout_seconds() -> float:
+    """`FINRISK_READY_PROBE_TIMEOUT_SECONDS`, falling back to the default.
+
+    An unparseable or non-positive value is ignored rather than raised: this feeds a
+    readiness probe, where an exception is indistinguishable from the database being
+    down. Getting that wrong inverts the answer — the endpoint would report an outage
+    for a database that is fine, and callers restart instances on the strength of it.
+    """
+    raw = os.getenv("FINRISK_READY_PROBE_TIMEOUT_SECONDS")
+    if raw is None:
+        return _READY_PROBE_TIMEOUT_DEFAULT
+    try:
+        value = float(raw)
+    except (TypeError, ValueError):
+        return _READY_PROBE_TIMEOUT_DEFAULT
+    return value if value > 0 else _READY_PROBE_TIMEOUT_DEFAULT
+
+
 class PostgresEnterpriseRepository:
     """Tenant-scoped psycopg repository used whenever ``DATABASE_URL`` is set."""
 
-    def __init__(self, connection=None, pool=None):
+    def __init__(self, connection=None, pool=None, dsn: str | None = None):
         self.connection = connection
         self.pool = pool
+        self.dsn = dsn
 
     @classmethod
     def connect(cls, dsn: str) -> PostgresEnterpriseRepository:
@@ -45,6 +165,8 @@ class PostgresEnterpriseRepository:
             min_size=int(os.getenv("FINRISK_DB_POOL_MIN", "1")),
             max_size=int(os.getenv("FINRISK_DB_POOL_MAX", "10")),
             open=True,
+            reconnect_timeout=_reconnect_timeout_seconds(),
+            kwargs={"connect_timeout": _connect_timeout_seconds()},
         )
         try:
             pool.wait(timeout=10)
@@ -54,12 +176,14 @@ class PostgresEnterpriseRepository:
             # leak. Close it before reporting the failure.
             pool.close()
             raise
-        return cls(pool=pool)
+        return cls(pool=pool, dsn=dsn)
 
     @contextmanager
-    def connection_context(self):
+    def connection_context(self, timeout: float | None = None):
         if self.pool is not None:
-            with self.pool.connection() as connection:
+            if timeout is None:
+                timeout = _operation_timeout_seconds()
+            with self.pool.connection(timeout=timeout) as connection:
                 yield connection
         elif self.connection is not None:
             yield self.connection
@@ -73,9 +197,70 @@ class PostgresEnterpriseRepository:
             self.connection.close()
 
     def check_ready(self) -> bool:
-        with self.connection_context() as connection, connection.cursor() as cursor:
+        # A readiness probe has to answer, not wait. Every pooled attempt is
+        # retried until the pool's own timeout (30 s by default), so a database
+        # that is down — or one that has rotated its password — used to hold the
+        # probe open for that whole window and then surface a bare `PoolTimeout`
+        # that says nothing about the cause. Bound the wait instead; the caller
+        # can then classify the failure while the request is still in flight.
+        # The knob is parsed defensively rather than left to blow up: `float("5s")`
+        # raising inside the probe would be caught by the readiness handler and
+        # reported as a datastore outage, so a typo would make readiness call a
+        # *healthy* database down — and an orchestrator acts on that answer. Keep
+        # the documented default instead of lying about the database.
+        timeout = _probe_timeout_seconds()
+        with self.connection_context(timeout=timeout) as connection, connection.cursor() as cursor:
             cursor.execute("SELECT 1")
             return cursor.fetchone()[0] == 1
+
+    def missing_schema_objects(self) -> tuple[str, ...]:
+        """The required v0.3.3 objects that are absent from the connected database.
+
+        `check_ready` proves the server answers and the credential is accepted —
+        which is exactly what it said when the API had been pointed at a database
+        that was reachable, empty and completely unmigrated: readiness was green
+        while every real request failed. Reachability and schema are different
+        facts and a deployment gate needs both.
+
+        One round trip over `to_regclass`, which resolves a name to NULL instead
+        of raising when it is missing, so an absent object is data rather than an
+        error to catch.
+        """
+        qualified = [f"public.{name}" for name in REQUIRED_SCHEMA_OBJECTS]
+        with (
+            self.connection_context(timeout=_probe_timeout_seconds()) as connection,
+            connection.cursor() as cursor,
+        ):
+            cursor.execute(
+                "SELECT " + ", ".join(["to_regclass(%s)"] * len(qualified)),
+                qualified,
+            )
+            row = cursor.fetchone() or ()
+        return tuple(name for name, found in zip(REQUIRED_SCHEMA_OBJECTS, row) if found is None)
+
+    def credentials_rejected(self) -> bool:
+        """Whether a fresh connection is refused *because of authentication*.
+
+        The pool swallows the server's reason and reports only a timeout, which
+        made a rotated credential indistinguishable from an outage — the one
+        distinction the readiness endpoint exists to draw. One direct attempt,
+        taken only on the failure path and bounded by `connect_timeout`, recovers
+        it: if the server rejects the password we say so, and if it is simply not
+        there we fall back to the generic outage answer.
+        """
+        if not self.dsn:
+            return False
+        try:
+            # Imported lazily, like `psycopg_pool` in `connect`, and *inside* the
+            # guard: this runs on the failure path of a readiness probe, so it has
+            # to answer rather than raise — an escaping ImportError would turn a
+            # diagnosable 503 into an opaque 500.
+            import psycopg
+
+            with psycopg.connect(self.dsn, connect_timeout=3):
+                return False
+        except Exception as exc:  # noqa: BLE001 - any driver error is an answer, not a defect
+            return "authentication failed" in str(exc).lower()
 
     def migrate(self, path: Path) -> None:
         with self.connection_context() as connection:

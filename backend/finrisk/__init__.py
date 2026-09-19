@@ -1,4 +1,4 @@
 """FinRisk-Agent: deterministic-first, evidence-grounded risk assessment."""
 
-__version__ = "0.3.2"
+__version__ = "0.3.3"
 

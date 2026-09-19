@@ -210,11 +210,18 @@ def test_shared_rate_limiter_sweeps_expired_rows_belonging_to_other_keys():
 
 
 @pytest.mark.skipif(not os.getenv("DATABASE_URL"), reason="PostgreSQL integration requires DATABASE_URL")
-def test_shared_rate_limiter_keeps_the_table_bounded_by_its_row_cap():
-    from finrisk.enterprise.security import PostgresRateLimiter
+def test_shared_rate_limiter_fails_closed_at_the_row_cap_without_deleting_live_events():
+    """Capacity pressure refuses admission; it must never reclaim a live quota.
+
+    The cap used to trim the oldest surviving rows to make room, which deleted events
+    that were still inside their window — the record of what a client had already
+    spent. A client that had genuinely exhausted its quota then got it back for free,
+    and a flood of unique keys could keep resetting that state indefinitely.
+    """
+    from finrisk.enterprise.security import PostgresRateLimiter, RateLimiterUnavailable
 
     repository = _migrated_repository()
-    prefix = f"round8-cap-{new_id('c')}-"
+    prefix = f"cap-live-{new_id('c')}-"
     keys = [f"{prefix}{index}" for index in range(120)]
     with repository.connection_context() as connection, connection.cursor() as cursor:
         cursor.executemany(
@@ -224,16 +231,86 @@ def test_shared_rate_limiter_keeps_the_table_bounded_by_its_row_cap():
         connection.commit()
 
     limiter = PostgresRateLimiter(repository, limit=5, window_seconds=60, max_rows=40)
-    limiter.allow(f"bootstrap:{new_id('fresh')}")
+    victim = f"bootstrap:{new_id('victim')}"
+    with pytest.raises(RateLimiterUnavailable):
+        limiter.allow(victim)
 
     with repository.connection_context() as connection, connection.cursor() as cursor:
-        cursor.execute("SELECT count(*) FROM rate_limit_events")
-        total = cursor.fetchone()[0]
-        # The sweep trims to the cap, and this request then records its own admission,
-        # so the retained count is bounded by the cap plus the rows admitted since the
-        # sweep — one per concurrent request, one here.
-        assert total <= 41, f"row cap not enforced: {total} rows retained"
+        cursor.execute(
+            "SELECT count(*) FROM rate_limit_events WHERE key LIKE %s", (f"{prefix}%",)
+        )
+        assert cursor.fetchone()[0] == len(keys), "live events must never be deleted to make room"
+        cursor.execute("SELECT count(*) FROM rate_limit_events WHERE key = %s", (victim,))
+        assert cursor.fetchone()[0] == 0, "a refused request must not be recorded as admitted"
         cursor.execute("DELETE FROM rate_limit_events WHERE key LIKE %s", (f"{prefix}%",))
+        connection.commit()
+    repository.close()
+
+
+@pytest.mark.skipif(not os.getenv("DATABASE_URL"), reason="PostgreSQL integration requires DATABASE_URL")
+def test_shared_rate_limiter_recovers_once_expired_rows_free_capacity():
+    """Capacity is measured against live rows, so it returns as soon as rows age out.
+
+    Recovery must not depend on a sweep winning its advisory lock: counting only the
+    rows still inside the retention window means a table full of *expired* rows is
+    already free capacity, and the sweep simply reclaims the space afterwards.
+    """
+    from finrisk.enterprise.security import PostgresRateLimiter
+
+    repository = _migrated_repository()
+    prefix = f"cap-expired-{new_id('e')}-"
+    keys = [f"{prefix}{index}" for index in range(120)]
+    with repository.connection_context() as connection, connection.cursor() as cursor:
+        cursor.executemany(
+            """INSERT INTO rate_limit_events (scope, key, occurred_at)
+               VALUES ('api', %s, now() - interval '2 hours')""",
+            [(key,) for key in keys],
+        )
+        connection.commit()
+
+    # window 1s → retention 2s, so everything above is already expired, while the cap
+    # of 40 is far below the 120 rows physically present.
+    limiter = PostgresRateLimiter(repository, limit=5, window_seconds=1, max_rows=40)
+    assert limiter.allow(f"bootstrap:{new_id('fresh')}") is True
+
+    with repository.connection_context() as connection, connection.cursor() as cursor:
+        cursor.execute(
+            "SELECT count(*) FROM rate_limit_events WHERE key LIKE %s", (f"{prefix}%",)
+        )
+        assert cursor.fetchone()[0] == 0, "expired rows must still be swept to reclaim space"
+        cursor.execute("DELETE FROM rate_limit_events WHERE key LIKE %s", (f"{prefix}%",))
+        connection.commit()
+    repository.close()
+
+
+@pytest.mark.skipif(not os.getenv("DATABASE_URL"), reason="PostgreSQL integration requires DATABASE_URL")
+def test_an_exhausted_quota_is_not_restored_by_other_clients_filling_the_table():
+    """A spent quota stays spent for the whole window, whatever else the table holds.
+
+    This is the concrete harm the cap-trim caused: a key that had used up its quota
+    was admitted again once unrelated traffic pushed the table over the cap and the
+    limiter deleted the oldest rows to make room.
+    """
+    from finrisk.enterprise.security import PostgresRateLimiter
+
+    repository = _migrated_repository()
+    victim = f"bootstrap:{new_id('victim')}"
+    limiter = PostgresRateLimiter(repository, limit=3, window_seconds=60, max_rows=1_000)
+    assert [limiter.allow(victim) for _ in range(4)] == [True, True, True, False]
+
+    with repository.connection_context() as connection, connection.cursor() as cursor:
+        cursor.executemany(
+            "INSERT INTO rate_limit_events (scope, key) VALUES ('api', %s)",
+            [(f"flood-{new_id('f')}-{index}",) for index in range(400)],
+        )
+        connection.commit()
+
+    assert limiter.allow(victim) is False, "a spent quota must not come back mid-window"
+    with repository.connection_context() as connection, connection.cursor() as cursor:
+        cursor.execute("SELECT count(*) FROM rate_limit_events WHERE key = %s", (victim,))
+        assert cursor.fetchone()[0] == 3, "the admissions that spent the quota must survive"
+        cursor.execute("DELETE FROM rate_limit_events WHERE key LIKE 'flood-%'")
+        cursor.execute("DELETE FROM rate_limit_events WHERE key = %s", (victim,))
         connection.commit()
     repository.close()
 

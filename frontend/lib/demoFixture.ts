@@ -13,13 +13,13 @@ export interface DemoFixture {
 }
 
 export const DEMO_FIXTURE: DemoFixture = {
-  "generatedBy": "FinancialRiskAgent v0.3.2 (deterministic offline provider)",
+  "generatedBy": "FinancialRiskAgent v0.3.3 (deterministic offline provider)",
   "sourceFixture": "examples/synthetic_company.json",
   "sourceFiling": "research/results/public_v1/summary.json",
   "notice": "Bundled offline sample. The assessment is a real pipeline output for the repository's synthetic fixture - not a real issuer, and not a live run. Reliability is UNCALIBRATED.",
   "pilot": {
     "snapshot": "v0.3.0 frozen public pilot",
-    "runtime": "v0.3.2",
+    "runtime": "v0.3.3",
     "annotation_status": "single-reviewer pilot; not a definitive financial-risk benchmark",
     "benchmark_evidence_coverage": 0.5833,
     "rows": [

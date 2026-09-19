@@ -78,7 +78,7 @@ def main() -> None:
                 raise RuntimeError(f"unexpected readiness status: {payload!r}")
             with urlopen("http://127.0.0.1:3000/api/v1/public-pilot", timeout=5) as response:
                 frontend_payload = json.load(response)
-            if frontend_payload.get("runtime") != "v0.3.2":
+            if frontend_payload.get("runtime") != "v0.3.3":
                 raise RuntimeError(f"frontend API proxy failed: {frontend_payload!r}")
             print("production compose API is ready")
             break

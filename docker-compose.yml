@@ -23,11 +23,18 @@ services:
       # *first* initialised, so changing it against an existing volume leaves a server
       # that happily reports "ready" and then rejects every application connection
       # with `password authentication failed` — a mismatch that used to surface only
-      # as a traceback from migrate/api. Authenticating over TCP (the `host` rule the
-      # image installs) makes it an immediately visible `unhealthy` container instead.
+      # as a traceback from migrate/api. Authenticating over TCP makes it an
+      # immediately visible `unhealthy` container instead.
+      #
+      # The host matters as much as the password: the image ships
+      # `host all all 127.0.0.1/32 trust` *above* the `host all all all
+      # scram-sha-256` line it appends, so a loopback probe is authenticated by
+      # trust and succeeds with any password — including a wrong one. Connecting to
+      # the container's own address on the compose network is what actually puts
+      # `POSTGRES_PASSWORD` to the test.
       test:
         - CMD-SHELL
-        - 'PGPASSWORD="$$POSTGRES_PASSWORD" psql -h 127.0.0.1 -U finrisk -d finrisk -tAc "SELECT 1" | grep -q 1'
+        - 'PGPASSWORD="$$POSTGRES_PASSWORD" psql -h "$$(hostname -i)" -U finrisk -d finrisk -tAc "SELECT 1" | grep -q 1'
       interval: 5s
       timeout: 5s
       retries: 10

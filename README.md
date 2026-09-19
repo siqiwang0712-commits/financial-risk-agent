@@ -27,7 +27,7 @@
 
 ## Current release
 
-**v0.3.2** — reproducibility and runtime-integrity hardening. Frozen E1/E2/E3 experiments replay read-only, and `DATABASE_URL` selects durable PostgreSQL persistence.
+**v0.3.3** — shared rate limiting, secret-file mounting and honest failure diagnostics on top of the v0.3.2 reproducibility and runtime-integrity base. Frozen E1/E2/E3 experiments replay read-only, and `DATABASE_URL` selects durable PostgreSQL persistence.
 
 - [CHANGELOG](CHANGELOG.md) — complete release history
 - [Reproducibility and runtime integrity](docs/reproducibility_runtime_integrity.md) — replay, persistence and trust boundaries
@@ -100,8 +100,30 @@ POSTGRES_PASSWORD='<strong-secret>' docker compose -f docker-compose.yml -f dock
 `POSTGRES_PASSWORD` is only applied when the PostgreSQL volume is **first** initialised.
 Changing it afterwards does not change the password stored in the existing volume, so
 the containers stop authenticating. The PostgreSQL healthcheck authenticates over TCP,
-so this shows up as `unhealthy` (not as a healthy database plus a crashing API). To
-rotate the credential, change it inside the database first:
+so this shows up as `unhealthy` (not as a healthy database plus a crashing API).
+The probe deliberately connects to the container's own address on the
+Compose network rather than to `127.0.0.1`: the image ships
+`host all all 127.0.0.1/32 trust` *above* the `scram-sha-256` rule it appends, so a
+loopback probe succeeds with any password, including a wrong one.
+
+How the mismatch surfaces depends on when the API has to open a **new** connection:
+
+- **New connection by a running API.** `/health/ready` answers `503` naming the
+  rejected credential while `/health/live` stays `200`. Rotating the password inside
+  a live database is *not* immediately visible, though: PostgreSQL does not terminate
+  established sessions, so an API holding pooled connections keeps answering `200`
+  until those sessions break — a server restart, a pool grow, or a lifetime expiry.
+  Do not read a `200` right after an `ALTER USER` as proof that the rotation was safe.
+- **Start-up with a mismatched password.** The API does not reach request handling at
+  all: it builds its connection pool while the app module is imported, and that pool
+  readiness wait gives up after 10 s by raising `psycopg_pool.PoolTimeout` (a bare
+  timeout — it does not name the credential), so the container exits and **neither
+  `/health/live` nor `/health/ready` answers**. Rotate (or recreate the volume)
+  *before* a cold start rather than expecting a `503` from it.
+- Under Compose the API is gated on `service_healthy`, so an unhealthy database stops
+  `up` before the API container is even created.
+
+To rotate the credential, change it inside the database first:
 
 ```bash
 docker compose exec postgres psql -U finrisk -d finrisk -c "ALTER USER finrisk WITH PASSWORD '<new-secret>'"
@@ -379,6 +401,10 @@ financial-risk-agent/
 ## Verification
 
 ```bash
+# With DATABASE_URL set, apply the migrations first: the suite assumes the schema
+# already exists and does not create it. On a fresh database `rate_limit_events` is
+# missing, the limiter fails closed and every authenticated route answers 503.
+python scripts/validate_postgres_migration.py
 pytest --cov=finrisk --cov-report=term-missing --cov-fail-under=90
 ruff check backend tests scripts
 ```

@@ -1,9 +1,9 @@
-# Complete resolved Python environment constraints for v0.3.2.
+# Complete resolved Python environment constraints for v0.3.3.
 # CI installs the package with: python -m pip install -c requirements.lock -e ".[dev,postgres]"
 # Versions are shared by the supported CPython 3.11/3.12 matrix.
 annotated-doc==0.0.4
 annotated-types==0.6.0
-anyio==4.12.1
+anyio==4.14.2
 certifi==2026.6.17
 charset-normalizer==3.4.7
 click==8.4.1

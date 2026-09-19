@@ -55,6 +55,7 @@ from .enterprise.security import (
 )
 from .enterprise.service import EnterpriseRiskService
 from .pipeline import FinRiskPipeline
+from .secret_files import env_or_file as _env_or_file
 from .xbrl import parse_companyfacts, values_by_year
 
 
@@ -130,32 +131,6 @@ def _json_safe(value):
     if isinstance(value, (list, tuple)):
         return [_json_safe(item) for item in value]
     return value
-
-
-def _env_or_file(name: str) -> str | None:
-    """Read a secret from `<NAME>_FILE` (Docker/K8s secret mount) or from the env.
-
-    Preferring the file form keeps secrets out of `docker inspect` output and out
-    of the process environment, which is visible to any child process.
-
-    Failure is *loud*, never silent: a configured-but-unreadable `<NAME>_FILE` raises
-    instead of quietly falling back to `<NAME>`, because a fallback would either
-    disable the protection (an unread bootstrap token) or connect to the wrong
-    database while appearing healthy. Only an absent variable or an empty file falls
-    back. Neither the path nor the content is logged.
-    """
-    path = os.getenv(f"{name}_FILE")
-    if path:
-        try:
-            content = Path(path).read_text(encoding="utf-8").strip()
-        except OSError as exc:
-            raise RuntimeError(
-                f"{name}_FILE is set but could not be read; refusing to fall back to {name}"
-            ) from exc
-        if content:
-            return content
-    value = os.getenv(name)
-    return value or None
 
 
 # Driver-level failures that mean "the datastore could not be reached", as opposed to
@@ -315,7 +290,7 @@ if FastAPI:
 
     app = FastAPI(
         title="FinRisk-Agent API",
-        version="0.3.2",
+        version="0.3.3",
         description="Three-layer evidence-grounded financial risk agent",
     )
     cors_origins = [
@@ -620,19 +595,56 @@ if FastAPI:
                 # server rejecting the new value while everything still looks
                 # configured. Say so explicitly instead of reporting a generic
                 # outage — the operator needs to know which of the two it is.
-                if "authentication failed" in str(exc).lower():
+                # The pool reports a bare `PoolTimeout` when every attempt fails,
+                # so the string alone cannot tell a rotated credential from an
+                # outage. Ask the server directly, once, before falling back to
+                # the generic answer.
+                if "authentication failed" in str(exc).lower() or (
+                    isinstance(repository, PostgresEnterpriseRepository)
+                    and repository.credentials_rejected()
+                ):
                     structured_event(api_logger, "health.database_auth_failed")
                     raise HTTPException(
                         503,
                         "database rejected the configured credentials: a pre-existing "
                         "PostgreSQL volume keeps the password it was initialised with "
                         "(rotate it inside the database, or recreate the volume)",
+                        headers={"Retry-After": "5"},
                     ) from exc
                 structured_event(api_logger, "health.database_unavailable")
                 raise HTTPException(
-                    503, "database readiness check failed"
+                    503, "database readiness check failed", headers={"Retry-After": "5"}
                 ) from exc
-        return {"status": "ready", "datastore": datastore}
+            # A reachable database is not a migrated one. The API once served a
+            # zero-table database behind a green `/health/ready`, because the probe
+            # only ran `SELECT 1`; every business request then failed while the
+            # orchestrator believed the deploy was healthy. Migration state is a
+            # separate fact, so it is checked separately — and reported separately,
+            # because "not migrated" has a different fix from "not reachable".
+            try:
+                missing = repository.missing_schema_objects()
+            except Exception as exc:
+                structured_event(api_logger, "health.database_unavailable")
+                raise HTTPException(
+                    503, "database readiness check failed", headers={"Retry-After": "5"}
+                ) from exc
+            if missing:
+                structured_event(
+                    api_logger, "health.schema_incomplete", objects=",".join(missing)
+                )
+                # A missing schema is not self-healing on a short timer, but a load
+                # balancer still needs a backoff hint rather than a tight retry loop.
+                raise HTTPException(
+                    503,
+                    "database schema is not migrated: missing "
+                    + ", ".join(missing)
+                    + " (run scripts/validate_postgres_migration.py)",
+                    headers={"Retry-After": "5"},
+                )
+        payload = {"status": "ready", "datastore": datastore}
+        if datastore == "postgres":
+            payload["schema"] = "complete"
+        return payload
 
     @app.get("/health", include_in_schema=False)
     def health_compatibility():
@@ -657,7 +669,7 @@ if FastAPI:
             raise HTTPException(503, "public pilot snapshot is missing the full_hybrid baseline")
         return {
             "snapshot": "v0.3.0 frozen public pilot",
-            "runtime": "v0.3.2",
+            "runtime": "v0.3.3",
             "annotation_status": payload.get("annotation_status"),
             # Benchmark-level only: copying this into every row incorrectly
             # represented one aggregate as three entity measurements.

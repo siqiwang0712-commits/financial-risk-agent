@@ -143,7 +143,7 @@ export default function Page() {
     <>
       <AppHeader
         origin={origin}
-        runtime={pilot?.payload.runtime ?? "v0.3.2"}
+        runtime={pilot?.payload.runtime ?? "v0.3.3"}
       />
       <main>
         {/* Pilot table */}
@@ -260,7 +260,7 @@ export default function Page() {
         {/* Footer */}
         <footer>
           <p>
-            FinRisk-Agent v0.3.2 · Un-calibrated research prototype · Not for production use.
+            FinRisk-Agent v0.3.3 · Un-calibrated research prototype · Not for production use.
           </p>
           <p className="muted">
             {assessment?.disclaimer ||

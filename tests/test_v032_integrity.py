@@ -198,7 +198,7 @@ def test_version_metadata_is_consistent():
 
     pyproject = tomllib.loads((ROOT / "pyproject.toml").read_text(encoding="utf-8"))
     frontend = json.loads((ROOT / "frontend/package.json").read_text(encoding="utf-8"))
-    assert {__version__, app.version, pyproject["project"]["version"], frontend["version"]} == {"0.3.2"}
+    assert {__version__, app.version, pyproject["project"]["version"], frontend["version"]} == {"0.3.3"}
 
 
 def test_ratio_missing_is_unavailable_and_cash_conversion_is_not_double_counted():

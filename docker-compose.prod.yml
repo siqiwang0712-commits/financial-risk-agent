@@ -27,6 +27,12 @@ services:
       FINRISK_ENABLE_ORG_BOOTSTRAP: "0"
       FINRISK_AUTO_MIGRATE: "0"
       DATABASE_URL: postgresql://finrisk:${POSTGRES_PASSWORD:?POSTGRES_PASSWORD is required}@postgres:5432/finrisk
+      # Both services must resolve the DSN through the *same* rule, or a deploy
+      # that mounts it as a file migrates one database while the API serves
+      # another — an empty schema that `/health/ready` still calls ready, because
+      # the probe only runs `SELECT 1`. Without this line the migration job saw
+      # only `DATABASE_URL` and used it, whatever `DATABASE_URL_FILE` said.
+      DATABASE_URL_FILE: ${DATABASE_URL_FILE:-}
     command: ["python", "scripts/validate_postgres_migration.py"]
     depends_on:
       postgres:

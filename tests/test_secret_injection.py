@@ -98,3 +98,74 @@ def test_a_token_loaded_from_a_file_still_gates_the_bootstrap_route(tmp_path, mo
         json={"name": "Mounted value", "actor_id": "a"},
         headers={"X-Bootstrap-Token": SECRET},
     ).status_code == 200
+
+
+def test_the_migration_job_resolves_the_secret_the_same_way(tmp_path, monkeypatch):
+    """The migration job gates every production deploy.
+
+    It used to read `os.environ["DATABASE_URL"]` directly, so an operator who
+    mounted the DSN as a file got an API using the file and a migration using a
+    stale environment value — the deploy gate then failed with a pool timeout
+    that named neither cause.
+    """
+    import importlib.util
+    from contextlib import contextmanager
+    from pathlib import Path
+
+    source = Path(__file__).resolve().parents[1] / "scripts" / "validate_postgres_migration.py"
+    spec = importlib.util.spec_from_file_location("validate_postgres_migration", source)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    assert module.env_or_file is _env_or_file
+
+    mounted = tmp_path / "database_url"
+    mounted.write_text("postgresql://finrisk:from-the-file@db:5432/finrisk\n", encoding="utf-8")
+    monkeypatch.setenv("DATABASE_URL_FILE", str(mounted))
+    monkeypatch.setenv("DATABASE_URL", "postgresql://finrisk:stale-env@db:5432/finrisk")
+
+    captured: dict[str, object] = {}
+
+    class FakeCursor:
+        def __enter__(self):
+            return self
+
+        def __exit__(self, *exc_info):
+            return False
+
+        def execute(self, sql):
+            captured["sql"] = sql
+
+        def fetchone(self):
+            return ("ok",) * 5
+
+    @contextmanager
+    def fake_connection(*args, **kwargs):
+        class FakeConnection:
+            def cursor(self):
+                return FakeCursor()
+
+        yield FakeConnection()
+
+    class FakeRepository:
+        def migrate(self, path):
+            captured.setdefault("migrations", []).append(Path(path).name)
+
+        connection_context = staticmethod(fake_connection)
+
+        def close(self):
+            captured["closed"] = True
+
+    seen: dict[str, str] = {}
+
+    def remember(dsn):
+        seen["dsn"] = dsn
+        return FakeRepository()
+
+    monkeypatch.setattr(module.PostgresEnterpriseRepository, "connect",
+                        classmethod(lambda cls, dsn: remember(dsn)))
+    module.main()
+
+    assert seen["dsn"] == "postgresql://finrisk:from-the-file@db:5432/finrisk", seen
+    expected = len(list((source.parents[1] / "migrations").glob("*.sql"))) * 2
+    assert len(captured["migrations"]) == expected, captured["migrations"]
+    assert captured["closed"] is True

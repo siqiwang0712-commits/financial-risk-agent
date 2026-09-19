@@ -109,8 +109,16 @@ class PostgresRateLimiter:
     rows belonging to the key being checked, so an attacker who varied the key (the
     bootstrap limiter keys on the client, so rotating source addresses does it) left
     one stale row set per key behind. A bounded global retention runs alongside the
-    per-key window: expired rows are swept in bounded batches at most once per
-    window, and a hard row cap trims the oldest survivors.
+    per-key window: expired rows are swept in bounded batches at most once per window.
+
+    The row cap is a *fail-closed* bound, not a trimming one. It used to delete the
+    oldest surviving rows to stay under the cap, which deleted events that were still
+    inside their window — a key that had genuinely exhausted its quota silently got
+    its quota back early, and a flood of unique keys could keep resetting that for
+    free. Now the cap only ever refuses admission: expired rows are removed, and if
+    what remains still fills the table there is nowhere safe to put a new event, so
+    the limiter says so (`RateLimiterUnavailable` → controlled 503) instead of
+    quietly dropping the live evidence that constrains a client.
     """
 
     def __init__(
@@ -156,11 +164,12 @@ class PostgresRateLimiter:
         return True
 
     def _sweep(self, cursor) -> None:
-        """Drop expired rows, then trim to the row cap. Both are bounded.
+        """Drop expired rows only, in bounded batches.
 
-        The cap is applied to the table *at sweep time*; requests admitted after the
-        sweep each add their own row, so the retained count is bounded by the cap plus
-        the number of in-flight admissions rather than by the cap exactly.
+        Nothing here may delete a row that is still inside its window: those rows are
+        the record of what a client has already spent, and removing them restores a
+        quota that was legitimately exhausted. Capacity is handled by refusing
+        admission (`allow`), never by discarding live evidence.
         """
         for _ in range(self.sweep_batches):
             cursor.execute(
@@ -174,22 +183,6 @@ class PostgresRateLimiter:
             )
             if cursor.rowcount < self.sweep_batch_size:
                 break
-        if self.max_rows <= 0:
-            return
-        cursor.execute("SELECT count(*) FROM rate_limit_events")
-        excess = int(cursor.fetchone()[0]) - self.max_rows
-        if excess <= 0:
-            return
-        # Oldest first: the newest rows are the ones that still constrain clients.
-        cursor.execute(
-            """DELETE FROM rate_limit_events
-               WHERE ctid IN (
-                   SELECT ctid FROM rate_limit_events
-                   ORDER BY occurred_at ASC
-                   LIMIT %s
-               )""",
-            (min(excess, self.sweep_batch_size),),
-        )
 
     def allow(self, key: str, now: float | None = None) -> bool:
         # `now` is accepted for contract parity with the fallback; the shared window
@@ -222,6 +215,28 @@ class PostgresRateLimiter:
                              AND occurred_at < now() - make_interval(secs => %s)""",
                         (scope, key, float(self.window_seconds)),
                     )
+                    # Capacity is checked against *live* rows, not against the whole
+                    # table: expired rows that a sweep has not reached yet are not
+                    # occupying anyone's quota, and counting them would refuse
+                    # requests for a table that is merely due for a clean-up. Counting
+                    # live rows also means recovery is automatic — as soon as rows age
+                    # out of the retention window the capacity is theirs again, with
+                    # no sweep having to win the lock first.
+                    if self.max_rows > 0:
+                        cursor.execute(
+                            """SELECT count(*) FROM rate_limit_events
+                               WHERE occurred_at >= now() - make_interval(secs => %s)""",
+                            (float(self.retention_seconds),),
+                        )
+                        if cursor.fetchone()[0] >= self.max_rows:
+                            # Nothing safe can be deleted to make room, so the only
+                            # honest answers are "refuse" or "admit while dropping the
+                            # rows that constrain other clients". Refuse: the API
+                            # turns this into a controlled 503 with `Retry-After`.
+                            raise RateLimiterUnavailable(
+                                "rate limiter store is at capacity; "
+                                "no expired events to reclaim"
+                            )
                     cursor.execute(
                         "SELECT count(*) FROM rate_limit_events WHERE scope = %s AND key = %s",
                         (scope, key),
