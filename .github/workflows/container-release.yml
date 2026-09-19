@@ -233,8 +233,18 @@ jobs:
         run: |
           set -euo pipefail
           mkdir -p .runtime
-          docker pull --quiet "$CANDIDATE_API_IMAGE" | tee .runtime/api-image-id.txt
-          docker pull --quiet "$CANDIDATE_WEB_IMAGE" | tee .runtime/web-image-id.txt
+          # Record the *image id* (config digest), not the pull output: `docker pull --quiet`
+          # echoes the reference on some Docker versions, which would make the identity
+          # assertion below compare an id against a reference and fail spuriously.
+          for svc in api web; do
+            ref_var="CANDIDATE_$(echo "$svc" | tr '[:lower:]' '[:upper:]')_IMAGE"
+            ref="${!ref_var}"
+            docker pull --quiet "$ref" >/dev/null
+            id="$(docker image inspect "$ref" --format '{{.Id}}')"
+            [[ "$id" == sha256:* ]] || { echo "::error::$svc resolved to a non-digest id: $id"; exit 1; }
+            printf '%s\n' "$id" > ".runtime/${svc}-image-id.txt"
+            echo "$svc image ref=$ref id=$id"
+          done
       - name: Start the candidate stack (migrate -> api -> web)
         run: docker compose $COMPOSE_FILES up -d postgres migrate api web
       - name: Assert the running containers are the pulled candidate digests
