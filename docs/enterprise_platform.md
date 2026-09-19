@@ -37,7 +37,7 @@ Four fusion strategies share one interface: weighted-average baseline, max sever
 
 - Every persisted entity, policy, case, snapshot, bundle, credential and audit event carries `organization_id`.
 - RBAC distinguishes Admin, Risk Manager, Analyst, Reviewer and Viewer.
-- API keys are stored as hashes; a process-local limiter is supplied for development.
+- API keys are stored as hashes server-side (and persisted as hashes in `api_credentials` when PostgreSQL is selected); rate limits live in `rate_limit_events` and are shared across replicas, falling back to an in-process window only for local runs.
 - Audit events are append-only through the service interface; human overrides require actor, original value, replacement, reason and time.
 - Local document storage rejects traversal and returns a SHA-256 receipt; object storage can implement the same protocol.
 - PostgreSQL DDL and the pooled psycopg adapter cover the wired runtime records and

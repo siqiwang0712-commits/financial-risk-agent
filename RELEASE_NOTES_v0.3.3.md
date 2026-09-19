@@ -253,6 +253,25 @@ return schema-valid JSON. On one run it did not, and the software **failed close
   (READY 4 / blocked on external dependency 2 / insufficient data 3) — the report
   refuses to claim readiness it cannot evidence, so this is the expected result.
 
+## Known dependency advisory
+
+`PyMuPDF==1.28.2`, pinned in `requirements.lock`, falls inside the affected range of
+**CVE-2026-82035** (HIGH, published 2026-09-14): a path-traversal issue in the font
+branch of PyMuPDF's `extract_objects()` **CLI** entry point, where a document-controlled
+`BaseFont` name is joined onto the output directory without stripping separators.
+
+FinRisk does not invoke that CLI path. PDF ingestion uses the Python API
+(`fitz.open` / `page.get_text`) behind magic-byte validation, page-count and
+extracted-text limits, encrypted-file rejection and a killable subprocess timeout, so
+this release does not expose the reported entry point. No fixed release exists yet — the
+fix is in commit `b2c8f3a`, above 1.28.2 — so the pin should be raised as soon as a fixed
+version is published. Until then the CI audit gates (`pip-audit --strict` in `ci.yml`,
+Trivy `HIGH` in the container release) may flag it.
+
+This is recorded because the `pip-audit` result quoted above was a **point-in-time
+observation on the date of preparation**, not a permanent statement about the dependency
+graph.
+
 ## Limitations carried forward
 
 Production deployment remains unvalidated — every result above comes from a local stack

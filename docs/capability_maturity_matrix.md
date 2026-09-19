@@ -1,6 +1,6 @@
 # Capability Maturity Matrix
 
-Updated: 2026-09-15. `Production` means externally operated and validated; no row currently meets that standard.
+Updated: 2026-09-19. `Production` means externally operated and validated; no row currently meets that standard.
 
 `Wired` asks a different question from the other columns: is this capability reachable
 from a live entry point (`/api/v1/documents/analyze`, `/api/v1/agent/assess`, or the
@@ -17,7 +17,7 @@ caller actually reaches, not that it is broken.
 | Traditional models | Yes | Yes | Yes | Pilot inputs incomplete | Formula tests | No |
 | 68-rule engine | Yes | Yes | Yes | Pilot | Not expert-validated | No |
 | Evidence verification/decision trace | Yes | Yes | Yes | Pilot | Partial | No |
-| Correlated-evidence de-duplication | Yes | Yes | Yes | Fixture only | Monotonicity property test | No |
+| Correlated-evidence de-duplication | Yes | Yes | No | Fixture only | Monotonicity property test | No |
 | Temporal risk state/attribution | Yes | Yes | Yes | 30-company numeric trajectories | Executed; usefulness not validated | No |
 | Temporal evidence graph | Yes | Yes | No | No | No | No |
 | Applicability Router | Yes | Yes | Yes | No sector validation | No | No |
@@ -32,6 +32,11 @@ caller actually reaches, not that it is broken.
 `Wired: No` rows and why:
 
 - **Temporal evidence graph** — schema and traversal exist; no entry point populates it.
+- **Correlated-evidence de-duplication** — `deduplicate_contributions` /
+  `fuse_verified_contributions` are a tested library capability reached only from tests.
+  Both live decision paths (`pipeline.assess` and the Agent) call
+  `hierarchical_escalation` directly, which consumes per-dimension maxima without
+  invoking the de-duplication step.
 - **Champion–Challenger gate**, **Human–AI study** — offline/analysis-only by design.
 
 Temporal risk state and selective automation are wired through explicit enterprise

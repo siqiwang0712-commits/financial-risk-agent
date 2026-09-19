@@ -47,11 +47,15 @@ The empirical path is designed so that a future run is auditable and fails close
 Reproducibility is treated as four linked layers: data hashes and PIT manifests; Git code
 revision; versioned rule/policy/schema configuration; and environment locks.
 `requirements.lock` is a complete constraints set for the Python 3.11/3.12 CI matrix.
-CI additionally fixes pip 25.2 and the setuptools 80.9.0 build backend, while official
+CI additionally fixes pip 26.2.0 and the setuptools 83.0.0 build backend, while official
 GitHub Actions are referenced by immutable commit SHA rather than mutable tags.
-The frontend uses npm's lockfile. Dockerfiles select fixed major/minor runtime families,
-but image digests are not pinned because this machine cannot pull and verify them; image
-byte identity is therefore not claimed.
+The frontend uses npm's lockfile. Both Dockerfiles pin their base image as
+`tag + digest` (`python:3.12-slim@sha256:…`, `node:22-alpine@sha256:…`) and
+`docker-compose.release.yml` pins `postgres:17-alpine` the same way, so a rebuild of one
+commit resolves the same base layers. The released application images go further: the
+container-release workflow builds them once, verifies that exact digest on a real
+Compose stack, and promotes the same digest to the release tags, so the artifact that was
+tested is the artifact that is served.
 
 The backend image consumes `requirements.lock` and installs the PostgreSQL extra, so a
 configured `DATABASE_URL` has its required psycopg runtime. The production compose
@@ -69,10 +73,12 @@ or availability validation.
 `DATABASE_URL` selects `PostgresEnterpriseRepository` and durable credential storage.
 Without it, the in-memory repository is available only for tests and lightweight local
 development. Production mode rejects missing or default database configuration.
-Migrations cover organizations, entities, policies, risk cases, analysis/risk snapshots,
-audit events, model records and credentials. The CI PostgreSQL service validates CRUD,
-credential rotation and restart persistence; this is engineering validation, not a
-production availability claim.
+Migrations cover organizations, entities, policies, risk cases, analysis and risk
+snapshots, decision bundles, audit events, model records, validation records,
+credentials, the temporal evidence graph and the shared rate-limit store. `documents`,
+`jobs` and `alerts` are provisioned as reserved tables and are not exposed as runtime
+endpoints. The CI PostgreSQL service validates CRUD, credential rotation and restart
+persistence; this is engineering validation, not a production availability claim.
 
 ## Trust boundary
 
@@ -89,7 +95,10 @@ separately hashed secret; rotation revokes the former credential.
 - PostgreSQL adapter: implemented and validated locally with PostgreSQL 17 across
   migrations, CRUD, credential rotation and repository restart persistence. The same
   service-backed test is configured in CI; production deployment is not validated.
-- Rate limiting: the interface is shared-store-ready; the included sliding-window
-  implementation is a process-local development fallback.
+- Rate limiting: backed by `rate_limit_events` in PostgreSQL whenever `DATABASE_URL` is
+  set, so the window survives a restart and is shared by every replica (admission
+  serialised per key with a transaction-scoped advisory lock, expired rows swept in
+  bounded batches, and a hard row cap that refuses admission rather than evicting live
+  events). The in-process sliding window remains only the local/development fallback.
 - Predictive superiority, calibrated probability of default, external validation,
   production SLA and regulatory compliance are not established.

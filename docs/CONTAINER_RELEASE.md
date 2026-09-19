@@ -34,11 +34,12 @@ Concretely:
    nothing is rebuilt — and runs the project's full runtime gate chain against it.
 3. `scan` runs Trivy against the same digest.
 4. `publish` attaches SBOM and build-provenance attestations to that digest and then
-   adds `v0.3.x`, `sha-<commit>` and `latest` to it, and deletes the candidate tag.
-   Promotion is a registry-side copy: the manifest bytes for the verified digest are
-   `GET` under their own `Content-Type` and `PUT` under each tag, then the
-   `docker-content-digest` the registry computes for the tag is read back and required
-   to equal the verified digest.
+   adds `v0.3.x`, `sha-<commit>` and `latest` to it. The candidate tag is deliberately
+   left in place — the registry rejects the delete API, so the pipeline cannot remove it
+   (see Known limitations). Promotion is a registry-side copy: the manifest bytes for the
+   verified digest are `GET` under their own `Content-Type` and `PUT` under each tag,
+   then the `docker-content-digest` the registry computes for the tag is read back and
+   required to equal the verified digest.
 
 **Why promotion cannot use `docker tag`/`docker push`.** Buildx publishes an *OCI
 image manifest*; a local `docker pull` + `tag` + `push` re-encodes it as *Docker
@@ -124,8 +125,9 @@ require it, so a broken deployment file can no longer be promoted.
 ## Supply-chain artifacts (job `publish`)
 
 * **SBOM** — `anchore/sbom-action` (Syft) produces SPDX JSON per image.
-* **Attestations** — `actions/attest-sbom` and `actions/attest-build-provenance`
-  (SLSA-style) are pushed to the registry keyed by digest.
+* **Attestations** — `actions/attest-build-provenance` (SLSA-style build provenance) and
+  `actions/attest` (the SPDX SBOM from the step above) are pushed to the registry keyed
+  by digest.
 * **Provenance note** — BuildKit's *built-in* provenance is disabled
   (`provenance: false`). It wraps the image in an OCI index with an attached
   attestation manifest, which changes the manifest digest and would break

@@ -73,7 +73,7 @@ python -m pip install -e ".[dev]"
 uvicorn finrisk.api:app --reload
 ```
 
-API documentation is available at `http://localhost:8000/docs`; health is at `http://localhost:8000/health`.
+API documentation is available at `http://localhost:8000/docs`; liveness is at `http://localhost:8000/health/live` and readiness at `http://localhost:8000/health/ready` (`/health` remains as a compatibility alias for readiness).
 
 ### Frontend
 
@@ -196,6 +196,15 @@ the **Image identity** note below, and
 Secrets are mounted as files, not passed through the environment: `<VAR>_FILE` wins
 over `<VAR>` when set, so the value never appears in `docker inspect` or in a shell
 history. Supported for `DATABASE_URL`, `OPENAI_API_KEY` and `FINRISK_BOOTSTRAP_TOKEN`.
+
+Rate limits are shared through PostgreSQL whenever `DATABASE_URL` is set, so the window
+survives a restart and holds across replicas; the in-process window is only the local
+fallback. Three optional settings bound datastore latency, and each falls back to its
+default on an unusable value: `FINRISK_DATABASE_OPERATION_TIMEOUT_SECONDS` (default
+`5.0`, how long a request waits for a pooled connection before a controlled `503`),
+`FINRISK_DB_RECONNECT_TIMEOUT_SECONDS` (default `5.0`, replacing the pool's 300-second
+reconnection window) and `FINRISK_DB_CONNECT_TIMEOUT_SECONDS` (default `5`, the libpq
+handshake ceiling). None of them is related to the 60-second analysis timeout.
 
 **Image identity.** `v0.3.3` and `latest` are tags; only the digest is the artifact:
 
@@ -420,19 +429,47 @@ Current evidence is diagnostic only: RQ3 is not supported by the pilot, RQ2 has 
 
 ## API surface
 
+Unauthenticated:
+
+| Endpoint | Purpose |
+|---|---|
+| `GET /health/live` | Process liveness; never touches the database |
+| `GET /health/ready` | Readiness: datastore reachability, credential acceptance and the schema sentinels; `GET /health` is a compatibility alias |
+| `GET /api/v1/public-pilot` | Frozen v0.3.0 public-pilot rows served from the checked-in artifact |
+
+Authenticated with `X-API-Key` (rate-limited per tenant/user):
+
 | Endpoint | Purpose |
 |---|---|
 | `POST /api/v1/assess` | Assess normalized current/prior financial data and optional page text |
+| `POST /api/v1/agent/assess` | Run the full Agent workflow over the same inputs |
 | `POST /api/v1/documents/analyze` | Validate and analyze a PDF upload |
 | `POST /api/v1/xbrl/normalize` | Normalize SEC Company Facts with provenance |
-| `/api/v1/enterprise/*` | Tenant-scoped entities, cases, scenarios, policies, governance and audit |
 
-PDF uploads validate magic bytes and configurable limits (`FINRISK_MAX_UPLOAD_MB`, `FINRISK_MAX_PDF_PAGES`, `FINRISK_MAX_EXTRACTED_CHARS`, `FINRISK_ANALYSIS_TIMEOUT_SECONDS`). Opening, page counting and page-text scanning run in Starlette's bounded worker pool rather than the async event loop.
+`/api/v1/enterprise` (tenant-scoped; identity and role come from the server-side hashed credential, never from caller headers):
+
+| Endpoint | Purpose |
+|---|---|
+| `POST /organizations` | First-run provisioning: gated by `FINRISK_ENABLE_ORG_BOOTSTRAP` and, in production, by `X-Bootstrap-Token`; mints the first ADMIN key |
+| `POST /entities` | Register a tenant-owned entity; `GET /overview` returns the portfolio roll-up |
+| `POST /risk-cases`, `GET /risk-cases` | Create and list risk cases derived from a server-held snapshot |
+| `POST /risk-cases/{id}/transition · override · actions · resolution-evidence · reopen` | Lifecycle, reason-required human override, mitigation actions and reopen |
+| `POST /policies`, `POST /policies/{id}/evaluate` | Versioned KRI thresholds and their evaluation |
+| `POST /snapshots`, `POST /snapshots/{id}/replay-diff` | Import a snapshot and diff a replayed output against it |
+| `POST /entities/{id}/risk-snapshots`, `GET /entities/{id}/risk-timeline` | Temporal risk state and delta timeline |
+| `POST /applicability · selective-decision · fusion · scenarios` | Model applicability, selective automation, fusion strategies and stress scenarios |
+| `GET /audit-events` | Append-only audit trail for the tenant |
+
+Every failure answers `{"detail": "…"}` with an `X-Correlation-Id` header; middleware-generated `500` and `503` bodies additionally carry a `correlation_id` field, and `503` responses from a datastore outage carry `Retry-After`. Validation failures answer `422` with a JSON-serialisable error body rather than a `500`. Machine-readable error codes and a response envelope are not yet provided: `422` covers several distinct rejection reasons under one message.
+
+PDF uploads validate magic bytes and configurable limits (`FINRISK_MAX_UPLOAD_BYTES`, `FINRISK_MAX_PDF_PAGES`, `FINRISK_MAX_EXTRACTED_CHARS`, `FINRISK_ANALYSIS_TIMEOUT_SECONDS`); the historical `FINRISK_MAX_UPLOAD_MB` name is still honoured as a fallback when the bytes form is unset. Opening, page counting and page-text scanning run in Starlette's bounded worker pool rather than the async event loop.
 
 Invalid, encrypted, oversized or timed-out inputs fail closed, and temporary files are
-removed. Production-mode analysis runs in a killable subprocess so a timeout stops the
-expensive pipeline. Internet-facing deployment still needs production identity, malware
-scanning, a distributed worker system for scale and operational validation.
+removed. Analysis runs in a killable child process in every environment — not only in
+production — so a timeout terminates the expensive pipeline instead of leaving it running
+after the request has already answered. Internet-facing deployment still needs production
+identity, malware scanning, a distributed worker system for scale and operational
+validation.
 
 The default narrative provider is deterministic and offline. To enable the schema-constrained real provider, copy `.env.example`, set `FINRISK_LLM_PROVIDER=openai`, configure `OPENAI_API_KEY`, and pin model pricing if cost estimates are needed. Tests never require a live API.
 
