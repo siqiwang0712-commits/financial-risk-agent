@@ -1,0 +1,16 @@
+# Trivy exceptions for the FinRisk container release gate.
+#
+# Policy
+#   * CRITICAL  — always blocks the release. No exception is accepted for a CRITICAL
+#                 finding in a *fixable* package.
+#   * HIGH      — blocks the release too, unless a line below justifies it. An
+#                 exception requires the CVE id, the reason, and the date it was
+#                 reviewed; a bare CVE id in this file is a review failure.
+#   * No fixed version — excluded globally by `ignore-unfixed: true`. Suppressing
+#                 "there is no patch yet" adds no signal and would silently rot; the
+#                 finding is re-evaluated on every run as the advisory DB updates, and
+#                 becomes blocking the moment a fixed version exists.
+#
+# Format: one CVE id per line, preceded by a `#` comment with the justification.
+#
+# Empty by default: nothing is currently suppressed.

@@ -1,0 +1,155 @@
+# End-user deployment stack for published GHCR images.
+#
+#   cp .env.example .env        # then edit it — see README "Container (GHCR) quick start"
+#   docker compose -f docker-compose.release.yml pull
+#   docker compose -f docker-compose.release.yml up -d
+#
+# Differences from the development stack (docker-compose.yml + docker-compose.prod.yml):
+#   * No `build:` anywhere. `api`, `web` and `migrate` run the images published by
+#     .github/workflows/container-release.yml. `migrate` re-uses the API image, so
+#     there is no third image and no way for the migration job and the server to drift.
+#   * PostgreSQL stays the official `postgres:17-alpine` image. It is deliberately not
+#     repackaged: pinning the upstream digest gives reproducibility without turning
+#     database patching into a FinRisk release.
+#   * Nothing is exposed on 0.0.0.0. Every published port is bound to 127.0.0.1; put a
+#     reverse proxy (or an explicit tunnel) in front for remote access.
+#
+# Image identity: the tag is a *pointer*, the digest is the artifact. To pin this
+# stack to one audited build, set the tag to a `sha-<commit>` tag or replace it with
+# `...:v0.3.3@sha256:<digest>`; see docs/CONTAINER_RELEASE.md.
+x-upload-bytes: &upload-bytes ${FINRISK_MAX_UPLOAD_BYTES:-52428800}
+x-api-image: &api-image ${FINRISK_API_IMAGE:-ghcr.io/siqiwang0712-commits/financial-risk-agent-api:${FINRISK_VERSION:-v0.3.3}}
+x-web-image: &web-image ${FINRISK_WEB_IMAGE:-ghcr.io/siqiwang0712-commits/financial-risk-agent-web:${FINRISK_VERSION:-v0.3.3}}
+
+services:
+  postgres:
+    # Pinned "tag + digest" for reproducibility. Drop the `@sha256:` suffix to float on
+    # the tag; Dependabot keeps the pair updated.
+    image: postgres:17-alpine@sha256:f02121de6f74d30d8a94cd1d9584125e2178d7e6c377d8130112d4e52d867995
+    environment:
+      POSTGRES_DB: finrisk
+      POSTGRES_USER: finrisk
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD is required}
+    healthcheck:
+      # `pg_isready` only proves the socket accepts connections. The password is applied
+      # when the volume is *first* initialised, so changing it against an existing volume
+      # leaves a server that reports "ready" and then rejects every application
+      # connection. Authenticating over TCP makes that an immediately visible
+      # `unhealthy` container instead.
+      #
+      # The host matters as much as the password: the image ships
+      # `host all all 127.0.0.1/32 trust` *above* the `scram-sha-256` line it appends, so
+      # a loopback probe succeeds with any password, including a wrong one. Connecting to
+      # the container's own address on the compose network is what actually tests
+      # `POSTGRES_PASSWORD`.
+      test:
+        - CMD-SHELL
+        - 'PGPASSWORD="$$POSTGRES_PASSWORD" psql -h "$$(hostname -i)" -U finrisk -d finrisk -tAc "SELECT 1" | grep -q 1'
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    ports: ["127.0.0.1:55432:5432"]
+    volumes: ["finrisk-postgres:/var/lib/postgresql/data"]
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits: {memory: 512M}
+  migrate:
+    # Same image as `api` — one artifact, two roles.
+    image: *api-image
+    environment:
+      FINRISK_ENV: production
+      FINRISK_ENABLE_ORG_BOOTSTRAP: "0"
+      FINRISK_AUTO_MIGRATE: "0"
+      DATABASE_URL: postgresql://finrisk:${POSTGRES_PASSWORD:?POSTGRES_PASSWORD is required}@postgres:5432/finrisk
+      # Both services must resolve the DSN through the *same* rule, or a deploy that
+      # mounts it as a file migrates one database while the API serves another — an
+      # empty schema that `/health/ready` still calls ready, because the probe only
+      # runs `SELECT 1`. Without this line the migration job would see only
+      # `DATABASE_URL` and use it, whatever `DATABASE_URL_FILE` said.
+      DATABASE_URL_FILE: ${DATABASE_URL_FILE:-}
+    command: ["python", "scripts/validate_postgres_migration.py"]
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: "no"
+  api:
+    image: *api-image
+    ports: ["127.0.0.1:8000:8000"]
+    environment:
+      # Fail closed: an unset provider is an error. A deployment must say which LLM it
+      # talks to; `mock` is a deterministic test provider and is not a default.
+      FINRISK_LLM_PROVIDER: ${FINRISK_LLM_PROVIDER:?FINRISK_LLM_PROVIDER is required (e.g. openai; `mock` is for tests only)}
+      FINRISK_LLM_MODEL: ${FINRISK_LLM_MODEL:-gpt-4.1-mini}
+      FINRISK_LLM_ENDPOINT: ${FINRISK_LLM_ENDPOINT:-https://api.openai.com/v1/chat/completions}
+      FINRISK_LLM_MAX_RETRIES: ${FINRISK_LLM_MAX_RETRIES:-2}
+      FINRISK_LLM_MAX_TOKENS: ${FINRISK_LLM_MAX_TOKENS:-1200}
+      FINRISK_ANALYSIS_TIMEOUT_SECONDS: ${FINRISK_ANALYSIS_TIMEOUT_SECONDS:-60}
+      FINRISK_MAX_UPLOAD_BYTES: *upload-bytes
+      FINRISK_INPUT_COST_PER_MILLION: ${FINRISK_INPUT_COST_PER_MILLION:-0}
+      FINRISK_OUTPUT_COST_PER_MILLION: ${FINRISK_OUTPUT_COST_PER_MILLION:-0}
+      # Secrets: prefer the `_FILE` form (mount a file, e.g. a Docker secret or a
+      # Kubernetes projected volume). `<VAR>_FILE` wins over `<VAR>` when set, so the
+      # value never appears in `docker inspect`, in the process environment of the build,
+      # or in a shell's history.
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+      OPENAI_API_KEY_FILE: ${OPENAI_API_KEY_FILE:-}
+      DATABASE_URL: postgresql://finrisk:${POSTGRES_PASSWORD:?POSTGRES_PASSWORD is required}@postgres:5432/finrisk
+      DATABASE_URL_FILE: ${DATABASE_URL_FILE:-}
+      FINRISK_ENV: production
+      # Migrations belong to the one-shot `migrate` service; the API must never mutate
+      # schema on its own in production.
+      FINRISK_AUTO_MIGRATE: "0"
+      FINRISK_ENABLE_ORG_BOOTSTRAP: ${FINRISK_ENABLE_ORG_BOOTSTRAP:-1}
+      FINRISK_BOOTSTRAP_TOKEN: ${FINRISK_BOOTSTRAP_TOKEN:-}
+      FINRISK_BOOTSTRAP_TOKEN_FILE: ${FINRISK_BOOTSTRAP_TOKEN_FILE:-}
+    depends_on:
+      postgres:
+        condition: service_healthy
+      migrate:
+        condition: service_completed_successfully
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits: {memory: 1G}
+    healthcheck:
+      # Readiness, not liveness: the API answers 503 when it cannot reach PostgreSQL, so
+      # gating `web` on `/health/live` would start the web tier against a dependency that
+      # is not ready. Docker's healthcheck only sets the health status — it takes no
+      # corrective action — so this does not make the container restart itself.
+      test:
+        - CMD
+        - python
+        - -c
+        - 'import urllib.request; urllib.request.urlopen("http://127.0.0.1:8000/health/ready", timeout=3)'
+      interval: 10s
+      timeout: 5s
+      retries: 6
+      start_period: 20s
+  web:
+    image: *web-image
+    ports: ["127.0.0.1:3000:3000"]
+    depends_on:
+      api:
+        condition: service_healthy
+    environment:
+      FINRISK_API_UPSTREAM: http://api:8000
+      FINRISK_ANALYSIS_TIMEOUT_SECONDS: ${FINRISK_ANALYSIS_TIMEOUT_SECONDS:-60}
+      FINRISK_MAX_UPLOAD_BYTES: *upload-bytes
+      HOSTNAME: 0.0.0.0
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits: {memory: 512M}
+    healthcheck:
+      test:
+        - CMD
+        - node
+        - -e
+        - 'fetch("http://127.0.0.1:3000/api/v1/public-pilot").then((r) => process.exit(r.ok ? 0 : 1)).catch(() => process.exit(1))'
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+volumes:
+  finrisk-postgres:

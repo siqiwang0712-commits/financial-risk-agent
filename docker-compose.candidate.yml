@@ -1,0 +1,31 @@
+# Release-candidate image override.
+#
+# Purpose: make the release pipeline test *the exact artifact it is about to publish*
+# instead of the source tree that artifact was built from. Every locally-built
+# service is re-pointed at an immutable `repo@sha256:<digest>` reference and its
+# `build:` section is removed, so `up` with this file resolves that digest and starts
+# it. Nothing is rebuilt — testing a rebuilt image would prove nothing about the
+# digest that later receives the release tags.
+#
+#   CANDIDATE_API_IMAGE=ghcr.io/<owner>/financial-risk-agent-api@sha256:<digest> \
+#   CANDIDATE_WEB_IMAGE=ghcr.io/<owner>/financial-risk-agent-web@sha256:<digest> \
+#   docker compose -f docker-compose.yml -f docker-compose.prod.yml \
+#                  -f docker-compose.candidate.yml up -d postgres migrate api web
+#
+# `migrate` deliberately uses the API image: there is no third migration image, so
+# the migration job and the API are bit-for-bit the same artifact and cannot drift.
+#
+# Requirements:
+#   * Compose >= v2.24 (`!reset` is what removes the inherited `build:` key).
+#   * Both variables must be digest references. The workflow asserts this before
+#     starting the stack; a tag reference would let a re-push change what is tested.
+services:
+  api:
+    image: ${CANDIDATE_API_IMAGE:?CANDIDATE_API_IMAGE must be <repo>@sha256:<digest>}
+    build: !reset null
+  web:
+    image: ${CANDIDATE_WEB_IMAGE:?CANDIDATE_WEB_IMAGE must be <repo>@sha256:<digest>}
+    build: !reset null
+  migrate:
+    image: ${CANDIDATE_API_IMAGE:?CANDIDATE_API_IMAGE must be <repo>@sha256:<digest>}
+    build: !reset null

@@ -136,6 +136,45 @@ or recreate the volume with `down -v`, which **destroys the stored data**.
 header is omitted rather than advertising a guarantee the deployment does not provide;
 put TLS in front and it takes effect automatically.
 
+### Container (GHCR) quick start
+
+Pre-built images live on GitHub Container Registry. No toolchain, no build step:
+
+```bash
+cp .env.example .env            # then edit it — see the table below
+docker compose -f docker-compose.release.yml pull
+docker compose -f docker-compose.release.yml up -d
+```
+
+The API answers on `http://127.0.0.1:8000`, the Workbench on `http://127.0.0.1:3000`.
+Every port is bound to loopback on purpose — put a TLS terminator in front for remote
+access. PostgreSQL runs as the official `postgres:17-alpine` image and is not
+repackaged; migrations run as a one-shot service from the API image before the API
+starts.
+
+| variable | required | why |
+|---|---|---|
+| `POSTGRES_PASSWORD` | yes | Applied when the volume is **first** initialised; see the rotation note above. |
+| `FINRISK_LLM_PROVIDER` | yes | Fail-closed: unset is an error. Use `openai` for a real run; `mock` is a deterministic test provider, not a default. |
+| `OPENAI_API_KEY` / `OPENAI_API_KEY_FILE` | when the provider needs one | Prefer the `_FILE` form (see below). |
+| `FINRISK_ENABLE_ORG_BOOTSTRAP` | optional | Defaults to `1` so the first administrator can be provisioned. Set to `0` after provisioning. |
+| `FINRISK_BOOTSTRAP_TOKEN` / `..._FILE` | with bootstrap enabled | Gates the route that mints ADMIN keys. |
+
+Secrets are mounted as files, not passed through the environment: `<VAR>_FILE` wins
+over `<VAR>` when set, so the value never appears in `docker inspect` or in a shell
+history. Supported for `DATABASE_URL`, `OPENAI_API_KEY` and `FINRISK_BOOTSTRAP_TOKEN`.
+
+**Image identity.** `v0.3.3` and `latest` are tags; only the digest is the artifact:
+
+```bash
+docker compose -f docker-compose.release.yml up -d        # convenience
+FINRISK_VERSION=sha-2ff500b37659155ab58a0e7bda70769698be34de ...   # source identity
+FINRISK_API_IMAGE=ghcr.io/siqiwang0712-commits/financial-risk-agent-api:v0.3.3@sha256:<digest> ...
+```
+
+`latest` is convenience only and is never a reproducibility reference. How the images
+are built, verified and attested is documented in [`docs/CONTAINER_RELEASE.md`](docs/CONTAINER_RELEASE.md).
+
 ### Run the synthetic offline demo
 
 ```powershell

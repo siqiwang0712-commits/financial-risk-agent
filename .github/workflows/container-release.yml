@@ -1,0 +1,534 @@
+name: Container Release
+
+# GHCR release pipeline for the two FinRisk images:
+#   ghcr.io/siqiwang0712-commits/financial-risk-agent-api
+#   ghcr.io/siqiwang0712-commits/financial-risk-agent-web
+#
+# Core invariant — build once, then promote the tested digest:
+#   1. build   the api and web candidate images once and record their digests
+#   2. verify  start a real Compose stack from *those digests* and run the project's
+#              full runtime gate chain against it
+#   3. scan    Trivy (CRITICAL blocks, HIGH is strict) + secret scan on the same digest
+#   4. publish attest (SBOM + build provenance) and add the release tags to the SAME
+#              digest. Nothing is rebuilt after verification, so the digest that was
+#              tested is byte-for-byte the digest that `v0.3.x`, `sha-<commit>` and
+#              `latest` end up pointing at.
+#
+# Identity model (see docs/CONTAINER_RELEASE.md):
+#   v0.3.x        release identity   - what humans deploy
+#   sha-<commit>  source identity    - which tree it was built from
+#   sha256:<...>  artifact identity  - the only reproducible reference
+#   latest        convenience only   - never a reproducibility reference
+#
+# Authentication: `${{ secrets.GITHUB_TOKEN }}` only. No PAT, no extra secret is
+# needed or used anywhere in this workflow.
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Release version, e.g. v0.3.3. Must match pyproject.toml [project].version."
+        required: true
+        type: string
+      publish:
+        description: "Promote the verified digest to release tags after the gates pass."
+        required: true
+        default: false
+        type: boolean
+  push:
+    tags: ["v[0-9]+.[0-9]+.[0-9]+"]
+
+# Least privilege by default; each job asks for exactly what it needs and nothing else.
+permissions:
+  contents: read
+
+concurrency:
+  group: container-release-${{ github.ref }}
+  cancel-in-progress: false
+
+env:
+  REGISTRY: ghcr.io
+  API_IMAGE: ghcr.io/siqiwang0712-commits/financial-risk-agent-api
+  WEB_IMAGE: ghcr.io/siqiwang0712-commits/financial-risk-agent-web
+
+jobs:
+  # ---------------------------------------------------------------------------
+  # Resolve and cross-check the release identity before anything is built.
+  # ---------------------------------------------------------------------------
+  prepare:
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.resolve.outputs.version }}
+      version_core: ${{ steps.resolve.outputs.version_core }}
+      commit: ${{ steps.resolve.outputs.commit }}
+      short_sha: ${{ steps.resolve.outputs.short_sha }}
+      created: ${{ steps.resolve.outputs.created }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          fetch-depth: 0
+      - name: Resolve version and refuse to publish a mismatched tag
+        id: resolve
+        env:
+          INPUT_VERSION: ${{ inputs.version }}
+          REF_NAME: ${{ github.ref_name }}
+        run: |
+          set -euo pipefail
+          requested="${INPUT_VERSION:-$REF_NAME}"
+          [[ "$requested" == v* ]] || requested="v$requested"
+          core="${requested#v}"
+          declared="$(python3 -c 'import tomllib,pathlib;print(tomllib.loads(pathlib.Path("pyproject.toml").read_text())["project"]["version"])')"
+          frontend="$(python3 -c 'import json,pathlib;print(json.loads(pathlib.Path("frontend/package.json").read_text())["version"])')"
+          changelog_head="$(grep -m1 -oE '^## \[?[0-9]+\.[0-9]+\.[0-9]+' CHANGELOG.md | grep -oE '[0-9]+\.[0-9]+\.[0-9]+')"
+          echo "requested=$requested core=$core declared=$declared frontend=$frontend changelog=$changelog_head"
+          if [[ "$core" != "$declared" ]]; then
+            echo "::error::tag/input version '$core' != pyproject.toml version '$declared'"
+            exit 1
+          fi
+          if [[ "$core" != "$frontend" ]]; then
+            echo "::error::tag/input version '$core' != frontend/package.json version '$frontend'"
+            exit 1
+          fi
+          if [[ -n "$changelog_head" && "$core" != "$changelog_head" ]]; then
+            echo "::error::tag/input version '$core' != newest CHANGELOG section '$changelog_head'"
+            exit 1
+          fi
+          echo "version=$requested" >> "$GITHUB_OUTPUT"
+          echo "version_core=$core" >> "$GITHUB_OUTPUT"
+          echo "commit=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+          echo "short_sha=$(git rev-parse --short=7 HEAD)" >> "$GITHUB_OUTPUT"
+          echo "created=$(git show -s --format=%cI HEAD)" >> "$GITHUB_OUTPUT"
+
+  # ---------------------------------------------------------------------------
+  # Build once. Both images are pushed under an immutable *candidate* tag only —
+  # never a release tag — and their digests are published as job outputs.
+  # ---------------------------------------------------------------------------
+  build-api:
+    needs: prepare
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    outputs:
+      digest: ${{ steps.build.outputs.digest }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      - uses: docker/setup-buildx-action@f87e5991a6d7451dcb8d9637bfbc97413f497069 # v4.4.1
+      - uses: docker/login-action@dbcb813823bdd20940b903addbd779551569679f # v4.6.0
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - uses: docker/build-push-action@c3c9e263c25d99ce0380d002d59b67737d91b0dc # v7.4.0
+        id: build
+        with:
+          context: .
+          file: backend/Dockerfile
+          # Phase 1 is linux/amd64 only. linux/arm64 is added only when its build AND
+          # its runtime smoke are both verified in this workflow — never on build
+          # success alone.
+          platforms: linux/amd64
+          push: true
+          # Built-in provenance is disabled on purpose: it wraps the image in an
+          # OCI index with an attached attestation manifest, which changes the
+          # manifest digest and would break "promote the exact tested digest".
+          # Provenance is instead attached as a separate, digest-keyed attestation
+          # by actions/attest-build-provenance in the publish job.
+          provenance: false
+          sbom: false
+          tags: |
+            ${{ env.API_IMAGE }}:candidate-${{ needs.prepare.outputs.short_sha }}-${{ github.run_id }}
+          build-args: |
+            OCI_VERSION=${{ needs.prepare.outputs.version_core }}
+            OCI_REVISION=${{ needs.prepare.outputs.commit }}
+            OCI_CREATED=${{ needs.prepare.outputs.created }}
+          cache-from: type=gha,scope=api
+          cache-to: type=gha,mode=max,scope=api
+      - name: Report candidate digest
+        run: |
+          set -euo pipefail
+          digest='${{ steps.build.outputs.digest }}'
+          [[ "$digest" == sha256:* ]] || { echo "::error::build produced no digest: '$digest'"; exit 1; }
+          echo "api candidate digest: $digest"
+          echo "### API candidate" >> "$GITHUB_STEP_SUMMARY"
+          echo "\`${{ env.API_IMAGE }}@$digest\`" >> "$GITHUB_STEP_SUMMARY"
+
+  build-web:
+    needs: prepare
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    outputs:
+      digest: ${{ steps.build.outputs.digest }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      - uses: docker/setup-buildx-action@f87e5991a6d7451dcb8d9637bfbc97413f497069 # v4.4.1
+      - uses: docker/login-action@dbcb813823bdd20940b903addbd779551569679f # v4.6.0
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - uses: docker/build-push-action@c3c9e263c25d99ce0380d002d59b67737d91b0dc # v7.4.0
+        id: build
+        with:
+          context: frontend
+          file: frontend/Dockerfile
+          platforms: linux/amd64
+          push: true
+          provenance: false
+          sbom: false
+          tags: |
+            ${{ env.WEB_IMAGE }}:candidate-${{ needs.prepare.outputs.short_sha }}-${{ github.run_id }}
+          # The only build argument the frontend accepts: a *public* timeout that is
+          # inlined into the client bundle by design. No secret is ever a build arg.
+          build-args: |
+            OCI_VERSION=${{ needs.prepare.outputs.version_core }}
+            OCI_REVISION=${{ needs.prepare.outputs.commit }}
+            OCI_CREATED=${{ needs.prepare.outputs.created }}
+            NEXT_PUBLIC_FINRISK_ANALYSIS_TIMEOUT_SECONDS=60
+          cache-from: type=gha,scope=web
+          cache-to: type=gha,mode=max,scope=web
+      - name: Report candidate digest
+        run: |
+          set -euo pipefail
+          digest='${{ steps.build.outputs.digest }}'
+          [[ "$digest" == sha256:* ]] || { echo "::error::build produced no digest: '$digest'"; exit 1; }
+          echo "web candidate digest: $digest"
+          echo "### Web candidate" >> "$GITHUB_STEP_SUMMARY"
+          echo "\`${{ env.WEB_IMAGE }}@$digest\`" >> "$GITHUB_STEP_SUMMARY"
+
+  # ---------------------------------------------------------------------------
+  # Test the *built image*, not the source tree. The Compose override re-points
+  # api/web/migrate at the candidate digest and deletes their `build:` sections.
+  # ---------------------------------------------------------------------------
+  verify:
+    name: Verify the candidate images on a real stack
+    needs: [prepare, build-api, build-web]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: read
+    env:
+      POSTGRES_PASSWORD: ci-only-strong-password-v033
+      FINRISK_LLM_PROVIDER: mock
+      FINRISK_BOOTSTRAP_TOKEN: ci-only-bootstrap-token-v033
+      CANDIDATE_API_IMAGE: ghcr.io/siqiwang0712-commits/financial-risk-agent-api@${{ needs.build-api.outputs.digest }}
+      CANDIDATE_WEB_IMAGE: ghcr.io/siqiwang0712-commits/financial-risk-agent-web@${{ needs.build-web.outputs.digest }}
+      COMPOSE_FILES: -f docker-compose.yml -f docker-compose.prod.yml -f docker-compose.candidate.yml
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      - name: Assert the candidates are immutable digest references
+        run: |
+          set -euo pipefail
+          for ref in "$CANDIDATE_API_IMAGE" "$CANDIDATE_WEB_IMAGE"; do
+            [[ "$ref" == *"@sha256:"* ]] || { echo "::error::'$ref' is not a digest reference"; exit 1; }
+          done
+          echo "compose: $(docker compose version)"
+      - uses: docker/login-action@dbcb813823bdd20940b903addbd779551569679f # v4.6.0
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Pull the candidate images and record their image ids
+        run: |
+          set -euo pipefail
+          mkdir -p .runtime
+          docker pull --quiet "$CANDIDATE_API_IMAGE" | tee .runtime/api-image-id.txt
+          docker pull --quiet "$CANDIDATE_WEB_IMAGE" | tee .runtime/web-image-id.txt
+      - name: Start the candidate stack (migrate -> api -> web)
+        run: docker compose $COMPOSE_FILES up -d postgres migrate api web
+      - name: Assert the running containers are the pulled candidate digests
+        run: |
+          set -euo pipefail
+          for svc in api web; do
+            got="$(docker inspect --format '{{.Image}}' "$(docker compose $COMPOSE_FILES ps -q "$svc")")"
+            want="$(cat ".runtime/${svc}-image-id.txt")"
+            echo "$svc container image=$got candidate=$want"
+            [[ "$got" == "$want" ]] || { echo "::error::$svc is not running the candidate image"; exit 1; }
+          done
+          # migrate must be the *same* artifact as api, not a third image.
+          mig="$(docker inspect --format '{{.Image}}' "$(docker compose $COMPOSE_FILES ps -q migrate -a)")"
+          echo "migrate container image=$mig"
+          [[ "$mig" == "$(cat .runtime/api-image-id.txt)" ]] || { echo "::error::migrate does not reuse the api image"; exit 1; }
+      - name: Wait for the API and web proxies to answer
+        run: |
+          set -euo pipefail
+          for i in $(seq 1 60); do
+            if curl -fsS http://127.0.0.1:8000/health/ready >/dev/null 2>&1 \
+               && curl -fsS http://127.0.0.1:3000/api/v1/public-pilot >/dev/null 2>&1; then
+              echo "stack answered after ${i} polls"; exit 0
+            fi
+            sleep 5
+          done
+          echo "::error::stack never became ready"; exit 1
+      - name: Verify deployed HTTP contracts (auth, limits, correlation id)
+        run: python3 scripts/verify_docker_health.py
+      - name: Assert the API selected PostgreSQL
+        run: python3 scripts/verify_postgres_state.py --phase before --state-file .runtime/pg-state.json
+      - name: Restart the API and assert persistence
+        run: |
+          set -euo pipefail
+          docker compose $COMPOSE_FILES restart api
+          for i in $(seq 1 60); do
+            curl -fsS http://127.0.0.1:8000/health/ready >/dev/null 2>&1 && break
+            sleep 5
+          done
+          python3 scripts/verify_postgres_state.py --phase after --state-file .runtime/pg-state.json
+      - name: Verify production timeout and explicit retry contract
+        run: |
+          set -euo pipefail
+          FINRISK_ANALYSIS_TIMEOUT_SECONDS=0.001 docker compose $COMPOSE_FILES up -d --force-recreate api web
+          python3 scripts/verify_docker_timeout.py
+      - name: Show container logs on failure
+        if: failure()
+        run: docker compose $COMPOSE_FILES logs postgres migrate api web
+      - name: Stop the verification stack
+        if: always()
+        run: docker compose $COMPOSE_FILES down -v
+
+  # ---------------------------------------------------------------------------
+  # Vulnerability + secret scanning of the same digest that was verified.
+  # ---------------------------------------------------------------------------
+  scan:
+    name: Trivy vulnerability and secret scan
+    needs: [build-api, build-web]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: read
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      - uses: docker/login-action@dbcb813823bdd20940b903addbd779551569679f # v4.6.0
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Scan the API image (CRITICAL + HIGH, unfixed excluded)
+        uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0
+        with:
+          image-ref: ghcr.io/siqiwang0712-commits/financial-risk-agent-api@${{ needs.build-api.outputs.digest }}
+          format: table
+          severity: CRITICAL,HIGH
+          ignore-unfixed: true
+          vuln-type: os,library
+          scanners: vuln
+          exit-code: "1"
+          trivyignores: .trivyignore
+      - name: Scan the Web image (CRITICAL + HIGH, unfixed excluded)
+        uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0
+        with:
+          image-ref: ghcr.io/siqiwang0712-commits/financial-risk-agent-web@${{ needs.build-web.outputs.digest }}
+          format: table
+          severity: CRITICAL,HIGH
+          ignore-unfixed: true
+          vuln-type: os,library
+          scanners: vuln
+          exit-code: "1"
+          trivyignores: .trivyignore
+      - name: Scan both images for embedded secrets
+        uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0
+        with:
+          image-ref: ghcr.io/siqiwang0712-commits/financial-risk-agent-api@${{ needs.build-api.outputs.digest }}
+          format: table
+          scanners: secret
+          severity: CRITICAL,HIGH,MEDIUM
+          exit-code: "1"
+      - name: Scan the web image for embedded secrets
+        uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0
+        with:
+          image-ref: ghcr.io/siqiwang0712-commits/financial-risk-agent-web@${{ needs.build-web.outputs.digest }}
+          format: table
+          scanners: secret
+          severity: CRITICAL,HIGH,MEDIUM
+          exit-code: "1"
+      - name: Assert the images carry no secret-shaped build argument or env default
+        run: |
+          set -euo pipefail
+          for ref in \
+            "ghcr.io/siqiwang0712-commits/financial-risk-agent-api@${{ needs.build-api.outputs.digest }}" \
+            "ghcr.io/siqiwang0712-commits/financial-risk-agent-web@${{ needs.build-web.outputs.digest }}"; do
+            docker pull --quiet "$ref" >/dev/null
+            echo "--- $ref"
+            docker image inspect "$ref" --format '{{json .Config.Env}}' | tee /tmp/env.json
+            if grep -Eqi 'OPENAI_API_KEY=.+|DATABASE_URL=[a-z]+://|FINRISK_BOOTSTRAP_TOKEN=.+' /tmp/env.json; then
+              echo "::error::image ships a non-empty secret in its environment: $ref"
+              exit 1
+            fi
+          done
+      - name: Machine-readable scan results
+        if: always()
+        run: |
+          mkdir -p .runtime
+          for pair in "api:${{ needs.build-api.outputs.digest }}" "web:${{ needs.build-web.outputs.digest }}"; do
+            name="${pair%%:*}"; digest="${pair#*:}"
+            ref="ghcr.io/siqiwang0712-commits/financial-risk-agent-${name}@${digest}"
+            docker run --rm -v /var/run/docker.sock:/var/run/docker.sock \
+              -v "$PWD/.runtime:/out" aquasecurity/trivy:0.68.2@sha256:05d0126976bdedcd0782a0336f77832dbea1c81b9cc5e4b3a5ea5d2ec863aca7 image \
+              --format json --severity CRITICAL,HIGH --ignore-unfixed \
+              --output "/out/trivy-${name}.json" "$ref" || true
+          done
+      - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+        if: always()
+        with:
+          name: trivy-results
+          path: .runtime/trivy-*.json
+          if-no-files-found: ignore
+
+  # ---------------------------------------------------------------------------
+  # Attest and promote. This job never builds: it resolves the digest that the
+  # verify and scan jobs already approved and adds release tags to it.
+  # ---------------------------------------------------------------------------
+  publish:
+    needs: [prepare, build-api, build-web, verify, scan]
+    if: >-
+      needs.verify.result == 'success' && needs.scan.result == 'success' &&
+      (inputs.publish == true || startsWith(github.ref, 'refs/tags/v'))
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+      attestations: write
+      id-token: write
+    env:
+      API_DIGEST: ${{ needs.build-api.outputs.digest }}
+      WEB_DIGEST: ${{ needs.build-web.outputs.digest }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      - uses: docker/login-action@dbcb813823bdd20940b903addbd779551569679f # v4.6.0
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Generate SBOMs for the verified digests
+        uses: anchore/sbom-action@3ad7283483fc7af8ff2b4ea19663c2d5ca935e26 # v0.24.2
+        with:
+          image: ghcr.io/siqiwang0712-commits/financial-risk-agent-api@${{ needs.build-api.outputs.digest }}
+          format: spdx-json
+          output-file: .runtime/api.spdx.json
+          upload-artifact: false
+      - name: Generate web SBOM
+        uses: anchore/sbom-action@3ad7283483fc7af8ff2b4ea19663c2d5ca935e26 # v0.24.2
+        with:
+          image: ghcr.io/siqiwang0712-commits/financial-risk-agent-web@${{ needs.build-web.outputs.digest }}
+          format: spdx-json
+          output-file: .runtime/web.spdx.json
+          upload-artifact: false
+      - name: Attest build provenance (api)
+        uses: actions/attest-build-provenance@4d101475d8b20a2381f78447822ac1eab6504dd8 # v4.2.2
+        with:
+          subject-name: ghcr.io/siqiwang0712-commits/financial-risk-agent-api
+          subject-digest: ${{ needs.build-api.outputs.digest }}
+          push-to-registry: true
+      - name: Attest build provenance (web)
+        uses: actions/attest-build-provenance@4d101475d8b20a2381f78447822ac1eab6504dd8 # v4.2.2
+        with:
+          subject-name: ghcr.io/siqiwang0712-commits/financial-risk-agent-web
+          subject-digest: ${{ needs.build-web.outputs.digest }}
+          push-to-registry: true
+      - name: Attest SBOM (api)
+        uses: actions/attest-sbom@c604332985a26aa8cf1bdc465b92731239ec6b9e # v4.1.0
+        with:
+          subject-name: ghcr.io/siqiwang0712-commits/financial-risk-agent-api
+          subject-digest: ${{ needs.build-api.outputs.digest }}
+          sbom-path: .runtime/api.spdx.json
+          push-to-registry: true
+      - name: Attest SBOM (web)
+        uses: actions/attest-sbom@c604332985a26aa8cf1bdc465b92731239ec6b9e # v4.1.0
+        with:
+          subject-name: ghcr.io/siqiwang0712-commits/financial-risk-agent-web
+          subject-digest: ${{ needs.build-web.outputs.digest }}
+          sbom-path: .runtime/web.spdx.json
+          push-to-registry: true
+      - name: Promote the tested digest to the release tags
+        run: |
+          set -euo pipefail
+          version='${{ needs.prepare.outputs.version }}'
+          commit='${{ needs.prepare.outputs.commit }}'
+          promote() {
+            repo="$1"; digest="$2"
+            # Pull by digest, then tag and push the identical manifest. No rebuild,
+            # no `latest`-first ordering: the release tags are created from the
+            # artifact that verify/scan approved.
+            docker pull --quiet "${repo}@${digest}" >/dev/null
+            tested_id="$(docker image inspect "${repo}@${digest}" --format '{{.Id}}')"
+            for tag in "$version" "sha-${commit}" latest; do
+              docker tag "${repo}@${digest}" "${repo}:${tag}"
+              # `docker push` reports the manifest digest it actually published. That is
+              # the authoritative check: if re-tagging had produced a different manifest
+              # (an index, a rebuilt layer, ...) the printed digest would differ from the
+              # one that was verified.
+              push_out="$(docker push "${repo}:${tag}" 2>&1 | tee /dev/stderr)"
+              pushed="$(printf '%s\n' "$push_out" | grep -o 'digest: sha256:[0-9a-f]\{64\}' | tail -1 | cut -d' ' -f2)"
+              if [[ "$pushed" != "$digest" ]]; then
+                echo "::error::${repo}:${tag} published manifest $pushed, tested digest is $digest"
+                exit 1
+              fi
+              got_id="$(docker image inspect "${repo}:${tag}" --format '{{.Id}}')"
+              if [[ "$got_id" != "$tested_id" ]]; then
+                echo "::error::${repo}:${tag} resolves to $got_id, tested image is $tested_id"
+                exit 1
+              fi
+              echo "${repo}:${tag} -> ${digest} (manifest ${pushed}, image id ${got_id})"
+            done
+          }
+          promote ghcr.io/siqiwang0712-commits/financial-risk-agent-api "$API_DIGEST"
+          promote ghcr.io/siqiwang0712-commits/financial-risk-agent-web "$WEB_DIGEST"
+      - name: Re-verify the published tags resolve to the tested digest
+        run: |
+          set -euo pipefail
+          version='${{ needs.prepare.outputs.version }}'
+          commit='${{ needs.prepare.outputs.commit }}'
+          check() {
+            repo="$1"; digest="$2"
+            for tag in "$version" "sha-${commit}" latest; do
+              docker pull --quiet "${repo}:${tag}" >/dev/null
+              got="$(docker image inspect "${repo}:${tag}" --format '{{.Id}}')"
+              want="$(docker image inspect "${repo}@${digest}" --format '{{.Id}}')"
+              [[ "$got" == "$want" ]] || { echo "::error::${repo}:${tag} != tested digest"; exit 1; }
+              echo "OK ${repo}:${tag} == ${digest}"
+            done
+          }
+          check ghcr.io/siqiwang0712-commits/financial-risk-agent-api "$API_DIGEST"
+          check ghcr.io/siqiwang0712-commits/financial-risk-agent-web "$WEB_DIGEST"
+      - name: Release summary
+        run: |
+          {
+            echo "## Container release ${{ needs.prepare.outputs.version }}"
+            echo ""
+            echo "| image | digest | tags | platform |"
+            echo "|---|---|---|---|"
+            echo "| financial-risk-agent-api | \`${API_DIGEST}\` | \`${{ needs.prepare.outputs.version }}\`, \`sha-${{ needs.prepare.outputs.commit }}\`, \`latest\` | linux/amd64 |"
+            echo "| financial-risk-agent-web | \`${WEB_DIGEST}\` | \`${{ needs.prepare.outputs.version }}\`, \`sha-${{ needs.prepare.outputs.commit }}\`, \`latest\` | linux/amd64 |"
+            echo ""
+            echo "All release tags point at the digest that passed the full Compose"
+            echo "verification chain and the Trivy gate. \`latest\` is convenience only —"
+            echo "pin \`sha-<commit>\` or the digest for reproducibility."
+          } >> "$GITHUB_STEP_SUMMARY"
+      - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+        if: always()
+        with:
+          name: sbom
+          path: .runtime/*.spdx.json
+          if-no-files-found: ignore
+
+  # ---------------------------------------------------------------------------
+  # When the run was a dry run, say so loudly instead of silently doing nothing.
+  # ---------------------------------------------------------------------------
+  dry-run:
+    needs: [prepare, build-api, build-web, verify, scan]
+    if: >-
+      needs.verify.result == 'success' && needs.scan.result == 'success' &&
+      !(inputs.publish == true || startsWith(github.ref, 'refs/tags/v'))
+    runs-on: ubuntu-latest
+    steps:
+      - name: Report the dry-run outcome
+        run: |
+          {
+            echo "## Dry run — nothing published"
+            echo ""
+            echo "The candidate images passed every gate but \`publish\` was false, so no"
+            echo "release tag was created."
+            echo ""
+            echo "- api: \`ghcr.io/siqiwang0712-commits/financial-risk-agent-api@${{ needs.build-api.outputs.digest }}\`"
+            echo "- web: \`ghcr.io/siqiwang0712-commits/financial-risk-agent-web@${{ needs.build-web.outputs.digest }}\`"
+          } >> "$GITHUB_STEP_SUMMARY"
