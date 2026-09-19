@@ -173,18 +173,23 @@ produce a mislabelled image.
 ## Verified release record
 
 The tags below were produced by `Container Release` run
-[35446367210](https://github.com/siqiwang0712-commits/financial-risk-agent/actions/runs/35446367210)
-from commit `f09825f869e9467a64ac7c36129fff281cebd70e`, all pointing at one digest per
+[35447634200](https://github.com/siqiwang0712-commits/financial-risk-agent/actions/runs/35447634200)
+from commit `c63fd5e36140286e788770c0f1680d129fa8ba7e`, all pointing at one digest per
 image:
 
 | image | digest | size | user | platform |
 |---|---|---|---|---|
-| `financial-risk-agent-api` | `sha256:49f0e1afad1cb29bc49f6d662f6c789921577d63c8a3ace4c2abd8ef0a756631` | 100 MiB | `finrisk` (100) | linux/amd64 |
-| `financial-risk-agent-web` | `sha256:03fd9d0e589b85922ad5e6f05ee74054515b2a17a9cf98c4665ed4032b07455f` | 82 MiB | `node` (1000) | linux/amd64 |
+| `financial-risk-agent-api` | `sha256:8b97ee51c48b3294b4024773e58c83d58a6b9b50e761bdfea93cc5cf01c2835f` | 100 MiB | `finrisk` (100) | linux/amd64 |
+| `financial-risk-agent-web` | `sha256:03675f2b854b6df359e2efea7d6c43f9b9bea48977cc5cd52dcee06f5ca5af5b` | 82 MiB | `node` (1000) | linux/amd64 |
 
-`v0.3.3`, `sha-f09825f…` and `latest` on each image resolve to that image's digest,
+`v0.3.3`, `sha-c63fd5e…` and `latest` on each image resolve to that image's digest,
 asserted by the run itself after publishing. The `api` digest also serves the `migrate`
 service, so the migration job and the server are the same artifact.
+
+> **These digests are per-commit.** The image content embeds
+> `org.opencontainers.image.revision`, so every commit that touches the build produces
+> a new digest — including a commit that only edits this document. Read the digest from
+> the run that published the tag you intend to deploy rather than from this page.
 
 ## Known limitations
 
