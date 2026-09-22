@@ -5,6 +5,7 @@ from pathlib import Path
 
 import pytest
 from finrisk.api import AssessmentRequest, _run_document_isolated
+from finrisk.contradictions import _normalized_text_hash
 from finrisk.document_worker import PdfBoundaryError, inspect_pdf, run_inspect_worker
 from finrisk.domain import RuleSignal
 from finrisk.enterprise.api import FusionRequest, RiskSnapshotRequest
@@ -33,6 +34,14 @@ from finrisk.models import altman_variant
 from finrisk.normalization import normalize_line_item, parse_number
 from finrisk.numeric_benchmark import temporal_trajectories
 from finrisk.parser import DocumentParser
+
+
+def test_policy_hash_is_stable_across_platform_line_endings(tmp_path):
+    lf = tmp_path / "lf.json"
+    crlf = tmp_path / "crlf.json"
+    lf.write_bytes(b'{"policy": true}\n')
+    crlf.write_bytes(b'{"policy": true}\r\n')
+    assert _normalized_text_hash(lf) == _normalized_text_hash(crlf)
 from finrisk.pipeline import FinRiskPipeline
 from finrisk.rules import RuleEngine, unproducible_rule_conditions
 from finrisk.scoring import effective_signals

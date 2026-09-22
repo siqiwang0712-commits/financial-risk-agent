@@ -12,16 +12,28 @@ def sha256_bytes(path: Path) -> str:
 
 
 def git_state(root: Path) -> dict[str, Any]:
-    commit = subprocess.check_output(
-        ["git", "rev-parse", "HEAD"], cwd=root, text=True
-    ).strip()
-    dirty = bool(
-        subprocess.check_output(
-            ["git", "status", "--porcelain", "--untracked-files=no"],
+    try:
+        commit = subprocess.check_output(
+            ["git", "rev-parse", "HEAD"],
             cwd=root,
             text=True,
+            stderr=subprocess.DEVNULL,
         ).strip()
-    )
+        dirty = bool(
+            subprocess.check_output(
+                ["git", "status", "--porcelain", "--untracked-files=no"],
+                cwd=root,
+                text=True,
+                stderr=subprocess.DEVNULL,
+            ).strip()
+        )
+    except (OSError, subprocess.CalledProcessError) as exc:
+        # Prospective experiments require source-control provenance and must fail
+        # closed when it is unavailable. Frozen replay is different: artifact
+        # hashes remain verifiable from a GitHub/release archive that has no
+        # ``.git`` directory, and its caller records that the replay commit could
+        # not be established.
+        raise RuntimeError("Git provenance is unavailable for this source tree") from exc
     return {"commit": commit, "dirty": dirty, "state": "dirty" if dirty else "clean"}
 
 
@@ -45,7 +57,10 @@ def verify_frozen_experiment(directory: Path, root: Path) -> dict[str, Any]:
     experiment_manifest = json.loads(
         (directory / "experiment_manifest.json").read_text(encoding="utf-8")
     )
-    current = git_state(root)
+    try:
+        current = git_state(root)
+    except RuntimeError:
+        current = {"commit": "UNAVAILABLE", "dirty": None, "state": "unavailable"}
     verified = actual_manifest_hash == expected_manifest_hash and all(
         item["verified"] for item in artifacts
     )

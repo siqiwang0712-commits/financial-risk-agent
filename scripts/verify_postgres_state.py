@@ -28,9 +28,33 @@ import time
 import urllib.error
 import urllib.request
 from pathlib import Path
+from urllib.parse import urlparse
 
-API = os.getenv("FINRISK_VERIFY_API", "http://127.0.0.1:8000")
-WEB = os.getenv("FINRISK_VERIFY_WEB", "http://127.0.0.1:3000")
+
+def verification_base(variable: str, default: str) -> str:
+    value = os.getenv(variable, default).rstrip("/")
+    parsed = urlparse(value)
+    try:
+        port = parsed.port
+    except ValueError as exc:
+        raise ValueError(f"{variable} has an invalid port") from exc
+    if (
+        parsed.scheme not in {"http", "https"}
+        or parsed.hostname not in {"localhost", "127.0.0.1", "::1"}
+        or parsed.username is not None
+        or parsed.password is not None
+        or parsed.path not in {"", "/"}
+        or parsed.params
+        or parsed.query
+        or parsed.fragment
+        or port is None
+    ):
+        raise ValueError(f"{variable} must be an explicit loopback HTTP(S) origin")
+    return value
+
+
+API = verification_base("FINRISK_VERIFY_API", "http://127.0.0.1:8000")
+WEB = verification_base("FINRISK_VERIFY_WEB", "http://127.0.0.1:3000")
 
 
 def request_json(url: str, payload: dict | None = None, headers: dict[str, str] | None = None):
@@ -61,12 +85,14 @@ def wait_for_ready(timeout: float = 120) -> dict:
 
 def assert_postgres(readiness: dict) -> None:
     datastore = readiness.get("datastore")
-    if datastore != "postgres":
+    schema = readiness.get("schema")
+    if datastore != "postgres" or schema != "complete":
         raise SystemExit(
-            f"the API selected the {datastore!r} datastore; PostgreSQL was required. "
-            "Check DATABASE_URL and the migrate service."
+            f"the API reported datastore={datastore!r}, schema={schema!r}; "
+            "PostgreSQL with a complete schema was required. Check DATABASE_URL "
+            "and the migrate service."
         )
-    print("datastore: postgres (confirmed via /health/ready)")
+    print("datastore: postgres, schema: complete (confirmed via /health/ready)")
 
 
 def phase_before(state_file: Path) -> None:
@@ -96,6 +122,7 @@ def phase_before(state_file: Path) -> None:
                     "organization_id": entity["organization_id"]}),
         encoding="utf-8",
     )
+    state_file.chmod(0o600)
     print(f"provisioned entity {entity['id']} (proxy case_count={proxied['case_count']})")
 
 

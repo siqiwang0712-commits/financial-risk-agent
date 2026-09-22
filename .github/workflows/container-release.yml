@@ -224,6 +224,7 @@ jobs:
       POSTGRES_PASSWORD: ci-only-strong-password-v033
       FINRISK_LLM_PROVIDER: mock
       FINRISK_BOOTSTRAP_TOKEN: ci-only-bootstrap-token-v033
+      FINRISK_EXPECTED_RUNTIME: ${{ needs.prepare.outputs.version }}
       CANDIDATE_API_IMAGE: ghcr.io/siqiwang0712-commits/financial-risk-agent-api@${{ needs.build-api.outputs.digest }}
       CANDIDATE_WEB_IMAGE: ghcr.io/siqiwang0712-commits/financial-risk-agent-web@${{ needs.build-web.outputs.digest }}
       COMPOSE_FILES: -f docker-compose.yml -f docker-compose.prod.yml -f docker-compose.candidate.yml
@@ -333,6 +334,7 @@ jobs:
       # bootstrap and make the health script's first call return 403.
       FINRISK_ENABLE_ORG_BOOTSTRAP: "1"
       FINRISK_BOOTSTRAP_TOKEN: ci-only-bootstrap-token-v033
+      FINRISK_EXPECTED_RUNTIME: ${{ needs.prepare.outputs.version }}
       FINRISK_API_IMAGE: ghcr.io/siqiwang0712-commits/financial-risk-agent-api@${{ needs.build-api.outputs.digest }}
       FINRISK_WEB_IMAGE: ghcr.io/siqiwang0712-commits/financial-risk-agent-web@${{ needs.build-web.outputs.digest }}
     steps:
@@ -392,6 +394,13 @@ jobs:
           echo "::error::release stack never became ready"; exit 1
       - name: Verify deployed HTTP contracts on the release stack
         run: python3 scripts/verify_docker_health.py
+      - name: Assert release Compose PostgreSQL persistence
+        run: python3 scripts/verify_postgres_state.py --phase before --state-file .runtime/release-pg-state.json
+      - name: Restart the release API and assert persistence
+        run: |
+          set -euo pipefail
+          docker compose -f docker-compose.release.yml restart api
+          python3 scripts/verify_postgres_state.py --phase after --state-file .runtime/release-pg-state.json
       - name: Show container logs on failure
         if: failure()
         run: docker compose -f docker-compose.release.yml logs postgres migrate api web

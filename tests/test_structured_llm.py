@@ -22,6 +22,28 @@ def test_structured_provider_validates_and_logs_without_network(tmp_path):
     assert (tmp_path/"calls.jsonl").exists()
 
 
+@pytest.mark.parametrize(
+    "endpoint",
+    [
+        "file:///tmp/provider",
+        "ftp://provider.example/api",
+        "http://provider.example/api",
+        "https://user:secret@provider.example/api",
+    ],
+)
+def test_structured_provider_rejects_unsafe_endpoints(endpoint):
+    with pytest.raises(ValueError, match="HTTPS"):
+        StructuredLLMProvider(endpoint=endpoint, transport=lambda _: {})
+
+
+def test_structured_provider_allows_loopback_http_for_local_compatible_servers():
+    provider = StructuredLLMProvider(
+        endpoint="http://127.0.0.1:11434/v1/chat/completions",
+        transport=lambda _: {},
+    )
+    assert provider.endpoint.startswith("http://127.0.0.1:")
+
+
 def test_structured_provider_does_not_retry_schema_failure():
     calls=[]
     def transport(_):

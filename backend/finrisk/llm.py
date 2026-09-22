@@ -11,6 +11,7 @@ from contextvars import ContextVar
 from dataclasses import asdict, dataclass
 from pathlib import Path
 from typing import Any, ClassVar, Protocol
+from urllib.parse import urlparse
 
 from pydantic import BaseModel, ConfigDict, Field, ValidationError
 
@@ -146,6 +147,20 @@ class StructuredLLMProvider:
     }
 
     def __init__(self, api_key: str | None = None, model: str = "gpt-4.1-mini", endpoint: str = "https://api.openai.com/v1/chat/completions", max_retries: int = 2, max_tokens: int = 1200, log_path: Path | None = None, transport: Callable[[dict[str, Any]], dict[str, Any]] | None = None, input_cost_per_million: float = 0.0, output_cost_per_million: float = 0.0, max_input_chars: int = 120_000, max_page_chars: int = 8_000):
+        parsed_endpoint = urlparse(endpoint)
+        if (
+            parsed_endpoint.scheme not in {"http", "https"}
+            or not parsed_endpoint.hostname
+            or parsed_endpoint.username is not None
+            or parsed_endpoint.password is not None
+            or (
+                parsed_endpoint.scheme == "http"
+                and parsed_endpoint.hostname not in {"localhost", "127.0.0.1", "::1"}
+            )
+        ):
+            raise ValueError(
+                "LLM endpoint must use HTTPS (or loopback HTTP) without embedded credentials"
+            )
         self.api_key = api_key or os.getenv("OPENAI_API_KEY")
         self.model = model
         self.endpoint = endpoint

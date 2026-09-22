@@ -1,4 +1,5 @@
 import json
+import subprocess
 import tomllib
 from pathlib import Path
 
@@ -31,7 +32,10 @@ from finrisk.enterprise.security import (
 )
 from finrisk.enterprise.temporal import RiskSnapshot
 from finrisk.numeric_benchmark import ratio_risk_score
-from finrisk.reproducibility import verify_frozen_experiment
+from finrisk.reproducibility import (
+    prospective_experiment_metadata,
+    verify_frozen_experiment,
+)
 from finrisk.research_schema import migrate_review_record_v1_to_v2
 from finrisk.sec_bulk import build_reported_fcf_periods_v2
 
@@ -63,6 +67,27 @@ def test_frozen_replay_is_read_only_and_hash_verified():
     assert report["artifact_integrity"] == "VERIFIED"
     assert report["writes_performed"] is False
     assert before == after
+
+
+def test_frozen_replay_from_source_archive_reports_unavailable_git_state(monkeypatch):
+    def unavailable(*_args, **_kwargs):
+        raise subprocess.CalledProcessError(128, "git")
+
+    monkeypatch.setattr(subprocess, "check_output", unavailable)
+    directory = ROOT / "research/results/v0.3.1/benchmark_forensics/v0.3.1-E3"
+    report = verify_frozen_experiment(directory, ROOT)
+    assert report["artifact_integrity"] == "VERIFIED"
+    assert report["current_replay_commit"] == "UNAVAILABLE"
+    assert report["current_working_tree_state"] == "unavailable"
+
+
+def test_prospective_experiment_still_requires_git_provenance(monkeypatch):
+    def unavailable(*_args, **_kwargs):
+        raise FileNotFoundError("git")
+
+    monkeypatch.setattr(subprocess, "check_output", unavailable)
+    with pytest.raises(RuntimeError, match="Git provenance is unavailable"):
+        prospective_experiment_metadata(ROOT)
 
 
 def test_execution_status_matches_canonical_independence_audit():
@@ -409,7 +434,9 @@ def test_compose_llm_and_frontend_proxy_are_runtime_configurable():
     assert "FINRISK_LLM_PROVIDER: ${FINRISK_LLM_PROVIDER:-mock}" in compose
     assert "FINRISK_LLM_MAX_TOKENS" in compose and "OPENAI_API_KEY" in compose
     assert "FINRISK_LLM_PROVIDER: mock" in workflow
-    assert "127.0.0.1:3000/api/v1/public-pilot" in (ROOT / "scripts/verify_docker_health.py").read_text(encoding="utf-8")
+    smoke = (ROOT / "scripts/verify_docker_health.py").read_text(encoding="utf-8")
+    assert "FINRISK_VERIFY_API" in smoke and "FINRISK_VERIFY_WEB" in smoke
+    assert '"datastore": "postgres"' in smoke and '"schema": "complete"' in smoke
     # The upstream is still runtime-configurable: the route hands the live process
     # environment to the resolver on every request. The resolver itself now lives in
     # `lib/proxy.mjs` so it can be unit-tested; `frontend/test/proxy.test.mjs`

@@ -1,8 +1,10 @@
 from __future__ import annotations
 
 import hashlib
+import hmac
 import json
 import math
+import re
 import time
 import urllib.error
 import urllib.request
@@ -60,11 +62,73 @@ class SecClient:
     def __init__(self, user_agent: str, cache_dir: Path | None = None, pause_seconds: float = 0.12, max_retries: int = 3):
         if "@" not in user_agent:
             raise ValueError("SEC user_agent must identify an application and contact email")
+        if pause_seconds < 0 or max_retries < 0:
+            raise ValueError("SEC pause_seconds and max_retries cannot be negative")
         self.user_agent = user_agent
         self.cache_dir = cache_dir
         self.pause_seconds = pause_seconds
         self.max_retries=max_retries
         self._last_request_at=0.0
+
+    @staticmethod
+    def _normalize_cik(cik: str) -> str:
+        raw = str(cik).strip()
+        if re.fullmatch(r"[0-9]{1,10}", raw) is None:
+            raise ValueError("SEC CIK must contain between 1 and 10 ASCII digits")
+        return raw.zfill(10)
+
+    def _cache_path(self, cache_key: str | None, suffix: str) -> Path | None:
+        if self.cache_dir is None or cache_key is None:
+            return None
+        # Cache identifiers become filenames. Restrict them to one plain segment
+        # so a caller cannot escape the configured cache root with ``../`` or an
+        # absolute path.
+        if re.fullmatch(r"[A-Za-z0-9._-]{1,200}", cache_key) is None:
+            raise ValueError("SEC cache key contains unsafe characters")
+        return self.cache_dir / f"{cache_key}{suffix}"
+
+    @staticmethod
+    def _validated_sec_url(url: str) -> str:
+        parsed = urlparse(url)
+        try:
+            port = parsed.port
+        except ValueError as exc:
+            raise ValueError("SEC endpoint contains an invalid port") from exc
+        if (
+            parsed.scheme != "https"
+            or parsed.hostname not in {"data.sec.gov", "www.sec.gov"}
+            or parsed.username is not None
+            or parsed.password is not None
+            or port not in {None, 443}
+        ):
+            raise ValueError("SEC requests require an official HTTPS endpoint")
+        return url
+
+    @staticmethod
+    def _read_verified_cache(cache: Path) -> bytes:
+        if cache.stat().st_size > MAX_SEC_RESPONSE_BYTES:
+            raise ValueError(f"SEC cache exceeds configured size limit: {cache}")
+        hash_path = cache.with_suffix(".sha256")
+        if not hash_path.is_file():
+            # A crash between the data write and sidecar write leaves exactly this
+            # state. Treat it as incomplete, not trusted historical evidence.
+            raise ValueError(f"SEC cache hash is missing: {cache}")
+        if hash_path.stat().st_size > 128:
+            raise ValueError(f"SEC cache hash is invalid: {hash_path}")
+        expected = hash_path.read_text(encoding="ascii").strip()
+        if re.fullmatch(r"[0-9a-f]{64}", expected) is None:
+            raise ValueError(f"SEC cache hash is invalid: {hash_path}")
+        raw = cache.read_bytes()
+        if not hmac.compare_digest(hashlib.sha256(raw).hexdigest(), expected):
+            raise ValueError(f"SEC cache hash mismatch: {cache}")
+        return raw
+
+    @staticmethod
+    def _json_object(raw: bytes) -> dict[str, Any]:
+        payload = json.loads(raw)
+        if not isinstance(payload, dict):
+            raise TypeError("SEC JSON response must be an object")
+        return payload
 
     @staticmethod
     def _read_bounded(response, limit: int = MAX_SEC_RESPONSE_BYTES) -> bytes:
@@ -83,11 +147,10 @@ class SecClient:
         return raw
 
     def get_json(self, url: str, cache_key: str | None = None) -> dict[str, Any]:
-        cache = self.cache_dir / f"{cache_key}.json" if self.cache_dir and cache_key else None
+        cache = self._cache_path(cache_key, ".json")
         if cache and cache.exists():
-            raw=cache.read_bytes();hash_path=cache.with_suffix(".sha256")
-            if hash_path.exists() and hashlib.sha256(raw).hexdigest()!=hash_path.read_text(encoding="ascii").strip():raise ValueError(f"SEC cache hash mismatch: {cache}")
-            return json.loads(raw)
+            return self._json_object(self._read_verified_cache(cache))
+        url = self._validated_sec_url(url)
         request = urllib.request.Request(url, headers={
             "User-Agent": self.user_agent,
             "Accept": "application/json,text/plain,*/*",
@@ -101,7 +164,7 @@ class SecClient:
             try:
                 self._last_request_at=time.monotonic()
                 with urllib.request.urlopen(request, timeout=60) as response:
-                    payload = json.loads(self._read_bounded(response))
+                    payload = self._json_object(self._read_bounded(response))
                 break
             except urllib.error.HTTPError as exc:
                 if exc.code==403:raise RuntimeError("SEC rejected this network with HTTP 403; do not bypass Fair Access controls") from exc
@@ -111,7 +174,8 @@ class SecClient:
             except urllib.error.URLError:
                 if attempt>=self.max_retries:raise
                 time.sleep(min(2**attempt,8))
-        assert payload is not None
+        if payload is None:
+            raise RuntimeError("SEC JSON request completed without a response")
         if cache:
             cache.parent.mkdir(parents=True, exist_ok=True)
             raw=json.dumps(payload,sort_keys=True,separators=(",",":")).encode()
@@ -120,13 +184,10 @@ class SecClient:
 
     def get_bytes(self, url: str, cache_key: str | None = None) -> bytes:
         """Fetch an SEC filing artifact with the same fair-access and hash policy."""
-        cache = self.cache_dir / f"{cache_key}.bin" if self.cache_dir and cache_key else None
+        cache = self._cache_path(cache_key, ".bin")
         if cache and cache.exists():
-            raw = cache.read_bytes()
-            hash_path = cache.with_suffix(".sha256")
-            if hash_path.exists() and hashlib.sha256(raw).hexdigest() != hash_path.read_text(encoding="ascii").strip():
-                raise ValueError(f"SEC cache hash mismatch: {cache}")
-            return raw
+            return self._read_verified_cache(cache)
+        url = self._validated_sec_url(url)
         request = urllib.request.Request(
             url,
             headers={
@@ -157,7 +218,8 @@ class SecClient:
                 if attempt >= self.max_retries:
                     raise
                 time.sleep(min(2**attempt, 8))
-        assert raw is not None
+        if raw is None:
+            raise RuntimeError("SEC filing request completed without a response")
         if cache:
             cache.parent.mkdir(parents=True, exist_ok=True)
             cache.write_bytes(raw)
@@ -165,21 +227,26 @@ class SecClient:
         return raw
 
     def companyfacts(self, cik: str) -> dict[str, Any]:
-        normalized = str(cik).zfill(10)
+        normalized = self._normalize_cik(cik)
         return self.get_json(f"{SEC_BASE}/api/xbrl/companyfacts/CIK{normalized}.json", f"companyfacts-{normalized}")
 
     def ticker_to_cik(self, ticker: str) -> str:
+        if not isinstance(ticker, str) or re.fullmatch(r"[A-Za-z0-9.-]{1,20}", ticker.strip()) is None:
+            raise ValueError("SEC ticker contains invalid characters")
         payload = self.get_json(
             "https://www.sec.gov/files/company_tickers.json", "company-tickers"
         )
         target = ticker.upper().strip()
         for company in payload.values():
-            if company.get("ticker", "").upper() == target:
-                return str(company["cik_str"]).zfill(10)
+            if not isinstance(company, dict):
+                continue
+            candidate = company.get("ticker")
+            if isinstance(candidate, str) and candidate.upper() == target:
+                return self._normalize_cik(company.get("cik_str", ""))
         raise KeyError(f"unknown SEC ticker: {ticker}")
 
     def submissions(self, cik: str) -> dict[str, Any]:
-        normalized = str(cik).zfill(10)
+        normalized = self._normalize_cik(cik)
         return self.get_json(
             f"{SEC_BASE}/submissions/CIK{normalized}.json",
             f"submissions-{normalized}",
@@ -188,20 +255,38 @@ class SecClient:
     def latest_filing(self, ticker: str, forms: tuple[str, ...] = ("10-K", "10-Q")) -> dict[str, Any]:
         cik = self.ticker_to_cik(ticker)
         payload = self.submissions(cik)
-        recent = payload.get("filings", {}).get("recent", {})
-        for index, form in enumerate(recent.get("form", [])):
+        filings = payload.get("filings", {}) if isinstance(payload, dict) else {}
+        recent = filings.get("recent", {}) if isinstance(filings, dict) else {}
+        if not isinstance(recent, dict) or not isinstance(recent.get("form"), list):
+            raise TypeError(f"SEC submissions are malformed for {ticker}")
+        for index, form in enumerate(recent["form"]):
             if form not in forms:
                 continue
-            accession = recent["accessionNumber"][index]
-            primary_document = recent["primaryDocument"][index]
+            try:
+                accession = recent["accessionNumber"][index]
+                primary_document = recent["primaryDocument"][index]
+                filing_date = recent["filingDate"][index]
+                report_date = recent["reportDate"][index]
+            except (KeyError, IndexError, TypeError):
+                # SEC responses occasionally contain a partially populated recent
+                # table. Skip an incomplete row instead of crashing the whole
+                # acquisition boundary with IndexError.
+                continue
+            if not isinstance(accession, str) or not isinstance(primary_document, str):
+                continue
+            if (
+                re.fullmatch(r"[0-9]{10}-[0-9]{2}-[0-9]{6}", accession) is None
+                or re.fullmatch(r"[A-Za-z0-9._-]{1,255}", primary_document) is None
+            ):
+                continue
             accession_path = accession.replace("-", "")
             return {
                 "ticker": ticker.upper(),
                 "cik": cik,
                 "form": form,
                 "accession": accession,
-                "filing_date": recent["filingDate"][index],
-                "report_date": recent["reportDate"][index],
+                "filing_date": filing_date,
+                "report_date": report_date,
                 "primary_document": primary_document,
                 "filing_url": f"{SEC_ARCHIVES}/{int(cik)}/{accession_path}/{primary_document}",
                 "companyfacts_url": f"{SEC_BASE}/api/xbrl/companyfacts/CIK{cik}.json",
@@ -407,7 +492,15 @@ def acquire_latest_filing(client: SecClient, ticker: str) -> dict[str, Any]:
     """Fail-closed SEC acquisition boundary for product and worker callers."""
     try:
         return {"status": "READY", "filing": client.latest_filing(ticker), "decision": None}
-    except (OSError, RuntimeError, KeyError, LookupError, urllib.error.URLError) as exc:
+    except (
+        OSError,
+        RuntimeError,
+        KeyError,
+        LookupError,
+        TypeError,
+        ValueError,
+        urllib.error.URLError,
+    ) as exc:
         return {
             "status": "SOURCE_UNAVAILABLE",
             "filing": None,

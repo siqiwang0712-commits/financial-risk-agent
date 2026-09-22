@@ -9,8 +9,15 @@ from pathlib import Path
 from .domain import Contradiction, NarrativeClaim
 
 _POLICY_PATH = Path(__file__).resolve().parents[2] / "config" / "consistency_policy.json"
+
+
+def _normalized_text_hash(path: Path) -> str:
+    """Hash text with Python's universal-newline normalization."""
+    return hashlib.sha256(path.read_text(encoding="utf-8").encode()).hexdigest()
+
+
 CONSISTENCY_POLICY = json.loads(_POLICY_PATH.read_text(encoding="utf-8"))
-CONSISTENCY_POLICY_HASH = hashlib.sha256(_POLICY_PATH.read_bytes()).hexdigest()
+CONSISTENCY_POLICY_HASH = _normalized_text_hash(_POLICY_PATH)
 
 
 def _configured(metric: str) -> Callable[[float], bool]:

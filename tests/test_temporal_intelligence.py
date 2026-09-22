@@ -226,7 +226,7 @@ def test_sec_ticker_to_latest_filing_main_path():
     client = SecClient("FinRisk test@example.com")
     responses = {
         "https://www.sec.gov/files/company_tickers.json": {"0": {"ticker": "ACME", "cik_str": 42}},
-        "https://data.sec.gov/submissions/CIK0000000042.json": {"filings": {"recent": {"form": ["8-K", "10-Q"], "accessionNumber": ["x", "0001-24-000002"], "primaryDocument": ["x.htm", "q.htm"], "filingDate": ["2024-01-01", "2024-05-01"], "reportDate": ["2023-12-31", "2024-03-31"]}}},
+        "https://data.sec.gov/submissions/CIK0000000042.json": {"filings": {"recent": {"form": ["8-K", "10-Q"], "accessionNumber": ["x", "0000000001-24-000002"], "primaryDocument": ["x.htm", "q.htm"], "filingDate": ["2024-01-01", "2024-05-01"], "reportDate": ["2023-12-31", "2024-03-31"]}}},
     }
     client.get_json = lambda url, cache_key=None: responses[url]
     filing = client.latest_filing("acme")

@@ -7,7 +7,34 @@ import os
 import time
 import uuid
 from urllib.error import HTTPError, URLError
+from urllib.parse import urlparse
 from urllib.request import Request, urlopen
+
+
+def verification_base(variable: str, default: str) -> str:
+    value = os.getenv(variable, default).rstrip("/")
+    parsed = urlparse(value)
+    try:
+        port = parsed.port
+    except ValueError as exc:
+        raise ValueError(f"{variable} has an invalid port") from exc
+    if (
+        parsed.scheme not in {"http", "https"}
+        or parsed.hostname not in {"localhost", "127.0.0.1", "::1"}
+        or parsed.username is not None
+        or parsed.password is not None
+        or parsed.path not in {"", "/"}
+        or parsed.params
+        or parsed.query
+        or parsed.fragment
+        or port is None
+    ):
+        raise ValueError(f"{variable} must be an explicit loopback HTTP(S) origin")
+    return value
+
+
+API = verification_base("FINRISK_VERIFY_API", "http://127.0.0.1:8000")
+WEB = verification_base("FINRISK_VERIFY_WEB", "http://127.0.0.1:3000")
 
 
 def request_json(url: str, payload: dict, headers: dict[str, str]) -> dict:
@@ -74,8 +101,13 @@ def main() -> None:
     deadline = time.monotonic() + 60
     while time.monotonic() < deadline:
         try:
-            with urlopen("http://127.0.0.1:8000/health/ready", timeout=3) as response:
-                if json.load(response).get("status") == "ready":
+            with urlopen(f"{API}/health/ready", timeout=3) as response:
+                readiness = json.load(response)
+                if (
+                    readiness.get("status") == "ready"
+                    and readiness.get("datastore") == "postgres"
+                    and readiness.get("schema") == "complete"
+                ):
                     break
         except (OSError, URLError, ValueError):
             time.sleep(1)
@@ -90,7 +122,7 @@ def main() -> None:
     proxy_deadline = time.monotonic() + 60
     while time.monotonic() < proxy_deadline:
         try:
-            with urlopen("http://127.0.0.1:3000/", timeout=3) as response:
+            with urlopen(f"{WEB}/", timeout=3) as response:
                 if response.status == 200:
                     break
         except (OSError, URLError, ValueError):
@@ -99,13 +131,13 @@ def main() -> None:
         raise SystemExit("timeout-smoke web proxy readiness failed")
 
     organization = request_json(
-        "http://127.0.0.1:8000/api/v1/enterprise/organizations",
+        f"{API}/api/v1/enterprise/organizations",
         {"name": "Timeout tenant", "actor_id": "timeout-admin"},
         {"X-Bootstrap-Token": os.environ["FINRISK_BOOTSTRAP_TOKEN"]},
     )
     headers = {"X-API-Key": organization["api_key"]}
     entity = request_json(
-        "http://127.0.0.1:3000/api/v1/enterprise/entities",
+        f"{WEB}/api/v1/enterprise/entities",
         {"name": "Timeout issuer"},
         headers,
     )
@@ -117,7 +149,7 @@ def main() -> None:
     for attempt in (1, 2):
         correlation_id = f"timeout-retry-{attempt}"
         request = Request(
-            "http://127.0.0.1:3000/api/v1/documents/analyze",
+            f"{WEB}/api/v1/documents/analyze",
             data=body,
             headers={
                 **headers,

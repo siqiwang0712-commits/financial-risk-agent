@@ -72,8 +72,12 @@ Run against the candidate images, not against the source tree:
 1. `migrate` (API image) applies the PostgreSQL schema and exits `0`; the API only
    starts after `service_completed_successfully`.
 2. `/health/ready` and the web proxy answer on the published loopback ports.
-3. `scripts/verify_docker_health.py` — readiness, authenticated entity/document
-   workflow, proxy failure contracts (401/413/415/422/429).
+3. `scripts/verify_docker_health.py` — readiness (including PostgreSQL and complete
+   schema), authenticated entity/document workflow, proxy failure contracts
+   (401/413/415/422/429). `FINRISK_VERIFY_API` and `FINRISK_VERIFY_WEB` select
+   non-default loopback ports across all credentialed verification scripts (remote
+   origins are rejected); `FINRISK_EXPECTED_RUNTIME` selects the expected public
+   runtime version and otherwise defaults to `pyproject.toml`.
 4. `scripts/verify_postgres_state.py --phase before` — asserts the API really selected
    PostgreSQL (not the in-memory repository) and records a tenant/credential/entity.
 5. `docker compose restart api`, then `--phase after` — the data survives a restart.
@@ -104,6 +108,9 @@ pointed at the same candidate digests:
    the candidate image ids and that `migrate` carries the **same** id as `api`.
 3. `/health/ready` and the web proxy answer on the published loopback ports.
 4. `scripts/verify_docker_health.py` on that stack.
+5. `scripts/verify_postgres_state.py --phase before`, restart the release API, then
+   `--phase after` — this independently proves the operator-facing Compose file did
+   not accidentally wire the API to ephemeral storage.
 
 It tests the same artifact — nothing is rebuilt — and `publish` and `dry-run` both
 require it, so a broken deployment file can no longer be promoted.

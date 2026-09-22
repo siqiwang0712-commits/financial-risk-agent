@@ -1,10 +1,13 @@
 import hashlib
 import json
+import urllib.error
+from pathlib import Path
 from typing import ClassVar
 
 import pytest
 from finrisk.domain import FinancialValue
 from finrisk.xbrl import (
+    MAX_SEC_RESPONSE_BYTES,
     SecClient,
     acquire_latest_filing,
     parse_companyfacts,
@@ -58,6 +61,87 @@ def test_sec_binary_cache_is_hash_verified(tmp_path):
         client.get_bytes("https://example.invalid", "filing")
 
 
+@pytest.mark.parametrize(("suffix", "method"), [(".json", "get_json"), (".bin", "get_bytes")])
+def test_sec_cache_without_hash_fails_closed(tmp_path, suffix, method):
+    (tmp_path / f"incomplete{suffix}").write_bytes(b"{}")
+    client = SecClient("FinRisk test@example.com", tmp_path)
+    with pytest.raises(ValueError, match="hash is missing"):
+        getattr(client, method)("https://example.invalid", "incomplete")
+
+
+def test_sec_cache_rejects_oversized_content_before_reading(tmp_path, monkeypatch):
+    cache = tmp_path / "oversized.bin"
+    cache.write_bytes(b"content")
+    cache.with_suffix(".sha256").write_text("0" * 64, encoding="ascii")
+    original_stat = Path.stat
+
+    def oversized_stat(path):
+        result = original_stat(path)
+        if path == cache:
+            return type("Stat", (), {"st_size": MAX_SEC_RESPONSE_BYTES + 1})()
+        return result
+
+    monkeypatch.setattr(Path, "stat", oversized_stat)
+    client = SecClient("FinRisk test@example.com", tmp_path)
+    with pytest.raises(ValueError, match="size limit"):
+        client.get_bytes("https://example.invalid", "oversized")
+
+
+@pytest.mark.parametrize("digest", ["not-a-digest", "0" * 129])
+def test_sec_cache_rejects_invalid_hash_sidecars(tmp_path, digest):
+    cache = tmp_path / "invalid.bin"
+    cache.write_bytes(b"content")
+    cache.with_suffix(".sha256").write_text(digest, encoding="ascii")
+    client = SecClient("FinRisk test@example.com", tmp_path)
+    with pytest.raises(ValueError, match="hash is invalid"):
+        client.get_bytes("https://example.invalid", "invalid")
+
+
+def test_sec_identifiers_cannot_escape_cache_root(tmp_path):
+    client = SecClient("FinRisk test@example.com", tmp_path)
+    with pytest.raises(ValueError, match="unsafe characters"):
+        client.get_json("https://example.invalid", "../outside")
+    with pytest.raises(ValueError, match="ASCII digits"):
+        client.companyfacts("../../outside")
+
+
+@pytest.mark.parametrize(
+    "url",
+    [
+        "file:///etc/passwd",
+        "http://data.sec.gov/test",
+        "https://data.sec.gov:invalid/test",
+        "https://data.sec.gov:444/test",
+        "https://example.com/test",
+    ],
+)
+def test_sec_network_requests_are_restricted_to_official_https_hosts(url):
+    client = SecClient("FinRisk test@example.com")
+    with pytest.raises(ValueError, match="SEC (requests require|endpoint contains)"):
+        client.get_json(url)
+
+
+@pytest.mark.parametrize(
+    "options",
+    [{"pause_seconds": -0.1}, {"max_retries": -1}],
+)
+def test_sec_client_rejects_negative_retry_configuration(options):
+    with pytest.raises(ValueError, match="cannot be negative"):
+        SecClient("FinRisk test@example.com", **options)
+
+
+def test_sec_json_payload_must_be_an_object():
+    with pytest.raises(TypeError, match="must be an object"):
+        SecClient._json_object(b"[]")
+
+
+@pytest.mark.parametrize("ticker", ["../ACME", "", None])
+def test_sec_ticker_rejects_invalid_input(ticker):
+    client = SecClient("FinRisk test@example.com")
+    with pytest.raises(ValueError, match="ticker contains invalid"):
+        client.ticker_to_cik(ticker)
+
+
 def test_companyfacts_preserves_and_prefers_authoritative_unit():
     payload = fixture()
     payload["facts"]["us-gaap"]["Assets"]["units"]["EUR"] = [
@@ -72,6 +156,50 @@ def test_sec_acquisition_fails_closed():
     client.latest_filing = lambda ticker: (_ for _ in ()).throw(RuntimeError("SEC unavailable"))
     result = acquire_latest_filing(client, "ACME")
     assert result["decision"] == "ABSTAIN" and result["filing"] is None
+
+
+def test_sec_acquisition_abstains_on_malformed_submission_rows():
+    client = SecClient("FinRisk test@example.com")
+    responses = [
+        {"0": {"ticker": "ACME", "cik_str": 42}},
+        {
+            "filings": {
+                "recent": {
+                    "form": ["10-Q"],
+                    "accessionNumber": [],
+                    "primaryDocument": [],
+                    "filingDate": [],
+                    "reportDate": [],
+                }
+            }
+        },
+    ]
+    client.get_json = lambda *_args, **_kwargs: responses.pop(0)
+    result = acquire_latest_filing(client, "ACME")
+    assert result["decision"] == "ABSTAIN"
+    assert result["error_type"] == "LookupError"
+
+
+def test_sec_acquisition_skips_unsafe_filing_paths():
+    client = SecClient("FinRisk test@example.com")
+    responses = [
+        {"0": {"ticker": "ACME", "cik_str": 42}},
+        {
+            "filings": {
+                "recent": {
+                    "form": ["10-Q"],
+                    "accessionNumber": ["0000000042-26-000001"],
+                    "primaryDocument": ["../../outside.htm"],
+                    "filingDate": ["2026-09-01"],
+                    "reportDate": ["2026-06-30"],
+                }
+            }
+        },
+    ]
+    client.get_json = lambda *_args, **_kwargs: responses.pop(0)
+    result = acquire_latest_filing(client, "ACME")
+    assert result["decision"] == "ABSTAIN"
+    assert result["error_type"] == "LookupError"
 
 
 def test_companyfacts_debt_component_is_not_aggregate_and_derives_only_complete_total():
@@ -119,6 +247,12 @@ def test_sec_response_reader_rejects_unbounded_payloads():
     with pytest.raises(ValueError, match="size limit"):
         SecClient._read_bounded(Response(), 16)
 
+    class DeclaredOversized(Response):
+        headers: ClassVar[dict[str, str]] = {"Content-Length": "17"}
+
+    with pytest.raises(ValueError, match="size limit"):
+        SecClient._read_bounded(DeclaredOversized(), 16)
+
 
 def test_sec_network_json_is_bounded_and_hash_cached(monkeypatch, tmp_path):
     body = json.dumps({"ok": True}).encode()
@@ -147,3 +281,64 @@ def test_sec_network_json_is_bounded_and_hash_cached(monkeypatch, tmp_path):
 
     with pytest.raises(ValueError, match="invalid Content-Length"):
         SecClient._read_bounded(InvalidLength())
+
+
+@pytest.mark.parametrize(
+    "first_error",
+    [
+        urllib.error.HTTPError(
+            "https://data.sec.gov/test", 429, "rate limited", {"Retry-After": "0"}, None
+        ),
+        urllib.error.URLError("temporary network failure"),
+    ],
+)
+def test_sec_json_retries_transient_failures(monkeypatch, first_error):
+    body = b'{"ok":true}'
+
+    class Response:
+        headers: ClassVar[dict[str, str]] = {"Content-Length": str(len(body))}
+
+        def __enter__(self):
+            return self
+
+        def __exit__(self, *_):
+            return None
+
+        def read(self, _amount):
+            return body
+
+    outcomes = [first_error, Response()]
+
+    def urlopen(*_args, **_kwargs):
+        outcome = outcomes.pop(0)
+        if isinstance(outcome, Exception):
+            raise outcome
+        return outcome
+
+    monkeypatch.setattr("finrisk.xbrl.urllib.request.urlopen", urlopen)
+    monkeypatch.setattr("finrisk.xbrl.time.sleep", lambda _seconds: None)
+    client = SecClient("FinRisk test@example.com", pause_seconds=0, max_retries=1)
+    assert client.get_json("https://data.sec.gov/test") == {"ok": True}
+
+
+def test_sec_network_bytes_are_bounded_and_hash_cached(monkeypatch, tmp_path):
+    body = b"<html>filing</html>"
+
+    class Response:
+        headers: ClassVar[dict[str, str]] = {"Content-Length": str(len(body))}
+
+        def __enter__(self):
+            return self
+
+        def __exit__(self, *_):
+            return None
+
+        def read(self, amount):
+            assert amount == 100 * 1024 * 1024 + 1
+            return body
+
+    monkeypatch.setattr("finrisk.xbrl.urllib.request.urlopen", lambda *_, **__: Response())
+    client = SecClient("FinRisk test@example.com", tmp_path, pause_seconds=0)
+    assert client.get_bytes("https://www.sec.gov/Archives/test", "filing") == body
+    assert (tmp_path / "filing.bin").read_bytes() == body
+    assert client.get_bytes("https://example.invalid", "filing") == body

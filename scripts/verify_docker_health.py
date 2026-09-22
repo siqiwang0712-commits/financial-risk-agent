@@ -5,9 +5,47 @@ from __future__ import annotations
 import json
 import os
 import time
+import tomllib
 import uuid
+from pathlib import Path
 from urllib.error import HTTPError, URLError
+from urllib.parse import urlparse
 from urllib.request import Request, urlopen
+
+
+def verification_base(variable: str, default: str) -> str:
+    """Return a loopback-only base URL so test credentials cannot be exfiltrated."""
+    value = os.getenv(variable, default).rstrip("/")
+    parsed = urlparse(value)
+    try:
+        port = parsed.port
+    except ValueError as exc:
+        raise ValueError(f"{variable} has an invalid port") from exc
+    if (
+        parsed.scheme not in {"http", "https"}
+        or parsed.hostname not in {"localhost", "127.0.0.1", "::1"}
+        or parsed.username is not None
+        or parsed.password is not None
+        or parsed.path not in {"", "/"}
+        or parsed.params
+        or parsed.query
+        or parsed.fragment
+        or port is None
+    ):
+        raise ValueError(f"{variable} must be an explicit loopback HTTP(S) origin")
+    return value
+
+
+def declared_runtime() -> str:
+    project = Path(__file__).resolve().parents[1] / "pyproject.toml"
+    version = tomllib.loads(project.read_text(encoding="utf-8"))["project"]["version"]
+    return f"v{version}"
+
+
+API = verification_base("FINRISK_VERIFY_API", "http://127.0.0.1:8000")
+WEB = verification_base("FINRISK_VERIFY_WEB", "http://127.0.0.1:3000")
+EXPECTED_READINESS = {"status": "ready", "datastore": "postgres", "schema": "complete"}
+EXPECTED_RUNTIME = os.getenv("FINRISK_EXPECTED_RUNTIME", declared_runtime())
 
 
 def request_json(url: str, payload: dict, headers: dict[str, str] | None = None) -> dict:
@@ -63,6 +101,20 @@ def multipart(fields: dict[str, str], filename: str, content: bytes) -> tuple[by
     return b"".join(parts), boundary
 
 
+def assert_readiness(payload: dict) -> None:
+    """Reject a healthy-looking API backed by the wrong store or schema."""
+    mismatches = {
+        name: (expected, payload.get(name))
+        for name, expected in EXPECTED_READINESS.items()
+        if payload.get(name) != expected
+    }
+    if mismatches:
+        raise RuntimeError(
+            f"unexpected readiness payload (expected/actual): {mismatches!r}; "
+            f"full payload: {payload!r}"
+        )
+
+
 def main() -> None:
     """Verify the composed production stack end to end.
 
@@ -72,13 +124,12 @@ def main() -> None:
     last_error: Exception | None = None
     while time.monotonic() < deadline:
         try:
-            with urlopen("http://127.0.0.1:8000/health/ready", timeout=3) as response:
+            with urlopen(f"{API}/health/ready", timeout=3) as response:
                 payload = json.load(response)
-            if payload.get("status") != "ready":
-                raise RuntimeError(f"unexpected readiness status: {payload!r}")
-            with urlopen("http://127.0.0.1:3000/api/v1/public-pilot", timeout=5) as response:
+            assert_readiness(payload)
+            with urlopen(f"{WEB}/api/v1/public-pilot", timeout=5) as response:
                 frontend_payload = json.load(response)
-            if frontend_payload.get("runtime") != "v0.3.3":
+            if frontend_payload.get("runtime") != EXPECTED_RUNTIME:
                 raise RuntimeError(f"frontend API proxy failed: {frontend_payload!r}")
             print("production compose API is ready")
             break
@@ -92,12 +143,25 @@ def main() -> None:
     # frozen artifact: securely provision the first tenant, create its entity, and
     # persist an authenticated document analysis.
     bootstrap_token = os.environ["FINRISK_BOOTSTRAP_TOKEN"]
-    organization = request_json("http://127.0.0.1:8000/api/v1/enterprise/organizations", {"name": "Smoke tenant", "actor_id": "smoke-admin"}, {"X-Bootstrap-Token": bootstrap_token})
+    organization = request_json(
+        f"{API}/api/v1/enterprise/organizations",
+        {"name": "Smoke tenant", "actor_id": "smoke-admin"},
+        {"X-Bootstrap-Token": bootstrap_token},
+    )
     api_key = organization["api_key"]
     headers = {"X-API-Key": api_key}
-    entity = request_json("http://127.0.0.1:3000/api/v1/enterprise/entities", {"name": "Smoke issuer", "sector": "industrial"}, headers)
+    entity = request_json(
+        f"{WEB}/api/v1/enterprise/entities",
+        {"name": "Smoke issuer", "sector": "industrial"},
+        headers,
+    )
     body, boundary = multipart({"company": "Smoke issuer", "fiscal_year": "2025", "entity_id": entity["id"]}, "smoke.pdf", pdf_with_text("BALANCE SHEET\nCash and cash equivalents 100\nTotal assets 500"))
-    analysis_request = Request("http://127.0.0.1:3000/api/v1/documents/analyze", data=body, headers={**headers, "Content-Type": f"multipart/form-data; boundary={boundary}"}, method="POST")
+    analysis_request = Request(
+        f"{WEB}/api/v1/documents/analyze",
+        data=body,
+        headers={**headers, "Content-Type": f"multipart/form-data; boundary={boundary}"},
+        method="POST",
+    )
     with urlopen(analysis_request, timeout=90) as response:
         analysis = json.load(response)
     if analysis.get("company") != "Smoke issuer" or not analysis.get("agent", {}).get("trace"):
@@ -109,7 +173,7 @@ def main() -> None:
     # correlated error response. The rate-limit check is last because a 429 is
     # intentionally absorbing for the remainder of this short smoke run.
     unauthorized = Request(
-        "http://127.0.0.1:3000/api/v1/enterprise/entities",
+        f"{WEB}/api/v1/enterprise/entities",
         data=b'{"name":"Unauthorized"}',
         headers={"Content-Type": "application/json"},
         method="POST",
@@ -117,7 +181,7 @@ def main() -> None:
     expect_http_status(unauthorized, 401)
 
     invalid_entity = Request(
-        "http://127.0.0.1:3000/api/v1/enterprise/entities",
+        f"{WEB}/api/v1/enterprise/entities",
         data=b'{"name":""}',
         headers={**headers, "Content-Type": "application/json", "X-Correlation-Id": "smoke-correlation"},
         method="POST",
@@ -132,7 +196,7 @@ def main() -> None:
         b"not a PDF",
     )
     unsupported = Request(
-        "http://127.0.0.1:3000/api/v1/documents/analyze",
+        f"{WEB}/api/v1/documents/analyze",
         data=bad_body,
         headers={**headers, "Content-Type": f"multipart/form-data; boundary={bad_boundary}"},
         method="POST",
@@ -147,7 +211,7 @@ def main() -> None:
     # boundary is covered by tests/test_upload_size_boundary.py against a small limit.
     upload_limit = int(os.getenv("FINRISK_MAX_UPLOAD_BYTES", str(50 * 1024 * 1024)))
     oversized = Request(
-        "http://127.0.0.1:3000/api/v1/documents/analyze",
+        f"{WEB}/api/v1/documents/analyze",
         data=b"x",
         headers={
             **headers,
@@ -161,7 +225,7 @@ def main() -> None:
     rate_limited = False
     for _ in range(70):
         request = Request(
-            "http://127.0.0.1:3000/api/v1/enterprise/entities",
+            f"{WEB}/api/v1/enterprise/entities",
             data=b'{"name":""}',
             headers={**headers, "Content-Type": "application/json"},
             method="POST",
