@@ -75,8 +75,8 @@ def test_sec_cache_rejects_oversized_content_before_reading(tmp_path, monkeypatc
     cache.with_suffix(".sha256").write_text("0" * 64, encoding="ascii")
     original_stat = Path.stat
 
-    def oversized_stat(path):
-        result = original_stat(path)
+    def oversized_stat(path, *args, **kwargs):
+        result = original_stat(path, *args, **kwargs)
         if path == cache:
             return type("Stat", (), {"st_size": MAX_SEC_RESPONSE_BYTES + 1})()
         return result
