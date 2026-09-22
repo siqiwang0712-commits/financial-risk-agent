@@ -45,6 +45,20 @@ class EvidenceVerifier:
         )
 
 
+# Language the pipeline turns into a narrative risk signal. If a document contains
+# it and extraction returns nothing, the most likely cause is a suppressed
+# extraction rather than an absence of risk.
+_RISK_LANGUAGE = re.compile(
+    r"going concern|substantial doubt|material weakness|refinanc",
+    re.IGNORECASE,
+)
+
+
+def has_risk_language(pages: dict[int, str]) -> bool:
+    """True when the supplied page text carries language the pipeline scores as risk."""
+    return any(_RISK_LANGUAGE.search(text) for text in pages.values())
+
+
 # Terms too common to distinguish one claim from another.
 _CLAIM_STOPWORDS = frozenset({
     "that", "this", "with", "from", "have", "will", "been", "were", "they", "their",

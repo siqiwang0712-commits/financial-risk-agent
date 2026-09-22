@@ -4,6 +4,7 @@ import json
 from pathlib import Path
 from typing import Any
 
+from .llm import MockNarrativeProvider
 from .pipeline import FinRiskPipeline
 
 BASELINES=("llm_only","ratios_only","rules_only","models_only","full_hybrid","hybrid_without_narrative","hybrid_without_trends")
@@ -14,7 +15,10 @@ def load_manifest(path:Path)->list[dict[str,Any]]:
     return data["examples"]
 
 def run_manifest(manifest:Path,root:Path)->list[dict[str,Any]]:
-    pipeline=FinRiskPipeline(root);rows=[]
+    # The manifest is an explicitly synthetic smoke dataset, so the baseline
+    # comparison pins the deterministic provider rather than reading it from the
+    # environment (matching `research_eval`).
+    pipeline=FinRiskPipeline(root,MockNarrativeProvider());rows=[]
     for entry in load_manifest(manifest):
         data=json.loads((root/entry["path"]).read_text(encoding="utf-8"))
         pages={int(k):v for k,v in data.get("pages",{}).items()}

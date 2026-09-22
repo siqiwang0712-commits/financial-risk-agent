@@ -47,7 +47,8 @@ Four fusion strategies share one interface: weighted-average baseline, max sever
 
 ## REST surface
 
-`/api/v1/enterprise` exposes token-gated organization bootstrap, tenant-scoped entities,
+`/api/v1/enterprise` exposes organization bootstrap (disabled by default, and token-gated
+whenever it is enabled outside development), tenant-scoped entities,
 risk cases, lifecycle transitions, override history, portfolio overview, audit events,
 deterministic scenarios and selectable fusion. Tenant identity and role come from the
 server-side hashed API credential; caller-supplied role headers are not trusted.

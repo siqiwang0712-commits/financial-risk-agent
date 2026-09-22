@@ -222,13 +222,15 @@ class PostgresRateLimiter:
                     # live rows also means recovery is automatic — as soon as rows age
                     # out of the retention window the capacity is theirs again, with
                     # no sweep having to win the lock first.
+                    live_total = 0
                     if self.max_rows > 0:
                         cursor.execute(
                             """SELECT count(*) FROM rate_limit_events
                                WHERE occurred_at >= now() - make_interval(secs => %s)""",
                             (float(self.retention_seconds),),
                         )
-                        if cursor.fetchone()[0] >= self.max_rows:
+                        live_total = cursor.fetchone()[0]
+                        if live_total >= self.max_rows:
                             # Nothing safe can be deleted to make room, so the only
                             # honest answers are "refuse" or "admit while dropping the
                             # rows that constrain other clients". Refuse: the API
@@ -241,7 +243,24 @@ class PostgresRateLimiter:
                         "SELECT count(*) FROM rate_limit_events WHERE scope = %s AND key = %s",
                         (scope, key),
                     )
-                    admitted = cursor.fetchone()[0] < int(self.limit)
+                    live_for_key = cursor.fetchone()[0]
+                    admitted = live_for_key < int(self.limit)
+                    # A flood of never-before-seen keys is how the shared table is
+                    # driven to capacity: each one inserts a single row that the
+                    # per-key prune can never reclaim, and once the table is full
+                    # *every* client is refused. Stop admitting novel keys well before
+                    # that point, so clients that already hold a window keep being
+                    # served and the table never reaches the cliff.
+                    if (
+                        admitted
+                        and live_for_key == 0
+                        and self.max_rows > 0
+                        and live_total >= self.max_rows // 2
+                    ):
+                        raise RateLimiterUnavailable(
+                            "rate limiter store is under pressure; new keys are not "
+                            "admitted until existing windows expire"
+                        )
                     if admitted:
                         cursor.execute(
                             "INSERT INTO rate_limit_events (scope, key, occurred_at) VALUES (%s, %s, now())",
@@ -301,7 +320,14 @@ class PostgresCredentialStore:
             row = cursor.fetchone()
         if row is None:
             raise PermissionError("invalid API key")
-        credential = ApiCredential(row[0], row[1], row[2], prefix, row[3], Role(row[4]), row[5])
+        try:
+            role = Role(row[4])
+        except ValueError as exc:
+            # A row with an unrecognised role is a credential problem, not a server
+            # fault: `authenticated_principal` only catches PermissionError, so
+            # anything else escaped as an opaque 500 on every request.
+            raise PermissionError("invalid API key") from exc
+        credential = ApiCredential(row[0], row[1], row[2], prefix, row[3], role, row[5])
         if not verify_api_key(raw, credential):
             raise PermissionError("invalid API key")
         return Principal(credential.user_id, credential.organization_id, credential.role)

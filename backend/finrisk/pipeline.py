@@ -14,7 +14,12 @@ from .enterprise.applicability import (
 )
 from .enterprise.fusion import failure_aware_decision, hierarchical_escalation
 from .enterprise.tension import classify_tension
-from .evidence import PROOF_COVERED_STATUSES, EvidenceVerifier, claim_is_grounded
+from .evidence import (
+    PROOF_COVERED_STATUSES,
+    EvidenceVerifier,
+    claim_is_grounded,
+    has_risk_language,
+)
 from .facts import build_facts, narrative_signals
 from .llm import NarrativeProvider, provider_from_env
 from .metrics import calculate_metrics, resolve_total_debt
@@ -108,12 +113,19 @@ class FinRiskPipeline:
         payload["legacy_weighted_score"] = weighted
         payload["overall_score"] = score
         payload["risk_level"] = severity_label(score)
-        payload["final_decision"] = fusion.decision.value
-        # Kept in step with the agent path: the response contract declares
-        # `final_decision`, `failure_state` and `enterprise_fusion`, and this
-        # endpoint previously produced none of them, so the Workbench read
-        # `undefined` for all three.
-        payload["failure_state"] = failure_aware_decision(fusion, {})
+        # A suppressed extraction must not read as a clean result: it is the same
+        # failure signal as a provider that could not be reached.
+        failures = (
+            {"llm_unavailable": True}
+            if getattr(assessment, "narrative_suppressed", False)
+            else {}
+        )
+        failure = failure_aware_decision(fusion, failures)
+        # Kept in step with the agent path: `final_decision` must be the
+        # failure-aware disposition, not the raw fusion outcome, so the two published
+        # decisions cannot disagree.
+        payload["final_decision"] = failure["decision"]
+        payload["failure_state"] = failure
         payload["model_disagreement"] = fusion.disagreement
         payload["enterprise_fusion"] = fusion.__dict__
         return payload
@@ -228,6 +240,13 @@ class FinRiskPipeline:
         for key, items in signals_by_source.items():
             if items:
                 source_map[key] = [item.evidence for item in items]
+        # Extraction ran inline (the deterministic endpoint). A schema-valid empty
+        # claim set is indistinguishable from "no risk language found", so flag the
+        # case where risk-bearing text produced nothing; `decide` escalates it.
+        narrative_suppressed = bool(
+            narrative_claims is None and pages and not accepted
+            and has_risk_language(pages)
+        )
         signals=self.rules.evaluate(facts)
         ops={"<":lambda a,b:a<b,"<=":lambda a,b:a<=b,">":lambda a,b:a>b,">=":lambda a,b:a>=b}
         for mapping in self.model_scoring["mappings"]:
@@ -342,4 +361,8 @@ class FinRiskPipeline:
         for category in dimensions:nodes.append({"id":f"dimension:{category}","type":"dimension","label":category});edges.append({"from":f"dimension:{category}","to":"overall","relation":"weighted_into"})
         nodes.append({"id":"overall","type":"assessment","label":"overall risk"})
         graph={"nodes":nodes,"edges":edges}
-        return Assessment(company,str(year),score,level,conf,dimensions,metrics,models,signals,contradictions,missing,confidence_components=components,evidence_graph=graph,evidence_quality=conf,evidence_coverage=evidence_coverage,reliability_status="UNCALIBRATED",claim_consistency_evaluations=claim_evaluations,disclosure_tensions=tensions)
+        result=Assessment(company,str(year),score,level,conf,dimensions,metrics,models,signals,contradictions,missing,confidence_components=components,evidence_graph=graph,evidence_quality=conf,evidence_coverage=evidence_coverage,reliability_status="UNCALIBRATED",claim_consistency_evaluations=claim_evaluations,disclosure_tensions=tensions)
+        # Not a dataclass field, so `to_dict()` - and therefore the published payload -
+        # is unchanged; it only lets `decide` escalate a suppressed extraction.
+        result.narrative_suppressed = narrative_suppressed
+        return result

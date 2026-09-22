@@ -1,4 +1,5 @@
 import json
+import os
 from pathlib import Path
 
 from finrisk.pipeline import FinRiskPipeline
@@ -9,6 +10,9 @@ ROOT=Path(__file__).resolve().parents[1]
 
 def main() -> None:
     """Regenerate the committed Intel sample. Importing this module must not."""
+    # The committed sample is produced offline from a frozen observation file, so
+    # it opts into the deterministic provider explicitly.
+    os.environ.setdefault("FINRISK_LLM_PROVIDER", "mock")
     data=json.loads((ROOT/"research/benchmark/public_company_observations.json").read_text(encoding="utf-8"))
     example=next(x for x in data["examples"] if x["id"]=="intc-2024")
     pipeline=FinRiskPipeline(ROOT)

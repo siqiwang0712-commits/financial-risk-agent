@@ -23,7 +23,7 @@ from ..enterprise.fusion import (
 from ..enterprise.integrity import CalibrationStatus, epistemic_summary
 from ..enterprise.telemetry import component_delta
 from ..enterprise.temporal import classify_trajectory
-from ..evidence import VERIFIER_VERSION
+from ..evidence import VERIFIER_VERSION, has_risk_language
 from ..facts import build_facts
 from ..llm import NarrativeProvider, provider_from_env
 from ..scoring import aggregate
@@ -95,6 +95,17 @@ class FinancialRiskAgent:
                     )
                     claims = extraction["accepted"]
                     claim_verifications = extraction["verifications"]
+                    # A schema-valid empty list is indistinguishable from "no risk
+                    # language found", so a successful suppression would silently
+                    # remove the narrative layer and lower the score. When the
+                    # document plainly contains risk language and nothing was
+                    # extracted, treat it as a review condition instead.
+                    if not extraction["verifications"] and has_risk_language(pages):
+                        semantic_failed = True
+                        state.warnings.append(
+                            "narrative extraction returned no claims for a document "
+                            "containing risk language; possible extraction suppression"
+                        )
                 except Exception as exc:  # noqa: BLE001 - semantic failure degrades safely
                     semantic_failed = True
                     state.warnings.append(f"Narrative provider unavailable: {exc}")

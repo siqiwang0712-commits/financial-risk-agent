@@ -190,7 +190,7 @@ the **Image identity** note below, and
 | `POSTGRES_PASSWORD` | yes | Applied when the volume is **first** initialised; see the rotation note above. |
 | `FINRISK_LLM_PROVIDER` | yes | Fail-closed: unset is an error. Use `openai` for a real run; `mock` is a deterministic test provider, not a default. |
 | `OPENAI_API_KEY` / `OPENAI_API_KEY_FILE` | when the provider needs one | Prefer the `_FILE` form (see below). |
-| `FINRISK_ENABLE_ORG_BOOTSTRAP` | optional | Defaults to `1` so the first administrator can be provisioned. Set to `0` after provisioning. |
+| `FINRISK_ENABLE_ORG_BOOTSTRAP` | optional | Defaults to `0`; the route mints ADMIN keys without an API key. Set to `1` only for first-run provisioning, then back to `0`. |
 | `FINRISK_BOOTSTRAP_TOKEN` / `..._FILE` | with bootstrap enabled | Gates the route that mints ADMIN keys. |
 
 Secrets are mounted as files, not passed through the environment: `<VAR>_FILE` wins

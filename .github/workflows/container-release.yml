@@ -92,6 +92,18 @@ jobs:
             echo "::error::tag/input version '$core' != newest CHANGELOG section '$changelog_head'"
             exit 1
           fi
+          # A versioned image tag must be built from the commit the git tag points
+          # at. Otherwise "the vX.Y.Z source" and "the vX.Y.Z image" are different
+          # artifacts and an auditor inspecting the tag reviews code that never
+          # shipped.
+          if git rev-parse -q --verify "refs/tags/${requested}^{commit}" >/dev/null; then
+            tagged="$(git rev-parse "refs/tags/${requested}^{commit}")"
+            head_commit="$(git rev-parse HEAD)"
+            if [[ "$tagged" != "$head_commit" ]]; then
+              echo "::error::tag ${requested} points at ${tagged} but HEAD is ${head_commit}"
+              exit 1
+            fi
+          fi
           echo "version=$requested" >> "$GITHUB_OUTPUT"
           echo "version_core=$core" >> "$GITHUB_OUTPUT"
           echo "commit=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"

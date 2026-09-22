@@ -66,6 +66,7 @@ COPY --from=builder /opt/venv /opt/venv
 RUN rm -rf /opt/venv/lib/python3.12/site-packages/pip \
            /opt/venv/lib/python3.12/site-packages/pip-*.dist-info \
            /opt/venv/bin/pip /opt/venv/bin/pip3 /opt/venv/bin/pip3.12 \
+           /usr/local/bin/pip /usr/local/bin/pip3 /usr/local/bin/pip3.12 \
            /usr/local/lib/python3.12/site-packages/pip \
            /usr/local/lib/python3.12/site-packages/pip-*.dist-info \
            /usr/local/lib/python3.12/ensurepip

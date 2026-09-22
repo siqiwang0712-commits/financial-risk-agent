@@ -5,6 +5,7 @@ from pathlib import Path
 
 import pytest
 from finrisk.api import AssessmentRequest, _run_document_isolated
+from finrisk.document_worker import PdfBoundaryError, inspect_pdf, run_inspect_worker
 from finrisk.domain import RuleSignal
 from finrisk.enterprise.api import FusionRequest, RiskSnapshotRequest
 from finrisk.enterprise.applicability import MODEL_KEYS
@@ -323,3 +324,78 @@ def test_path_enumeration_is_bounded():
     assert len(graph.paths_to("t", max_paths=5)) == 5
     with pytest.raises(ValueError):
         graph.paths_to("t", max_paths=0)
+
+
+def _pdf_with_text(text: str) -> bytes:
+    stream = ("BT /F1 11 Tf 72 720 Td (" + text + ") Tj ET").encode()
+    objects = [
+        b"<< /Type /Catalog /Pages 2 0 R >>",
+        b"<< /Type /Pages /Kids [3 0 R] /Count 1 >>",
+        (
+            b"<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] "
+            b"/Resources << /Font << /F1 5 0 R >> >> /Contents 4 0 R >>"
+        ),
+        b"<< /Length " + str(len(stream)).encode() + b" >>\nstream\n" + stream + b"\nendstream",
+        b"<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>",
+    ]
+    out = bytearray(b"%PDF-1.4\n")
+    offsets = []
+    for number, item in enumerate(objects, 1):
+        offsets.append(len(out))
+        out += f"{number} 0 obj\n".encode() + item + b"\nendobj\n"
+    start = len(out)
+    out += f"xref\n0 {len(objects) + 1}\n0000000000 65535 f \n".encode()
+    out += b"".join(f"{offset:010d} 00000 n \n".encode() for offset in offsets)
+    out += (f"trailer\n<< /Size {len(objects) + 1} /Root 1 0 R >>\n"
+            f"startxref\n{start}\n%%EOF\n").encode()
+    return bytes(out)
+
+
+def _encrypted_pdf() -> bytes:
+    import io
+
+    import pymupdf as fitz
+
+    document = fitz.open()
+    document.new_page().insert_text((72, 720), "BALANCE SHEET")
+    buffer = io.BytesIO()
+    document.save(buffer, encryption=fitz.PDF_ENCRYPT_AES_256,
+                  owner_pw="owner", user_pw="user")
+    return buffer.getvalue()
+
+
+def test_inspect_pdf_enforces_page_and_text_boundaries():
+    # `inspect_pdf` runs in a spawned child, which coverage cannot measure, so it is
+    # exercised directly here as well.
+    inspect_pdf(_pdf_with_text("BALANCE SHEET"), 500, 5_000_000)
+    with pytest.raises(PdfBoundaryError) as exc:
+        inspect_pdf(_encrypted_pdf(), 500, 5_000_000)
+    assert exc.value.status_code == 422
+    assert "encrypted" in exc.value.detail
+    with pytest.raises(PdfBoundaryError) as exc:
+        inspect_pdf(_pdf_with_text("x"), 0, 5_000_000)
+    assert exc.value.status_code == 413
+    with pytest.raises(PdfBoundaryError) as exc:
+        inspect_pdf(_pdf_with_text("BALANCE SHEET"), 500, 1)
+    assert exc.value.status_code == 413
+    with pytest.raises(PdfBoundaryError) as exc:
+        inspect_pdf(b"not a PDF at all", 500, 5_000_000)
+    assert exc.value.status_code == 422
+
+
+def test_inspect_worker_reports_boundaries_through_the_queue():
+    class Queue:
+        def __init__(self):
+            self.payload = None
+
+        def put(self, value):
+            self.payload = value
+
+    queue = Queue()
+    run_inspect_worker(queue, _pdf_with_text("BALANCE SHEET"), 500, 5_000_000)
+    assert queue.payload == ("ok", None)
+
+    queue = Queue()
+    run_inspect_worker(queue, b"not a PDF", 500, 5_000_000)
+    assert queue.payload[0] == "boundary"
+    assert queue.payload[1][0] == 422

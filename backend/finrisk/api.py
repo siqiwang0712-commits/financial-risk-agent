@@ -28,12 +28,15 @@ try:
     from fastapi.middleware.cors import CORSMiddleware
     from fastapi.responses import JSONResponse
     from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
-    from starlette.concurrency import run_in_threadpool
 except ImportError:
     FastAPI = None
 
 from .agent import FinancialRiskAgent
-from .document_worker import run_document_worker
+from .document_worker import (
+    PdfBoundaryError,
+    run_document_worker,
+    run_inspect_worker,
+)
 from .enterprise.api import enterprise_router
 from .enterprise.decision import create_snapshot
 from .enterprise.decision_bundle import build_decision_bundle
@@ -94,13 +97,46 @@ async def _run_document_isolated(
         queue.join_thread()
 
 
-class PdfBoundaryError(ValueError):
-    """A safe, client-facing PDF resource-boundary failure."""
+async def _run_inspect_isolated(
+    data: bytes, max_pages: int, max_chars: int, timeout: float
+):
+    """Inspect a PDF's boundaries in a killable child process.
 
-    def __init__(self, status_code: int, detail: str) -> None:
-        super().__init__(detail)
-        self.status_code = status_code
-        self.detail = detail
+    `inspect_pdf` can hold the GIL for minutes on a hostile document, and a thread
+    cannot be interrupted, so the inspection runs in a spawned child that is
+    terminated when the budget expires — the same boundary the analysis already
+    uses. Without this, one upload blocks the whole API process, health probes
+    included.
+    """
+    context = multiprocessing.get_context("spawn")
+    queue = context.Queue(maxsize=1)
+    process = context.Process(
+        target=run_inspect_worker, args=(queue, data, max_pages, max_chars), daemon=True
+    )
+    process.start()
+    try:
+        try:
+            # Read while the child is alive. Joining first can deadlock when a
+            # large payload fills the multiprocessing pipe during queue.put.
+            status, result = await asyncio.to_thread(queue.get, True, timeout)
+        except queue_module.Empty as exc:
+            process.terminate()
+            await asyncio.to_thread(process.join, 5)
+            raise PdfBoundaryError(504, "PDF inspection timed out") from exc
+        await asyncio.to_thread(process.join, 5)
+        if process.is_alive():
+            process.terminate()
+            await asyncio.to_thread(process.join, 5)
+        if status == "boundary":
+            raise PdfBoundaryError(result[0], result[1])
+        if status != "ok":
+            raise PdfBoundaryError(422, "PDF could not be safely parsed")
+    finally:
+        if process.is_alive():
+            process.terminate()
+            process.join(5)
+        queue.close()
+        queue.join_thread()
 
 
 def _positive_env_number(name: str, default: str, cast):
@@ -178,26 +214,6 @@ def _pdf_limits() -> tuple[int, int, int, float]:
     )
     return max_upload_bytes(), pages, chars, timeout
 
-
-def _inspect_pdf(data: bytes, max_pages: int, max_chars: int) -> None:
-    """Inspect a PDF synchronously; callers must run this in a bounded worker pool."""
-    try:
-        import pymupdf as fitz
-
-        with fitz.open(stream=data, filetype="pdf") as document:
-            if document.needs_pass:
-                raise PdfBoundaryError(422, "encrypted PDFs are not supported")
-            if document.page_count > max_pages:
-                raise PdfBoundaryError(413, "PDF page limit exceeded")
-            extracted_chars = 0
-            for page in document:
-                extracted_chars += len(page.get_text("text"))
-                if extracted_chars > max_chars:
-                    raise PdfBoundaryError(413, "PDF extracted-text limit exceeded")
-    except PdfBoundaryError:
-        raise
-    except Exception as exc:
-        raise PdfBoundaryError(422, "PDF could not be safely parsed") from exc
 
 if FastAPI:
 
@@ -327,7 +343,10 @@ if FastAPI:
     # unconditionally left a fresh production database with no way to provision
     # the first administrator; enabling it without a token is rejected by the
     # router's production token requirement.
-    bootstrap_enabled = os.getenv("FINRISK_ENABLE_ORG_BOOTSTRAP", "1") == "1"
+    # Opt-in, not opt-out: the route mints ADMIN keys, so the safe value is the
+    # default one. Compose and the release stack set it explicitly for first-run
+    # provisioning, and the production overlay additionally requires a token.
+    bootstrap_enabled = os.getenv("FINRISK_ENABLE_ORG_BOOTSTRAP", "0") == "1"
     bootstrap_token = _env_or_file("FINRISK_BOOTSTRAP_TOKEN")
     app.include_router(
         enterprise_router(
@@ -759,8 +778,13 @@ if FastAPI:
         if not data.startswith(b"%PDF"):
             raise HTTPException(415, "Only valid PDF files are accepted")
         try:
-            await run_in_threadpool(_inspect_pdf, data, max_pages, max_chars)
+            await _run_inspect_isolated(data, max_pages, max_chars, timeout_seconds)
         except PdfBoundaryError as exc:
+            # Mirror the analysis path below: a 504 is an operator-visible failure and
+            # needs an event, while a boundary rejection (413/422) is an ordinary
+            # client error that the status code already describes.
+            if exc.status_code == 504:
+                structured_event(api_logger, "document.inspection_timeout")
             raise HTTPException(exc.status_code, exc.detail) from exc
         with NamedTemporaryFile(suffix=".pdf", delete=False) as tmp:
             tmp.write(data)

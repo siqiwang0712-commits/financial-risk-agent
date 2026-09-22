@@ -99,7 +99,9 @@ def main() -> None:
         "rule_version": file_hash(ROOT / "rules/rules.json"),
         "model_config": {"traditional_ml": "logistic_regression", "fitted": False},
         "fusion_config": {"source": "config/decision_policy.json", "hash": file_hash(ROOT / "config/decision_policy.json")},
-        "prompt_version": "narrative-v1.1.0-claim-conditioned",
+        # Must match StructuredLLMProvider.PROMPT_VERSION; a mismatch would make the
+        # manifest claim a prompt that never produced the results.
+        "prompt_version": "narrative-v1.2.0-untrusted-data-delimited",
         "llm_model": "NOT_CONFIGURED",
         "label_schema_hash": file_hash(ROOT / "research/label_schema.json"),
         "random_seed": 20260907,

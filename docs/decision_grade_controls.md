@@ -20,7 +20,7 @@ Model lifecycle transitions are Experimental → Validated → Approved → Depr
 | Privilege escalation | Role is no longer accepted from caller headers | User lifecycle/SSO PLANNED |
 | Credential theft | Only SHA-256 hashes retained; constant-time check; rotation revokes old key | Hardware-backed secret management PLANNED |
 | Unsafe paths | Tenant-scoped storage rejects traversal | Malware scanning/object-store policy PLANNED |
-| Prompt/data injection | LLM output is schema validated and cannot perform arithmetic/scoring; quotes require source verification | Adversarial corpus evaluation NOT RUN |
+| Prompt/data injection | Document text is delimited as untrusted data and the model is told not to obey it; LLM output is schema validated and cannot perform arithmetic/scoring; quotes require source verification; a zero-claim extraction on risk-bearing text is escalated rather than treated as "no risk found" | Adversarial corpus evaluation NOT RUN |
 | Audit tampering | Service is append-only; PostgreSQL trigger rejects update/delete | External database permissions/retention NOT VALIDATED |
 
 No SOC 2, ISO 27001, regulatory certification or production SLA is claimed.

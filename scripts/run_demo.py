@@ -1,4 +1,5 @@
 import json
+import os
 from pathlib import Path
 
 from finrisk.pipeline import FinRiskPipeline
@@ -7,6 +8,9 @@ from finrisk.report import render_text_report
 
 def main() -> None:
     """Print the synthetic demo report. Importing this module must not."""
+    # The demo is offline and synthetic, so it opts into the deterministic provider
+    # explicitly rather than relying on a default.
+    os.environ.setdefault("FINRISK_LLM_PROVIDER", "mock")
     root=Path(__file__).resolve().parents[1]
     d=json.loads((root/"examples"/"synthetic_company.json").read_text())
     pipeline=FinRiskPipeline(root)

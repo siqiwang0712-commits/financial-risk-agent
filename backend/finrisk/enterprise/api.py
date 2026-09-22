@@ -479,6 +479,28 @@ def enterprise_router(
     def save_snapshot(req: SnapshotCreate, actor: Principal = principal_dependency):
         if not bootstrap_enabled:
             raise HTTPException(403, "snapshot import is disabled; use the server analysis workflow")
+        # `evidence_path_status` is the verdict of the server's evidence verifier.
+        # A caller-supplied snapshot that declares its own paths VERIFIED would
+        # satisfy the final-state proof gate (`service.transition` to
+        # ACCEPTED/RESOLVED) with evidence the pipeline never checked, so such an
+        # import is refused. Server-produced snapshots never arrive here — they go
+        # through `persist_agent_snapshot`, which calls `service.save_snapshot`
+        # directly.
+        # `frozen_output` is caller-supplied JSON of arbitrary shape, so every step
+        # is type-checked: an unexpected shape is simply "no verified path here"
+        # (the proof gate cannot be satisfied by one either) rather than a 500.
+        agent = req.frozen_output.get("agent")
+        trace = agent.get("decision_trace") if isinstance(agent, dict) else None
+        paths = trace.get("paths") if isinstance(trace, dict) else None
+        if isinstance(paths, list) and any(
+            isinstance(path, dict) and path.get("evidence_path_status") == "VERIFIED"
+            for path in paths
+        ):
+            raise HTTPException(
+                422,
+                "snapshot import rejected: evidence_path_status is assigned by the "
+                "server, not by the caller",
+            )
         snapshot = create_snapshot(
             actor.organization_id,
             req.entity_id,

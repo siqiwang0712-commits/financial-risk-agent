@@ -19,12 +19,18 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import re
 import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "backend"))
+
+# Regenerating the bundled offline sample is a synthetic, offline job, so it opts
+# into the deterministic provider explicitly instead of relying on a default. It is
+# set at import time because `finrisk.api` builds its pipeline while being imported.
+os.environ.setdefault("FINRISK_LLM_PROVIDER", "mock")
 
 TARGET = ROOT / "frontend" / "lib" / "demoFixture.ts"
 TYPES = ROOT / "frontend" / "lib" / "types.ts"
