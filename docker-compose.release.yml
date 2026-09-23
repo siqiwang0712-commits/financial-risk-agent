@@ -16,10 +16,10 @@
 #
 # Image identity: the tag is a *pointer*, the digest is the artifact. To pin this
 # stack to one audited build, set the tag to a `sha-<commit>` tag or replace it with
-# `...:v0.3.3@sha256:<digest>`; see docs/CONTAINER_RELEASE.md.
+# `...:v0.3.4@sha256:<digest>`; see docs/CONTAINER_RELEASE.md.
 x-upload-bytes: &upload-bytes ${FINRISK_MAX_UPLOAD_BYTES:-52428800}
-x-api-image: &api-image ${FINRISK_API_IMAGE:-ghcr.io/siqiwang0712-commits/financial-risk-agent-api:${FINRISK_VERSION:-v0.3.3}}
-x-web-image: &web-image ${FINRISK_WEB_IMAGE:-ghcr.io/siqiwang0712-commits/financial-risk-agent-web:${FINRISK_VERSION:-v0.3.3}}
+x-api-image: &api-image ${FINRISK_API_IMAGE:-ghcr.io/siqiwang0712-commits/financial-risk-agent-api:${FINRISK_VERSION:-v0.3.4}}
+x-web-image: &web-image ${FINRISK_WEB_IMAGE:-ghcr.io/siqiwang0712-commits/financial-risk-agent-web:${FINRISK_VERSION:-v0.3.4}}
 
 services:
   postgres:

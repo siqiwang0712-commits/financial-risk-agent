@@ -224,7 +224,33 @@ def test_version_metadata_is_consistent():
 
     pyproject = tomllib.loads((ROOT / "pyproject.toml").read_text(encoding="utf-8"))
     frontend = json.loads((ROOT / "frontend/package.json").read_text(encoding="utf-8"))
-    assert {__version__, app.version, pyproject["project"]["version"], frontend["version"]} == {"0.3.3"}
+    frontend_lock = json.loads(
+        (ROOT / "frontend/package-lock.json").read_text(encoding="utf-8")
+    )
+    expected = "0.3.4"
+    changelog_version = next(
+        line.removeprefix("## [").split("]", 1)[0]
+        for line in (ROOT / "CHANGELOG.md").read_text(encoding="utf-8").splitlines()
+        if line.startswith("## [")
+    )
+    assert {
+        __version__,
+        app.version,
+        pyproject["project"]["version"],
+        frontend["version"],
+        frontend_lock["version"],
+        frontend_lock["packages"][""]["version"],
+        changelog_version,
+    } == {expected}
+    assert f"ARG OCI_VERSION={expected}" in (
+        ROOT / "backend/Dockerfile"
+    ).read_text(encoding="utf-8")
+    assert f"ARG OCI_VERSION={expected}" in (
+        ROOT / "frontend/Dockerfile"
+    ).read_text(encoding="utf-8")
+    assert f"FINRISK_VERSION:-v{expected}" in (
+        ROOT / "docker-compose.release.yml"
+    ).read_text(encoding="utf-8")
 
 
 def test_ratio_missing_is_unavailable_and_cash_conversion_is_not_double_counted():

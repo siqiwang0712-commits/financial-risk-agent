@@ -36,7 +36,7 @@ TARGET = ROOT / "frontend" / "lib" / "demoFixture.ts"
 TYPES = ROOT / "frontend" / "lib" / "types.ts"
 SOURCE_FIXTURE = "examples/synthetic_company.json"
 SOURCE_FILING = "research/results/public_v1/summary.json"
-GENERATED_BY = "FinancialRiskAgent v0.3.3 (deterministic offline provider)"
+GENERATED_BY = "FinancialRiskAgent v0.3.4 (deterministic offline provider)"
 NOTICE = (
     "Bundled offline sample. The assessment is a real pipeline output for the "
     "repository's synthetic fixture - not a real issuer, and not a live run. "

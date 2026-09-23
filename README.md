@@ -27,7 +27,7 @@
 
 ## Release target
 
-**v0.3.4 — Hardened Boundaries & Verified Release Runtime** closes the v0.3.x architecture and runtime hardening work: the API, Agent and tool registry share one configured pipeline; document analysis runs behind a killable process boundary; external SEC, LLM and evidence inputs fail closed; and both candidate and operator-facing Compose paths verify the exact container digest before promotion. The published container record remains v0.3.3 until the v0.3.4 release workflow completes.
+**v0.3.4 — Hardened Boundaries & Verified Release Runtime** closes the v0.3.x architecture and runtime hardening work: the API, Agent and tool registry share one configured pipeline; document analysis runs behind a killable process boundary; external SEC, LLM and evidence inputs fail closed; and both candidate and operator-facing Compose paths verify the exact container digest before promotion. The v0.3.3 digest example below remains a historical verified record; read the v0.3.4 digest from the release workflow output after promotion.
 
 - [CHANGELOG](CHANGELOG.md) — complete release history
 - [v0.3.4 release notes](RELEASE_NOTES_v0.3.4.md) — scope and unchanged research boundary

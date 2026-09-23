@@ -43,7 +43,7 @@ def test_json_endpoint_wait_retries_transport_and_contract_failures(monkeypatch)
         [
             OSError("not listening yet"),
             {"runtime": "wrong"},
-            {"runtime": "v0.3.3"},
+            {"runtime": "v0.3.4"},
         ]
     )
 
@@ -54,7 +54,7 @@ def test_json_endpoint_wait_retries_transport_and_contract_failures(monkeypatch)
         return result
 
     def validate(payload):
-        if payload.get("runtime") != "v0.3.3":
+        if payload.get("runtime") != "v0.3.4":
             raise RuntimeError("wrong runtime")
 
     monkeypatch.setattr(verification_http, "request_json", request)
@@ -65,7 +65,7 @@ def test_json_endpoint_wait_retries_transport_and_contract_failures(monkeypatch)
         timeout=1,
         label="frontend proxy",
         validator=validate,
-    )["runtime"] == "v0.3.3"
+    )["runtime"] == "v0.3.4"
 
 
 def test_verification_endpoints_and_runtime_are_configurable(monkeypatch):
@@ -98,7 +98,7 @@ def test_verification_endpoints_are_loopback_origins(monkeypatch, base):
 def test_default_runtime_comes_from_project_metadata(monkeypatch):
     monkeypatch.delenv("FINRISK_EXPECTED_RUNTIME", raising=False)
     verifier = load_script()
-    assert verifier.EXPECTED_RUNTIME == "v0.3.3"
+    assert verifier.EXPECTED_RUNTIME == "v0.3.4"
 
 
 @pytest.mark.parametrize(

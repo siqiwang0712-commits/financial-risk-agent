@@ -224,10 +224,6 @@ to continue if the requested version does not match `pyproject.toml`,
 `frontend/package.json` and the newest `CHANGELOG.md` section, so a mistyped tag cannot
 produce a mislabelled image.
 
-At this documentation closeout, the source package/runtime metadata still declares 0.3.3.
-It must be updated consistently to 0.3.4 in a separate, non-document change before the
-release gates can pass.
-
 ## Verified v0.3.3 release record
 
 The tags below were produced by `Container Release` run

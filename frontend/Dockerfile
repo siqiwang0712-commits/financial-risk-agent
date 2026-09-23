@@ -29,7 +29,7 @@ RUN npm run build
 # Stage 2 — runtime.
 # ---------------------------------------------------------------------------
 FROM ${NODE_BASE} AS runtime
-ARG OCI_VERSION=0.3.3
+ARG OCI_VERSION=0.3.4
 ARG OCI_REVISION=unknown
 ARG OCI_CREATED=1970-01-01T00:00:00Z
 LABEL org.opencontainers.image.title="FinRisk Web" \

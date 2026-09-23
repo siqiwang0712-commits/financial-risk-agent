@@ -12,7 +12,7 @@ def test_public_pilot_projection_is_cached_and_contract_complete():
     second = public_pilot_payload(ROOT)
 
     assert first is second
-    assert first["runtime"] == "v0.3.3"
+    assert first["runtime"] == "v0.3.4"
     assert first["rows"]
     required = {"entity", "decision", "score", "reliability", "filing"}
     assert all(required <= set(row) for row in first["rows"])
