@@ -12,14 +12,17 @@ from ..llm import NarrativeProvider
 from ..metrics import calculate_metrics
 from ..models import altman_z, beneish_m, ohlson_o, piotroski_f
 from ..pipeline import FinRiskPipeline
-from ..rules import RuleEngine
 from .ingestion import ingest_pdf, ingest_xbrl
 
 
-def build_tool_registry(root: Path, provider: NarrativeProvider) -> ToolRegistry:
+def build_tool_registry(
+    root: Path,
+    provider: NarrativeProvider,
+    pipeline: FinRiskPipeline | None = None,
+) -> ToolRegistry:
     registry = ToolRegistry()
-    pipeline = FinRiskPipeline(root, provider)
-    rules = RuleEngine.from_file(root / "rules" / "rules.json")
+    pipeline = pipeline or FinRiskPipeline(root, provider)
+    rules = pipeline.rules
     verifier = EvidenceVerifier()
     registry.register(
         ToolSpec(

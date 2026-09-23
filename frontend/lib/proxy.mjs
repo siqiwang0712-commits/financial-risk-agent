@@ -18,6 +18,16 @@ export const DEFAULT_TIMEOUT_SECONDS = 60;
 /** Same shape the backend accepts for `X-Correlation-Id`. */
 export const CORRELATION_ID_PATTERN = /^[A-Za-z0-9._-]{1,64}$/;
 
+/** Copy only explicitly allowed headers into a new mutable collection. */
+export function forwardedHeaders(source, names) {
+  const headers = new Headers();
+  for (const name of names) {
+    const value = source.get(name);
+    if (value) headers.set(name, value);
+  }
+  return headers;
+}
+
 /**
  * Accept a caller-supplied correlation id only if it is well formed.
  *

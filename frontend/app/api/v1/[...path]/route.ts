@@ -3,6 +3,7 @@ import {
   ALLOWED_METHODS,
   FORWARDED_REQUEST_HEADERS,
   FORWARDED_RESPONSE_HEADERS,
+  forwardedHeaders,
   normalizeCorrelationId,
   rebuildTarget,
   resolveUpstream,
@@ -68,11 +69,7 @@ async function proxy(request: NextRequest, context: { params: Promise<{ path: st
   if (!target) {
     return errorResponse("invalid upstream path", 400, correlationId);
   }
-  const headers = new Headers();
-  for (const name of FORWARDED_REQUEST_HEADERS) {
-    const value = request.headers.get(name);
-    if (value) headers.set(name, value);
-  }
+  const headers = forwardedHeaders(request.headers, FORWARDED_REQUEST_HEADERS);
   headers.set("x-correlation-id", correlationId);
   const declaredLength = Number(request.headers.get("content-length"));
   if (Number.isFinite(declaredLength) && declaredLength > MAX_UPLOAD_BYTES) {
@@ -92,11 +89,7 @@ async function proxy(request: NextRequest, context: { params: Promise<{ path: st
       redirect: "manual",
       signal: AbortSignal.timeout(UPSTREAM_TIMEOUT_MS),
     } as RequestInit & { duplex: "half" });
-    const responseHeaders = new Headers();
-    for (const name of FORWARDED_RESPONSE_HEADERS) {
-      const value = response.headers.get(name);
-      if (value) responseHeaders.set(name, value);
-    }
+    const responseHeaders = forwardedHeaders(response.headers, FORWARDED_RESPONSE_HEADERS);
     if (!responseHeaders.has("x-correlation-id")) {
       responseHeaders.set("x-correlation-id", correlationId);
     }

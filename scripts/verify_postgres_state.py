@@ -24,63 +24,24 @@ from __future__ import annotations
 import argparse
 import json
 import os
-import time
-import urllib.error
-import urllib.request
 from pathlib import Path
-from urllib.parse import urlparse
 
+from finrisk.verification_http import (
+    VerificationEndpoints,
+    request_json,
+    wait_for_readiness,
+)
 
-def verification_base(variable: str, default: str) -> str:
-    value = os.getenv(variable, default).rstrip("/")
-    parsed = urlparse(value)
-    try:
-        port = parsed.port
-    except ValueError as exc:
-        raise ValueError(f"{variable} has an invalid port") from exc
-    if (
-        parsed.scheme not in {"http", "https"}
-        or parsed.hostname not in {"localhost", "127.0.0.1", "::1"}
-        or parsed.username is not None
-        or parsed.password is not None
-        or parsed.path not in {"", "/"}
-        or parsed.params
-        or parsed.query
-        or parsed.fragment
-        or port is None
-    ):
-        raise ValueError(f"{variable} must be an explicit loopback HTTP(S) origin")
-    return value
-
-
-API = verification_base("FINRISK_VERIFY_API", "http://127.0.0.1:8000")
-WEB = verification_base("FINRISK_VERIFY_WEB", "http://127.0.0.1:3000")
-
-
-def request_json(url: str, payload: dict | None = None, headers: dict[str, str] | None = None):
-    data = json.dumps(payload).encode() if payload is not None else None
-    request = urllib.request.Request(url, data=data, method="POST" if data else "GET")
-    if data:
-        request.add_header("Content-Type", "application/json")
-    for name, value in (headers or {}).items():
-        request.add_header(name, value)
-    with urllib.request.urlopen(request, timeout=30) as response:
-        return json.load(response)
+ENDPOINTS = VerificationEndpoints.from_env()
+API = ENDPOINTS.api
+WEB = ENDPOINTS.web
 
 
 def wait_for_ready(timeout: float = 120) -> dict:
-    deadline = time.monotonic() + timeout
-    last: Exception | None = None
-    while time.monotonic() < deadline:
-        try:
-            payload = request_json(f"{API}/health/ready")
-            if payload.get("status") == "ready":
-                return payload
-            last = RuntimeError(f"unexpected readiness payload: {payload!r}")
-        except (OSError, urllib.error.URLError, ValueError) as exc:
-            last = exc
-        time.sleep(2)
-    raise SystemExit(f"API did not become ready: {last}")
+    try:
+        return wait_for_readiness(API, timeout=timeout)
+    except TimeoutError as exc:
+        raise SystemExit(str(exc)) from exc
 
 
 def assert_postgres(readiness: dict) -> None:

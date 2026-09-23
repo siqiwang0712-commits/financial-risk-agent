@@ -6,6 +6,7 @@ import {
   CORRELATION_ID_PATTERN,
   DEFAULT_UPLOAD_BYTES,
   MULTIPART_OVERHEAD_BYTES,
+  forwardedHeaders,
   normalizeCorrelationId,
   rebuildTarget,
   resolveUpstream,
@@ -18,6 +19,18 @@ const env = (overrides = {}) => ({ FINRISK_API_UPSTREAM: "http://api:8000", ...o
 
 test("only the two methods the Workbench performs are proxied", () => {
   assert.deepEqual([...ALLOWED_METHODS].sort(), ["GET", "POST"]);
+});
+
+test("only allowlisted headers cross each proxy boundary", () => {
+  const source = new Headers({
+    "content-type": "application/json",
+    "x-api-key": "secret",
+    "x-internal-debug": "must-not-cross",
+  });
+  const selected = forwardedHeaders(source, ["content-type", "x-api-key"]);
+  assert.equal(selected.get("content-type"), "application/json");
+  assert.equal(selected.get("x-api-key"), "secret");
+  assert.equal(selected.get("x-internal-debug"), null);
 });
 
 test("upstream is rejected when unset, unparseable or not http(s)", () => {

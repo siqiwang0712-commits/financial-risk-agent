@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import json
 import time
 from pathlib import Path
 from typing import Any
@@ -26,6 +25,7 @@ from ..enterprise.temporal import classify_trajectory
 from ..evidence import VERIFIER_VERSION, has_risk_language
 from ..facts import build_facts
 from ..llm import NarrativeProvider, provider_from_env
+from ..pipeline import FinRiskPipeline
 from ..scoring import aggregate
 from ..severity import severity_label
 from ..tools import build_tool_registry
@@ -41,12 +41,20 @@ class FinancialRiskAgent:
     """Public orchestration boundary. Trace records actions and evidence, never hidden reasoning."""
 
     def __init__(
-        self, root: Path | None = None, provider: NarrativeProvider | None = None
+        self,
+        root: Path | None = None,
+        provider: NarrativeProvider | None = None,
+        pipeline: FinRiskPipeline | None = None,
     ):
         self.root = root or Path(__file__).resolve().parents[3]
-        self.provider = provider or provider_from_env()
+        if pipeline is not None and provider is not None and pipeline.provider is not provider:
+            raise ValueError("pipeline and agent must share the same narrative provider")
+        self.provider = provider or (
+            pipeline.provider if pipeline is not None else provider_from_env()
+        )
+        self.pipeline = pipeline or FinRiskPipeline(self.root, self.provider)
         self.planner = AgentPlanner()
-        self.tools = build_tool_registry(self.root, self.provider)
+        self.tools = build_tool_registry(self.root, self.provider, self.pipeline)
 
     def run(
         self,
@@ -157,11 +165,7 @@ class FinancialRiskAgent:
                 name: value.get("score")
                 for name, value in state.assessment.get("dimensions", {}).items()
             }
-            decision_policy = json.loads(
-                (self.root / "config" / "decision_policy.json").read_text(
-                    encoding="utf-8"
-                )
-            )
+            decision_policy = self.pipeline.decision_policy
             fusion = hierarchical_escalation(
                 dimension_scores,
                 state.evidence_coverage,
@@ -329,9 +333,7 @@ class FinancialRiskAgent:
             state.assessment["epistemics"] = state.epistemics
             state.assessment["evidence_quality"] = state.confidence
             state.assessment["reliability_status"] = "UNCALIBRATED"
-            scoring_config = json.loads(
-                (self.root / "config" / "scoring.json").read_text(encoding="utf-8")
-            )
+            scoring_config = self.pipeline.scoring
             non_model_signals = [
                 item
                 for item in assessment.triggered_rules
@@ -508,16 +510,10 @@ class FinancialRiskAgent:
         return state
 
     def component_versions(self) -> dict[str, str]:
-        decision_policy = json.loads(
-            (self.root / "config" / "decision_policy.json").read_text(encoding="utf-8")
-        )
+        decision_policy = self.pipeline.decision_policy
         return {
-            "rules": canonical_hash(
-                (self.root / "rules" / "rules.json").read_text(encoding="utf-8")
-            ),
-            "scoring": canonical_hash(
-                (self.root / "config" / "scoring.json").read_text(encoding="utf-8")
-            ),
+            "rules": canonical_hash(self.pipeline.rules_source),
+            "scoring": canonical_hash(self.pipeline.scoring_source),
             "decision_policy": canonical_hash(decision_policy),
             # Derived from the policy hash so a change to the escalation
             # parameters is detected as a component-version change rather than

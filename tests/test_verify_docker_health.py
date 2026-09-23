@@ -4,6 +4,7 @@ import importlib.util
 from pathlib import Path
 
 import pytest
+from finrisk.verification_http import assert_readiness
 
 ROOT = Path(__file__).resolve().parents[1]
 SCRIPT = ROOT / "scripts" / "verify_docker_health.py"
@@ -27,20 +28,13 @@ def load_named_script(name: str):
 
 
 def test_readiness_requires_postgres_and_complete_schema():
-    verifier = load_script()
-    verifier.assert_readiness(
-        {"status": "ready", "datastore": "postgres", "schema": "complete"}
-    )
+    assert_readiness({"status": "ready", "datastore": "postgres", "schema": "complete"})
 
     with pytest.raises(RuntimeError, match="datastore"):
-        verifier.assert_readiness(
-            {"status": "ready", "datastore": "memory", "schema": "complete"}
-        )
+        assert_readiness({"status": "ready", "datastore": "memory", "schema": "complete"})
 
     with pytest.raises(RuntimeError, match="schema"):
-        verifier.assert_readiness(
-            {"status": "ready", "datastore": "postgres", "schema": "pending"}
-        )
+        assert_readiness({"status": "ready", "datastore": "postgres", "schema": "pending"})
 
 
 def test_verification_endpoints_and_runtime_are_configurable(monkeypatch):

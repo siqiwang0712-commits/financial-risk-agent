@@ -435,8 +435,14 @@ def test_compose_llm_and_frontend_proxy_are_runtime_configurable():
     assert "FINRISK_LLM_MAX_TOKENS" in compose and "OPENAI_API_KEY" in compose
     assert "FINRISK_LLM_PROVIDER: mock" in workflow
     smoke = (ROOT / "scripts/verify_docker_health.py").read_text(encoding="utf-8")
-    assert "FINRISK_VERIFY_API" in smoke and "FINRISK_VERIFY_WEB" in smoke
-    assert '"datastore": "postgres"' in smoke and '"schema": "complete"' in smoke
+    verification_http = (ROOT / "backend/finrisk/verification_http.py").read_text(
+        encoding="utf-8"
+    )
+    assert "VerificationEndpoints.from_env()" in smoke
+    assert "FINRISK_VERIFY_API" in verification_http
+    assert "FINRISK_VERIFY_WEB" in verification_http
+    assert '"datastore": "postgres"' in verification_http
+    assert '"schema": "complete"' in verification_http
     # The upstream is still runtime-configurable: the route hands the live process
     # environment to the resolver on every request. The resolver itself now lives in
     # `lib/proxy.mjs` so it can be unit-tested; `frontend/test/proxy.test.mjs`

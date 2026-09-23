@@ -30,12 +30,29 @@ from .severity import severity_label
 
 
 class FinRiskPipeline:
-    def __init__(self,root:Path|None=None,provider:NarrativeProvider|None=None):
-        self.root=root or Path(__file__).resolve().parents[2]
-        self.rules=RuleEngine.from_file(self.root/"rules"/"rules.json")
-        self.scoring=json.loads((self.root/"config"/"scoring.json").read_text(encoding="utf-8"))
-        self.model_scoring=json.loads((self.root/"config"/"model_scoring.json").read_text(encoding="utf-8"))
-        self.provider=provider or provider_from_env(); self.verifier=EvidenceVerifier()
+    def __init__(
+        self,
+        root: Path | None = None,
+        provider: NarrativeProvider | None = None,
+    ):
+        self.root = root or Path(__file__).resolve().parents[2]
+        self.rules_source = (self.root / "rules" / "rules.json").read_text(
+            encoding="utf-8"
+        )
+        self.scoring_source = (self.root / "config" / "scoring.json").read_text(
+            encoding="utf-8"
+        )
+        rules_payload = json.loads(self.rules_source)
+        self.rules = RuleEngine(rules_payload["rules"])
+        self.scoring = json.loads(self.scoring_source)
+        self.model_scoring = json.loads(
+            (self.root / "config" / "model_scoring.json").read_text(encoding="utf-8")
+        )
+        self.decision_policy = json.loads(
+            (self.root / "config" / "decision_policy.json").read_text(encoding="utf-8")
+        )
+        self.provider = provider or provider_from_env()
+        self.verifier = EvidenceVerifier()
         self._assert_signals_are_not_double_counted()
         self._assert_model_names_are_known()
 
@@ -98,14 +115,11 @@ class FinRiskPipeline:
             name: value.get("score")
             for name, value in payload.get("dimensions", {}).items()
         }
-        policy = json.loads(
-            (self.root / "config" / "decision_policy.json").read_text(encoding="utf-8")
-        )
         fusion = hierarchical_escalation(
             dimension_scores,
             assessment.evidence_coverage,
             assessment.confidence,
-            policy,
+            self.decision_policy,
         )
         weighted = assessment.overall_score
         score = fusion.score if fusion.score is not None else weighted

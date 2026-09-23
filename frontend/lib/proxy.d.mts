@@ -6,6 +6,11 @@ export const DEFAULT_UPLOAD_BYTES: number;
 export const DEFAULT_TIMEOUT_SECONDS: number;
 export const CORRELATION_ID_PATTERN: RegExp;
 
+export function forwardedHeaders(
+  source: Pick<Headers, "get">,
+  names: readonly string[],
+): Headers;
+
 export function normalizeCorrelationId(
   raw: string | null | undefined,
   generate?: () => string,

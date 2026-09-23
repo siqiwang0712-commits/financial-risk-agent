@@ -1,12 +1,8 @@
 from __future__ import annotations
 
-import asyncio
-import json
 import logging
 import math
-import multiprocessing
 import os
-import queue as queue_module
 from dataclasses import asdict
 from pathlib import Path
 from tempfile import NamedTemporaryFile
@@ -31,6 +27,7 @@ try:
 except ImportError:
     FastAPI = None
 
+from . import __version__
 from .agent import FinancialRiskAgent
 from .document_worker import (
     PdfBoundaryError,
@@ -48,16 +45,15 @@ from .enterprise.observability import (
     structured_event,
 )
 from .enterprise.postgres import PostgresEnterpriseRepository
-from .enterprise.repository import InMemoryEnterpriseRepository
 from .enterprise.security import (
-    CredentialStore,
-    PostgresCredentialStore,
     PostgresRateLimiter,
     RateLimiterUnavailable,
     SlidingWindowRateLimiter,
 )
-from .enterprise.service import EnterpriseRiskService
 from .pipeline import FinRiskPipeline
+from .process_isolation import WorkerTimeoutError, run_spawned_worker
+from .public_pilot import PublicPilotUnavailable, public_pilot_payload
+from .runtime import build_runtime_components, document_limits
 from .secret_files import env_or_file as _env_or_file
 from .xbrl import parse_companyfacts, values_by_year
 
@@ -65,36 +61,17 @@ from .xbrl import parse_companyfacts, values_by_year
 async def _run_document_isolated(
     root: Path, company: str, year: int, path: Path, document: str, timeout: float
 ):
-    context = multiprocessing.get_context("spawn")
-    queue = context.Queue(maxsize=1)
-    process = context.Process(
-        target=run_document_worker,
-        args=(queue, str(root), company, year, str(path), document),
-        daemon=True,
-    )
-    process.start()
     try:
-        try:
-            # Read while the child is alive. Joining first can deadlock when a
-            # large AgentState fills the multiprocessing pipe during queue.put.
-            status, result = await asyncio.to_thread(queue.get, True, timeout)
-        except queue_module.Empty as exc:
-            process.terminate()
-            await asyncio.to_thread(process.join, 5)
-            raise TimeoutError("document analysis timed out") from exc
-        await asyncio.to_thread(process.join, 5)
-        if process.is_alive():
-            process.terminate()
-            await asyncio.to_thread(process.join, 5)
-        if status != "ok":
-            raise RuntimeError(f"document worker failed: {result}")
-        return result
-    finally:
-        if process.is_alive():
-            process.terminate()
-            process.join(5)
-        queue.close()
-        queue.join_thread()
+        status, result = await run_spawned_worker(
+            run_document_worker,
+            (str(root), company, year, str(path), document),
+            timeout=timeout,
+        )
+    except WorkerTimeoutError as exc:
+        raise TimeoutError("document analysis timed out") from exc
+    if status != "ok":
+        raise RuntimeError(f"document worker failed: {result}")
+    return result
 
 
 async def _run_inspect_isolated(
@@ -108,46 +85,18 @@ async def _run_inspect_isolated(
     uses. Without this, one upload blocks the whole API process, health probes
     included.
     """
-    context = multiprocessing.get_context("spawn")
-    queue = context.Queue(maxsize=1)
-    process = context.Process(
-        target=run_inspect_worker, args=(queue, data, max_pages, max_chars), daemon=True
-    )
-    process.start()
     try:
-        try:
-            # Read while the child is alive. Joining first can deadlock when a
-            # large payload fills the multiprocessing pipe during queue.put.
-            status, result = await asyncio.to_thread(queue.get, True, timeout)
-        except queue_module.Empty as exc:
-            process.terminate()
-            await asyncio.to_thread(process.join, 5)
-            raise PdfBoundaryError(504, "PDF inspection timed out") from exc
-        await asyncio.to_thread(process.join, 5)
-        if process.is_alive():
-            process.terminate()
-            await asyncio.to_thread(process.join, 5)
-        if status == "boundary":
-            raise PdfBoundaryError(result[0], result[1])
-        if status != "ok":
-            raise PdfBoundaryError(422, "PDF could not be safely parsed")
-    finally:
-        if process.is_alive():
-            process.terminate()
-            process.join(5)
-        queue.close()
-        queue.join_thread()
-
-
-def _positive_env_number(name: str, default: str, cast):
-    raw = os.getenv(name, default)
-    try:
-        value = cast(raw)
-    except (TypeError, ValueError) as exc:
-        raise RuntimeError(f"{name} must be a positive number") from exc
-    if value <= 0:
-        raise RuntimeError(f"{name} must be a positive number")
-    return value
+        status, result = await run_spawned_worker(
+            run_inspect_worker,
+            (data, max_pages, max_chars),
+            timeout=timeout,
+        )
+    except WorkerTimeoutError as exc:
+        raise PdfBoundaryError(504, "PDF inspection timed out") from exc
+    if status == "boundary":
+        raise PdfBoundaryError(result[0], result[1])
+    if status != "ok":
+        raise PdfBoundaryError(422, "PDF could not be safely parsed")
 
 
 def _json_safe(value):
@@ -190,29 +139,14 @@ def _is_datastore_unavailable(exc: BaseException) -> bool:
     return any(cls.__name__ in _UNAVAILABLE_ERROR_NAMES for cls in type(exc).__mro__)
 
 
-def max_upload_bytes() -> int:
-    """The upload ceiling, in bytes, shared with the Next proxy.
-
-    The proxy enforced `FINRISK_MAX_UPLOAD_BYTES` while the backend enforced
-    `FINRISK_MAX_UPLOAD_MB` — two names, two units, one of them undocumented, so
-    lowering the backend limit left the proxy accepting (and the user uploading)
-    far more than the backend would take. `*_BYTES` is now the single knob; the
-    historical `*_MB` name is still honoured so existing deployments and tests
-    keep working.
-    """
-    configured_bytes = os.getenv("FINRISK_MAX_UPLOAD_BYTES")
-    if configured_bytes:
-        return int(_positive_env_number("FINRISK_MAX_UPLOAD_BYTES", "52428800", int))
-    return int(_positive_env_number("FINRISK_MAX_UPLOAD_MB", "50", int)) * 1024 * 1024
-
-
 def _pdf_limits() -> tuple[int, int, int, float]:
-    pages = _positive_env_number("FINRISK_MAX_PDF_PAGES", "500", int)
-    chars = _positive_env_number("FINRISK_MAX_EXTRACTED_CHARS", "5000000", int)
-    timeout = _positive_env_number(
-        "FINRISK_ANALYSIS_TIMEOUT_SECONDS", "60", float
+    limits = document_limits()
+    return (
+        limits.upload_bytes,
+        limits.pages,
+        limits.extracted_chars,
+        limits.timeout_seconds,
     )
-    return max_upload_bytes(), pages, chars, timeout
 
 
 if FastAPI:
@@ -221,24 +155,6 @@ if FastAPI:
     # Configure the root logger before anything logs; otherwise INFO events were
     # dropped by logging.lastResort and production ran silently.
     configure_logging()
-
-    def runtime_components():
-        database_url = _env_or_file("DATABASE_URL")
-        environment = os.getenv("FINRISK_ENV", "development").lower()
-        if environment == "production" and (
-            not database_url or "local-development-only" in database_url
-        ):
-            raise RuntimeError("production requires an explicit DATABASE_URL with a non-default password")
-        if database_url:
-            repository = PostgresEnterpriseRepository.connect(database_url)
-            if os.getenv("FINRISK_AUTO_MIGRATE", "0") == "1":
-                for migration in sorted((ROOT / "migrations").glob("*.sql")):
-                    repository.migrate(migration)
-            credentials = PostgresCredentialStore(repository)
-        else:
-            repository = InMemoryEnterpriseRepository()
-            credentials = CredentialStore()
-        return EnterpriseRiskService(repository), credentials
 
     class XbrlNormalizeRequest(BaseModel):
         companyfacts: dict
@@ -306,7 +222,7 @@ if FastAPI:
 
     app = FastAPI(
         title="FinRisk-Agent API",
-        version="0.3.3",
+        version=__version__,
         description="Three-layer evidence-grounded financial risk agent",
     )
     cors_origins = [
@@ -321,8 +237,10 @@ if FastAPI:
         allow_headers=["*"],
     )
     pipeline = FinRiskPipeline(ROOT)
-    agent = FinancialRiskAgent(ROOT, pipeline.provider)
-    enterprise_service, credential_store = runtime_components()
+    agent = FinancialRiskAgent(ROOT, pipeline.provider, pipeline)
+    runtime = build_runtime_components(ROOT)
+    enterprise_service = runtime.service
+    credential_store = runtime.credentials
     # Rate limits must hold across restarts and replicas, so they live in the same
     # store as the data whenever PostgreSQL is in use; the in-process window is only
     # the local fallback.
@@ -671,39 +589,10 @@ if FastAPI:
 
     @app.get("/api/v1/public-pilot")
     def public_pilot():
-        # Unauthenticated and served on every request, so a missing or malformed
-        # snapshot has to be reported as "not available" rather than escaping as a
-        # FileNotFoundError/StopIteration 500.
         try:
-            payload = json.loads(
-                (ROOT / "research/results/public_v1/summary.json").read_text(encoding="utf-8")
-            )
-        except (OSError, ValueError) as exc:
-            raise HTTPException(503, "public pilot snapshot is unavailable") from exc
-        full_hybrid = next(
-            (item for item in payload.get("summaries", []) if item.get("baseline") == "full_hybrid"),
-            None,
-        )
-        if full_hybrid is None:
-            raise HTTPException(503, "public pilot snapshot is missing the full_hybrid baseline")
-        return {
-            "snapshot": "v0.3.0 frozen public pilot",
-            "runtime": "v0.3.3",
-            "annotation_status": payload.get("annotation_status"),
-            # Benchmark-level only: copying this into every row incorrectly
-            # represented one aggregate as three entity measurements.
-            "benchmark_evidence_coverage": full_hybrid["evidence_coverage"],
-            "rows": [
-                {
-                    "entity": item.get("company"),
-                    "decision": "FLAG" if item.get("prediction") else "PASS",
-                    "score": item.get("overall_score"),
-                    "reliability": "UNCALIBRATED",
-                    "filing": item.get("example_id"),
-                }
-                for item in payload.get("decompositions", [])
-            ],
-        }
+            return public_pilot_payload(ROOT)
+        except PublicPilotUnavailable as exc:
+            raise HTTPException(503, str(exc)) from exc
 
     @app.post("/api/v1/xbrl/normalize")
     def normalize_xbrl(req: XbrlNormalizeRequest, actor: Principal = protected):

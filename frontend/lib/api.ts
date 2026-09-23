@@ -50,6 +50,27 @@ async function readJson(response: Response): Promise<unknown> {
   return response.json().catch(() => ({}));
 }
 
+interface JsonExchange {
+  response: Response;
+  body: unknown;
+}
+
+async function exchangeJson(
+  input: RequestInfo | URL,
+  init: RequestInit,
+  timeoutMs: number,
+): Promise<JsonExchange | null> {
+  try {
+    const response = await fetch(input, {
+      ...init,
+      signal: AbortSignal.timeout(timeoutMs),
+    });
+    return { response, body: await readJson(response) };
+  } catch {
+    return null;
+  }
+}
+
 function detailOf(body: unknown, fallback: string): string {
   if (body && typeof body === "object" && "detail" in body) {
     const detail = (body as { detail: unknown }).detail;
@@ -75,18 +96,19 @@ export type EntityResult =
 
 /** Create a tenant-bound entity using the same credential used for analysis. */
 export async function createEntity(apiKey: string, name: string): Promise<EntityResult> {
-  let response: Response;
-  try {
-    response = await fetch("/api/v1/enterprise/entities", {
+  const exchange = await exchangeJson(
+    "/api/v1/enterprise/entities",
+    {
       method: "POST",
       headers: { "Content-Type": "application/json", "X-API-Key": apiKey },
       body: JSON.stringify({ name }),
-      signal: AbortSignal.timeout(PILOT_TIMEOUT_MS),
-    });
-  } catch {
+    },
+    PILOT_TIMEOUT_MS,
+  );
+  if (!exchange) {
     return { ok: false, failure: { message: "Could not reach the entity API.", upstreamUnavailable: true } };
   }
-  const payload = await readJson(response);
+  const { response, body: payload } = exchange;
   if (response.ok && payload && typeof payload === "object" && "id" in payload
       && typeof (payload as { id: unknown }).id === "string") {
     return { ok: true, entityId: (payload as { id: string }).id };
@@ -109,12 +131,8 @@ export async function createEntity(apiKey: string, name: string): Promise<Entity
  * previous implementation silently returned sample data for all of them.
  */
 export async function loadPilot(): Promise<LoadResult<PilotPayload>> {
-  let response: Response;
-  try {
-    response = await fetch("/api/v1/public-pilot", {
-      signal: AbortSignal.timeout(PILOT_TIMEOUT_MS),
-    });
-  } catch {
+  const exchange = await exchangeJson("/api/v1/public-pilot", {}, PILOT_TIMEOUT_MS);
+  if (!exchange) {
     return {
       ok: false,
       failure: {
@@ -123,7 +141,7 @@ export async function loadPilot(): Promise<LoadResult<PilotPayload>> {
       },
     };
   }
-  const body = await readJson(response);
+  const { response, body } = exchange;
   if (response.ok) {
     if (!isPilotPayload(body)) {
       return {
@@ -184,15 +202,16 @@ export async function analyzeDocument(input: AnalyzeInput): Promise<AnalyzeResul
   body.append("entity_id", input.entityId);
   body.append("file", input.file);
 
-  let response: Response;
-  try {
-    response = await fetch("/api/v1/documents/analyze", {
+  const exchange = await exchangeJson(
+    "/api/v1/documents/analyze",
+    {
       method: "POST",
       body,
       headers: { "X-API-Key": input.apiKey },
-      signal: AbortSignal.timeout(ANALYSIS_TIMEOUT_MS),
-    });
-  } catch {
+    },
+    ANALYSIS_TIMEOUT_MS,
+  );
+  if (!exchange) {
     return {
       ok: false,
       failure: {
@@ -202,8 +221,7 @@ export async function analyzeDocument(input: AnalyzeInput): Promise<AnalyzeResul
       },
     };
   }
-
-  const payload = await readJson(response);
+  const { response, body: payload } = exchange;
 
   if (response.ok) {
     if (!isAssessmentPayload(payload)) {
