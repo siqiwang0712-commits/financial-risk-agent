@@ -224,6 +224,7 @@ jobs:
       POSTGRES_PASSWORD: ci-only-strong-password-v033
       FINRISK_LLM_PROVIDER: mock
       FINRISK_BOOTSTRAP_TOKEN: ci-only-bootstrap-token-v033
+      PYTHONPATH: backend
       FINRISK_EXPECTED_RUNTIME: ${{ needs.prepare.outputs.version }}
       CANDIDATE_API_IMAGE: ghcr.io/siqiwang0712-commits/financial-risk-agent-api@${{ needs.build-api.outputs.digest }}
       CANDIDATE_WEB_IMAGE: ghcr.io/siqiwang0712-commits/financial-risk-agent-web@${{ needs.build-web.outputs.digest }}
@@ -334,6 +335,7 @@ jobs:
       # bootstrap and make the health script's first call return 403.
       FINRISK_ENABLE_ORG_BOOTSTRAP: "1"
       FINRISK_BOOTSTRAP_TOKEN: ci-only-bootstrap-token-v033
+      PYTHONPATH: backend
       FINRISK_EXPECTED_RUNTIME: ${{ needs.prepare.outputs.version }}
       FINRISK_API_IMAGE: ghcr.io/siqiwang0712-commits/financial-risk-agent-api@${{ needs.build-api.outputs.digest }}
       FINRISK_WEB_IMAGE: ghcr.io/siqiwang0712-commits/financial-risk-agent-web@${{ needs.build-web.outputs.digest }}

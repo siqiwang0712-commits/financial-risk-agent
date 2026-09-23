@@ -4,6 +4,7 @@ import tomllib
 from pathlib import Path
 
 import pytest
+import yaml
 from finrisk.empirical_validation import (
     migrate_provenance_v2,
     validate_dataset_integrity,
@@ -449,6 +450,28 @@ def test_compose_llm_and_frontend_proxy_are_runtime_configurable():
     # asserts the behaviour, this only checks the wiring.
     assert "resolveUpstream(process.env)" in route
     assert "env.FINRISK_API_UPSTREAM" in proxy
+
+
+def test_smoke_workflow_jobs_can_import_repository_verification_helpers():
+    scripts = {
+        "scripts/verify_docker_health.py",
+        "scripts/verify_postgres_state.py",
+        "scripts/verify_docker_timeout.py",
+    }
+    for workflow_path in (
+        ROOT / ".github/workflows/ci.yml",
+        ROOT / ".github/workflows/container-release.yml",
+    ):
+        workflow = yaml.safe_load(workflow_path.read_text(encoding="utf-8"))
+        for job_name, job in workflow["jobs"].items():
+            commands = "\n".join(
+                str(step.get("run", "")) for step in job.get("steps", [])
+            )
+            if any(script in commands for script in scripts):
+                assert job.get("env", {}).get("PYTHONPATH") == "backend", (
+                    f"{workflow_path.name}:{job_name} invokes repository smoke "
+                    "helpers without exposing backend on PYTHONPATH"
+                )
 
 
 def test_production_compose_has_explicit_safe_migration_contract():

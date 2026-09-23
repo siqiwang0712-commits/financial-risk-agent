@@ -4,7 +4,8 @@ import importlib.util
 from pathlib import Path
 
 import pytest
-from finrisk.verification_http import assert_readiness
+from finrisk import verification_http
+from finrisk.verification_http import assert_readiness, wait_for_json_object
 
 ROOT = Path(__file__).resolve().parents[1]
 SCRIPT = ROOT / "scripts" / "verify_docker_health.py"
@@ -35,6 +36,36 @@ def test_readiness_requires_postgres_and_complete_schema():
 
     with pytest.raises(RuntimeError, match="schema"):
         assert_readiness({"status": "ready", "datastore": "postgres", "schema": "pending"})
+
+
+def test_json_endpoint_wait_retries_transport_and_contract_failures(monkeypatch):
+    attempts = iter(
+        [
+            OSError("not listening yet"),
+            {"runtime": "wrong"},
+            {"runtime": "v0.3.3"},
+        ]
+    )
+
+    def request(*_args, **_kwargs):
+        result = next(attempts)
+        if isinstance(result, Exception):
+            raise result
+        return result
+
+    def validate(payload):
+        if payload.get("runtime") != "v0.3.3":
+            raise RuntimeError("wrong runtime")
+
+    monkeypatch.setattr(verification_http, "request_json", request)
+    monkeypatch.setattr(verification_http.time, "sleep", lambda _seconds: None)
+
+    assert wait_for_json_object(
+        "http://127.0.0.1:3000/api/v1/public-pilot",
+        timeout=1,
+        label="frontend proxy",
+        validator=validate,
+    )["runtime"] == "v0.3.3"
 
 
 def test_verification_endpoints_and_runtime_are_configurable(monkeypatch):

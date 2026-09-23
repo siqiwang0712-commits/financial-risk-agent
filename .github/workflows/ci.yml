@@ -71,6 +71,9 @@ jobs:
       POSTGRES_PASSWORD: ci-only-strong-password-v032
       FINRISK_LLM_PROVIDER: mock
       FINRISK_BOOTSTRAP_TOKEN: ci-only-bootstrap-token-v032
+      # Smoke clients reuse the repository's bounded HTTP helpers without
+      # installing the application package on the GitHub runner.
+      PYTHONPATH: backend
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
       - name: Build frontend production image

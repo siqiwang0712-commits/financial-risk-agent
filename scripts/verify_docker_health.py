@@ -14,6 +14,7 @@ from finrisk.verification_http import (
     multipart,
     pdf_with_text,
     request_json,
+    wait_for_json_object,
     wait_for_readiness,
 )
 
@@ -23,6 +24,11 @@ WEB = ENDPOINTS.web
 EXPECTED_RUNTIME = os.getenv("FINRISK_EXPECTED_RUNTIME", declared_runtime())
 
 
+def assert_frontend_runtime(payload: dict) -> None:
+    if payload.get("runtime") != EXPECTED_RUNTIME:
+        raise RuntimeError(f"frontend API proxy failed: {payload!r}")
+
+
 def main() -> None:
     """Verify the composed production stack end to end.
 
@@ -30,10 +36,13 @@ def main() -> None:
     """
     try:
         wait_for_readiness(API, timeout=90)
-        with urlopen(f"{WEB}/api/v1/public-pilot", timeout=5) as response:
-            frontend_payload = json.load(response)
-        if frontend_payload.get("runtime") != EXPECTED_RUNTIME:
-            raise RuntimeError(f"frontend API proxy failed: {frontend_payload!r}")
+        wait_for_json_object(
+            f"{WEB}/api/v1/public-pilot",
+            timeout=90,
+            label="frontend proxy",
+            request_timeout=5,
+            validator=assert_frontend_runtime,
+        )
     except (OSError, ValueError, RuntimeError, TimeoutError) as exc:
         raise SystemExit(f"production compose readiness failed: {exc}") from exc
     print("production compose API is ready")

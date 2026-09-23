@@ -13,7 +13,7 @@ import os
 import time
 import tomllib
 import uuid
-from collections.abc import Mapping
+from collections.abc import Callable, Mapping
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
@@ -129,6 +129,32 @@ def assert_readiness(payload: Mapping[str, Any]) -> None:
         )
 
 
+def wait_for_json_object(
+    url: str,
+    *,
+    timeout: float,
+    label: str,
+    interval: float = 2,
+    request_timeout: float = 3,
+    validator: Callable[[Mapping[str, Any]], None] | None = None,
+) -> dict[str, Any]:
+    """Poll a JSON endpoint until it returns a valid object contract."""
+    deadline = time.monotonic() + timeout
+    last_error: Exception | None = None
+    while time.monotonic() < deadline:
+        try:
+            payload = request_json(url, timeout=request_timeout)
+            if not isinstance(payload, dict):
+                raise TypeError(f"unexpected {label} payload: {payload!r}")
+            if validator is not None:
+                validator(payload)
+            return payload
+        except (OSError, URLError, TypeError, ValueError, RuntimeError) as exc:
+            last_error = exc
+            time.sleep(interval)
+    raise TimeoutError(f"{label} did not become ready: {last_error}")
+
+
 def wait_for_readiness(
     api: str,
     *,
@@ -136,22 +162,14 @@ def wait_for_readiness(
     interval: float = 2,
     request_timeout: float = 3,
 ) -> dict[str, Any]:
-    deadline = time.monotonic() + timeout
-    last_error: Exception | None = None
-    while time.monotonic() < deadline:
-        try:
-            payload = request_json(
-                f"{api}/health/ready",
-                timeout=request_timeout,
-            )
-            if not isinstance(payload, dict):
-                raise TypeError(f"unexpected readiness payload: {payload!r}")
-            assert_readiness(payload)
-            return payload
-        except (OSError, URLError, TypeError, ValueError, RuntimeError) as exc:
-            last_error = exc
-            time.sleep(interval)
-    raise TimeoutError(f"API did not become ready: {last_error}")
+    return wait_for_json_object(
+        f"{api}/health/ready",
+        timeout=timeout,
+        label="API",
+        interval=interval,
+        request_timeout=request_timeout,
+        validator=assert_readiness,
+    )
 
 
 def pdf_with_text(text: str) -> bytes:
