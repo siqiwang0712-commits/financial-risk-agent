@@ -8,4 +8,4 @@
 6. Show model outputs alongside missing components and applicability warnings.
 7. Contrast overall risk with confidence and remove an input to demonstrate N/A plus lower confidence.
 8. Export the report and trace one conclusion back to its page.
-9. Close with the five-baseline evaluation plan and honestly state that the real benchmark remains pending.
+9. Close with the executed public and E3 numeric benchmarks, then state that the held-out result is underpowered and the frozen real-provider/document benchmark remains pending.

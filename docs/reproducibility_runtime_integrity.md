@@ -17,7 +17,7 @@ python scripts/replay_frozen_experiment.py v0.3.1-E2
 python scripts/replay_frozen_experiment.py v0.3.1-E3
 ```
 
-New experiments use a distinct v0.3.2 result directory, schema version and experiment
+New experiments use a distinct versioned result directory, schema version and experiment
 manifest. Their metadata records the actual Git commit and clean/dirty state. Manifests pin
 dataset, split, rules, models, fusion, prompt, labels, seed and git revision; incomplete
 inputs cannot create an immutable freeze. A new run

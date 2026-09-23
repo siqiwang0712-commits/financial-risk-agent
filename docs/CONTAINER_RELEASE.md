@@ -56,7 +56,7 @@ byte, the digest the release tags point at.
 
 | reference | meaning | use it for |
 |---|---|---|
-| `v0.3.3` | release identity | what humans deploy; mutable in principle |
+| `vX.Y.Z` | release identity | what humans deploy; mutable in principle |
 | `sha-<40-char commit>` | source identity | "which tree was this built from" |
 | `sha256:<digest>` | artifact identity | **the only reproducible reference** — pin this |
 | `latest` | convenience | never a reproducibility reference; may move |
@@ -213,10 +213,10 @@ Workflow default is `contents: read`. Per job:
 
 ```bash
 # dry run — builds, verifies and scans, but creates no release tag
-gh workflow run container-release.yml -f version=v0.3.3 -f publish=false
+gh workflow run container-release.yml -f version=v0.3.4 -f publish=false
 
 # real release
-gh workflow run container-release.yml -f version=v0.3.3 -f publish=true
+gh workflow run container-release.yml -f version=v0.3.4 -f publish=true
 ```
 
 Pushing a `vX.Y.Z` tag also runs it with publishing enabled. The `prepare` job refuses
@@ -224,7 +224,11 @@ to continue if the requested version does not match `pyproject.toml`,
 `frontend/package.json` and the newest `CHANGELOG.md` section, so a mistyped tag cannot
 produce a mislabelled image.
 
-## Verified release record
+At this documentation closeout, the source package/runtime metadata still declares 0.3.3.
+It must be updated consistently to 0.3.4 in a separate, non-document change before the
+release gates can pass.
+
+## Verified v0.3.3 release record
 
 The tags below were produced by `Container Release` run
 [35448112282](https://github.com/siqiwang0712-commits/financial-risk-agent/actions/runs/35448112282)

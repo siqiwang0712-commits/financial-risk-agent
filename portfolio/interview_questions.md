@@ -7,7 +7,7 @@
 5. **How is hallucination controlled?** Claims must include page text, and exact/fuzzy containment verification gates admission.
 6. **Why configuration rules?** They are reviewable, testable, versionable, and independent from orchestration code.
 7. **What is the research contribution?** A controlled comparison of deterministic, rules, models, LLM-only, and verified hybrid systems.
-8. **What would you improve first?** XBRL/table reconciliation, sector-specific applicability, adjudicated benchmarks, and calibrated confidence.
+8. **What would you improve first?** XBRL/table reconciliation, sector-specific applicability, adjudicated benchmarks, and calibrated reliability.
 9. **How do you prevent leakage?** Split evaluation by company, not pages or years from the same company.
 10. **What failure is most dangerous?** A correctly quoted but contextually misleading claim; provenance proves origin, not truth.
 

@@ -1,5 +1,33 @@
 # Changelog
 
+## [0.3.4] - 2026-09-23
+
+### Hardened boundaries and runtime ownership
+
+- Reused one configured `FinRiskPipeline` across the API, Agent and tool registry, and
+  separated runtime composition, transport schemas, process isolation, frozen pilot
+  projection and deployment-verification transport into explicit modules.
+- Moved PDF inspection and analysis behind killable child-process boundaries; tightened
+  document, SEC, hosted-LLM, evidence-admission and browser security boundaries.
+- Kept narrative extraction single-pass and aligned the Agent trace, deterministic facts,
+  contradiction checks, fusion score and final decision to the same admitted evidence.
+
+### Release runtime and regression protection
+
+- Added a build-once container release path that verifies candidate digests through both
+  the production overlay and the operator-facing release Compose file before digest-preserving
+  promotion, with vulnerability/secret scans, SBOMs and provenance attestations.
+- Consolidated credential-safe smoke-test HTTP helpers and restored the Docker gate's
+  authenticated workflow, PostgreSQL-selection, restart-persistence and timeout/retry checks.
+- Added regression coverage for runtime ownership, external-input validation, evidence
+  integrity, process cleanup and deployed HTTP contracts.
+
+### Research boundary
+
+- No prediction model, score calibration or frozen experiment changed. E1/E2/E3 and
+  `research/results/public_v1` remain byte-preserved historical artifacts. The FinRisk score
+  remains an explainable heuristic index and reliability remains `UNCALIBRATED`.
+
 ## [0.3.3] - 2026-09-19
 
 ### Runtime and operations

@@ -12,7 +12,7 @@
 [![Next.js](https://img.shields.io/badge/UI-Next.js-111111?logo=next.js&logoColor=white)](https://nextjs.org/)
 [![License](https://img.shields.io/badge/license-MIT-d45b3e)](LICENSE)
 
-**An evidence-grounded financial risk platform where an LLM plans and interprets, deterministic financial tools execute, and every material conclusion must trace back to verified evidence.**
+**An evidence-grounded financial risk platform where an Agent orchestrates, a constrained LLM interprets, deterministic financial tools execute, and every material conclusion must trace back to verified evidence.**
 
 [Quick start](#quick-start) · [Architecture](#architecture) · [Research results](#research-results) · [Workbench](#analyst-workbench) · [Documentation](#documentation)
 
@@ -25,11 +25,12 @@
 >
 > No production deployment, external validation, or regulatory approval is claimed. See [Limitations](research/limitations.md).
 
-## Current release
+## Release target
 
-**v0.3.3** — shared rate limiting, secret-file mounting and honest failure diagnostics on top of the v0.3.2 reproducibility and runtime-integrity base. Frozen E1/E2/E3 experiments replay read-only, and `DATABASE_URL` selects durable PostgreSQL persistence.
+**v0.3.4 — Hardened Boundaries & Verified Release Runtime** closes the v0.3.x architecture and runtime hardening work: the API, Agent and tool registry share one configured pipeline; document analysis runs behind a killable process boundary; external SEC, LLM and evidence inputs fail closed; and both candidate and operator-facing Compose paths verify the exact container digest before promotion. The published container record remains v0.3.3 until the v0.3.4 release workflow completes.
 
 - [CHANGELOG](CHANGELOG.md) — complete release history
+- [v0.3.4 release notes](RELEASE_NOTES_v0.3.4.md) — scope and unchanged research boundary
 - [Reproducibility and runtime integrity](docs/reproducibility_runtime_integrity.md) — replay, persistence and trust boundaries
 
 ## Why FinRisk exists
@@ -58,7 +59,7 @@ An unconstrained LLM is the wrong financial-risk oracle. It may transpose column
 - Verify quotations against cited pages before admitting them as evidence.
 - Fuse risk using weighted-average, max-severity, hierarchical or interaction-aware strategies.
 - Replay an assessment from frozen inputs and versions, then show any output drift.
-- Gate automation on evidence coverage, calibrated reliability and disagreement.
+- Gate automation on evidence coverage, explicit reliability/calibration status and disagreement.
 
 ## Quick start
 
@@ -307,6 +308,8 @@ The three layers enforce a strict dependency boundary:
 2. **Agent Reasoning Layer** — the planner and orchestrator select typed tools, assess sufficiency, cross-check signals, verify claims, reflect, and synthesize or abstain.
 3. **Tool / Code Layer** — ingestion, normalization, metrics, models, rules, evidence, contradiction detection, fusion and replay execute deterministically.
 
+`FinRiskPipeline` owns the shared rules, scoring policy, narrative provider and evidence verifier used by the API, Agent and tool registry. The Agent orchestrates that pipeline; it does not replace the deterministic calculation and decision path.
+
 ```text
 User
   ↓
@@ -417,7 +420,7 @@ Full detail, ablations, robustness checks and RQ-by-RQ status live in [Results](
 - **RQ3 — Classification:** Does Full Hybrid improve company-level risk classification under company-disjoint evaluation?
 - **RQ4 — Robustness:** How sensitive are decisions to narrative, rules, models, trends, missing evidence and perturbations?
 
-Current evidence is diagnostic only: RQ3 is not supported by the pilot, RQ2 has one true positive and one false positive, and RQ1 still requires a real-provider run.
+Current evidence is diagnostic only: RQ3 is not supported by the pilot, RQ2 has one true positive and one false positive, and RQ1 still requires a frozen real-provider benchmark. A hosted-provider smoke test established connectivity and schema conformance only.
 
 ## Project maturity
 
@@ -462,7 +465,7 @@ Authenticated with `X-API-Key` (rate-limited per tenant/user):
 
 Every failure answers `{"detail": "…"}` with an `X-Correlation-Id` header; middleware-generated `500` and `503` bodies additionally carry a `correlation_id` field, and `503` responses from a datastore outage carry `Retry-After`. Validation failures answer `422` with a JSON-serialisable error body rather than a `500`. Machine-readable error codes and a response envelope are not yet provided: `422` covers several distinct rejection reasons under one message.
 
-PDF uploads validate magic bytes and configurable limits (`FINRISK_MAX_UPLOAD_BYTES`, `FINRISK_MAX_PDF_PAGES`, `FINRISK_MAX_EXTRACTED_CHARS`, `FINRISK_ANALYSIS_TIMEOUT_SECONDS`); the historical `FINRISK_MAX_UPLOAD_MB` name is still honoured as a fallback when the bytes form is unset. Opening, page counting and page-text scanning run in Starlette's bounded worker pool rather than the async event loop.
+PDF uploads validate magic bytes and configurable limits (`FINRISK_MAX_UPLOAD_BYTES`, `FINRISK_MAX_PDF_PAGES`, `FINRISK_MAX_EXTRACTED_CHARS`, `FINRISK_ANALYSIS_TIMEOUT_SECONDS`); the historical `FINRISK_MAX_UPLOAD_MB` name is still honoured as a fallback when the bytes form is unset. Opening, page counting and page-text scanning run in a killable child process rather than the async event loop.
 
 Invalid, encrypted, oversized or timed-out inputs fail closed, and temporary files are
 removed. Analysis runs in a killable child process in every environment — not only in

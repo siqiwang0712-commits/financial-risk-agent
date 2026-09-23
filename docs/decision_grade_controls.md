@@ -37,7 +37,9 @@ The decision-grade manifest validator enforces required provenance, company-disj
 
 GitHub Actions provisions PostgreSQL and validates migration and restart persistence
 before tests, while retaining lint, ≥90% coverage, frozen benchmark replay, frontend
-security/type/test/build gates and a production-overlay Docker smoke test. The same
-smoke passed locally using Docker Desktop 29.7.2, including explicit migration,
-PostgreSQL-backed readiness, non-root API execution and persistence across API restart.
+security/type/test/build gates and a production-overlay Docker smoke test. The container
+release workflow additionally boots both its candidate overlay and the operator-facing
+release Compose file from the same candidate digests before promotion. The
+production-overlay smoke passed locally using Docker Desktop 29.7.2, including explicit
+migration, PostgreSQL-backed readiness, non-root API execution and persistence across API restart.
 Production deployment is not claimed.
