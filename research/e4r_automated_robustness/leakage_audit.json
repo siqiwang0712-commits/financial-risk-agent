@@ -1,0 +1,260 @@
+{
+ "checks": [
+  {
+   "check": "duplicate_observation_ids",
+   "detail": "675 rows, 675 unique",
+   "status": "PASS"
+  },
+  {
+   "check": "company_overlap",
+   "detail": "675 unique masked_company_id for 675 observations",
+   "status": "PASS"
+  },
+  {
+   "check": "cik_overlap",
+   "detail": "675 unique CIK for 675 observations",
+   "status": "PASS"
+  },
+  {
+   "check": "duplicate_accessions",
+   "detail": "2000 cohort rows, 2000 unique accessions",
+   "status": "PASS"
+  },
+  {
+   "check": "feature_timestamp_le_prediction_cutoff",
+   "detail": "11617 provenance facts scanned, 0 dated after the fiscal period end",
+   "examples": [],
+   "facts_scanned": 11617,
+   "status": "PASS"
+  },
+  {
+   "check": "fiscal_period_le_information_cutoff",
+   "detail": "0 observations with period_end after the cutoff date",
+   "status": "PASS"
+  },
+  {
+   "check": "previous_period_before_current_period",
+   "detail": "0 observations whose prior comparison period is not earlier",
+   "status": "PASS"
+  },
+  {
+   "check": "outcome_timestamp_gt_cutoff",
+   "detail": "0 outcomes resolved at or before the prediction cutoff",
+   "missing_timestamps": 0,
+   "status": "PASS"
+  },
+  {
+   "check": "outcome_within_forward_window",
+   "detail": "0 outcomes resolved after the locked forward window",
+   "status": "PASS"
+  },
+  {
+   "check": "no_future_year_field_names",
+   "detail": "0 field names embed a post-2025 year",
+   "fields": [],
+   "status": "PASS"
+  },
+  {
+   "check": "no_outcome_derived_field_names",
+   "detail": "0 field names reference the outcome",
+   "fields": [],
+   "status": "PASS"
+  },
+  {
+   "check": "no_label_derived_field_names",
+   "detail": "0 field names reference the label",
+   "fields": [],
+   "status": "PASS"
+  },
+  {
+   "check": "feature_and_outcome_key_disjointness",
+   "detail": "shared keys are identifiers only",
+   "shared_keys": [],
+   "status": "PASS"
+  },
+  {
+   "check": "no_feature_perfectly_separates_the_label",
+   "detail": "0 metrics separate events from non-events perfectly",
+   "fields": [],
+   "status": "PASS"
+  },
+  {
+   "check": "endpoint_anchored_on_pre_cutoff_levels",
+   "detail": "financial_deterioration_12m is a transition rule: four of its five conditions compare the FY2025 fact with the FY2024 fact and two are gated on the FY2024 value being positive. FY2024 facts are visible before the cutoff, so this is NOT leakage, but pre-cutoff magnitudes are strongly informative about the label - the strongest single metric sits 0.317 from chance.",
+   "status": "REVIEW"
+  },
+  {
+   "check": "missingness_indicators_carry_signal",
+   "detail": "whether a field is reported at all is itself predictive; the imputer's add_indicator flag therefore enters every learned model as a legitimate prediction-time feature",
+   "status": "REVIEW"
+  },
+  {
+   "check": "analysis_rows_equal_verified_outcomes",
+   "detail": "675 VERIFIED outcomes, 675 analysis rows",
+   "status": "PASS"
+  },
+  {
+   "check": "no_unresolved_outcome_converted_to_label",
+   "detail": "0 non-VERIFIED rows carry a binary label",
+   "status": "PASS"
+  }
+ ],
+ "confirmed_leakage_checks": [],
+ "events": 235,
+ "evidence_status": "POST_HOC_AUTOMATED_ROBUSTNESS",
+ "missingness_indicator_screen": [
+  {
+   "auroc": 0.7249274661508704,
+   "distance_from_chance": 0.22492746615087045,
+   "field": "free_cash_flow_growth",
+   "n_missing": 276
+  },
+  {
+   "auroc": 0.7233075435203095,
+   "distance_from_chance": 0.22330754352030946,
+   "field": "operating_cash_flow_growth",
+   "n_missing": 197
+  },
+  {
+   "auroc": 0.6926982591876208,
+   "distance_from_chance": 0.19269825918762085,
+   "field": "net_income_growth",
+   "n_missing": 290
+  },
+  {
+   "auroc": 0.6868955512572534,
+   "distance_from_chance": 0.18689555125725343,
+   "field": "cfo_to_net_income",
+   "n_missing": 275
+  },
+  {
+   "auroc": 0.6657640232108317,
+   "distance_from_chance": 0.16576402321083172,
+   "field": "debt_to_assets",
+   "n_missing": 397
+  },
+  {
+   "auroc": 0.6656189555125726,
+   "distance_from_chance": 0.16561895551257255,
+   "field": "net_debt",
+   "n_missing": 400
+  },
+  {
+   "auroc": 0.6630560928433269,
+   "distance_from_chance": 0.1630560928433269,
+   "field": "total_debt_growth",
+   "n_missing": 408
+  },
+  {
+   "auroc": 0.6623549323017408,
+   "distance_from_chance": 0.1623549323017408,
+   "field": "debt_to_equity",
+   "n_missing": 400
+  },
+  {
+   "auroc": 0.6266199226305609,
+   "distance_from_chance": 0.12661992263056088,
+   "field": "fcf_margin",
+   "n_missing": 104
+  },
+  {
+   "auroc": 0.6167311411992263,
+   "distance_from_chance": 0.11673114119922634,
+   "field": "revenue_growth",
+   "n_missing": 61
+  },
+  {
+   "auroc": 0.6025386847195358,
+   "distance_from_chance": 0.10253868471953576,
+   "field": "receivable_days",
+   "n_missing": 197
+  },
+  {
+   "auroc": 0.6018375241779497,
+   "distance_from_chance": 0.10183752417794967,
+   "field": "net_margin",
+   "n_missing": 54
+  }
+ ],
+ "n_observations": 675,
+ "note": "A CONFIRMED_LEAKAGE check invalidates E4-R's performance conclusions; a REVIEW check is an ambiguity that must be disclosed but does not by itself invalidate.",
+ "review_checks": [
+  "endpoint_anchored_on_pre_cutoff_levels",
+  "missingness_indicators_carry_signal"
+ ],
+ "status": "REVIEW",
+ "univariate_signal_screen": [
+  {
+   "auroc": 0.1833029197080292,
+   "distance_from_chance": 0.3166970802919708,
+   "field": "fcf_margin",
+   "n": 571
+  },
+  {
+   "auroc": 0.1843797299751771,
+   "distance_from_chance": 0.3156202700248229,
+   "field": "free_cash_flow",
+   "n": 614
+  },
+  {
+   "auroc": 0.19114657936020735,
+   "distance_from_chance": 0.30885342063979265,
+   "field": "operating_margin",
+   "n": 586
+  },
+  {
+   "auroc": 0.2545995536821225,
+   "distance_from_chance": 0.2454004463178775,
+   "field": "net_margin",
+   "n": 621
+  },
+  {
+   "auroc": 0.25593055013655874,
+   "distance_from_chance": 0.24406944986344126,
+   "field": "roa",
+   "n": 673
+  },
+  {
+   "auroc": 0.32694243156199676,
+   "distance_from_chance": 0.17305756843800324,
+   "field": "roe",
+   "n": 662
+  },
+  {
+   "auroc": 0.3435821697099893,
+   "distance_from_chance": 0.15641783029001072,
+   "field": "operating_cash_flow_growth",
+   "n": 478
+  },
+  {
+   "auroc": 0.35844550586191926,
+   "distance_from_chance": 0.14155449413808074,
+   "field": "free_cash_flow_growth",
+   "n": 399
+  },
+  {
+   "auroc": 0.6286008230452675,
+   "distance_from_chance": 0.12860082304526754,
+   "field": "current_ratio",
+   "n": 657
+  },
+  {
+   "auroc": 0.3752190495825173,
+   "distance_from_chance": 0.12478095041748272,
+   "field": "revenue_growth",
+   "n": 614
+  },
+  {
+   "auroc": 0.6195119407654605,
+   "distance_from_chance": 0.11951194076546046,
+   "field": "cash_ratio",
+   "n": 653
+  },
+  {
+   "auroc": 0.3821428571428571,
+   "distance_from_chance": 0.11785714285714288,
+   "field": "accounts_receivable_growth",
+   "n": 486
+  }
+ ]
+}

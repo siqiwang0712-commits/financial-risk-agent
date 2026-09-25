@@ -1,0 +1,244 @@
+{
+ "caution": "coefficients are fitted prediction-time associations on 4/5 of the cohort, not causal effects and not a mediation analysis",
+ "coefficient_stability_across_outer_folds": {
+  "cash_growth": {
+   "consistent_sign": "negative",
+   "folds": 5,
+   "max": 1.2840718410277467,
+   "mean": -0.2655773894889938,
+   "min": -1.632979230008437,
+   "positive_folds": 2,
+   "sign_consistency": 0.6,
+   "values": [
+    -0.27550996428181695,
+    -0.7124315795773241,
+    0.008961985394862121,
+    1.2840718410277467,
+    -1.632979230008437
+   ]
+  },
+  "cfo_to_net_income": {
+   "consistent_sign": "negative",
+   "folds": 5,
+   "max": 0.13399409954125677,
+   "mean": -0.012591458021960858,
+   "min": -0.14947072927791147,
+   "positive_folds": 2,
+   "sign_consistency": 0.6,
+   "values": [
+    -0.05130984720163378,
+    -0.0002141938453078579,
+    0.13399409954125677,
+    -0.14947072927791147,
+    0.004043380673792044
+   ]
+  },
+  "current_ratio": {
+   "consistent_sign": "positive",
+   "folds": 5,
+   "max": 0.38024888284267494,
+   "mean": 0.2721656626326695,
+   "min": 0.179619516691216,
+   "positive_folds": 5,
+   "sign_consistency": 1.0,
+   "values": [
+    0.2487561105063186,
+    0.38024888284267494,
+    0.179619516691216,
+    0.34261718140070807,
+    0.20958662172242976
+   ]
+  },
+  "debt_to_assets": {
+   "consistent_sign": "negative",
+   "folds": 5,
+   "max": 0.0463336917306685,
+   "mean": 0.0031038708601800443,
+   "min": -0.02948726605243671,
+   "positive_folds": 2,
+   "sign_consistency": 0.6,
+   "values": [
+    -0.0014095053139386573,
+    0.0002860173196443059,
+    -0.02948726605243671,
+    0.0463336917306685,
+    -0.0002035833830372201
+   ]
+  },
+  "fcf_margin": {
+   "consistent_sign": "negative",
+   "folds": 5,
+   "max": -0.17510532495900402,
+   "mean": -64.19854867030128,
+   "min": -305.4221208017337,
+   "positive_folds": 0,
+   "sign_consistency": 1.0,
+   "values": [
+    -3.706929481396456,
+    -305.4221208017337,
+    -10.323052156734253,
+    -1.365535586682993,
+    -0.17510532495900402
+   ]
+  },
+  "net_margin": {
+   "consistent_sign": "positive",
+   "folds": 5,
+   "max": 2.6858131458609553,
+   "mean": -0.504659428261858,
+   "min": -5.746912321378085,
+   "positive_folds": 3,
+   "sign_consistency": 0.6,
+   "values": [
+    -5.746912321378085,
+    2.068287059140529,
+    2.6858131458609553,
+    -1.5353496980966346,
+    0.00486467316394585
+   ]
+  },
+  "operating_cash_flow_growth": {
+   "consistent_sign": "negative",
+   "folds": 5,
+   "max": 0.08353280720504004,
+   "mean": -0.045407103387202455,
+   "min": -0.17121436956934738,
+   "positive_folds": 2,
+   "sign_consistency": 0.6,
+   "values": [
+    -0.17121436956934738,
+    0.057255476033222764,
+    -0.10538495479612013,
+    -0.09122447580880759,
+    0.08353280720504004
+   ]
+  },
+  "revenue_growth": {
+   "consistent_sign": "negative",
+   "folds": 5,
+   "max": 0.02000962428322078,
+   "mean": -0.09327403256515818,
+   "min": -0.19139253143448112,
+   "positive_folds": 1,
+   "sign_consistency": 0.8,
+   "values": [
+    0.02000962428322078,
+    -0.07332618336425917,
+    -0.19139253143448112,
+    -0.09893525993099754,
+    -0.12272581237927385
+   ]
+  },
+  "total_debt_growth": {
+   "consistent_sign": "positive",
+   "folds": 5,
+   "max": 0.14463669415594388,
+   "mean": 0.10445260878616318,
+   "min": 0.037041732528468485,
+   "positive_folds": 5,
+   "sign_consistency": 1.0,
+   "values": [
+    0.09403700761489696,
+    0.037041732528468485,
+    0.14463669415594388,
+    0.12927960710135492,
+    0.11726800253015165
+   ]
+  }
+ },
+ "design": "Y ~ F0 versus Y ~ F0 + temporal, both scored out-of-fold",
+ "feature_order": [
+  "current_ratio",
+  "debt_to_assets",
+  "net_margin",
+  "cfo_to_net_income",
+  "fcf_margin",
+  "revenue_growth",
+  "operating_cash_flow_growth",
+  "total_debt_growth",
+  "cash_growth"
+ ],
+ "fold_fits": [
+  {
+   "coefficients": {
+    "cash_growth": -0.27550996428181695,
+    "cfo_to_net_income": -0.05130984720163378,
+    "current_ratio": 0.2487561105063186,
+    "debt_to_assets": -0.0014095053139386573,
+    "fcf_margin": -3.706929481396456,
+    "net_margin": -5.746912321378085,
+    "operating_cash_flow_growth": -0.17121436956934738,
+    "revenue_growth": 0.02000962428322078,
+    "total_debt_growth": 0.09403700761489696
+   },
+   "fold": "0",
+   "n_train": 540,
+   "status": "OK"
+  },
+  {
+   "coefficients": {
+    "cash_growth": -0.7124315795773241,
+    "cfo_to_net_income": -0.0002141938453078579,
+    "current_ratio": 0.38024888284267494,
+    "debt_to_assets": 0.0002860173196443059,
+    "fcf_margin": -305.4221208017337,
+    "net_margin": 2.068287059140529,
+    "operating_cash_flow_growth": 0.057255476033222764,
+    "revenue_growth": -0.07332618336425917,
+    "total_debt_growth": 0.037041732528468485
+   },
+   "fold": "1",
+   "n_train": 540,
+   "status": "OK"
+  },
+  {
+   "coefficients": {
+    "cash_growth": 0.008961985394862121,
+    "cfo_to_net_income": 0.13399409954125677,
+    "current_ratio": 0.179619516691216,
+    "debt_to_assets": -0.02948726605243671,
+    "fcf_margin": -10.323052156734253,
+    "net_margin": 2.6858131458609553,
+    "operating_cash_flow_growth": -0.10538495479612013,
+    "revenue_growth": -0.19139253143448112,
+    "total_debt_growth": 0.14463669415594388
+   },
+   "fold": "2",
+   "n_train": 540,
+   "status": "OK"
+  },
+  {
+   "coefficients": {
+    "cash_growth": 1.2840718410277467,
+    "cfo_to_net_income": -0.14947072927791147,
+    "current_ratio": 0.34261718140070807,
+    "debt_to_assets": 0.0463336917306685,
+    "fcf_margin": -1.365535586682993,
+    "net_margin": -1.5353496980966346,
+    "operating_cash_flow_growth": -0.09122447580880759,
+    "revenue_growth": -0.09893525993099754,
+    "total_debt_growth": 0.12927960710135492
+   },
+   "fold": "3",
+   "n_train": 540,
+   "status": "OK"
+  },
+  {
+   "coefficients": {
+    "cash_growth": -1.632979230008437,
+    "cfo_to_net_income": 0.004043380673792044,
+    "current_ratio": 0.20958662172242976,
+    "debt_to_assets": -0.0002035833830372201,
+    "fcf_margin": -0.17510532495900402,
+    "net_margin": 0.00486467316394585,
+    "operating_cash_flow_growth": 0.08353280720504004,
+    "revenue_growth": -0.12272581237927385,
+    "total_debt_growth": 0.11726800253015165
+   },
+   "fold": "4",
+   "n_train": 540,
+   "status": "OK"
+  }
+ ],
+ "status": "POST_HOC_AUTOMATED_ROBUSTNESS"
+}

@@ -433,6 +433,31 @@ The frozen CPU backend was Qwen2.5 0.5B Instruct (Q4_K_M) through Ollama 0.12.3.
 
 `ChatGPT5.6 Sol` is the project-internal display name for a Codex sub-Agent comparator; it is not an OpenAI model name or official ChatGPT model, and the platform did not expose the exact underlying model ID. On the same 50 frozen anonymous E4-B packets it completed 150/150 A0/A1/A2 judgments. Only 18 cases had deterministic `VERIFIED` outcomes and only five were events: AUROC was 0.815 for A0, 0.800 for A1, 0.738 for A2, and 0.708 for the fixed `0.5 × B6 + 0.5 × A2` hybrid. These outcome-blind predictions were commissioned after E4 outcomes existed, so all results are `POST_HOC`, `UNCALIBRATED`, and insufficiently powered; they do not alter E4 or establish model superiority. Full traceability and results are in [the comparator methodology](research/e4_posthoc/model_capacity/sol_codex_agent/METHODOLOGY.md).
 
+### E4-R Automated Robustness Study
+
+`research/e4r_automated_robustness/` is a **POST_HOC** retrospective study run on E4's published replication data. It **does not modify E4**, **does not create confirmatory evidence**, **does not replace E5**, and evaluates robustness and competitive baselines only.
+
+On the same 675 verified observations (235 events), it asks whether B6's temporal improvement is robust and whether conventional tabular learning can explain or beat it.
+
+| Scorer | Out-of-fold AUROC | PR-AUC |
+|---|---:|---:|
+| B0 (frozen heuristic) | 0.679 | 0.541 |
+| B6 (frozen heuristic) | 0.705 | 0.581 |
+| Logistic, static only | 0.827 | 0.769 |
+| Logistic, static + temporal (prespecified linear challenger) | 0.819 | 0.754 |
+| Gradient boosting, static + temporal (prespecified nonlinear challenger) | 0.885 | 0.839 |
+
+Findings, all `POST_HOC_AUTOMATED_ROBUSTNESS`:
+
+- B6 > B0 reproduces: ΔAUROC **+0.0264**, paired DeLong p = 0.0014, Holm-adjusted p = 0.0014, 20,000-replicate BCa 95% CI **[+0.011, +0.043]**.
+- The gain is entirely temporal: `B6_no_temporal` is `0.75 × B0`, so its AUROC equals B0's **exactly**, and removing the temporal block removes the whole separation.
+- The gain is **not** concentrated in one term. The largest single-term effect (revenue growth) is 41% of the temporal gain, and dropping the cash-growth term slightly *improves* AUROC.
+- B6 is **not competitive** here: the prespecified boosting challenger beats it by **+0.180** AUROC (Δ 95% CI [+0.139, +0.224]; the DeLong p underflows double precision at z = 8.39), and a logistic model on the four temporal features alone already reaches 0.805.
+- The aggregate result is not uniformly robust: `Transportation_Utilities` shows ΔAUROC(B6−B0) = −0.005, while no single observation deletion reverses the sign.
+- No confirmed leakage. Two checks are disclosed as `REVIEW`, not leakage: the endpoint is a transition rule anchored on pre-cutoff levels, and missingness indicators are themselves predictive.
+
+Reproduce with `python research/e4r_automated_robustness/verify_e4r.py`. Full protocol, artifacts and the generated report are in [the study directory](research/e4r_automated_robustness/README.md) and [FINAL_REPORT.md](research/e4r_automated_robustness/FINAL_REPORT.md).
+
 ### Robustness and data integrity
 
 All eight SEC archives passed SHA-256, CRC, required-member and size checks. Verified endpoint coverage was 33.7%; 571 cases required human review and 755 had insufficient outcome data. Prediction-time diagnostics show that verification was selective, so propensity weighting is post-hoc sensitivity analysis only and does not remove selection bias. Independent SEC–Zenodo processing/source concordance matched within 5% for 90.9% of 17,757 matched values; this is not extraction accuracy. Deterministic replay was canonical byte-identical.

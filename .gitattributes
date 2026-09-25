@@ -32,3 +32,9 @@ research/e4_statistical_audit/** text eol=lf
 # above would otherwise force a text filter on it, so it is marked binary explicitly;
 # later rules win.
 research/e4_statistical_audit/replication/*.gz binary
+
+# E4-R publishes a manifest of SHA-256 digests over its own outputs, so those bytes have
+# to survive a Windows/Linux round trip unchanged. The figure writer opens its output
+# binary for the same reason: matplotlib would otherwise emit CRLF for the SVGs.
+research/e4r_automated_robustness/** text eol=lf
+research/e4r_automated_robustness/oof_predictions.csv text eol=lf

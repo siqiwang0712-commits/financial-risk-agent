@@ -1,0 +1,606 @@
+{
+ "models": {
+  "B0": {
+   "bins": [
+    {
+     "bin": 0,
+     "event_rate": 0.2596491228070175,
+     "high": 0.1,
+     "low": 0.0,
+     "mean_score": 0.0,
+     "n": 285
+    },
+    {
+     "bin": 1,
+     "event_rate": null,
+     "high": 0.2,
+     "low": 0.1,
+     "mean_score": null,
+     "n": 0
+    },
+    {
+     "bin": 2,
+     "event_rate": 0.12195121951219512,
+     "high": 0.3,
+     "low": 0.2,
+     "mean_score": 0.23211382113821138,
+     "n": 123
+    },
+    {
+     "bin": 3,
+     "event_rate": 0.2830188679245283,
+     "high": 0.4,
+     "low": 0.3,
+     "mean_score": 0.3333333333,
+     "n": 53
+    },
+    {
+     "bin": 4,
+     "event_rate": 0.23076923076923078,
+     "high": 0.5,
+     "low": 0.4,
+     "mean_score": 0.4,
+     "n": 13
+    },
+    {
+     "bin": 5,
+     "event_rate": 0.5185185185185185,
+     "high": 0.6,
+     "low": 0.5,
+     "mean_score": 0.5,
+     "n": 54
+    },
+    {
+     "bin": 6,
+     "event_rate": 0.7127659574468085,
+     "high": 0.7,
+     "low": 0.6,
+     "mean_score": 0.664539007124468,
+     "n": 94
+    },
+    {
+     "bin": 7,
+     "event_rate": 0.5714285714285714,
+     "high": 0.8,
+     "low": 0.7,
+     "mean_score": 0.75,
+     "n": 14
+    },
+    {
+     "bin": 8,
+     "event_rate": 1.0,
+     "high": 0.9,
+     "low": 0.8,
+     "mean_score": 0.8,
+     "n": 1
+    },
+    {
+     "bin": 9,
+     "event_rate": 0.631578947368421,
+     "high": 1.0,
+     "low": 0.9,
+     "mean_score": 1.0,
+     "n": 38
+    }
+   ],
+   "brier": 0.22637901234488889,
+   "brier_skill_vs_prevalence": null,
+   "calibration_slope": 0.248066890804168,
+   "citl_intercept": -0.38973999957625305,
+   "ece": 0.16985185184474078,
+   "ece_bins": 10,
+   "event_rate": 0.34814814814814815,
+   "events": 235,
+   "extreme_mass": 0.4785185185185185,
+   "mean_score": 0.28175308642162966,
+   "n": 675,
+   "note": "Descriptive only. No calibration map was fitted; refitting a calibrator on this cohort and then reporting its performance here would be circular.",
+   "one_mass": 0.056296296296296296,
+   "status": "UNCALIBRATED_DESCRIPTIVE",
+   "unique_score_values": 11,
+   "zero_mass": 0.4222222222222222
+  },
+  "B6": {
+   "bins": [
+    {
+     "bin": 0,
+     "event_rate": 0.2151394422310757,
+     "high": 0.1,
+     "low": 0.0,
+     "mean_score": 0.022244355904382472,
+     "n": 251
+    },
+    {
+     "bin": 1,
+     "event_rate": 0.21348314606741572,
+     "high": 0.2,
+     "low": 0.1,
+     "mean_score": 0.1669943820269663,
+     "n": 89
+    },
+    {
+     "bin": 2,
+     "event_rate": 0.2976190476190476,
+     "high": 0.3,
+     "low": 0.2,
+     "mean_score": 0.24776785713690475,
+     "n": 84
+    },
+    {
+     "bin": 3,
+     "event_rate": 0.23636363636363636,
+     "high": 0.4,
+     "low": 0.3,
+     "mean_score": 0.3526515151490909,
+     "n": 55
+    },
+    {
+     "bin": 4,
+     "event_rate": 0.2692307692307692,
+     "high": 0.5,
+     "low": 0.4,
+     "mean_score": 0.43942307691923077,
+     "n": 26
+    },
+    {
+     "bin": 5,
+     "event_rate": 0.5909090909090909,
+     "high": 0.6,
+     "low": 0.5,
+     "mean_score": 0.521780303030303,
+     "n": 66
+    },
+    {
+     "bin": 6,
+     "event_rate": 0.7608695652173914,
+     "high": 0.7,
+     "low": 0.6,
+     "mean_score": 0.6413043478347826,
+     "n": 46
+    },
+    {
+     "bin": 7,
+     "event_rate": 0.8064516129032258,
+     "high": 0.8,
+     "low": 0.7,
+     "mean_score": 0.7491935483903226,
+     "n": 31
+    },
+    {
+     "bin": 8,
+     "event_rate": 0.6428571428571429,
+     "high": 0.9,
+     "low": 0.8,
+     "mean_score": 0.8690476190428571,
+     "n": 14
+    },
+    {
+     "bin": 9,
+     "event_rate": 0.6923076923076923,
+     "high": 1.0,
+     "low": 0.9,
+     "mean_score": 0.9807692307769231,
+     "n": 13
+    }
+   ],
+   "brier": 0.2081392489713856,
+   "brier_skill_vs_prevalence": null,
+   "calibration_slope": 0.586731639358931,
+   "citl_intercept": -0.27999953045669634,
+   "ece": 0.12787654321096298,
+   "ece_bins": 10,
+   "event_rate": 0.34814814814814815,
+   "events": 235,
+   "extreme_mass": 0.2740740740740741,
+   "mean_score": 0.2728271604921481,
+   "n": 675,
+   "note": "Descriptive only. No calibration map was fitted; refitting a calibrator on this cohort and then reporting its performance here would be circular.",
+   "one_mass": 0.014814814814814815,
+   "status": "UNCALIBRATED_DESCRIPTIVE",
+   "unique_score_values": 39,
+   "zero_mass": 0.25925925925925924
+  },
+  "hist_gb_F2": {
+   "bins": [
+    {
+     "bin": 0,
+     "event_rate": 0.0653061224489796,
+     "high": 0.1,
+     "low": 0.0,
+     "mean_score": 0.0494661129894022,
+     "n": 245
+    },
+    {
+     "bin": 1,
+     "event_rate": 0.16666666666666666,
+     "high": 0.2,
+     "low": 0.1,
+     "mean_score": 0.14496025422009987,
+     "n": 90
+    },
+    {
+     "bin": 2,
+     "event_rate": 0.23404255319148937,
+     "high": 0.3,
+     "low": 0.2,
+     "mean_score": 0.2438995260465914,
+     "n": 47
+    },
+    {
+     "bin": 3,
+     "event_rate": 0.35714285714285715,
+     "high": 0.4,
+     "low": 0.3,
+     "mean_score": 0.3491292611193991,
+     "n": 42
+    },
+    {
+     "bin": 4,
+     "event_rate": 0.36,
+     "high": 0.5,
+     "low": 0.4,
+     "mean_score": 0.44674789882786853,
+     "n": 50
+    },
+    {
+     "bin": 5,
+     "event_rate": 0.5769230769230769,
+     "high": 0.6,
+     "low": 0.5,
+     "mean_score": 0.5440666137105925,
+     "n": 26
+    },
+    {
+     "bin": 6,
+     "event_rate": 0.5714285714285714,
+     "high": 0.7,
+     "low": 0.6,
+     "mean_score": 0.6447823359479242,
+     "n": 35
+    },
+    {
+     "bin": 7,
+     "event_rate": 0.6,
+     "high": 0.8,
+     "low": 0.7,
+     "mean_score": 0.7486222100746134,
+     "n": 20
+    },
+    {
+     "bin": 8,
+     "event_rate": 0.9,
+     "high": 0.9,
+     "low": 0.8,
+     "mean_score": 0.8501078320831889,
+     "n": 50
+    },
+    {
+     "bin": 9,
+     "event_rate": 0.9714285714285714,
+     "high": 1.0,
+     "low": 0.9,
+     "mean_score": 0.943517537458273,
+     "n": 70
+    }
+   ],
+   "brier": 0.12419315019119093,
+   "brier_skill_vs_prevalence": null,
+   "calibration_slope": 0.9687086196172137,
+   "citl_intercept": -0.0016651542497971104,
+   "ece": 0.032317182093794944,
+   "ece_bins": 10,
+   "event_rate": 0.34814814814814815,
+   "events": 235,
+   "extreme_mass": 0.0,
+   "mean_score": 0.3464694804995468,
+   "n": 675,
+   "note": "Descriptive only. No calibration map was fitted; refitting a calibrator on this cohort and then reporting its performance here would be circular.",
+   "one_mass": 0.0,
+   "status": "UNCALIBRATED_DESCRIPTIVE",
+   "unique_score_values": 663,
+   "zero_mass": 0.0
+  },
+  "logistic_F2": {
+   "bins": [
+    {
+     "bin": 0,
+     "event_rate": 0.10614525139664804,
+     "high": 0.1,
+     "low": 0.0,
+     "mean_score": 0.058197058767758075,
+     "n": 179
+    },
+    {
+     "bin": 1,
+     "event_rate": 0.16666666666666666,
+     "high": 0.2,
+     "low": 0.1,
+     "mean_score": 0.16242911161128323,
+     "n": 102
+    },
+    {
+     "bin": 2,
+     "event_rate": 0.2248062015503876,
+     "high": 0.3,
+     "low": 0.2,
+     "mean_score": 0.22427234313100436,
+     "n": 129
+    },
+    {
+     "bin": 3,
+     "event_rate": 0.3157894736842105,
+     "high": 0.4,
+     "low": 0.3,
+     "mean_score": 0.34360464432184795,
+     "n": 57
+    },
+    {
+     "bin": 4,
+     "event_rate": 0.5,
+     "high": 0.5,
+     "low": 0.4,
+     "mean_score": 0.4413845357566617,
+     "n": 18
+    },
+    {
+     "bin": 5,
+     "event_rate": 0.4117647058823529,
+     "high": 0.6,
+     "low": 0.5,
+     "mean_score": 0.5560156441732278,
+     "n": 17
+    },
+    {
+     "bin": 6,
+     "event_rate": 0.6304347826086957,
+     "high": 0.7,
+     "low": 0.6,
+     "mean_score": 0.6675140940972543,
+     "n": 46
+    },
+    {
+     "bin": 7,
+     "event_rate": 0.7222222222222222,
+     "high": 0.8,
+     "low": 0.7,
+     "mean_score": 0.7352236178597561,
+     "n": 36
+    },
+    {
+     "bin": 8,
+     "event_rate": 0.7407407407407407,
+     "high": 0.9,
+     "low": 0.8,
+     "mean_score": 0.8515773835132882,
+     "n": 27
+    },
+    {
+     "bin": 9,
+     "event_rate": 0.953125,
+     "high": 1.0,
+     "low": 0.9,
+     "mean_score": 0.9727337270496098,
+     "n": 64
+    }
+   ],
+   "brier": 0.1518564416874832,
+   "brier_skill_vs_prevalence": null,
+   "calibration_slope": 0.6547304141407989,
+   "citl_intercept": -0.23311558350762818,
+   "ece": 0.03051537825696278,
+   "ece_bins": 10,
+   "event_rate": 0.34814814814814815,
+   "events": 235,
+   "extreme_mass": 0.005925925925925926,
+   "mean_score": 0.3486223317719229,
+   "n": 675,
+   "note": "Descriptive only. No calibration map was fitted; refitting a calibrator on this cohort and then reporting its performance here would be circular.",
+   "one_mass": 0.005925925925925926,
+   "status": "UNCALIBRATED_DESCRIPTIVE",
+   "unique_score_values": 670,
+   "zero_mass": 0.0
+  },
+  "logistic_l2_F2": {
+   "bins": [
+    {
+     "bin": 0,
+     "event_rate": 1.0,
+     "high": 0.1,
+     "low": 0.0,
+     "mean_score": 9.892378342036108e-05,
+     "n": 1
+    },
+    {
+     "bin": 1,
+     "event_rate": 0.08333333333333333,
+     "high": 0.2,
+     "low": 0.1,
+     "mean_score": 0.14089154400633894,
+     "n": 192
+    },
+    {
+     "bin": 2,
+     "event_rate": 0.19704433497536947,
+     "high": 0.3,
+     "low": 0.2,
+     "mean_score": 0.2529307741153373,
+     "n": 203
+    },
+    {
+     "bin": 3,
+     "event_rate": 0.3684210526315789,
+     "high": 0.4,
+     "low": 0.3,
+     "mean_score": 0.3584060006322155,
+     "n": 76
+    },
+    {
+     "bin": 4,
+     "event_rate": 0.5,
+     "high": 0.5,
+     "low": 0.4,
+     "mean_score": 0.44995204441385284,
+     "n": 36
+    },
+    {
+     "bin": 5,
+     "event_rate": 0.6627906976744186,
+     "high": 0.6,
+     "low": 0.5,
+     "mean_score": 0.5562540268539894,
+     "n": 86
+    },
+    {
+     "bin": 6,
+     "event_rate": 0.8260869565217391,
+     "high": 0.7,
+     "low": 0.6,
+     "mean_score": 0.6485662732095843,
+     "n": 23
+    },
+    {
+     "bin": 7,
+     "event_rate": 0.9130434782608695,
+     "high": 0.8,
+     "low": 0.7,
+     "mean_score": 0.7518058284688588,
+     "n": 23
+    },
+    {
+     "bin": 8,
+     "event_rate": 1.0,
+     "high": 0.9,
+     "low": 0.8,
+     "mean_score": 0.8503838332480114,
+     "n": 12
+    },
+    {
+     "bin": 9,
+     "event_rate": 1.0,
+     "high": 1.0,
+     "low": 0.9,
+     "mean_score": 0.9378816990684449,
+     "n": 23
+    }
+   ],
+   "brier": 0.15207355719469579,
+   "brier_skill_vs_prevalence": null,
+   "calibration_slope": 1.4714450836300756,
+   "citl_intercept": 0.30750045451250324,
+   "ece": 0.0683505263678554,
+   "ece_bins": 10,
+   "event_rate": 0.34814814814814815,
+   "events": 235,
+   "extreme_mass": 0.0014814814814814814,
+   "mean_score": 0.346156506505124,
+   "n": 675,
+   "note": "Descriptive only. No calibration map was fitted; refitting a calibrator on this cohort and then reporting its performance here would be circular.",
+   "one_mass": 0.0014814814814814814,
+   "status": "UNCALIBRATED_DESCRIPTIVE",
+   "unique_score_values": 674,
+   "zero_mass": 0.0
+  },
+  "random_forest_F2": {
+   "bins": [
+    {
+     "bin": 0,
+     "event_rate": 0.03867403314917127,
+     "high": 0.1,
+     "low": 0.0,
+     "mean_score": 0.050830303550557454,
+     "n": 181
+    },
+    {
+     "bin": 1,
+     "event_rate": 0.1440677966101695,
+     "high": 0.2,
+     "low": 0.1,
+     "mean_score": 0.14762379893511512,
+     "n": 118
+    },
+    {
+     "bin": 2,
+     "event_rate": 0.2236842105263158,
+     "high": 0.3,
+     "low": 0.2,
+     "mean_score": 0.25305455428274576,
+     "n": 76
+    },
+    {
+     "bin": 3,
+     "event_rate": 0.2962962962962963,
+     "high": 0.4,
+     "low": 0.3,
+     "mean_score": 0.34393512921101665,
+     "n": 54
+    },
+    {
+     "bin": 4,
+     "event_rate": 0.5434782608695652,
+     "high": 0.5,
+     "low": 0.4,
+     "mean_score": 0.44642399283658557,
+     "n": 46
+    },
+    {
+     "bin": 5,
+     "event_rate": 0.5,
+     "high": 0.6,
+     "low": 0.5,
+     "mean_score": 0.5466379218212107,
+     "n": 46
+    },
+    {
+     "bin": 6,
+     "event_rate": 0.575,
+     "high": 0.7,
+     "low": 0.6,
+     "mean_score": 0.6498114394204371,
+     "n": 40
+    },
+    {
+     "bin": 7,
+     "event_rate": 0.8857142857142857,
+     "high": 0.8,
+     "low": 0.7,
+     "mean_score": 0.7464004970214446,
+     "n": 35
+    },
+    {
+     "bin": 8,
+     "event_rate": 0.9642857142857143,
+     "high": 0.9,
+     "low": 0.8,
+     "mean_score": 0.8677931682611619,
+     "n": 28
+    },
+    {
+     "bin": 9,
+     "event_rate": 0.9607843137254902,
+     "high": 1.0,
+     "low": 0.9,
+     "mean_score": 0.9534175378070493,
+     "n": 51
+    }
+   ],
+   "brier": 0.12717366948246336,
+   "brier_skill_vs_prevalence": null,
+   "calibration_slope": 1.1594433968991544,
+   "citl_intercept": 0.07902027206605258,
+   "ece": 0.03700787273298622,
+   "ece_bins": 10,
+   "event_rate": 0.34814814814814815,
+   "events": 235,
+   "extreme_mass": 0.002962962962962963,
+   "mean_score": 0.3483620185276693,
+   "n": 675,
+   "note": "Descriptive only. No calibration map was fitted; refitting a calibrator on this cohort and then reporting its performance here would be circular.",
+   "one_mass": 0.002962962962962963,
+   "status": "UNCALIBRATED_DESCRIPTIVE",
+   "unique_score_values": 642,
+   "zero_mass": 0.0
+  }
+ },
+ "note": "Descriptive diagnostics on out-of-fold scores. No calibration map was fitted on this cohort, so these numbers must not be reported as calibrated performance.",
+ "status": "UNCALIBRATED"
+}

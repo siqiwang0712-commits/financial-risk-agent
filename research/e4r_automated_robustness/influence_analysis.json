@@ -1,0 +1,224 @@
+{
+ "comparison": "B6 - B0",
+ "leave_one_out": {
+  "deletions_flipping_sign": 0,
+  "max_delta_after_deletion": 0.02689381088547471,
+  "max_negative_influence": -0.0005350101117802541,
+  "max_negative_unit": "R_OBS_000827",
+  "max_positive_influence": 0.0017521574170511478,
+  "max_positive_unit": "R_OBS_001989",
+  "median_influence": 8.76192365562023e-06,
+  "min_delta_after_deletion": 0.02460664335664331,
+  "n_units": 675,
+  "observed_delta_auroc": 0.026358800773694457,
+  "status": "OK",
+  "top_20_by_absolute_influence": [
+   {
+    "delta_without": 0.02460664335664331,
+    "influence": 0.0017521574170511478,
+    "observation_id": "R_OBS_000618"
+   },
+   {
+    "delta_without": 0.02460664335664331,
+    "influence": 0.0017521574170511478,
+    "observation_id": "R_OBS_000819"
+   },
+   {
+    "delta_without": 0.02460664335664331,
+    "influence": 0.0017521574170511478,
+    "observation_id": "R_OBS_000842"
+   },
+   {
+    "delta_without": 0.02460664335664331,
+    "influence": 0.0017521574170511478,
+    "observation_id": "R_OBS_001267"
+   },
+   {
+    "delta_without": 0.02460664335664331,
+    "influence": 0.0017521574170511478,
+    "observation_id": "R_OBS_001631"
+   },
+   {
+    "delta_without": 0.02460664335664331,
+    "influence": 0.0017521574170511478,
+    "observation_id": "R_OBS_001666"
+   },
+   {
+    "delta_without": 0.02460664335664331,
+    "influence": 0.0017521574170511478,
+    "observation_id": "R_OBS_001960"
+   },
+   {
+    "delta_without": 0.02460664335664331,
+    "influence": 0.0017521574170511478,
+    "observation_id": "R_OBS_001989"
+   },
+   {
+    "delta_without": 0.025296231546231507,
+    "influence": 0.0010625692274629506,
+    "observation_id": "R_OBS_000096"
+   },
+   {
+    "delta_without": 0.025296231546231507,
+    "influence": 0.0010625692274629506,
+    "observation_id": "R_OBS_000522"
+   },
+   {
+    "delta_without": 0.025296231546231507,
+    "influence": 0.0010625692274629506,
+    "observation_id": "R_OBS_001288"
+   },
+   {
+    "delta_without": 0.025296231546231507,
+    "influence": 0.0010625692274629506,
+    "observation_id": "R_OBS_001442"
+   },
+   {
+    "delta_without": 0.025296231546231507,
+    "influence": 0.0010625692274629506,
+    "observation_id": "R_OBS_001616"
+   },
+   {
+    "delta_without": 0.025296231546231507,
+    "influence": 0.0010625692274629506,
+    "observation_id": "R_OBS_001697"
+   },
+   {
+    "delta_without": 0.025296231546231507,
+    "influence": 0.0010625692274629506,
+    "observation_id": "R_OBS_001750"
+   },
+   {
+    "delta_without": 0.02554875679875679,
+    "influence": 0.0008100439749376687,
+    "observation_id": "R_OBS_000394"
+   },
+   {
+    "delta_without": 0.02554875679875679,
+    "influence": 0.0008100439749376687,
+    "observation_id": "R_OBS_000568"
+   },
+   {
+    "delta_without": 0.02554875679875679,
+    "influence": 0.0008100439749376687,
+    "observation_id": "R_OBS_000679"
+   },
+   {
+    "delta_without": 0.02554875679875679,
+    "influence": 0.0008100439749376687,
+    "observation_id": "R_OBS_001618"
+   },
+   {
+    "delta_without": 0.02554875679875679,
+    "influence": 0.0008100439749376687,
+    "observation_id": "R_OBS_001784"
+   }
+  ]
+ },
+ "leave_sector_out": {
+  "entries": [
+   {
+    "delta_without": 0.02640332231144693,
+    "group": "Agriculture",
+    "influence": -4.452153775247325e-05,
+    "removed_events": 3,
+    "removed_n": 5
+   },
+   {
+    "delta_without": 0.02684201044856782,
+    "group": "Construction",
+    "influence": -0.00048320967487336386,
+    "removed_events": 1,
+    "removed_n": 14
+   },
+   {
+    "delta_without": 0.04941907051282057,
+    "group": "Manufacturing",
+    "influence": -0.023060269739126116,
+    "removed_events": 139,
+    "removed_n": 319
+   },
+   {
+    "delta_without": 0.024347722832129715,
+    "group": "Mining",
+    "influence": 0.002011077941564743,
+    "removed_events": 16,
+    "removed_n": 33
+   },
+   {
+    "delta_without": 0.02127553063676413,
+    "group": "Other_Nonfinancial",
+    "influence": 0.005083270136930329,
+    "removed_events": 8,
+    "removed_n": 8
+   },
+   {
+    "delta_without": 0.027424009956760975,
+    "group": "Retail",
+    "influence": -0.0010652091830665178,
+    "removed_events": 6,
+    "removed_n": 39
+   },
+   {
+    "delta_without": 0.021890772507000666,
+    "group": "Services",
+    "influence": 0.004468028266693791,
+    "removed_events": 42,
+    "removed_n": 173
+   },
+   {
+    "delta_without": 0.027301713830211294,
+    "group": "Transportation_Utilities",
+    "influence": -0.0009429130565168364,
+    "removed_events": 14,
+    "removed_n": 68
+   },
+   {
+    "delta_without": 0.023880369655732703,
+    "group": "Wholesale",
+    "influence": 0.0024784311179617546,
+    "removed_events": 6,
+    "removed_n": 16
+   }
+  ],
+  "observed_delta_auroc": 0.026358800773694457,
+  "sectors_evaluated": [
+   "Manufacturing",
+   "Services",
+   "Transportation_Utilities"
+  ],
+  "status": "OK",
+  "summary": {
+   "deletions_flipping_sign": 0,
+   "max_delta_after_deletion": 0.04941907051282057,
+   "max_negative_influence": -0.023060269739126116,
+   "max_negative_unit": "Manufacturing",
+   "max_positive_influence": 0.004468028266693791,
+   "max_positive_unit": "Services",
+   "median_influence": -0.0009429130565168364,
+   "min_delta_after_deletion": 0.021890772507000666,
+   "n_units": 3,
+   "observed_delta_auroc": 0.026358800773694457,
+   "status": "OK",
+   "top_20_by_absolute_influence": [
+    {
+     "delta_without": 0.04941907051282057,
+     "group": "Manufacturing",
+     "influence": -0.023060269739126116
+    },
+    {
+     "delta_without": 0.021890772507000666,
+     "group": "Services",
+     "influence": 0.004468028266693791
+    },
+    {
+     "delta_without": 0.027301713830211294,
+     "group": "Transportation_Utilities",
+     "influence": -0.0009429130565168364
+    }
+   ]
+  }
+ },
+ "observed_delta_auroc": 0.026358800773694457,
+ "status": "POST_HOC_AUTOMATED_ROBUSTNESS"
+}

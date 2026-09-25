@@ -1,0 +1,184 @@
+{
+ "cohort_rows": 2000,
+ "discovery": {
+  "b0_function": "ratio_risk_score",
+  "b0_inputs_from_code": [
+   "current_ratio",
+   "debt_to_assets",
+   "net_margin",
+   "cfo_to_net_income",
+   "fcf_margin"
+  ],
+  "b0_inputs_match_expected": true,
+  "b0_rules_from_code": [
+   {
+    "comparator": "<",
+    "metric": "current_ratio",
+    "threshold": 1.0
+   },
+   {
+    "comparator": ">",
+    "metric": "debt_to_assets",
+    "threshold": 0.6
+   },
+   {
+    "comparator": "<",
+    "metric": "net_margin",
+    "threshold": 0
+   },
+   {
+    "comparator": "<",
+    "metric": "cfo_to_net_income",
+    "threshold": 0.8
+   },
+   {
+    "comparator": "<",
+    "metric": "fcf_margin",
+    "threshold": 0
+   }
+  ],
+  "b6_function": "temporal_risk_score",
+  "b6_temporal_inputs_from_code": [
+   "revenue_growth",
+   "operating_cash_flow_growth",
+   "total_debt_growth",
+   "cash_growth"
+  ],
+  "b6_temporal_inputs_match_expected": true,
+  "b6_temporal_rules_from_code": [
+   {
+    "comparator": "<=",
+    "metric": "revenue_growth",
+    "threshold": -0.1
+   },
+   {
+    "comparator": "<=",
+    "metric": "operating_cash_flow_growth",
+    "threshold": -0.25
+   },
+   {
+    "comparator": ">=",
+    "metric": "total_debt_growth",
+    "threshold": 0.2
+   },
+   {
+    "comparator": "<=",
+    "metric": "cash_growth",
+    "threshold": -0.2
+   }
+  ],
+  "b6_thresholds_from_code": {
+   "cash_growth": {
+    "comparator": "<=",
+    "threshold": -0.2
+   },
+   "operating_cash_flow_growth": {
+    "comparator": "<=",
+    "threshold": -0.25
+   },
+   "revenue_growth": {
+    "comparator": "<=",
+    "threshold": -0.1
+   },
+   "total_debt_growth": {
+    "comparator": ">=",
+    "threshold": 0.2
+   }
+  },
+  "formula": "B6 = min(1, 0.75 * B0 + 0.25 * adverse/observed); B0 = mean of the static binary checks actually observed",
+  "source": "backend/finrisk/numeric_benchmark.py"
+ },
+ "families": {
+  "F0": {
+   "coverage_filter": false,
+   "description": "the five inputs B0 thresholds; no temporal term",
+   "fields": [
+    "current_ratio",
+    "debt_to_assets",
+    "net_margin",
+    "cfo_to_net_income",
+    "fcf_margin"
+   ],
+   "label": "static",
+   "role": "primary",
+   "source": "backend/finrisk/numeric_benchmark.py::ratio_risk_score"
+  },
+  "F1": {
+   "coverage_filter": false,
+   "description": "the four growth terms B6 adds on top of B0",
+   "fields": [
+    "revenue_growth",
+    "operating_cash_flow_growth",
+    "total_debt_growth",
+    "cash_growth"
+   ],
+   "label": "temporal",
+   "role": "primary",
+   "source": "backend/finrisk/numeric_benchmark.py::temporal_risk_score"
+  },
+  "F2": {
+   "coverage_filter": false,
+   "description": "F0 static + F1 temporal: everything B6 can see",
+   "fields": [
+    "current_ratio",
+    "debt_to_assets",
+    "net_margin",
+    "cfo_to_net_income",
+    "fcf_margin",
+    "revenue_growth",
+    "operating_cash_flow_growth",
+    "total_debt_growth",
+    "cash_growth"
+   ],
+   "label": "combined",
+   "role": "primary",
+   "source": "union of F0 and F1"
+  },
+  "F3": {
+   "coverage_filter": true,
+   "description": "every engineered metric in the frozen packet; exploratory and never allowed to change the primary reading",
+   "fields": [
+    "accounts_receivable_growth",
+    "cash_conversion_cycle",
+    "cash_growth",
+    "cash_ratio",
+    "cfo_to_net_income",
+    "current_ratio",
+    "debt_to_assets",
+    "debt_to_ebitda",
+    "debt_to_equity",
+    "fcf_margin",
+    "free_cash_flow",
+    "free_cash_flow_growth",
+    "gross_margin",
+    "interest_coverage",
+    "inventory_days",
+    "inventory_growth",
+    "liabilities_to_assets",
+    "net_debt",
+    "net_income_growth",
+    "net_margin",
+    "operating_cash_flow_growth",
+    "operating_margin",
+    "payable_days",
+    "quick_ratio",
+    "receivable_days",
+    "revenue_growth",
+    "roa",
+    "roe",
+    "total_debt_growth",
+    "working_capital"
+   ],
+   "label": "extended",
+   "min_train_coverage": 0.4,
+   "role": "secondary_exploratory",
+   "source": "research/e4_statistical_audit/replication/features.json.gz::metrics"
+  }
+ },
+ "notes": [
+  "F0/F1/F2 keep their columns whatever their coverage; imputation and scaling are fitted inside each training fold.",
+  "F3 applies a within-fold availability filter at 0.4 so no column is retained using information from the outer test fold."
+ ],
+ "packet_metric_field_count": 30,
+ "status": "POST_HOC_AUTOMATED_ROBUSTNESS"
+}

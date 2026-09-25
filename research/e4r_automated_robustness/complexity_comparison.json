@@ -1,0 +1,182 @@
+{
+ "environment": {
+  "packages": {
+   "matplotlib": "3.11.2",
+   "numpy": "2.5.3",
+   "pytest": "9.1.1",
+   "ruff": "0.16.9",
+   "scikit-learn": "1.9.1",
+   "scipy": "1.18.1"
+  },
+  "python": "3.13.14"
+ },
+ "models": [
+  {
+   "dependencies": "standard library only",
+   "deterministic_reproducibility": "exact: a pure function of the packet, no seed involved",
+   "failure_rate": 0.0,
+   "family": "deterministic heuristic",
+   "features_required": 5,
+   "fit_required": false,
+   "fit_seconds": 0.0,
+   "llm_cost": null,
+   "model": "B0"
+  },
+  {
+   "dependencies": "standard library only",
+   "deterministic_reproducibility": "exact: a pure function of the packet, no seed involved",
+   "failure_rate": 0.0,
+   "family": "deterministic heuristic",
+   "features_required": 9,
+   "fit_required": false,
+   "fit_seconds": 0.0,
+   "llm_cost": null,
+   "model": "B6"
+  },
+  {
+   "candidates_evaluated": 600,
+   "dependencies": "numpy, scipy, scikit-learn",
+   "deterministic_reproducibility": "deterministic under a fixed seed and single-threaded execution",
+   "failure_rate": 0.0,
+   "family": "hist_gb",
+   "features_required": 4,
+   "fit_required": true,
+   "fit_seconds": 87.394,
+   "llm_cost": null,
+   "model": "hist_gb_F1",
+   "seconds_per_outer_fold": 17.479
+  },
+  {
+   "candidates_evaluated": 600,
+   "dependencies": "numpy, scipy, scikit-learn",
+   "deterministic_reproducibility": "deterministic under a fixed seed and single-threaded execution",
+   "failure_rate": 0.0,
+   "family": "hist_gb",
+   "features_required": 9,
+   "fit_required": true,
+   "fit_seconds": 102.513,
+   "llm_cost": null,
+   "model": "hist_gb_F2",
+   "seconds_per_outer_fold": 20.503
+  },
+  {
+   "candidates_evaluated": 600,
+   "dependencies": "numpy, scipy, scikit-learn",
+   "deterministic_reproducibility": "deterministic under a fixed seed and single-threaded execution",
+   "failure_rate": 0.0,
+   "family": "hist_gb",
+   "features_required": 30,
+   "fit_required": true,
+   "fit_seconds": 114.452,
+   "llm_cost": null,
+   "model": "hist_gb_F3",
+   "seconds_per_outer_fold": 22.89
+  },
+  {
+   "candidates_evaluated": 25,
+   "dependencies": "numpy, scipy, scikit-learn",
+   "deterministic_reproducibility": "deterministic under a fixed seed and single-threaded execution",
+   "failure_rate": 0.0,
+   "family": "logistic",
+   "features_required": 5,
+   "fit_required": true,
+   "fit_seconds": 0.546,
+   "llm_cost": null,
+   "model": "logistic_F0",
+   "seconds_per_outer_fold": 0.109
+  },
+  {
+   "candidates_evaluated": 25,
+   "dependencies": "numpy, scipy, scikit-learn",
+   "deterministic_reproducibility": "deterministic under a fixed seed and single-threaded execution",
+   "failure_rate": 0.0,
+   "family": "logistic",
+   "features_required": 4,
+   "fit_required": true,
+   "fit_seconds": 0.492,
+   "llm_cost": null,
+   "model": "logistic_F1",
+   "seconds_per_outer_fold": 0.098
+  },
+  {
+   "candidates_evaluated": 25,
+   "dependencies": "numpy, scipy, scikit-learn",
+   "deterministic_reproducibility": "deterministic under a fixed seed and single-threaded execution",
+   "failure_rate": 0.0,
+   "family": "logistic",
+   "features_required": 9,
+   "fit_required": true,
+   "fit_seconds": 0.676,
+   "llm_cost": null,
+   "model": "logistic_F2",
+   "seconds_per_outer_fold": 0.135
+  },
+  {
+   "candidates_evaluated": 100,
+   "dependencies": "numpy, scipy, scikit-learn",
+   "deterministic_reproducibility": "deterministic under a fixed seed and single-threaded execution",
+   "failure_rate": 0.0,
+   "family": "logistic_l1",
+   "features_required": 9,
+   "fit_required": true,
+   "fit_seconds": 0.922,
+   "llm_cost": null,
+   "model": "logistic_l1_F2",
+   "seconds_per_outer_fold": 0.184
+  },
+  {
+   "candidates_evaluated": 100,
+   "dependencies": "numpy, scipy, scikit-learn",
+   "deterministic_reproducibility": "deterministic under a fixed seed and single-threaded execution",
+   "failure_rate": 0.0,
+   "family": "logistic_l2",
+   "features_required": 9,
+   "fit_required": true,
+   "fit_seconds": 1.107,
+   "llm_cost": null,
+   "model": "logistic_l2_F2",
+   "seconds_per_outer_fold": 0.221
+  },
+  {
+   "candidates_evaluated": 100,
+   "dependencies": "numpy, scipy, scikit-learn",
+   "deterministic_reproducibility": "deterministic under a fixed seed and single-threaded execution",
+   "failure_rate": 0.0,
+   "family": "logistic_l2",
+   "features_required": 30,
+   "fit_required": true,
+   "fit_seconds": 1.279,
+   "llm_cost": null,
+   "model": "logistic_l2_F3",
+   "seconds_per_outer_fold": 0.256
+  },
+  {
+   "candidates_evaluated": 300,
+   "dependencies": "numpy, scipy, scikit-learn",
+   "deterministic_reproducibility": "deterministic under a fixed seed and single-threaded execution",
+   "failure_rate": 0.0,
+   "family": "random_forest",
+   "features_required": 9,
+   "fit_required": true,
+   "fit_seconds": 87.649,
+   "llm_cost": null,
+   "model": "random_forest_F2",
+   "seconds_per_outer_fold": 17.53
+  },
+  {
+   "candidates_evaluated": 300,
+   "dependencies": "numpy, scipy, scikit-learn",
+   "deterministic_reproducibility": "deterministic under a fixed seed and single-threaded execution",
+   "failure_rate": 0.0,
+   "family": "random_forest",
+   "features_required": 30,
+   "fit_required": true,
+   "fit_seconds": 138.83,
+   "llm_cost": null,
+   "model": "random_forest_F3",
+   "seconds_per_outer_fold": 27.766
+  }
+ ],
+ "note": "E4-R compares deterministic heuristics against conventional tabular learners; no LLM inference is involved, so no token or API cost is attributed to any comparator.",
+ "status": "OK"
+}

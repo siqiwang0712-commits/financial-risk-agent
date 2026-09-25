@@ -1,0 +1,132 @@
+{
+ "events": 235,
+ "n": 675,
+ "sector_trigger_rates": {
+  "Agriculture": {
+   "cash_growth": 0.2,
+   "n": 5,
+   "operating_cash_flow_growth": 0.2,
+   "revenue_growth": 0.0,
+   "total_debt_growth": 0.0
+  },
+  "Construction": {
+   "cash_growth": 0.35714285714285715,
+   "n": 14,
+   "operating_cash_flow_growth": 0.35714285714285715,
+   "revenue_growth": 0.07142857142857142,
+   "total_debt_growth": 0.21428571428571427
+  },
+  "Manufacturing": {
+   "cash_growth": 0.27586206896551724,
+   "n": 319,
+   "operating_cash_flow_growth": 0.19122257053291536,
+   "revenue_growth": 0.1755485893416928,
+   "total_debt_growth": 0.06269592476489028
+  },
+  "Mining": {
+   "cash_growth": 0.2727272727272727,
+   "n": 33,
+   "operating_cash_flow_growth": 0.2727272727272727,
+   "revenue_growth": 0.30303030303030304,
+   "total_debt_growth": 0.18181818181818182
+  },
+  "Other_Nonfinancial": {
+   "cash_growth": 0.5,
+   "n": 8,
+   "operating_cash_flow_growth": 0.25,
+   "revenue_growth": 0.0,
+   "total_debt_growth": 0.375
+  },
+  "Retail": {
+   "cash_growth": 0.3333333333333333,
+   "n": 39,
+   "operating_cash_flow_growth": 0.1794871794871795,
+   "revenue_growth": 0.1282051282051282,
+   "total_debt_growth": 0.05128205128205128
+  },
+  "Services": {
+   "cash_growth": 0.2832369942196532,
+   "n": 173,
+   "operating_cash_flow_growth": 0.12138728323699421,
+   "revenue_growth": 0.06936416184971098,
+   "total_debt_growth": 0.05202312138728324
+  },
+  "Transportation_Utilities": {
+   "cash_growth": 0.27941176470588236,
+   "n": 68,
+   "operating_cash_flow_growth": 0.1323529411764706,
+   "revenue_growth": 0.07352941176470588,
+   "total_debt_growth": 0.07352941176470588
+  },
+  "Wholesale": {
+   "cash_growth": 0.5625,
+   "n": 16,
+   "operating_cash_flow_growth": 0.3125,
+   "revenue_growth": 0.375,
+   "total_debt_growth": 0.0625
+  }
+ },
+ "status": "POST_HOC_AUTOMATED_ROBUSTNESS",
+ "terms": {
+  "cash_growth": {
+   "event_rate_when_present": 0.344311377245509,
+   "event_rate_when_triggered": 0.38578680203045684,
+   "event_share_of_triggers": 0.38578680203045684,
+   "label": "cash",
+   "mean_contribution": 0.027993827160493825,
+   "mean_contribution_among_events": 0.04060283687943262,
+   "mean_contribution_among_non_events": 0.021259469696969697,
+   "non_event_triggers": 121,
+   "present_n": 668,
+   "present_share": 0.9896296296296296,
+   "trigger_prevalence_overall": 0.29185185185185186,
+   "trigger_rate_when_present": 0.2949101796407186,
+   "triggered_n": 197
+  },
+  "operating_cash_flow_growth": {
+   "event_rate_when_present": 0.20502092050209206,
+   "event_rate_when_triggered": 0.43333333333333335,
+   "event_share_of_triggers": 0.43333333333333335,
+   "label": "OCF",
+   "mean_contribution": 0.014012345679012344,
+   "mean_contribution_among_events": 0.018794326241134748,
+   "mean_contribution_among_non_events": 0.011458333333333333,
+   "non_event_triggers": 68,
+   "present_n": 478,
+   "present_share": 0.7081481481481482,
+   "trigger_prevalence_overall": 0.17777777777777778,
+   "trigger_rate_when_present": 0.2510460251046025,
+   "triggered_n": 120
+  },
+  "revenue_growth": {
+   "event_rate_when_present": 0.2899022801302932,
+   "event_rate_when_triggered": 0.631578947368421,
+   "event_share_of_triggers": 0.631578947368421,
+   "label": "revenue",
+   "mean_contribution": 0.01425925925925926,
+   "mean_contribution_among_events": 0.027836879432624115,
+   "mean_contribution_among_non_events": 0.007007575757575757,
+   "non_event_triggers": 35,
+   "present_n": 614,
+   "present_share": 0.9096296296296297,
+   "trigger_prevalence_overall": 0.14074074074074075,
+   "trigger_rate_when_present": 0.15472312703583063,
+   "triggered_n": 95
+  },
+  "total_debt_growth": {
+   "event_rate_when_present": 0.16104868913857678,
+   "event_rate_when_triggered": 0.22448979591836735,
+   "event_share_of_triggers": 0.22448979591836735,
+   "label": "debt",
+   "mean_contribution": 0.005246913580246914,
+   "mean_contribution_among_events": 0.004698581560283689,
+   "mean_contribution_among_non_events": 0.005539772727272727,
+   "non_event_triggers": 38,
+   "present_n": 267,
+   "present_share": 0.39555555555555555,
+   "trigger_prevalence_overall": 0.0725925925925926,
+   "trigger_rate_when_present": 0.18352059925093633,
+   "triggered_n": 49
+  }
+ }
+}

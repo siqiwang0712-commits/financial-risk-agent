@@ -1,0 +1,391 @@
+{
+ "firm_size": {
+  "note": "split on current.total_assets (feature-side, no outcome used); 675/675 observations carry the measure",
+  "rows": [
+   {
+    "estimable": true,
+    "events": 30,
+    "min_events": 10,
+    "min_n": 40,
+    "models": {
+     "B0": {
+      "auroc": 0.6345299145299146,
+      "pr_auc": 0.28078855942435277,
+      "status": "OK"
+     },
+     "B6": {
+      "auroc": 0.681965811965812,
+      "pr_auc": 0.36372574606556757,
+      "status": "OK"
+     },
+     "hist_gb_F2": {
+      "auroc": 0.8503418803418803,
+      "pr_auc": 0.6202025312352146,
+      "status": "OK"
+     },
+     "logistic_F2": {
+      "auroc": 0.8114529914529914,
+      "pr_auc": 0.5243642634147015,
+      "status": "OK"
+     }
+    },
+    "n": 225,
+    "prevalence": 0.13333333333333333,
+    "status": "OK",
+    "subgroup": "large"
+   },
+   {
+    "estimable": true,
+    "events": 56,
+    "min_events": 10,
+    "min_n": 40,
+    "models": {
+     "B0": {
+      "auroc": 0.5966821639898563,
+      "pr_auc": 0.3467426476962847,
+      "status": "OK"
+     },
+     "B6": {
+      "auroc": 0.6071956889264581,
+      "pr_auc": 0.37048171263776825,
+      "status": "OK"
+     },
+     "hist_gb_F2": {
+      "auroc": 0.8254437869822485,
+      "pr_auc": 0.6738850195383566,
+      "status": "OK"
+     },
+     "logistic_F2": {
+      "auroc": 0.7028740490278952,
+      "pr_auc": 0.5433567299144453,
+      "status": "OK"
+     }
+    },
+    "n": 225,
+    "prevalence": 0.24888888888888888,
+    "status": "OK",
+    "subgroup": "medium"
+   },
+   {
+    "estimable": true,
+    "events": 149,
+    "min_events": 10,
+    "min_n": 40,
+    "models": {
+     "B0": {
+      "auroc": 0.60420346167432,
+      "pr_auc": 0.7243784458480964,
+      "status": "OK"
+     },
+     "B6": {
+      "auroc": 0.6241610738255033,
+      "pr_auc": 0.7400553311392629,
+      "status": "OK"
+     },
+     "hist_gb_F2": {
+      "auroc": 0.8470505121865065,
+      "pr_auc": 0.9212309337156361,
+      "status": "OK"
+     },
+     "logistic_F2": {
+      "auroc": 0.7740197809961145,
+      "pr_auc": 0.8669019849670065,
+      "status": "OK"
+     }
+    },
+    "n": 225,
+    "prevalence": 0.6622222222222223,
+    "status": "OK",
+    "subgroup": "small"
+   }
+  ],
+  "status": "OK"
+ },
+ "focus_models": [
+  "B0",
+  "B6",
+  "hist_gb_F2",
+  "logistic_F2"
+ ],
+ "gates": {
+  "min_events": 10,
+  "min_n": 40
+ },
+ "missingness": {
+  "measure": "fraction of F2 fields missing per observation",
+  "profile_mean": 0.25037037037037035,
+  "rows": [
+   {
+    "estimable": true,
+    "events": 157,
+    "min_events": 10,
+    "min_n": 40,
+    "models": {
+     "B0": {
+      "auroc": 0.49077369801423754,
+      "pr_auc": 0.7053296925103831,
+      "status": "OK"
+     },
+     "B6": {
+      "auroc": 0.5188741101536156,
+      "pr_auc": 0.7199789883376141,
+      "status": "OK"
+     },
+     "hist_gb_F2": {
+      "auroc": 0.8623079805170476,
+      "pr_auc": 0.9371946931185472,
+      "status": "OK"
+     },
+     "logistic_F2": {
+      "auroc": 0.7636286998875984,
+      "pr_auc": 0.876739113462474,
+      "status": "OK"
+     }
+    },
+    "n": 225,
+    "prevalence": 0.6977777777777778,
+    "status": "OK",
+    "subgroup": "high"
+   },
+   {
+    "estimable": true,
+    "events": 21,
+    "min_events": 10,
+    "min_n": 40,
+    "models": {
+     "B0": {
+      "auroc": 0.6607142857142857,
+      "pr_auc": 0.19470683353036294,
+      "status": "OK"
+     },
+     "B6": {
+      "auroc": 0.6633986928104575,
+      "pr_auc": 0.23774576250483487,
+      "status": "OK"
+     },
+     "hist_gb_F2": {
+      "auroc": 0.7682072829131653,
+      "pr_auc": 0.341415087776869,
+      "status": "OK"
+     },
+     "logistic_F2": {
+      "auroc": 0.5648926237161531,
+      "pr_auc": 0.12167337080262619,
+      "status": "OK"
+     }
+    },
+    "n": 225,
+    "prevalence": 0.09333333333333334,
+    "status": "OK",
+    "subgroup": "low"
+   },
+   {
+    "estimable": true,
+    "events": 57,
+    "min_events": 10,
+    "min_n": 40,
+    "models": {
+     "B0": {
+      "auroc": 0.6153404344193818,
+      "pr_auc": 0.39709454692572865,
+      "status": "OK"
+     },
+     "B6": {
+      "auroc": 0.6572159565580619,
+      "pr_auc": 0.4407334457807897,
+      "status": "OK"
+     },
+     "hist_gb_F2": {
+      "auroc": 0.7729741019214703,
+      "pr_auc": 0.52565032580889,
+      "status": "OK"
+     },
+     "logistic_F2": {
+      "auroc": 0.6096491228070176,
+      "pr_auc": 0.35994608012548673,
+      "status": "OK"
+     }
+    },
+    "n": 225,
+    "prevalence": 0.25333333333333335,
+    "status": "OK",
+    "subgroup": "medium"
+   }
+  ],
+  "status": "OK"
+ },
+ "sector": {
+  "rows": [
+   {
+    "estimable": false,
+    "events": 3,
+    "min_events": 10,
+    "min_n": 40,
+    "models": {},
+    "n": 5,
+    "prevalence": 0.6,
+    "reason": "n=5 < 40 or events=3 < 10",
+    "status": "NOT_ESTIMABLE",
+    "subgroup": "Agriculture"
+   },
+   {
+    "estimable": false,
+    "events": 1,
+    "min_events": 10,
+    "min_n": 40,
+    "models": {},
+    "n": 14,
+    "prevalence": 0.07142857142857142,
+    "reason": "n=14 < 40 or events=1 < 10",
+    "status": "NOT_ESTIMABLE",
+    "subgroup": "Construction"
+   },
+   {
+    "estimable": true,
+    "events": 139,
+    "min_events": 10,
+    "min_n": 40,
+    "models": {
+     "B0": {
+      "auroc": 0.6435051958433253,
+      "pr_auc": 0.5798164958834104,
+      "status": "OK"
+     },
+     "B6": {
+      "auroc": 0.6521982414068745,
+      "pr_auc": 0.6047340403668583,
+      "status": "OK"
+     },
+     "hist_gb_F2": {
+      "auroc": 0.8562749800159872,
+      "pr_auc": 0.8422620787079282,
+      "status": "OK"
+     },
+     "logistic_F2": {
+      "auroc": 0.8031374900079936,
+      "pr_auc": 0.7922619598619833,
+      "status": "OK"
+     }
+    },
+    "n": 319,
+    "prevalence": 0.43573667711598746,
+    "status": "OK",
+    "subgroup": "Manufacturing"
+   },
+   {
+    "estimable": false,
+    "events": 16,
+    "min_events": 10,
+    "min_n": 40,
+    "models": {},
+    "n": 33,
+    "prevalence": 0.48484848484848486,
+    "reason": "n=33 < 40 or events=16 < 10",
+    "status": "NOT_ESTIMABLE",
+    "subgroup": "Mining"
+   },
+   {
+    "estimable": false,
+    "events": 8,
+    "min_events": 10,
+    "min_n": 40,
+    "models": {},
+    "n": 8,
+    "prevalence": 1.0,
+    "reason": "n=8 < 40 or events=8 < 10",
+    "status": "NOT_ESTIMABLE",
+    "subgroup": "Other_Nonfinancial"
+   },
+   {
+    "estimable": false,
+    "events": 6,
+    "min_events": 10,
+    "min_n": 40,
+    "models": {},
+    "n": 39,
+    "prevalence": 0.15384615384615385,
+    "reason": "n=39 < 40 or events=6 < 10",
+    "status": "NOT_ESTIMABLE",
+    "subgroup": "Retail"
+   },
+   {
+    "estimable": true,
+    "events": 42,
+    "min_events": 10,
+    "min_n": 40,
+    "models": {
+     "B0": {
+      "auroc": 0.7961650308978553,
+      "pr_auc": 0.5634664599272263,
+      "status": "OK"
+     },
+     "B6": {
+      "auroc": 0.8334242093784079,
+      "pr_auc": 0.6475848558324139,
+      "status": "OK"
+     },
+     "hist_gb_F2": {
+      "auroc": 0.9280261723009815,
+      "pr_auc": 0.8535249577489809,
+      "status": "OK"
+     },
+     "logistic_F2": {
+      "auroc": 0.7975281715739732,
+      "pr_auc": 0.620441103040709,
+      "status": "OK"
+     }
+    },
+    "n": 173,
+    "prevalence": 0.24277456647398843,
+    "status": "OK",
+    "subgroup": "Services"
+   },
+   {
+    "estimable": true,
+    "events": 14,
+    "min_events": 10,
+    "min_n": 40,
+    "models": {
+     "B0": {
+      "auroc": 0.6117724867724867,
+      "pr_auc": 0.33375471400681483,
+      "status": "OK"
+     },
+     "B6": {
+      "auroc": 0.6071428571428571,
+      "pr_auc": 0.37619500597441774,
+      "status": "OK"
+     },
+     "hist_gb_F2": {
+      "auroc": 0.8002645502645502,
+      "pr_auc": 0.6503632280417995,
+      "status": "OK"
+     },
+     "logistic_F2": {
+      "auroc": 0.8068783068783069,
+      "pr_auc": 0.6689537856609948,
+      "status": "OK"
+     }
+    },
+    "n": 68,
+    "prevalence": 0.20588235294117646,
+    "status": "OK",
+    "subgroup": "Transportation_Utilities"
+   },
+   {
+    "estimable": false,
+    "events": 6,
+    "min_events": 10,
+    "min_n": 40,
+    "models": {},
+    "n": 16,
+    "prevalence": 0.375,
+    "reason": "n=16 < 40 or events=6 < 10",
+    "status": "NOT_ESTIMABLE",
+    "subgroup": "Wholesale"
+   }
+  ],
+  "status": "OK"
+ },
+ "status": "POST_HOC_AUTOMATED_ROBUSTNESS"
+}

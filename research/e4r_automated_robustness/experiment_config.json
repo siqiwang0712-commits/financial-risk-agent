@@ -1,0 +1,485 @@
+{
+ "ablation": {
+  "bootstrap_replicates": 20000,
+  "rule": "rebuild the frozen closed form with the term removed; no weights are refitted",
+  "variants": [
+   "B6_full",
+   "B6_no_temporal",
+   "B6_minus_revenue",
+   "B6_minus_OCF",
+   "B6_minus_debt",
+   "B6_minus_cash"
+  ]
+ },
+ "calibration": {
+  "bins": 10,
+  "rule": "descriptive diagnostics only; no calibration map is fitted on the cohort",
+  "status": "UNCALIBRATED"
+ },
+ "cohort": {
+  "definition": "outcome rows with label_status == VERIFIED",
+  "expected_events": 235,
+  "expected_n": 675
+ },
+ "cross_validation": {
+  "forbidden": [
+   "preprocessing fitted on all 675 rows before CV",
+   "hyperparameter changes made after inspecting outer-test performance",
+   "feature selection on the full cohort"
+  ],
+  "group_key": "masked_company_id",
+  "inner_splits": 5,
+  "outer_splits": 5,
+  "preprocessing": "SimpleImputer(median, add_indicator=True) -> StandardScaler, fitted inside the fold",
+  "scheme": "nested",
+  "splitter": "sklearn StratifiedGroupKFold(shuffle=True, random_state=seed)",
+  "stratification": "outcome label"
+ },
+ "experiment_id": "E4-R",
+ "feature_sets_hash": "09a5267044109ddd8d73336408579e27bb1c3c5e638f81251f1c5bdd75f932cd",
+ "firm_size": {
+  "bins": [
+   "small",
+   "medium",
+   "large"
+  ],
+  "measure": "current.total_assets",
+  "why": "feature-side only, so the split cannot use the outcome"
+ },
+ "is_not": [
+  "ESTABLISHED_E4",
+  "CONFIRMATORY",
+  "PROSPECTIVE",
+  "E5_RESULT"
+ ],
+ "missingness": {
+  "bins": [
+   "low",
+   "medium",
+   "high"
+  ],
+  "measure": "fraction of F2 fields missing per observation"
+ },
+ "models": {
+  "grid_sizes": {
+   "hist_gb": 24,
+   "logistic": 1,
+   "logistic_l1": 4,
+   "logistic_l2": 4,
+   "random_forest": 12
+  },
+  "grids": {
+   "hist_gb": [
+    {
+     "model__l2_regularization": 0.0,
+     "model__learning_rate": 0.05,
+     "model__max_leaf_nodes": 7,
+     "model__min_samples_leaf": 5
+    },
+    {
+     "model__l2_regularization": 1.0,
+     "model__learning_rate": 0.05,
+     "model__max_leaf_nodes": 7,
+     "model__min_samples_leaf": 5
+    },
+    {
+     "model__l2_regularization": 0.0,
+     "model__learning_rate": 0.05,
+     "model__max_leaf_nodes": 7,
+     "model__min_samples_leaf": 20
+    },
+    {
+     "model__l2_regularization": 1.0,
+     "model__learning_rate": 0.05,
+     "model__max_leaf_nodes": 7,
+     "model__min_samples_leaf": 20
+    },
+    {
+     "model__l2_regularization": 0.0,
+     "model__learning_rate": 0.05,
+     "model__max_leaf_nodes": 15,
+     "model__min_samples_leaf": 5
+    },
+    {
+     "model__l2_regularization": 1.0,
+     "model__learning_rate": 0.05,
+     "model__max_leaf_nodes": 15,
+     "model__min_samples_leaf": 5
+    },
+    {
+     "model__l2_regularization": 0.0,
+     "model__learning_rate": 0.05,
+     "model__max_leaf_nodes": 15,
+     "model__min_samples_leaf": 20
+    },
+    {
+     "model__l2_regularization": 1.0,
+     "model__learning_rate": 0.05,
+     "model__max_leaf_nodes": 15,
+     "model__min_samples_leaf": 20
+    },
+    {
+     "model__l2_regularization": 0.0,
+     "model__learning_rate": 0.05,
+     "model__max_leaf_nodes": 31,
+     "model__min_samples_leaf": 5
+    },
+    {
+     "model__l2_regularization": 1.0,
+     "model__learning_rate": 0.05,
+     "model__max_leaf_nodes": 31,
+     "model__min_samples_leaf": 5
+    },
+    {
+     "model__l2_regularization": 0.0,
+     "model__learning_rate": 0.05,
+     "model__max_leaf_nodes": 31,
+     "model__min_samples_leaf": 20
+    },
+    {
+     "model__l2_regularization": 1.0,
+     "model__learning_rate": 0.05,
+     "model__max_leaf_nodes": 31,
+     "model__min_samples_leaf": 20
+    },
+    {
+     "model__l2_regularization": 0.0,
+     "model__learning_rate": 0.1,
+     "model__max_leaf_nodes": 7,
+     "model__min_samples_leaf": 5
+    },
+    {
+     "model__l2_regularization": 1.0,
+     "model__learning_rate": 0.1,
+     "model__max_leaf_nodes": 7,
+     "model__min_samples_leaf": 5
+    },
+    {
+     "model__l2_regularization": 0.0,
+     "model__learning_rate": 0.1,
+     "model__max_leaf_nodes": 7,
+     "model__min_samples_leaf": 20
+    },
+    {
+     "model__l2_regularization": 1.0,
+     "model__learning_rate": 0.1,
+     "model__max_leaf_nodes": 7,
+     "model__min_samples_leaf": 20
+    },
+    {
+     "model__l2_regularization": 0.0,
+     "model__learning_rate": 0.1,
+     "model__max_leaf_nodes": 15,
+     "model__min_samples_leaf": 5
+    },
+    {
+     "model__l2_regularization": 1.0,
+     "model__learning_rate": 0.1,
+     "model__max_leaf_nodes": 15,
+     "model__min_samples_leaf": 5
+    },
+    {
+     "model__l2_regularization": 0.0,
+     "model__learning_rate": 0.1,
+     "model__max_leaf_nodes": 15,
+     "model__min_samples_leaf": 20
+    },
+    {
+     "model__l2_regularization": 1.0,
+     "model__learning_rate": 0.1,
+     "model__max_leaf_nodes": 15,
+     "model__min_samples_leaf": 20
+    },
+    {
+     "model__l2_regularization": 0.0,
+     "model__learning_rate": 0.1,
+     "model__max_leaf_nodes": 31,
+     "model__min_samples_leaf": 5
+    },
+    {
+     "model__l2_regularization": 1.0,
+     "model__learning_rate": 0.1,
+     "model__max_leaf_nodes": 31,
+     "model__min_samples_leaf": 5
+    },
+    {
+     "model__l2_regularization": 0.0,
+     "model__learning_rate": 0.1,
+     "model__max_leaf_nodes": 31,
+     "model__min_samples_leaf": 20
+    },
+    {
+     "model__l2_regularization": 1.0,
+     "model__learning_rate": 0.1,
+     "model__max_leaf_nodes": 31,
+     "model__min_samples_leaf": 20
+    }
+   ],
+   "logistic": [
+    {}
+   ],
+   "logistic_l1": [
+    {
+     "model__C": 0.01
+    },
+    {
+     "model__C": 0.1
+    },
+    {
+     "model__C": 1.0
+    },
+    {
+     "model__C": 10.0
+    }
+   ],
+   "logistic_l2": [
+    {
+     "model__C": 0.01
+    },
+    {
+     "model__C": 0.1
+    },
+    {
+     "model__C": 1.0
+    },
+    {
+     "model__C": 10.0
+    }
+   ],
+   "random_forest": [
+    {
+     "model__max_depth": null,
+     "model__max_features": "sqrt",
+     "model__min_samples_leaf": 1,
+     "model__n_estimators": 400
+    },
+    {
+     "model__max_depth": null,
+     "model__max_features": 0.5,
+     "model__min_samples_leaf": 1,
+     "model__n_estimators": 400
+    },
+    {
+     "model__max_depth": null,
+     "model__max_features": "sqrt",
+     "model__min_samples_leaf": 5,
+     "model__n_estimators": 400
+    },
+    {
+     "model__max_depth": null,
+     "model__max_features": 0.5,
+     "model__min_samples_leaf": 5,
+     "model__n_estimators": 400
+    },
+    {
+     "model__max_depth": null,
+     "model__max_features": "sqrt",
+     "model__min_samples_leaf": 10,
+     "model__n_estimators": 400
+    },
+    {
+     "model__max_depth": null,
+     "model__max_features": 0.5,
+     "model__min_samples_leaf": 10,
+     "model__n_estimators": 400
+    },
+    {
+     "model__max_depth": 6,
+     "model__max_features": "sqrt",
+     "model__min_samples_leaf": 1,
+     "model__n_estimators": 400
+    },
+    {
+     "model__max_depth": 6,
+     "model__max_features": 0.5,
+     "model__min_samples_leaf": 1,
+     "model__n_estimators": 400
+    },
+    {
+     "model__max_depth": 6,
+     "model__max_features": "sqrt",
+     "model__min_samples_leaf": 5,
+     "model__n_estimators": 400
+    },
+    {
+     "model__max_depth": 6,
+     "model__max_features": 0.5,
+     "model__min_samples_leaf": 5,
+     "model__n_estimators": 400
+    },
+    {
+     "model__max_depth": 6,
+     "model__max_features": "sqrt",
+     "model__min_samples_leaf": 10,
+     "model__n_estimators": 400
+    },
+    {
+     "model__max_depth": 6,
+     "model__max_features": 0.5,
+     "model__min_samples_leaf": 10,
+     "model__n_estimators": 400
+    }
+   ]
+  },
+  "nonlinear_backend": {
+   "chosen": "sklearn HistGradientBoostingClassifier",
+   "why_not_xgboost": "the repository ships no numpy/scipy/scikit-learn runtime; adding XGBoost would add a second, heavier dependency for no capability the study needs"
+  },
+  "runs": [
+   {
+    "family": "logistic",
+    "feature_set": "F0",
+    "model_id": "logistic_F0",
+    "role": "secondary"
+   },
+   {
+    "family": "logistic",
+    "feature_set": "F1",
+    "model_id": "logistic_F1",
+    "role": "secondary"
+   },
+   {
+    "family": "logistic",
+    "feature_set": "F2",
+    "model_id": "logistic_F2",
+    "role": "primary_linear"
+   },
+   {
+    "family": "logistic_l1",
+    "feature_set": "F2",
+    "model_id": "logistic_l1_F2",
+    "role": "secondary"
+   },
+   {
+    "family": "logistic_l2",
+    "feature_set": "F2",
+    "model_id": "logistic_l2_F2",
+    "role": "secondary"
+   },
+   {
+    "family": "logistic_l2",
+    "feature_set": "F3",
+    "model_id": "logistic_l2_F3",
+    "role": "secondary"
+   },
+   {
+    "family": "random_forest",
+    "feature_set": "F2",
+    "model_id": "random_forest_F2",
+    "role": "secondary"
+   },
+   {
+    "family": "random_forest",
+    "feature_set": "F3",
+    "model_id": "random_forest_F3",
+    "role": "secondary"
+   },
+   {
+    "family": "hist_gb",
+    "feature_set": "F1",
+    "model_id": "hist_gb_F1",
+    "role": "secondary"
+   },
+   {
+    "family": "hist_gb",
+    "feature_set": "F2",
+    "model_id": "hist_gb_F2",
+    "role": "primary_nonlinear"
+   },
+   {
+    "family": "hist_gb",
+    "feature_set": "F3",
+    "model_id": "hist_gb_F3",
+    "role": "secondary"
+   }
+  ]
+ },
+ "negative_controls": {
+  "label_permutation_replicates": 200,
+  "temporal_shuffle_replicates": 10
+ },
+ "primary_family": [
+  {
+   "challenger": "B6",
+   "id": "P1",
+   "reference": "B0"
+  },
+  {
+   "challenger": "logistic_F2",
+   "id": "P2",
+   "reference": "B6"
+  },
+  {
+   "challenger": "hist_gb_F2",
+   "id": "P3",
+   "reference": "B6"
+  }
+ ],
+ "purpose": "understand E4 and plan E5; never to confirm E4",
+ "secondary_family": [
+  {
+   "challenger": "logistic_l2_F2",
+   "id": "S1",
+   "reference": "B6"
+  },
+  {
+   "challenger": "logistic_l1_F2",
+   "id": "S2",
+   "reference": "B6"
+  },
+  {
+   "challenger": "random_forest_F2",
+   "id": "S3",
+   "reference": "B6"
+  },
+  {
+   "challenger": "hist_gb_F3",
+   "id": "S4",
+   "reference": "B6"
+  },
+  {
+   "challenger": "logistic_F0",
+   "id": "S5",
+   "reference": "B6"
+  },
+  {
+   "challenger": "logistic_F2",
+   "id": "S6",
+   "label": "temporal increment (logistic)",
+   "reference": "logistic_F0"
+  }
+ ],
+ "seeds": {
+  "bootstrap": 20260925,
+  "inner_folds": 20260925,
+  "label_permutation": 20260926,
+  "master": 20260925,
+  "outer_folds": 20260925,
+  "temporal_shuffle": 20260927
+ },
+ "source": {
+  "external_verifier": "research/e4_statistical_audit/verify_audit.py --quick",
+  "manifest": "research/e4_statistical_audit/replication/manifest.json",
+  "packet": "research/e4_statistical_audit/replication"
+ },
+ "statistics": {
+  "auroc_test": "paired DeLong (DeLong, DeLong & Clarke-Pearson 1988)",
+  "bootstrap_replicates": 20000,
+  "bootstrap_type": "company-cluster paired BCa (one observation per company)",
+  "library": "research/e4_statistical_audit/e4s_stats.py (reused, not re-implemented)",
+  "multiplicity": "Holm step-down over the three prespecified primary comparisons"
+ },
+ "status": "POST_HOC_AUTOMATED_ROBUSTNESS",
+ "subgroup_gates": {
+  "min_events": 10,
+  "min_n": 40
+ },
+ "threshold_grid": [
+  0.3,
+  0.4,
+  0.5,
+  0.6,
+  0.7
+ ],
+ "title": "Automated Robustness & Competitive Baseline Study"
+}

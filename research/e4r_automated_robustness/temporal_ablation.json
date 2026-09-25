@@ -1,0 +1,419 @@
+{
+ "comparisons": {
+  "B6_minus_OCF": {
+   "bootstrap_delta_auroc_vs_full": {
+    "P_delta_gt_0p0": 0.0081,
+    "P_delta_gt_0p01": 0.0,
+    "P_delta_gt_0p02": 0.0,
+    "P_delta_gt_0p03": 0.0,
+    "bca": [
+     -0.018551726031560013,
+     -0.0022684502759480543
+    ],
+    "bca_high": -0.0022684502759480543,
+    "bca_low": -0.018551726031560013,
+    "bias": 4.781777584624003e-07,
+    "cluster_count": 675,
+    "invalid_replicates": 0,
+    "mean": -0.00931286805048141,
+    "median": -0.009143450102318207,
+    "metric": "auroc",
+    "observed": -0.009313346228239872,
+    "percentile_linear": [
+     -0.01768274197935891,
+     -0.001600958913901473
+    ],
+    "percentile_nearest_rank": [
+     -0.017686243295999438,
+     -0.0016010172260172428
+    ],
+    "q025": -0.01768274197935891,
+    "q25": -0.012026558451455505,
+    "q75": -0.0064813883767514124,
+    "q975": -0.001600958913901473,
+    "samples": 20000,
+    "standard_error": 0.004101528594116288,
+    "valid_replicates": 20000
+   },
+   "delong_vs_full": {
+    "auc_challenger": 0.6961025145067699,
+    "auc_reference": 0.7054158607350097,
+    "covariance": 0.0004906143291272655,
+    "events": 235,
+    "metric": "auroc",
+    "n_pairs": 675,
+    "observed_delta": -0.009313346228239872,
+    "p_value": 0.021125542462297364,
+    "standard_error_delta": 0.004039212368175623,
+    "status": "OK",
+    "test": "delong_1988_paired",
+    "variance_challenger": 0.0005107926635546764,
+    "variance_delta": 1.631523655522293e-05,
+    "variance_reference": 0.00048675123125507754,
+    "z": -2.3057332418613083,
+    "z_ci_high": -0.0013966354607069086,
+    "z_ci_low": -0.017230056995772833
+   },
+   "delta_auroc_vs_b0_equivalent": 0.017045454545454586,
+   "delta_auroc_vs_full": -0.009313346228239872,
+   "delta_pr_auc_vs_full": -0.0022310582109376087
+  },
+  "B6_minus_cash": {
+   "bootstrap_delta_auroc_vs_full": {
+    "P_delta_gt_0p0": 0.7469,
+    "P_delta_gt_0p01": 0.1511,
+    "P_delta_gt_0p02": 0.00245,
+    "P_delta_gt_0p03": 0.0,
+    "bca": [
+     -0.009444020975754216,
+     0.01458758247678565
+    ],
+    "bca_high": 0.01458758247678565,
+    "bca_low": -0.009444020975754216,
+    "bias": -7.25025008605257e-05,
+    "cluster_count": 675,
+    "invalid_replicates": 0,
+    "mean": 0.0038298185823115965,
+    "median": 0.003992990317730205,
+    "metric": "auroc",
+    "observed": 0.0039023210831721222,
+    "percentile_linear": [
+     -0.008538034576263563,
+     0.015248317901316076
+    ],
+    "percentile_nearest_rank": [
+     -0.008539947695988093,
+     0.015248300020605843
+    ],
+    "q025": -0.008538034576263563,
+    "q25": -5.288368478520433e-05,
+    "q75": 0.007902823805554293,
+    "q975": 0.015248317901316076,
+    "samples": 20000,
+    "standard_error": 0.00602565898094138,
+    "valid_replicates": 20000
+   },
+   "delong_vs_full": {
+    "auc_challenger": 0.7093181818181818,
+    "auc_reference": 0.7054158607350097,
+    "covariance": 0.00046202253799317315,
+    "events": 235,
+    "metric": "auroc",
+    "n_pairs": 675,
+    "observed_delta": 0.0039023210831721222,
+    "p_value": 0.5180177070219463,
+    "standard_error_delta": 0.006036968640105353,
+    "status": "OK",
+    "test": "delong_1988_paired",
+    "variance_challenger": 0.00047373883509288424,
+    "variance_delta": 3.6444990361615475e-05,
+    "variance_reference": 0.00048675123125507754,
+    "z": 0.6464040673075323,
+    "z_ci_high": 0.01573456219357636,
+    "z_ci_low": -0.007929920027232116
+   },
+   "delta_auroc_vs_b0_equivalent": 0.03026112185686658,
+   "delta_auroc_vs_full": 0.0039023210831721222,
+   "delta_pr_auc_vs_full": -0.004732166661580828
+  },
+  "B6_minus_debt": {
+   "bootstrap_delta_auroc_vs_full": {
+    "P_delta_gt_0p0": 0.3412,
+    "P_delta_gt_0p01": 0.0,
+    "P_delta_gt_0p02": 0.0,
+    "P_delta_gt_0p03": 0.0,
+    "bca": [
+     -0.006658459016772465,
+     0.00287528322717983
+    ],
+    "bca_high": 0.00287528322717983,
+    "bca_low": -0.006658459016772465,
+    "bias": -1.3033952862466416e-05,
+    "cluster_count": 675,
+    "invalid_replicates": 0,
+    "mean": -0.0010478502004447484,
+    "median": -0.0009468991681668704,
+    "metric": "auroc",
+    "observed": -0.001034816247582282,
+    "percentile_linear": [
+     -0.005938422339259433,
+     0.0032918882269710667
+    ],
+    "percentile_nearest_rank": [
+     -0.005941480691445511,
+     0.0032918385107268966
+    ],
+    "q025": -0.005938422339259433,
+    "q25": -0.0025959521128184893,
+    "q75": 0.0005911590930010868,
+    "q975": 0.0032918882269710667,
+    "samples": 20000,
+    "standard_error": 0.002364956545357972,
+    "valid_replicates": 20000
+   },
+   "delong_vs_full": {
+    "auc_challenger": 0.7043810444874274,
+    "auc_reference": 0.7054158607350097,
+    "covariance": 0.00048042262827295866,
+    "events": 235,
+    "metric": "auroc",
+    "n_pairs": 675,
+    "observed_delta": -0.001034816247582282,
+    "p_value": 0.6594701818616426,
+    "standard_error_delta": 0.002348413742886983,
+    "status": "OK",
+    "test": "delong_1988_paired",
+    "variance_challenger": 0.0004796090723986203,
+    "variance_delta": 5.515047107780449e-06,
+    "variance_reference": 0.00048675123125507754,
+    "z": -0.4406447759542354,
+    "z_ci_high": 0.0035679901092751116,
+    "z_ci_low": -0.0056376226044396755
+   },
+   "delta_auroc_vs_b0_equivalent": 0.025323984526112175,
+   "delta_auroc_vs_full": -0.001034816247582282,
+   "delta_pr_auc_vs_full": -0.0046279897778669365
+  },
+  "B6_minus_revenue": {
+   "bootstrap_delta_auroc_vs_full": {
+    "P_delta_gt_0p0": 0.0001,
+    "P_delta_gt_0p01": 0.0,
+    "P_delta_gt_0p02": 0.0,
+    "P_delta_gt_0p03": 0.0,
+    "bca": [
+     -0.017801218697348443,
+     -0.005154268279805808
+    ],
+    "bca_high": -0.005154268279805808,
+    "bca_low": -0.017801218697348443,
+    "bias": 1.0470415791833526e-05,
+    "cluster_count": 675,
+    "invalid_replicates": 0,
+    "mean": -0.010681018945910333,
+    "median": -0.010571505490067912,
+    "metric": "auroc",
+    "observed": -0.010691489361702167,
+    "percentile_linear": [
+     -0.01717102564214304,
+     -0.0047001857293144525
+    ],
+    "percentile_nearest_rank": [
+     -0.017171886394544478,
+     -0.004700193423597732
+    ],
+    "q025": -0.01717102564214304,
+    "q25": -0.012774976994126414,
+    "q75": -0.008517320157806929,
+    "q975": -0.0047001857293144525,
+    "samples": 20000,
+    "standard_error": 0.0031793115498816994,
+    "valid_replicates": 20000
+   },
+   "delong_vs_full": {
+    "auc_challenger": 0.6947243713733076,
+    "auc_reference": 0.7054158607350097,
+    "covariance": 0.00048814331274566245,
+    "events": 235,
+    "metric": "auroc",
+    "n_pairs": 675,
+    "observed_delta": -0.010691489361702167,
+    "p_value": 0.0008185579688309019,
+    "standard_error_delta": 0.0031948825967024765,
+    "status": "OK",
+    "test": "delong_1988_paired",
+    "variance_challenger": 0.0004997426690429598,
+    "variance_delta": 1.0207274806712358e-05,
+    "variance_reference": 0.00048675123125507754,
+    "z": -3.3464420172237745,
+    "z_ci_high": -0.0044296345373315065,
+    "z_ci_low": -0.016953344186072826
+   },
+   "delta_auroc_vs_b0_equivalent": 0.01566731141199229,
+   "delta_auroc_vs_full": -0.010691489361702167,
+   "delta_pr_auc_vs_full": -0.010249358493438554
+  },
+  "B6_no_temporal": {
+   "bootstrap_delta_auroc_vs_full": {
+    "P_delta_gt_0p0": 0.00055,
+    "P_delta_gt_0p01": 0.0,
+    "P_delta_gt_0p02": 0.0,
+    "P_delta_gt_0p03": 0.0,
+    "bca": [
+     -0.04344996333989097,
+     -0.010894621757277404
+    ],
+    "bca_high": -0.010894621757277404,
+    "bca_low": -0.04344996333989097,
+    "bias": -8.725192836428128e-05,
+    "cluster_count": 675,
+    "invalid_replicates": 0,
+    "mean": -0.02644605270205874,
+    "median": -0.026364300411522656,
+    "metric": "auroc",
+    "observed": -0.026358800773694457,
+    "percentile_linear": [
+     -0.04292970766488414,
+     -0.010415072579601978
+    ],
+    "percentile_nearest_rank": [
+     -0.04294588235294117,
+     -0.010415241817293586
+    ],
+    "q025": -0.04292970766488414,
+    "q25": -0.031999479430160155,
+    "q75": -0.020811994036623427,
+    "q975": -0.010415072579601978,
+    "samples": 20000,
+    "standard_error": 0.008306537273707936,
+    "valid_replicates": 20000
+   },
+   "delong_vs_full": {
+    "auc_challenger": 0.6790570599613153,
+    "auc_reference": 0.7054158607350097,
+    "covariance": 0.00046219761465365807,
+    "events": 235,
+    "metric": "auroc",
+    "n_pairs": 675,
+    "observed_delta": -0.026358800773694457,
+    "p_value": 0.0014401093495102213,
+    "standard_error_delta": 0.008272051242746922,
+    "status": "OK",
+    "test": "delong_1988_paired",
+    "variance_challenger": 0.0005060708298148696,
+    "variance_delta": 6.84268317626309e-05,
+    "variance_reference": 0.00048675123125507754,
+    "z": -3.186489058177234,
+    "z_ci_high": -0.010145878259640695,
+    "z_ci_low": -0.04257172328774822
+   },
+   "delta_auroc_vs_b0_equivalent": 0.0,
+   "delta_auroc_vs_full": -0.026358800773694457,
+   "delta_pr_auc_vs_full": -0.03958174835864847
+  },
+  "B6_temporal_only": {
+   "bootstrap_delta_auroc_vs_full": {
+    "P_delta_gt_0p0": 0.0013,
+    "P_delta_gt_0p01": 0.0002,
+    "P_delta_gt_0p02": 5e-05,
+    "P_delta_gt_0p03": 0.0,
+    "bca": [
+     -0.10821462767414919,
+     -0.02116745699690845
+    ],
+    "bca_high": -0.02116745699690845,
+    "bca_low": -0.10821462767414919,
+    "bias": 6.348316017099065e-05,
+    "cluster_count": 675,
+    "invalid_replicates": 0,
+    "mean": -0.06340363482822367,
+    "median": -0.06329132550634897,
+    "metric": "auroc",
+    "observed": -0.06346711798839466,
+    "percentile_linear": [
+     -0.10756505775143871,
+     -0.02075190117746496
+    ],
+    "percentile_nearest_rank": [
+     -0.10756641589833515,
+     -0.02075256228167832
+    ],
+    "q025": -0.10756505775143871,
+    "q25": -0.0782288507314313,
+    "q75": -0.04824287047347395,
+    "q975": -0.02075190117746496,
+    "samples": 20000,
+    "standard_error": 0.022207420762241043,
+    "valid_replicates": 20000
+   },
+   "delong_vs_full": {
+    "auc_challenger": 0.6419487427466151,
+    "auc_reference": 0.7054158607350097,
+    "covariance": 0.0002470569968243721,
+    "events": 235,
+    "metric": "auroc",
+    "n_pairs": 675,
+    "observed_delta": -0.06346711798839466,
+    "p_value": 0.004208803272847561,
+    "standard_error_delta": 0.022175229003232856,
+    "status": "OK",
+    "test": "delong_1988_paired",
+    "variance_challenger": 0.0004991035437394864,
+    "variance_delta": 0.0004917407813458197,
+    "variance_reference": 0.00048675123125507754,
+    "z": -2.862072719931866,
+    "z_ci_high": -0.02000446779313022,
+    "z_ci_low": -0.1069297681836591
+   },
+   "delta_auroc_vs_b0_equivalent": -0.037108317214700204,
+   "delta_auroc_vs_full": -0.06346711798839466,
+   "delta_pr_auc_vs_full": -0.05916620519218929
+  }
+ },
+ "definitions": {
+  "B6_full": "the frozen temporal_risk_score",
+  "B6_minus_<term>": "the frozen closed form with that growth term removed from both the numerator and the denominator",
+  "B6_no_temporal": "0.75 * B0 with every growth term removed; a strictly increasing map of B0",
+  "B6_temporal_only": "adverse / observed, the temporal block alone"
+ },
+ "formula_verification": {
+  "formula": "min(1, 0.75 * B0 + 0.25 * adverse/observed)",
+  "max_abs_error": 0.0,
+  "mismatches": 0,
+  "observations": 675,
+  "status": "PASS",
+  "tolerance": 1e-12
+ },
+ "status": "POST_HOC_AUTOMATED_ROBUSTNESS",
+ "structural_note": "B6_no_temporal is 0.75 * B0. Because B0 lies in [0, 1] that is a strictly increasing map of B0, so AUROC(B6_no_temporal) equals AUROC(B0) exactly; the 0.25 temporal block is the only thing that can reorder observations.",
+ "variants": {
+  "B6_full": {
+   "auroc": 0.7054158607350097,
+   "complete": true,
+   "n_scored": 675,
+   "pr_auc": 0.5807990224438443,
+   "status": "OK"
+  },
+  "B6_minus_OCF": {
+   "auroc": 0.6961025145067699,
+   "complete": true,
+   "n_scored": 675,
+   "pr_auc": 0.5785679642329067,
+   "status": "OK"
+  },
+  "B6_minus_cash": {
+   "auroc": 0.7093181818181818,
+   "complete": true,
+   "n_scored": 675,
+   "pr_auc": 0.5760668557822635,
+   "status": "OK"
+  },
+  "B6_minus_debt": {
+   "auroc": 0.7043810444874274,
+   "complete": true,
+   "n_scored": 675,
+   "pr_auc": 0.5761710326659774,
+   "status": "OK"
+  },
+  "B6_minus_revenue": {
+   "auroc": 0.6947243713733076,
+   "complete": true,
+   "n_scored": 675,
+   "pr_auc": 0.5705496639504057,
+   "status": "OK"
+  },
+  "B6_no_temporal": {
+   "auroc": 0.6790570599613153,
+   "complete": true,
+   "n_scored": 675,
+   "pr_auc": 0.5412172740851958,
+   "status": "OK"
+  },
+  "B6_temporal_only": {
+   "auroc": 0.6419487427466151,
+   "complete": true,
+   "n_scored": 675,
+   "pr_auc": 0.521632817251655,
+   "status": "OK"
+  }
+ }
+}

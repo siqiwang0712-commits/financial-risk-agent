@@ -1,0 +1,991 @@
+{
+ "events": 235,
+ "models": {
+  "B0": {
+   "auroc": 0.6790570599613153,
+   "candidates_evaluated": 0,
+   "estimator_family": "frozen heuristic",
+   "feature_set": "F0",
+   "fit_seconds": 0.0,
+   "inner_failures": 0,
+   "model_id": "B0",
+   "n_features_requested": 5,
+   "outer_failures": 0,
+   "pr_auc": 0.5412172740851958,
+   "prediction_source": "deterministic function, no fitting",
+   "role": "reference",
+   "selected_params_by_fold": [],
+   "status": "OK"
+  },
+  "B6": {
+   "auroc": 0.7054158607350097,
+   "candidates_evaluated": 0,
+   "estimator_family": "frozen heuristic",
+   "feature_set": "F2",
+   "fit_seconds": 0.0,
+   "inner_failures": 0,
+   "model_id": "B6",
+   "n_features_requested": 9,
+   "outer_failures": 0,
+   "pr_auc": 0.5807990224438443,
+   "prediction_source": "deterministic function, no fitting",
+   "role": "reference",
+   "selected_params_by_fold": [],
+   "status": "OK"
+  },
+  "B6_full": {
+   "auroc": 0.7054158607350097,
+   "candidates_evaluated": 0,
+   "estimator_family": "frozen heuristic (ablated)",
+   "feature_set": "F2",
+   "fit_seconds": 0.0,
+   "inner_failures": 0,
+   "model_id": "B6_full",
+   "n_features_requested": null,
+   "outer_failures": 0,
+   "pr_auc": 0.5807990224438443,
+   "prediction_source": "deterministic function, no fitting",
+   "role": "ablation",
+   "selected_params_by_fold": [],
+   "status": "OK"
+  },
+  "B6_minus_OCF": {
+   "auroc": 0.6961025145067699,
+   "candidates_evaluated": 0,
+   "estimator_family": "frozen heuristic (ablated)",
+   "feature_set": "F2",
+   "fit_seconds": 0.0,
+   "inner_failures": 0,
+   "model_id": "B6_minus_OCF",
+   "n_features_requested": null,
+   "outer_failures": 0,
+   "pr_auc": 0.5785679642329067,
+   "prediction_source": "deterministic function, no fitting",
+   "role": "ablation",
+   "selected_params_by_fold": [],
+   "status": "OK"
+  },
+  "B6_minus_cash": {
+   "auroc": 0.7093181818181818,
+   "candidates_evaluated": 0,
+   "estimator_family": "frozen heuristic (ablated)",
+   "feature_set": "F2",
+   "fit_seconds": 0.0,
+   "inner_failures": 0,
+   "model_id": "B6_minus_cash",
+   "n_features_requested": null,
+   "outer_failures": 0,
+   "pr_auc": 0.5760668557822635,
+   "prediction_source": "deterministic function, no fitting",
+   "role": "ablation",
+   "selected_params_by_fold": [],
+   "status": "OK"
+  },
+  "B6_minus_debt": {
+   "auroc": 0.7043810444874274,
+   "candidates_evaluated": 0,
+   "estimator_family": "frozen heuristic (ablated)",
+   "feature_set": "F2",
+   "fit_seconds": 0.0,
+   "inner_failures": 0,
+   "model_id": "B6_minus_debt",
+   "n_features_requested": null,
+   "outer_failures": 0,
+   "pr_auc": 0.5761710326659774,
+   "prediction_source": "deterministic function, no fitting",
+   "role": "ablation",
+   "selected_params_by_fold": [],
+   "status": "OK"
+  },
+  "B6_minus_revenue": {
+   "auroc": 0.6947243713733076,
+   "candidates_evaluated": 0,
+   "estimator_family": "frozen heuristic (ablated)",
+   "feature_set": "F2",
+   "fit_seconds": 0.0,
+   "inner_failures": 0,
+   "model_id": "B6_minus_revenue",
+   "n_features_requested": null,
+   "outer_failures": 0,
+   "pr_auc": 0.5705496639504057,
+   "prediction_source": "deterministic function, no fitting",
+   "role": "ablation",
+   "selected_params_by_fold": [],
+   "status": "OK"
+  },
+  "B6_no_temporal": {
+   "auroc": 0.6790570599613153,
+   "candidates_evaluated": 0,
+   "estimator_family": "frozen heuristic (ablated)",
+   "feature_set": "F0",
+   "fit_seconds": 0.0,
+   "inner_failures": 0,
+   "model_id": "B6_no_temporal",
+   "n_features_requested": null,
+   "outer_failures": 0,
+   "pr_auc": 0.5412172740851958,
+   "prediction_source": "deterministic function, no fitting",
+   "role": "ablation",
+   "selected_params_by_fold": [],
+   "status": "OK"
+  },
+  "B6_temporal_only": {
+   "auroc": 0.6419487427466151,
+   "candidates_evaluated": 0,
+   "estimator_family": "frozen heuristic (ablated)",
+   "feature_set": "F2",
+   "fit_seconds": 0.0,
+   "inner_failures": 0,
+   "model_id": "B6_temporal_only",
+   "n_features_requested": null,
+   "outer_failures": 0,
+   "pr_auc": 0.521632817251655,
+   "prediction_source": "deterministic function, no fitting",
+   "role": "ablation",
+   "selected_params_by_fold": [],
+   "status": "OK"
+  },
+  "hist_gb_F1": {
+   "auroc": 0.8631818181818182,
+   "candidates_evaluated": 600,
+   "estimator_family": "hist_gb",
+   "feature_set": "F1",
+   "fit_seconds": 87.394,
+   "inner_failures": 0,
+   "model_id": "hist_gb_F1",
+   "n_features_requested": 4,
+   "outer_failures": 0,
+   "pr_auc": 0.7762054199807132,
+   "prediction_source": "out-of-fold (each observation scored by a model that never saw it)",
+   "role": "secondary",
+   "selected_params_by_fold": [
+    {
+     "fold": "0",
+     "inner_cv_auroc": 0.8534679628267472,
+     "n_features_used": 4,
+     "n_test": 135,
+     "n_train": 540,
+     "params": {
+      "model__l2_regularization": 1.0,
+      "model__learning_rate": 0.05,
+      "model__max_leaf_nodes": 7,
+      "model__min_samples_leaf": 20
+     },
+     "status": "OK"
+    },
+    {
+     "fold": "1",
+     "inner_cv_auroc": 0.8767562845064699,
+     "n_features_used": 4,
+     "n_test": 135,
+     "n_train": 540,
+     "params": {
+      "model__l2_regularization": 1.0,
+      "model__learning_rate": 0.05,
+      "model__max_leaf_nodes": 7,
+      "model__min_samples_leaf": 20
+     },
+     "status": "OK"
+    },
+    {
+     "fold": "2",
+     "inner_cv_auroc": 0.8620946446817463,
+     "n_features_used": 4,
+     "n_test": 135,
+     "n_train": 540,
+     "params": {
+      "model__l2_regularization": 1.0,
+      "model__learning_rate": 0.05,
+      "model__max_leaf_nodes": 15,
+      "model__min_samples_leaf": 20
+     },
+     "status": "OK"
+    },
+    {
+     "fold": "3",
+     "inner_cv_auroc": 0.8739764046583913,
+     "n_features_used": 4,
+     "n_test": 135,
+     "n_train": 540,
+     "params": {
+      "model__l2_regularization": 1.0,
+      "model__learning_rate": 0.05,
+      "model__max_leaf_nodes": 15,
+      "model__min_samples_leaf": 5
+     },
+     "status": "OK"
+    },
+    {
+     "fold": "4",
+     "inner_cv_auroc": 0.873843215766863,
+     "n_features_used": 4,
+     "n_test": 135,
+     "n_train": 540,
+     "params": {
+      "model__l2_regularization": 1.0,
+      "model__learning_rate": 0.05,
+      "model__max_leaf_nodes": 7,
+      "model__min_samples_leaf": 5
+     },
+     "status": "OK"
+    }
+   ],
+   "status": "OK"
+  },
+  "hist_gb_F2": {
+   "auroc": 0.8851112185686654,
+   "candidates_evaluated": 600,
+   "estimator_family": "hist_gb",
+   "feature_set": "F2",
+   "fit_seconds": 102.513,
+   "inner_failures": 0,
+   "model_id": "hist_gb_F2",
+   "n_features_requested": 9,
+   "outer_failures": 0,
+   "pr_auc": 0.8386908645200237,
+   "prediction_source": "out-of-fold (each observation scored by a model that never saw it)",
+   "role": "primary_nonlinear",
+   "selected_params_by_fold": [
+    {
+     "fold": "0",
+     "inner_cv_auroc": 0.8842621447032123,
+     "n_features_used": 9,
+     "n_test": 135,
+     "n_train": 540,
+     "params": {
+      "model__l2_regularization": 1.0,
+      "model__learning_rate": 0.05,
+      "model__max_leaf_nodes": 7,
+      "model__min_samples_leaf": 20
+     },
+     "status": "OK"
+    },
+    {
+     "fold": "1",
+     "inner_cv_auroc": 0.8954292468895879,
+     "n_features_used": 9,
+     "n_test": 135,
+     "n_train": 540,
+     "params": {
+      "model__l2_regularization": 1.0,
+      "model__learning_rate": 0.05,
+      "model__max_leaf_nodes": 7,
+      "model__min_samples_leaf": 20
+     },
+     "status": "OK"
+    },
+    {
+     "fold": "2",
+     "inner_cv_auroc": 0.8826968067294235,
+     "n_features_used": 9,
+     "n_test": 135,
+     "n_train": 540,
+     "params": {
+      "model__l2_regularization": 1.0,
+      "model__learning_rate": 0.05,
+      "model__max_leaf_nodes": 7,
+      "model__min_samples_leaf": 20
+     },
+     "status": "OK"
+    },
+    {
+     "fold": "3",
+     "inner_cv_auroc": 0.8916698483933473,
+     "n_features_used": 9,
+     "n_test": 135,
+     "n_train": 540,
+     "params": {
+      "model__l2_regularization": 1.0,
+      "model__learning_rate": 0.05,
+      "model__max_leaf_nodes": 7,
+      "model__min_samples_leaf": 20
+     },
+     "status": "OK"
+    },
+    {
+     "fold": "4",
+     "inner_cv_auroc": 0.8756458809757548,
+     "n_features_used": 9,
+     "n_test": 135,
+     "n_train": 540,
+     "params": {
+      "model__l2_regularization": 1.0,
+      "model__learning_rate": 0.05,
+      "model__max_leaf_nodes": 7,
+      "model__min_samples_leaf": 20
+     },
+     "status": "OK"
+    }
+   ],
+   "status": "OK"
+  },
+  "hist_gb_F3": {
+   "auroc": 0.8836750483558994,
+   "candidates_evaluated": 600,
+   "estimator_family": "hist_gb",
+   "feature_set": "F3",
+   "fit_seconds": 114.452,
+   "inner_failures": 0,
+   "model_id": "hist_gb_F3",
+   "n_features_requested": 30,
+   "outer_failures": 0,
+   "pr_auc": 0.8412016617238625,
+   "prediction_source": "out-of-fold (each observation scored by a model that never saw it)",
+   "role": "secondary",
+   "selected_params_by_fold": [
+    {
+     "fold": "0",
+     "inner_cv_auroc": 0.8833442189409573,
+     "n_features_used": 24,
+     "n_test": 135,
+     "n_train": 540,
+     "params": {
+      "model__l2_regularization": 1.0,
+      "model__learning_rate": 0.05,
+      "model__max_leaf_nodes": 7,
+      "model__min_samples_leaf": 20
+     },
+     "status": "OK"
+    },
+    {
+     "fold": "1",
+     "inner_cv_auroc": 0.8930612122235548,
+     "n_features_used": 24,
+     "n_test": 135,
+     "n_train": 540,
+     "params": {
+      "model__l2_regularization": 1.0,
+      "model__learning_rate": 0.05,
+      "model__max_leaf_nodes": 7,
+      "model__min_samples_leaf": 20
+     },
+     "status": "OK"
+    },
+    {
+     "fold": "2",
+     "inner_cv_auroc": 0.8791506936354972,
+     "n_features_used": 25,
+     "n_test": 135,
+     "n_train": 540,
+     "params": {
+      "model__l2_regularization": 1.0,
+      "model__learning_rate": 0.05,
+      "model__max_leaf_nodes": 15,
+      "model__min_samples_leaf": 20
+     },
+     "status": "OK"
+    },
+    {
+     "fold": "3",
+     "inner_cv_auroc": 0.898706721123326,
+     "n_features_used": 24,
+     "n_test": 135,
+     "n_train": 540,
+     "params": {
+      "model__l2_regularization": 0.0,
+      "model__learning_rate": 0.05,
+      "model__max_leaf_nodes": 7,
+      "model__min_samples_leaf": 5
+     },
+     "status": "OK"
+    },
+    {
+     "fold": "4",
+     "inner_cv_auroc": 0.8799247547876161,
+     "n_features_used": 24,
+     "n_test": 135,
+     "n_train": 540,
+     "params": {
+      "model__l2_regularization": 1.0,
+      "model__learning_rate": 0.05,
+      "model__max_leaf_nodes": 7,
+      "model__min_samples_leaf": 20
+     },
+     "status": "OK"
+    }
+   ],
+   "status": "OK"
+  },
+  "logistic_F0": {
+   "auroc": 0.8274371373307543,
+   "candidates_evaluated": 25,
+   "estimator_family": "logistic",
+   "feature_set": "F0",
+   "fit_seconds": 0.546,
+   "inner_failures": 0,
+   "model_id": "logistic_F0",
+   "n_features_requested": 5,
+   "outer_failures": 0,
+   "pr_auc": 0.7694344865729974,
+   "prediction_source": "out-of-fold (each observation scored by a model that never saw it)",
+   "role": "secondary",
+   "selected_params_by_fold": [
+    {
+     "fold": "0",
+     "inner_cv_auroc": 0.818381269122559,
+     "n_features_used": 5,
+     "n_test": 135,
+     "n_train": 540,
+     "params": {},
+     "status": "OK"
+    },
+    {
+     "fold": "1",
+     "inner_cv_auroc": 0.8267461955230673,
+     "n_features_used": 5,
+     "n_test": 135,
+     "n_train": 540,
+     "params": {},
+     "status": "OK"
+    },
+    {
+     "fold": "2",
+     "inner_cv_auroc": 0.8129059706746883,
+     "n_features_used": 5,
+     "n_test": 135,
+     "n_train": 540,
+     "params": {},
+     "status": "OK"
+    },
+    {
+     "fold": "3",
+     "inner_cv_auroc": 0.8354419260942612,
+     "n_features_used": 5,
+     "n_test": 135,
+     "n_train": 540,
+     "params": {},
+     "status": "OK"
+    },
+    {
+     "fold": "4",
+     "inner_cv_auroc": 0.8194824995492157,
+     "n_features_used": 5,
+     "n_test": 135,
+     "n_train": 540,
+     "params": {},
+     "status": "OK"
+    }
+   ],
+   "status": "OK"
+  },
+  "logistic_F1": {
+   "auroc": 0.8045067698259187,
+   "candidates_evaluated": 25,
+   "estimator_family": "logistic",
+   "feature_set": "F1",
+   "fit_seconds": 0.492,
+   "inner_failures": 0,
+   "model_id": "logistic_F1",
+   "n_features_requested": 4,
+   "outer_failures": 0,
+   "pr_auc": 0.7165930889572398,
+   "prediction_source": "out-of-fold (each observation scored by a model that never saw it)",
+   "role": "secondary",
+   "selected_params_by_fold": [
+    {
+     "fold": "0",
+     "inner_cv_auroc": 0.7824325469173504,
+     "n_features_used": 4,
+     "n_test": 135,
+     "n_train": 540,
+     "params": {},
+     "status": "OK"
+    },
+    {
+     "fold": "1",
+     "inner_cv_auroc": 0.8235841507079462,
+     "n_features_used": 4,
+     "n_test": 135,
+     "n_train": 540,
+     "params": {},
+     "status": "OK"
+    },
+    {
+     "fold": "2",
+     "inner_cv_auroc": 0.8154791623138546,
+     "n_features_used": 4,
+     "n_test": 135,
+     "n_train": 540,
+     "params": {},
+     "status": "OK"
+    },
+    {
+     "fold": "3",
+     "inner_cv_auroc": 0.8367722694631515,
+     "n_features_used": 4,
+     "n_test": 135,
+     "n_train": 540,
+     "params": {},
+     "status": "OK"
+    },
+    {
+     "fold": "4",
+     "inner_cv_auroc": 0.8020145338603456,
+     "n_features_used": 4,
+     "n_test": 135,
+     "n_train": 540,
+     "params": {},
+     "status": "OK"
+    }
+   ],
+   "status": "OK"
+  },
+  "logistic_F2": {
+   "auroc": 0.8190183752417795,
+   "candidates_evaluated": 25,
+   "estimator_family": "logistic",
+   "feature_set": "F2",
+   "fit_seconds": 0.676,
+   "inner_failures": 0,
+   "model_id": "logistic_F2",
+   "n_features_requested": 9,
+   "outer_failures": 0,
+   "pr_auc": 0.753629140431216,
+   "prediction_source": "out-of-fold (each observation scored by a model that never saw it)",
+   "role": "primary_linear",
+   "selected_params_by_fold": [
+    {
+     "fold": "0",
+     "inner_cv_auroc": 0.8027823269632017,
+     "n_features_used": 9,
+     "n_test": 135,
+     "n_train": 540,
+     "params": {},
+     "status": "OK"
+    },
+    {
+     "fold": "1",
+     "inner_cv_auroc": 0.8159491801448807,
+     "n_features_used": 9,
+     "n_test": 135,
+     "n_train": 540,
+     "params": {},
+     "status": "OK"
+    },
+    {
+     "fold": "2",
+     "inner_cv_auroc": 0.8138473229132976,
+     "n_features_used": 9,
+     "n_test": 135,
+     "n_train": 540,
+     "params": {},
+     "status": "OK"
+    },
+    {
+     "fold": "3",
+     "inner_cv_auroc": 0.8342551754338263,
+     "n_features_used": 9,
+     "n_test": 135,
+     "n_train": 540,
+     "params": {},
+     "status": "OK"
+    },
+    {
+     "fold": "4",
+     "inner_cv_auroc": 0.8253752958719602,
+     "n_features_used": 9,
+     "n_test": 135,
+     "n_train": 540,
+     "params": {},
+     "status": "OK"
+    }
+   ],
+   "status": "OK"
+  },
+  "logistic_l1_F2": {
+   "auroc": 0.8360928433268858,
+   "candidates_evaluated": 100,
+   "estimator_family": "logistic_l1",
+   "feature_set": "F2",
+   "fit_seconds": 0.922,
+   "inner_failures": 0,
+   "model_id": "logistic_l1_F2",
+   "n_features_requested": 9,
+   "outer_failures": 0,
+   "pr_auc": 0.7744824735078428,
+   "prediction_source": "out-of-fold (each observation scored by a model that never saw it)",
+   "role": "secondary",
+   "selected_params_by_fold": [
+    {
+     "fold": "0",
+     "inner_cv_auroc": 0.8344505153252374,
+     "n_features_used": 9,
+     "n_test": 135,
+     "n_train": 540,
+     "params": {
+      "model__C": 0.1
+     },
+     "status": "OK"
+    },
+    {
+     "fold": "1",
+     "inner_cv_auroc": 0.8485123543537183,
+     "n_features_used": 9,
+     "n_test": 135,
+     "n_train": 540,
+     "params": {
+      "model__C": 0.1
+     },
+     "status": "OK"
+    },
+    {
+     "fold": "2",
+     "inner_cv_auroc": 0.8510944471952626,
+     "n_features_used": 9,
+     "n_test": 135,
+     "n_train": 540,
+     "params": {
+      "model__C": 0.1
+     },
+     "status": "OK"
+    },
+    {
+     "fold": "3",
+     "inner_cv_auroc": 0.8587127888239824,
+     "n_features_used": 9,
+     "n_test": 135,
+     "n_train": 540,
+     "params": {
+      "model__C": 0.1
+     },
+     "status": "OK"
+    },
+    {
+     "fold": "4",
+     "inner_cv_auroc": 0.8391075757532391,
+     "n_features_used": 9,
+     "n_test": 135,
+     "n_train": 540,
+     "params": {
+      "model__C": 0.1
+     },
+     "status": "OK"
+    }
+   ],
+   "status": "OK"
+  },
+  "logistic_l2_F2": {
+   "auroc": 0.8320116054158607,
+   "candidates_evaluated": 100,
+   "estimator_family": "logistic_l2",
+   "feature_set": "F2",
+   "fit_seconds": 1.107,
+   "inner_failures": 0,
+   "model_id": "logistic_l2_F2",
+   "n_features_requested": 9,
+   "outer_failures": 0,
+   "pr_auc": 0.7768778871033661,
+   "prediction_source": "out-of-fold (each observation scored by a model that never saw it)",
+   "role": "secondary",
+   "selected_params_by_fold": [
+    {
+     "fold": "0",
+     "inner_cv_auroc": 0.8189378089303961,
+     "n_features_used": 9,
+     "n_test": 135,
+     "n_train": 540,
+     "params": {
+      "model__C": 0.01
+     },
+     "status": "OK"
+    },
+    {
+     "fold": "1",
+     "inner_cv_auroc": 0.8359996107512787,
+     "n_features_used": 9,
+     "n_test": 135,
+     "n_train": 540,
+     "params": {
+      "model__C": 0.01
+     },
+     "status": "OK"
+    },
+    {
+     "fold": "2",
+     "inner_cv_auroc": 0.8310094421436156,
+     "n_features_used": 9,
+     "n_test": 135,
+     "n_train": 540,
+     "params": {
+      "model__C": 0.01
+     },
+     "status": "OK"
+    },
+    {
+     "fold": "3",
+     "inner_cv_auroc": 0.8495508184240579,
+     "n_features_used": 9,
+     "n_test": 135,
+     "n_train": 540,
+     "params": {
+      "model__C": 0.01
+     },
+     "status": "OK"
+    },
+    {
+     "fold": "4",
+     "inner_cv_auroc": 0.8441759518705405,
+     "n_features_used": 9,
+     "n_test": 135,
+     "n_train": 540,
+     "params": {
+      "model__C": 0.01
+     },
+     "status": "OK"
+    }
+   ],
+   "status": "OK"
+  },
+  "logistic_l2_F3": {
+   "auroc": 0.8263056092843327,
+   "candidates_evaluated": 100,
+   "estimator_family": "logistic_l2",
+   "feature_set": "F3",
+   "fit_seconds": 1.279,
+   "inner_failures": 0,
+   "model_id": "logistic_l2_F3",
+   "n_features_requested": 30,
+   "outer_failures": 0,
+   "pr_auc": 0.7712509087069757,
+   "prediction_source": "out-of-fold (each observation scored by a model that never saw it)",
+   "role": "secondary",
+   "selected_params_by_fold": [
+    {
+     "fold": "0",
+     "inner_cv_auroc": 0.8295606641270096,
+     "n_features_used": 24,
+     "n_test": 135,
+     "n_train": 540,
+     "params": {
+      "model__C": 0.01
+     },
+     "status": "OK"
+    },
+    {
+     "fold": "1",
+     "inner_cv_auroc": 0.8467637689579869,
+     "n_features_used": 24,
+     "n_test": 135,
+     "n_train": 540,
+     "params": {
+      "model__C": 0.01
+     },
+     "status": "OK"
+    },
+    {
+     "fold": "2",
+     "inner_cv_auroc": 0.851240100632243,
+     "n_features_used": 25,
+     "n_test": 135,
+     "n_train": 540,
+     "params": {
+      "model__C": 0.01
+     },
+     "status": "OK"
+    },
+    {
+     "fold": "3",
+     "inner_cv_auroc": 0.8710458769687829,
+     "n_features_used": 24,
+     "n_test": 135,
+     "n_train": 540,
+     "params": {
+      "model__C": 0.1
+     },
+     "status": "OK"
+    },
+    {
+     "fold": "4",
+     "inner_cv_auroc": 0.844667063547716,
+     "n_features_used": 24,
+     "n_test": 135,
+     "n_train": 540,
+     "params": {
+      "model__C": 10.0
+     },
+     "status": "OK"
+    }
+   ],
+   "status": "OK"
+  },
+  "random_forest_F2": {
+   "auroc": 0.8842166344294003,
+   "candidates_evaluated": 300,
+   "estimator_family": "random_forest",
+   "feature_set": "F2",
+   "fit_seconds": 87.649,
+   "inner_failures": 0,
+   "model_id": "random_forest_F2",
+   "n_features_requested": 9,
+   "outer_failures": 0,
+   "pr_auc": 0.8269323721925793,
+   "prediction_source": "out-of-fold (each observation scored by a model that never saw it)",
+   "role": "secondary",
+   "selected_params_by_fold": [
+    {
+     "fold": "0",
+     "inner_cv_auroc": 0.8817357917061402,
+     "n_features_used": 9,
+     "n_test": 135,
+     "n_train": 540,
+     "params": {
+      "model__max_depth": 6,
+      "model__max_features": "sqrt",
+      "model__min_samples_leaf": 5,
+      "model__n_estimators": 400
+     },
+     "status": "OK"
+    },
+    {
+     "fold": "1",
+     "inner_cv_auroc": 0.8932384062554559,
+     "n_features_used": 9,
+     "n_test": 135,
+     "n_train": 540,
+     "params": {
+      "model__max_depth": null,
+      "model__max_features": 0.5,
+      "model__min_samples_leaf": 10,
+      "model__n_estimators": 400
+     },
+     "status": "OK"
+    },
+    {
+     "fold": "2",
+     "inner_cv_auroc": 0.8828424601664038,
+     "n_features_used": 9,
+     "n_test": 135,
+     "n_train": 540,
+     "params": {
+      "model__max_depth": 6,
+      "model__max_features": "sqrt",
+      "model__min_samples_leaf": 1,
+      "model__n_estimators": 400
+     },
+     "status": "OK"
+    },
+    {
+     "fold": "3",
+     "inner_cv_auroc": 0.9005711223242729,
+     "n_features_used": 9,
+     "n_test": 135,
+     "n_train": 540,
+     "params": {
+      "model__max_depth": null,
+      "model__max_features": "sqrt",
+      "model__min_samples_leaf": 1,
+      "model__n_estimators": 400
+     },
+     "status": "OK"
+    },
+    {
+     "fold": "4",
+     "inner_cv_auroc": 0.8853402921082683,
+     "n_features_used": 9,
+     "n_test": 135,
+     "n_train": 540,
+     "params": {
+      "model__max_depth": 6,
+      "model__max_features": "sqrt",
+      "model__min_samples_leaf": 1,
+      "model__n_estimators": 400
+     },
+     "status": "OK"
+    }
+   ],
+   "status": "OK"
+  },
+  "random_forest_F3": {
+   "auroc": 0.8898984526112186,
+   "candidates_evaluated": 300,
+   "estimator_family": "random_forest",
+   "feature_set": "F3",
+   "fit_seconds": 138.83,
+   "inner_failures": 0,
+   "model_id": "random_forest_F3",
+   "n_features_requested": 30,
+   "outer_failures": 0,
+   "pr_auc": 0.8440059696846363,
+   "prediction_source": "out-of-fold (each observation scored by a model that never saw it)",
+   "role": "secondary",
+   "selected_params_by_fold": [
+    {
+     "fold": "0",
+     "inner_cv_auroc": 0.886214012381544,
+     "n_features_used": 24,
+     "n_test": 135,
+     "n_train": 540,
+     "params": {
+      "model__max_depth": null,
+      "model__max_features": "sqrt",
+      "model__min_samples_leaf": 1,
+      "model__n_estimators": 400
+     },
+     "status": "OK"
+    },
+    {
+     "fold": "1",
+     "inner_cv_auroc": 0.8974054855448481,
+     "n_features_used": 24,
+     "n_test": 135,
+     "n_train": 540,
+     "params": {
+      "model__max_depth": 6,
+      "model__max_features": "sqrt",
+      "model__min_samples_leaf": 1,
+      "model__n_estimators": 400
+     },
+     "status": "OK"
+    },
+    {
+     "fold": "2",
+     "inner_cv_auroc": 0.8867286220881476,
+     "n_features_used": 25,
+     "n_test": 135,
+     "n_train": 540,
+     "params": {
+      "model__max_depth": null,
+      "model__max_features": "sqrt",
+      "model__min_samples_leaf": 5,
+      "model__n_estimators": 400
+     },
+     "status": "OK"
+    },
+    {
+     "fold": "3",
+     "inner_cv_auroc": 0.8986060316379071,
+     "n_features_used": 24,
+     "n_test": 135,
+     "n_train": 540,
+     "params": {
+      "model__max_depth": 6,
+      "model__max_features": "sqrt",
+      "model__min_samples_leaf": 1,
+      "model__n_estimators": 400
+     },
+     "status": "OK"
+    },
+    {
+     "fold": "4",
+     "inner_cv_auroc": 0.8850205643534036,
+     "n_features_used": 24,
+     "n_test": 135,
+     "n_train": 540,
+     "params": {
+      "model__max_depth": 6,
+      "model__max_features": "sqrt",
+      "model__min_samples_leaf": 5,
+      "model__n_estimators": 400
+     },
+     "status": "OK"
+    }
+   ],
+   "status": "OK"
+  }
+ },
+ "n": 675,
+ "prevalence": 0.34814814814814815,
+ "primary_linear_challenger": "logistic_F2",
+ "primary_nonlinear_challenger": "hist_gb_F2",
+ "status": "POST_HOC_AUTOMATED_ROBUSTNESS"
+}

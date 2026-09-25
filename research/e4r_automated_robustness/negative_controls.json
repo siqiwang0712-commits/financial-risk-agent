@@ -1,0 +1,218 @@
+{
+ "NC1_label_permutation": {
+  "models": {
+   "B0": {
+    "max": 0.5815232108317214,
+    "mean": 0.500321252417795,
+    "median": 0.4997364603481625,
+    "min": 0.4376595744680851,
+    "p2_5": 0.45654255319148934,
+    "p97_5": 0.5540152321083172,
+    "replicates": 200,
+    "sd": 0.024416328205161642,
+    "share_above_0_55": 0.03
+   },
+   "B6": {
+    "max": 0.5692214700193423,
+    "mean": 0.5000856866537717,
+    "median": 0.4990014506769826,
+    "min": 0.43757736943907155,
+    "p2_5": 0.45732325918762085,
+    "p97_5": 0.5538265232108317,
+    "replicates": 200,
+    "sd": 0.02468227640690142,
+    "share_above_0_55": 0.04
+   },
+   "hist_gb_F2": {
+    "max": 0.5672727272727273,
+    "mean": 0.500847001934236,
+    "median": 0.5014313346228241,
+    "min": 0.4320164410058027,
+    "p2_5": 0.4520469052224371,
+    "p97_5": 0.5510544003868472,
+    "replicates": 200,
+    "sd": 0.023935205782355744,
+    "share_above_0_55": 0.03
+   },
+   "logistic_F2": {
+    "max": 0.5609332688588008,
+    "mean": 0.5005904013539653,
+    "median": 0.49954303675048356,
+    "min": 0.4447823984526112,
+    "p2_5": 0.4570384429400387,
+    "p97_5": 0.5505076160541587,
+    "replicates": 200,
+    "sd": 0.023374479720521747,
+    "share_above_0_55": 0.03
+   }
+  },
+  "purpose": "sanity check that the pipeline returns to chance under random labels; not an equal-AUROC test",
+  "replicates": 200,
+  "seed": 20260926
+ },
+ "NC2_temporal_alignment_destroyed": {
+  "config": "reduced inner grid, identical for the real and shuffled arms",
+  "purpose": "shuffle the temporal block across companies while static features and labels stay put; a real temporal contribution should degrade",
+  "real": {
+   "hist_gb": {
+    "auroc": 0.8740618955512572,
+    "fit_seconds": 6.444,
+    "pr_auc": 0.8248306036201491
+   },
+   "logistic": {
+    "auroc": 0.8190183752417795,
+    "fit_seconds": 0.592,
+    "pr_auc": 0.753629140431216
+   }
+  },
+  "replicates": [
+   {
+    "hist_gb": {
+     "auroc": 0.8613926499032882,
+     "fit_seconds": 6.696,
+     "pr_auc": 0.8014316979202911
+    },
+    "logistic": {
+     "auroc": 0.8206769825918762,
+     "fit_seconds": 0.612,
+     "pr_auc": 0.765844410345187
+    }
+   },
+   {
+    "hist_gb": {
+     "auroc": 0.8628046421663443,
+     "fit_seconds": 6.655,
+     "pr_auc": 0.8187367634607318
+    },
+    "logistic": {
+     "auroc": 0.8064023210831721,
+     "fit_seconds": 0.569,
+     "pr_auc": 0.7505172276660607
+    }
+   },
+   {
+    "hist_gb": {
+     "auroc": 0.8598936170212766,
+     "fit_seconds": 6.536,
+     "pr_auc": 0.8107356228703307
+    },
+    "logistic": {
+     "auroc": 0.8274468085106383,
+     "fit_seconds": 0.552,
+     "pr_auc": 0.7690585432270538
+    }
+   },
+   {
+    "hist_gb": {
+     "auroc": 0.8666537717601548,
+     "fit_seconds": 6.485,
+     "pr_auc": 0.8091184038104892
+    },
+    "logistic": {
+     "auroc": 0.8077949709864604,
+     "fit_seconds": 0.579,
+     "pr_auc": 0.7430846182718759
+    }
+   },
+   {
+    "hist_gb": {
+     "auroc": 0.8614700193423598,
+     "fit_seconds": 6.563,
+     "pr_auc": 0.8018934104560628
+    },
+    "logistic": {
+     "auroc": 0.8175918762088975,
+     "fit_seconds": 0.644,
+     "pr_auc": 0.7618285073418967
+    }
+   },
+   {
+    "hist_gb": {
+     "auroc": 0.8630270793036751,
+     "fit_seconds": 6.434,
+     "pr_auc": 0.812527009084426
+    },
+    "logistic": {
+     "auroc": 0.8141779497098646,
+     "fit_seconds": 0.58,
+     "pr_auc": 0.744731795435591
+    }
+   },
+   {
+    "hist_gb": {
+     "auroc": 0.8707446808510638,
+     "fit_seconds": 6.604,
+     "pr_auc": 0.8285720065590627
+    },
+    "logistic": {
+     "auroc": 0.8288684719535784,
+     "fit_seconds": 0.581,
+     "pr_auc": 0.7558361844852377
+    }
+   },
+   {
+    "hist_gb": {
+     "auroc": 0.8538491295938104,
+     "fit_seconds": 6.542,
+     "pr_auc": 0.8057702762357414
+    },
+    "logistic": {
+     "auroc": 0.8085009671179884,
+     "fit_seconds": 0.573,
+     "pr_auc": 0.7474219070949735
+    }
+   },
+   {
+    "hist_gb": {
+     "auroc": 0.8613926499032882,
+     "fit_seconds": 6.656,
+     "pr_auc": 0.8222292953941855
+    },
+    "logistic": {
+     "auroc": 0.8189748549323017,
+     "fit_seconds": 0.604,
+     "pr_auc": 0.7635597361391918
+    }
+   },
+   {
+    "hist_gb": {
+     "auroc": 0.8615377176015474,
+     "fit_seconds": 6.632,
+     "pr_auc": 0.8175012550818024
+    },
+    "logistic": {
+     "auroc": 0.8204061895551257,
+     "fit_seconds": 0.571,
+     "pr_auc": 0.7672858999867961
+    }
+   }
+  ],
+  "shuffled_fields": [
+   "revenue_growth",
+   "operating_cash_flow_growth",
+   "total_debt_growth",
+   "cash_growth"
+  ],
+  "summary": {
+   "hist_gb": {
+    "mean_drop_vs_real": 0.011785299806576277,
+    "real_auroc": 0.8740618955512572,
+    "replicates_above_real": 0,
+    "shuffled_max_auroc": 0.8707446808510638,
+    "shuffled_mean_auroc": 0.862276595744681,
+    "shuffled_min_auroc": 0.8538491295938104,
+    "shuffled_replicates": 10
+   },
+   "logistic": {
+    "mean_drop_vs_real": 0.0019342359767891004,
+    "real_auroc": 0.8190183752417795,
+    "replicates_above_real": 4,
+    "shuffled_max_auroc": 0.8288684719535784,
+    "shuffled_mean_auroc": 0.8170841392649904,
+    "shuffled_min_auroc": 0.8064023210831721,
+    "shuffled_replicates": 10
+   }
+  }
+ },
+ "status": "POST_HOC_AUTOMATED_ROBUSTNESS"
+}

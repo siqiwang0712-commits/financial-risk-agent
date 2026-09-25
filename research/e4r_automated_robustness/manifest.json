@@ -1,0 +1,246 @@
+{
+ "config_hash": "f47974607b7dd306c3cc75e8ff6314aefe9c91e9a39b58ed1e990f0786857723",
+ "experiment_id": "E4-R",
+ "feature_sets_hash": "09a5267044109ddd8d73336408579e27bb1c3c5e638f81251f1c5bdd75f932cd",
+ "generated_utc": "2026-09-25T14:14:16Z",
+ "git_commit": "f4f002f492d9668bd3df1e595760896a8f6158c1",
+ "outputs": [
+  {
+   "bytes": 6192,
+   "path": "research/e4r_automated_robustness/README.md",
+   "present": true,
+   "sha256": "cbf4b08af1ac6133d92dc70bcf5c05c7f4818efdcb2c541c1f49498c820e93c5"
+  },
+  {
+   "bytes": 9633,
+   "path": "research/e4r_automated_robustness/STUDY_PROTOCOL.md",
+   "present": true,
+   "sha256": "8ace00e61917b51d6f8d8b0579e57488936c1f8b199e9cf134cbacbd0b8b6f3b"
+  },
+  {
+   "bytes": 4323,
+   "path": "research/e4r_automated_robustness/INTERPRETATION_POLICY.md",
+   "present": true,
+   "sha256": "f4c3d606bb6db69b3e29f4cf27eedb4464e101a895bc1afa5643e10ab87335e2"
+  },
+  {
+   "bytes": 11161,
+   "path": "research/e4r_automated_robustness/experiment_config.json",
+   "present": true,
+   "sha256": "f47974607b7dd306c3cc75e8ff6314aefe9c91e9a39b58ed1e990f0786857723"
+  },
+  {
+   "bytes": 4356,
+   "path": "research/e4r_automated_robustness/feature_sets.json",
+   "present": true,
+   "sha256": "09a5267044109ddd8d73336408579e27bb1c3c5e638f81251f1c5bdd75f932cd"
+  },
+  {
+   "bytes": 6823,
+   "path": "research/e4r_automated_robustness/leakage_audit.json",
+   "present": true,
+   "sha256": "d3a979364a07650fc125f7772fe91d26704b482bd9a7850a150b01aeee9ebd1d"
+  },
+  {
+   "bytes": 764721,
+   "path": "research/e4r_automated_robustness/oof_predictions.csv",
+   "present": true,
+   "sha256": "2849bb0518d1719d57970d89ecea7ad04abd9b68849c6500c92ce37b731a2116"
+  },
+  {
+   "bytes": 2344775,
+   "path": "research/e4r_automated_robustness/oof_predictions.json",
+   "present": true,
+   "sha256": "f0b85295043de6493df624ef62babd932baa6298bf781dabb141054cede0e491"
+  },
+  {
+   "bytes": 23879,
+   "path": "research/e4r_automated_robustness/model_results.json",
+   "present": true,
+   "sha256": "6627813d4bd9ce97e8fa452f486743400eae37c9fa15efaf77b2df2be70e74a0"
+  },
+  {
+   "bytes": 12626,
+   "path": "research/e4r_automated_robustness/temporal_ablation.json",
+   "present": true,
+   "sha256": "6fe6be2c0e251a9db132c1ea178546502929fb768638628ecfea7388ff10ddd9"
+  },
+  {
+   "bytes": 4234,
+   "path": "research/e4r_automated_robustness/temporal_contribution_summary.json",
+   "present": true,
+   "sha256": "ed1f7805b72bb999c263c16bfeff32c181e1baed6f4dff4a9a43ba9041816c37"
+  },
+  {
+   "bytes": 8229,
+   "path": "research/e4r_automated_robustness/subgroup_results.json",
+   "present": true,
+   "sha256": "3f1e58fabc81523014d8d84ac7b2ea4d4f08ed5d9142db56dfbb673722748523"
+  },
+  {
+   "bytes": 5853,
+   "path": "research/e4r_automated_robustness/influence_analysis.json",
+   "present": true,
+   "sha256": "afad870ead67d3c354b4eca560674cf82bdb39588e173887e04f582a8659ea7b"
+  },
+  {
+   "bytes": 5217,
+   "path": "research/e4r_automated_robustness/negative_controls.json",
+   "present": true,
+   "sha256": "49c2d07f23a15e57476ed9a857072238f545a3b3049c35b5e2a5226283b23373"
+  },
+  {
+   "bytes": 13294,
+   "path": "research/e4r_automated_robustness/calibration_diagnostics.json",
+   "present": true,
+   "sha256": "70977c063df5812d694f84decbe3e9181ffd9280f7729cecee13def1ae2a371b"
+  },
+  {
+   "bytes": 20282,
+   "path": "research/e4r_automated_robustness/statistical_tests.json",
+   "present": true,
+   "sha256": "b84eac68918c0c9daa3178d4e611f703473859952c12ad71705ab9b2d5618753"
+  },
+  {
+   "bytes": 5521,
+   "path": "research/e4r_automated_robustness/complexity_comparison.json",
+   "present": true,
+   "sha256": "989e5457e03290701f4563f5402b8210787dade7a39cdfde4f4c7c6389a1be3c"
+  },
+  {
+   "bytes": 12075,
+   "path": "research/e4r_automated_robustness/FINAL_REPORT.md",
+   "present": true,
+   "sha256": "e6a3e2fb1019275a254fb05aa6e16e1f54851d35ce4a235dd7a93cde9744ee89"
+  },
+  {
+   "bytes": 21545,
+   "path": "research/e4r_automated_robustness/figures/auroc_comparison.svg",
+   "present": true,
+   "sha256": "5b65d6b9a0b0ea80266dfee335631a7e7aad5db4fbee26388a6f88f40c2eef75"
+  },
+  {
+   "bytes": 26575,
+   "path": "research/e4r_automated_robustness/figures/bootstrap_delta_auroc.svg",
+   "present": true,
+   "sha256": "bae934c1e795a68771d15052cc75b179b18e2c1d4d9d913df32fd9483f06dd71"
+  },
+  {
+   "bytes": 49170,
+   "path": "research/e4r_automated_robustness/figures/calibration_score_support.svg",
+   "present": true,
+   "sha256": "99267dc5d61b15d4d7e4d84df080648c6005ab51c73ef068033403040c9d6de2"
+  },
+  {
+   "bytes": 15931,
+   "path": "research/e4r_automated_robustness/figures/missingness_robustness.svg",
+   "present": true,
+   "sha256": "1eb18b54001d70216c15b99725f15d1665f7b23ed745731b18213c2a287e277a"
+  },
+  {
+   "bytes": 14299,
+   "path": "research/e4r_automated_robustness/figures/pr_auc_comparison.svg",
+   "present": true,
+   "sha256": "eab184f9aafb0472692c257c888e4ae1127caa75721df2ae43f0de092cf47be9"
+  },
+  {
+   "bytes": 15833,
+   "path": "research/e4r_automated_robustness/figures/sector_robustness.svg",
+   "present": true,
+   "sha256": "b7e390fcc79191ac0a67801a47765ecad4960d07c7e86577fbf718d34c444e9a"
+  },
+  {
+   "bytes": 17261,
+   "path": "research/e4r_automated_robustness/figures/temporal_ablation.svg",
+   "present": true,
+   "sha256": "c25bda543f9e86f0696b9ebf420145f9e1cde641a79a810b1960105d7791a949"
+  }
+ ],
+ "packages": {
+  "matplotlib": "3.11.2",
+  "numpy": "2.5.3",
+  "pytest": "9.1.1",
+  "ruff": "0.16.9",
+  "scikit-learn": "1.9.1",
+  "scipy": "1.18.1"
+ },
+ "python": {
+  "executable": "C:\\Users\\WSQ\\.workbuddy\\binaries\\python\\envs\\e4r\\Scripts\\python.exe",
+  "implementation": "CPython",
+  "version": "3.13.14"
+ },
+ "seeds": {
+  "bootstrap": 20260925,
+  "inner_folds": 20260925,
+  "label_permutation": 20260926,
+  "master": 20260925,
+  "outer_folds": 20260925,
+  "temporal_shuffle": 20260927
+ },
+ "source_artifacts": [
+  {
+   "on_disk_sha256": "eaf80c00e53069a2a4d001c4f1f98232ed72bbc7c83e84d131bb81c4aad42cde",
+   "path": "research/e4_statistical_audit/replication/analysis.json",
+   "sha256": "eaf80c00e53069a2a4d001c4f1f98232ed72bbc7c83e84d131bb81c4aad42cde"
+  },
+  {
+   "on_disk_sha256": "3270f108518fad9599e8902c1143d2b36842480579b82a315c0633b0a3803be1",
+   "path": "research/e4_statistical_audit/replication/cohort.json",
+   "sha256": "3270f108518fad9599e8902c1143d2b36842480579b82a315c0633b0a3803be1"
+  },
+  {
+   "on_disk_sha256": "f6281c8a7fff04dc72e48dff36530dce98a5fe1184a99062f608d167281f2899",
+   "path": "research/e4_statistical_audit/replication/cohort_report.json",
+   "sha256": "f6281c8a7fff04dc72e48dff36530dce98a5fe1184a99062f608d167281f2899"
+  },
+  {
+   "on_disk_sha256": "26872ab2eaca745aacb02cffc5ae158a16ca1e6934d9b295c54c9022bb0fd73f",
+   "path": "research/e4_statistical_audit/replication/feature_report.json",
+   "sha256": "26872ab2eaca745aacb02cffc5ae158a16ca1e6934d9b295c54c9022bb0fd73f"
+  },
+  {
+   "on_disk_sha256": "62e2d3cc1c8fe6152ad6ea1aabd2a4a85863411368effb6aa8769d31ff599801",
+   "path": "research/e4_statistical_audit/replication/features.json.gz",
+   "sha256": "62e2d3cc1c8fe6152ad6ea1aabd2a4a85863411368effb6aa8769d31ff599801"
+  },
+  {
+   "on_disk_sha256": "f06f1804bc83c165ce211ae4ae88985ffe00105ab50786e2df349e30bc5b98d7",
+   "path": "research/e4_statistical_audit/replication/input_inventory.json",
+   "sha256": "f06f1804bc83c165ce211ae4ae88985ffe00105ab50786e2df349e30bc5b98d7"
+  },
+  {
+   "on_disk_sha256": "c02a5d758f9166bdda2965a00fbd496fb8d21f35ad09a208817011dd5e87cb39",
+   "path": "research/e4_statistical_audit/replication/numeric_predictions.json",
+   "sha256": "c02a5d758f9166bdda2965a00fbd496fb8d21f35ad09a208817011dd5e87cb39"
+  },
+  {
+   "on_disk_sha256": "075b052fab5bbcefc1affbe66672067ba741f5a2e2b356c21884bae62320c8dd",
+   "path": "research/e4_statistical_audit/replication/numeric_report.json",
+   "sha256": "075b052fab5bbcefc1affbe66672067ba741f5a2e2b356c21884bae62320c8dd"
+  },
+  {
+   "on_disk_sha256": "a791173fc145b283e812ba32d5df73ef0dbfd2455a5ddb57b065f9a32d9d75b0",
+   "path": "research/e4_statistical_audit/replication/outcome_report.json",
+   "sha256": "a791173fc145b283e812ba32d5df73ef0dbfd2455a5ddb57b065f9a32d9d75b0"
+  },
+  {
+   "on_disk_sha256": "15acb5d1a89f60deb212c8dc17cfb423942a37e7b9c403d98a047ba7ae99bab2",
+   "path": "research/e4_statistical_audit/replication/outcomes.json",
+   "sha256": "15acb5d1a89f60deb212c8dc17cfb423942a37e7b9c403d98a047ba7ae99bab2"
+  },
+  {
+   "on_disk_sha256": "2523cc579de2fffd51120af2bd2b4b21ce224e0ff68763ebc17c8030e56b7ac0",
+   "path": "research/e4_statistical_audit/replication/summaries.json",
+   "sha256": "2523cc579de2fffd51120af2bd2b4b21ce224e0ff68763ebc17c8030e56b7ac0"
+  }
+ ],
+ "source_integrity": {
+  "b0_reconstruction_max_abs_error": 3.33333360913457e-11,
+  "b6_reconstruction_max_abs_error": 3.333339160249693e-11,
+  "external_verifier": "PASS",
+  "replication_files_checked": 11,
+  "status": "PASS"
+ },
+ "status": "POST_HOC_AUTOMATED_ROBUSTNESS",
+ "verification_command": "python research/e4r_automated_robustness/verify_e4r.py"
+}
