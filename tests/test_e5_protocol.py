@@ -214,3 +214,75 @@ def test_power_analysis_artifact_is_internally_consistent() -> None:
     for point in payload["power_curve"]["points"]:
         assert point["power"] is None or 0.0 <= point["power"] <= 1.0
     assert payload["recommendation"]["target_power"] in (0.80, 0.90)
+
+
+# ----------------------------------------------------------------------------------
+# E5-Narrative: a separate study, with its own frozen requirements
+# ----------------------------------------------------------------------------------
+
+NARRATIVE_DIR = E5_DIR / "narrative"
+
+
+def test_narrative_study_is_present_and_separate() -> None:
+    assert (NARRATIVE_DIR / "NARRATIVE_PROTOCOL.md").is_file()
+    assert (NARRATIVE_DIR / "experiment_config.json").is_file()
+    config = json.loads((NARRATIVE_DIR / "experiment_config.json").read_text(encoding="utf-8"))
+    assert config["merge_with_structured_e5"] is False
+    assert config["separate_from"].startswith("structured E5")
+    assert config["status"] == "PROSPECTIVE_NOT_FROZEN"
+
+
+def test_narrative_config_forbids_cross_study_claim_transfer() -> None:
+    """Structured E5 and E5-Narrative measure different capabilities."""
+    config = json.loads((NARRATIVE_DIR / "experiment_config.json").read_text(encoding="utf-8"))
+    transfer = config["cross_study_claim_transfer"].lower()
+    assert "forbidden" in transfer
+
+
+def test_narrative_study_uses_the_same_inference_rules() -> None:
+    """The E4-S findings must carry over: cluster resampling and no permutation equality test."""
+    config = json.loads((NARRATIVE_DIR / "experiment_config.json").read_text(encoding="utf-8"))
+    inference = config["inference"]
+    assert inference["resampling_unit"] == "company"
+    assert inference["interval"] == "company_cluster_bca_bootstrap"
+    assert inference["bootstrap_replicates"] == 20000
+    assert inference["multiplicity"] == "holm_over_N1_N2_N3_N4_N5"
+    assert "forbidden" in inference["label_permutation_as_equality_test"]
+
+
+def test_narrative_study_covers_all_five_research_questions() -> None:
+    config = json.loads((NARRATIVE_DIR / "experiment_config.json").read_text(encoding="utf-8"))
+    metrics = config["metrics"]
+    for question in ("N1_claim_extraction", "N2_evidence_grounding", "N3_contradiction",
+                     "N4_temporal_change", "N5_abstention"):
+        assert question in metrics, f"missing metric family {question}"
+    assert metrics["abstention_reported_in_both_directions"] is True
+
+
+def test_narrative_study_validates_its_instrument_before_running_models() -> None:
+    """A metric that cannot detect a planted defect cannot be trusted on model output."""
+    config = json.loads((NARRATIVE_DIR / "experiment_config.json").read_text(encoding="utf-8"))
+    validation = config["instrument_validation"]
+    assert validation["must_be_committed_before_model_run"] is True
+    assert validation["defect_types"], "at least one planted defect type is required"
+    assert config["governance"]["instrument_validation_precedes_model_run"] is True
+    stages = config["governance"]["stage_commits"]
+    assert stages.index("instrument-validation") < stages.index("model-run")
+
+
+def test_narrative_ground_truth_is_double_annotated_and_blinded() -> None:
+    config = json.loads((NARRATIVE_DIR / "experiment_config.json").read_text(encoding="utf-8"))
+    truth = config["ground_truth"]
+    assert truth["annotators"] == {"a": True, "b": True, "adjudicator_c": True}
+    assert truth["field_level_kappa_required"] is True
+    assert "model output" in truth["blinding"]
+    assert truth["guidelines"].startswith("frozen")
+
+
+def test_narrative_annotation_schema_is_complete() -> None:
+    config = json.loads((NARRATIVE_DIR / "experiment_config.json").read_text(encoding="utf-8"))
+    schema = config["annotation_schema"]
+    for field in ("claim_span", "claim_type", "direction", "evidence_spans",
+                  "evidence_sufficiency", "contradicts_structured_financials", "temporal_change"):
+        assert field in schema, f"annotation schema is missing {field}"
+    assert schema["evidence_sufficiency"] == ["sufficient", "partial", "absent"]

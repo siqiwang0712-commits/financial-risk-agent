@@ -28,6 +28,26 @@ The freeze candidate lives in `protocol/`:
 `protocol/` is written but **not frozen**. Nothing here has a cohort, a
 prediction, a label or a result.
 
+## Narrative / evidence study
+
+`narrative/` holds the separate claim-level study, which tests whether the Agent can
+extract, ground and check claims against filing text (MD&A, Risk Factors, Liquidity, Debt,
+going-concern footnotes, auditor commentary). It is deliberately **not** merged into
+structured E5: structured E5 asks whether risk *ranking* adds value, this asks whether the
+Agent can *read a filing*, and E4's own audit records that E4's packets contained no
+document text at all.
+
+| File | Purpose |
+|---|---|
+| `narrative/NARRATIVE_PROTOCOL.md` | corpus, annotation schema, metrics N1–N5, instrument validation, systems, inference, failure taxonomy, governance |
+| `narrative/experiment_config.json` | the machine-readable freeze payload, including the annotation schema |
+
+Its most important design element is **instrument validation**: controlled defects are
+planted into reference claims, and the metric implementation must recover them at a reported
+rate *before* any model output exists. A metric for citation correctness that cannot detect a
+deliberately wrong citation cannot be trusted to report one in model output — the same lesson
+the E4-S audit applies to E4's inference.
+
 ## Status of the freeze prerequisites
 
 Ready:

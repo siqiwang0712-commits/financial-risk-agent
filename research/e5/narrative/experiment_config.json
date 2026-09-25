@@ -1,0 +1,103 @@
+{
+ "study": "E5-Narrative",
+ "status": "PROSPECTIVE_NOT_FROZEN",
+ "protocol_document": "research/e5/narrative/NARRATIVE_PROTOCOL.md",
+ "separate_from": "structured E5 (research/e5/protocol/STUDY_PROTOCOL.md)",
+ "merge_with_structured_e5": false,
+ "cross_study_claim_transfer": "forbidden: no metric from this study may be cited as evidence for a structured-E5 claim, or the reverse",
+
+ "corpus": {
+  "sections": ["MD&A", "Risk Factors", "Liquidity", "Debt", "going-concern footnotes", "auditor commentary"],
+  "company_selection": "frozen hash rule; disjoint from E1-E5 and every prior validation cohort; not hand-picked",
+  "boundary_rule": "section boundaries are part of the frozen protocol; a claim is only defined relative to a section",
+  "freeze_before_annotation": ["section text", "section boundaries", "extraction method and version", "per-section content hash"],
+  "future_text_allowed": false,
+  "structured_outcome_visible": false
+ },
+
+ "ground_truth": {
+  "unit": "claim",
+  "annotators": {"a": true, "b": true, "adjudicator_c": true},
+  "blinding": "annotators never see model output, any score, any prediction, or the other annotator's verdict before recording their own",
+  "guidelines": "frozen and published before annotation, with a worked example set; changing them after seeing model output would make the reference a function of the model",
+  "report": ["raw_agreement", "cohen_kappa_per_field", "adjudication_rate"],
+  "field_level_kappa_required": true,
+  "note": "evidence_spans agreement is typically far lower than direction agreement; an aggregate kappa would hide the hard part"
+ },
+
+ "annotation_schema": {
+  "claim_id": "string",
+  "company_id": "string",
+  "filing_period": "string",
+  "section": "string",
+  "claim_span": "[start, end]",
+  "claim_text": "string",
+  "claim_type": ["level", "trend", "driver", "forward_looking"],
+  "direction": ["improving", "deteriorating", "neutral"],
+  "evidence_spans": "[[start, end]]",
+  "evidence_sufficiency": ["sufficient", "partial", "absent"],
+  "contradicts_structured_financials": [true, false, "unknown"],
+  "temporal_change": ["new", "repeated", "escalated", "resolved", "not_comparable"]
+ },
+
+ "metrics": {
+  "N1_claim_extraction": ["claim_recall", "claim_precision"],
+  "N2_evidence_grounding": ["evidence_grounding_rate", "citation_correctness"],
+  "N3_contradiction": ["contradiction_f1"],
+  "N4_temporal_change": ["temporal_change_f1"],
+  "N5_abstention": ["unsupported_claim_rate", "abstention_quality", "over_abstention_rate"],
+  "denominator_required": true,
+  "abstention_reported_in_both_directions": true,
+  "note": "a model that abstains on everything scores perfectly on unsupported_claim_rate, so the pair is mandatory"
+ },
+
+ "instrument_validation": {
+  "purpose": "a metric for citation correctness is only meaningful if it can detect a known-wrong citation",
+  "method": "plant controlled defects into reference claims, then run the metric implementation over the injected set",
+  "defect_types": ["citation_pointing_at_unrelated_span", "flipped_direction", "claim_with_no_evidence", "mislabelled_temporal_change"],
+  "report": ["per_defect_type_detection_rate", "false_positive_rate_on_unmodified_claims"],
+  "must_be_committed_before_model_run": true
+ },
+
+ "systems": {
+  "full": "the complete Agent pipeline as shipped",
+  "no_retrieval": "claims generated without evidence retrieval",
+  "retrieval_only": "evidence spans returned without claim synthesis",
+  "evidence_removed": "full, with cited spans stripped before judging; if citation correctness does not move, the metric measures self-consistency rather than grounding",
+  "human_upper_bound": "annotator A scored against the adjudicated reference"
+ },
+
+ "inference": {
+  "unit": "claim",
+  "resampling_unit": "company",
+  "interval": "company_cluster_bca_bootstrap",
+  "bootstrap_replicates": 20000,
+  "multiplicity": "holm_over_N1_N2_N3_N4_N5",
+  "family_wise_alpha": 0.05,
+  "label_permutation_as_equality_test": "forbidden",
+  "subgroup_descriptive_threshold": 20
+ },
+
+ "failure_taxonomy": [
+  "extraction_miss", "spurious_claim", "wrong_span", "span_too_broad", "citation_unsupported",
+  "direction_error", "contradiction_false_positive", "contradiction_false_negative",
+  "temporal_misclassification", "over_abstention", "abstention_on_supported_claim"
+ ],
+
+ "governance": {
+  "workflow_document": "research/e5/protocol/GOVERNANCE_WORKFLOW.md",
+  "stage_commits": [
+   "narrative-protocol", "section-freeze", "guideline-freeze", "annotation-A/B",
+   "adjudication", "instrument-validation", "model-run", "evaluation", "results"
+  ],
+  "instrument_validation_precedes_model_run": true,
+  "amend_pushed_commits": false
+ },
+
+ "limitations": [
+  "claim segmentation is partly subjective; kappa on claim_span is reported, not smoothed",
+  "the reference set is bounded by annotator time, so recall is measured against a human reference, not a complete one",
+  "planted defects validate the metric, not the annotators; annotator error is measured by kappa and remains a limitation",
+  "temporal-change labels exist only where a comparable prior filing exists"
+ ]
+}
