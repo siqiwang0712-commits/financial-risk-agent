@@ -450,11 +450,19 @@ On the same 675 verified observations (235 events), it asks whether B6's tempora
 Findings, all `POST_HOC_AUTOMATED_ROBUSTNESS`:
 
 - B6 > B0 reproduces: ΔAUROC **+0.0264**, paired DeLong p = 0.0014, Holm-adjusted p = 0.0014, 20,000-replicate BCa 95% CI **[+0.011, +0.043]**.
-- The gain is entirely temporal: `B6_no_temporal` is `0.75 × B0`, so its AUROC equals B0's **exactly**, and removing the temporal block removes the whole separation.
+- The gain is entirely temporal: `B6_no_temporal` is `0.75 × B0`, a strictly rank-equivalent transformation, so all B6–B0 ranking separation is mechanically introduced through the temporal component. This is a structural decomposition of a deterministic formula, not a causal finding.
 - The gain is **not** concentrated in one term. The largest single-term effect (revenue growth) is 41% of the temporal gain, and dropping the cash-growth term slightly *improves* AUROC.
 - B6 is **not competitive** here: the prespecified boosting challenger beats it by **+0.180** AUROC (Δ 95% CI [+0.139, +0.224]; the DeLong p underflows double precision at z = 8.39), and a logistic model on the four temporal features alone already reaches 0.805.
-- The aggregate result is not uniformly robust: `Transportation_Utilities` shows ΔAUROC(B6−B0) = −0.005, while no single observation deletion reverses the sign.
+- No single observation deletion reverses the sign of ΔAUROC(B6−B0), and label permutation returns every scorer to AUROC ≈ 0.50.
 - No confirmed leakage. Two checks are disclosed as `REVIEW`, not leakage: the endpoint is a transition rule anchored on pre-cutoff levels, and missingness indicators are themselves predictive.
+
+A **post-hoc hardening pass** ([EXTENSION_PROTOCOL.md](research/e4r_automated_robustness/EXTENSION_PROTOCOL.md)) then closed three gaps a reviewer would be right to push on. It cannot upgrade any statement, and `experiment_config.json` was not touched.
+
+- **A material share of the learned-model advantage is reporting structure.** Removing the imputer's missing-value indicators costs the logistic **−0.160** AUROC (95% CI [−0.209, −0.110]) and the boosting model **−0.026** ([−0.040, −0.014]). A model given **only** the nine presence/absence flags — no financial value at all — reaches **0.835** (boosting) and **0.829** (logistic), i.e. **+0.13 above B6**. This is not called leakage: nothing shows an indicator carries outcome-side information, and the audit's timestamp checks pass.
+- **Temporal features add little once a strong static nonlinear learner is used.** `hist_gb_F0` (static only) reaches **0.880** against `hist_gb_F2`'s 0.885: Δ **+0.0056**, paired DeLong p = 0.39, BCa [−0.007, +0.019].
+- **The shuffled-temporal control is now genuinely paired** (one shared configuration, the original arm's folds asserted equal to the frozen run's). Shuffling the temporal block costs the boosting model a median **+0.012** AUROC with 0 of 100 replicates reaching the original, and the logistic only +0.001 with P(drop>0) = 0.61.
+- **Sector heterogeneity is not established.** No gated sector has an interval-supported negative effect, and a 2,000-replicate permutation test does not reject a common effect (p = 0.25, I² = 0.10). `Transportation_Utilities`'s −0.005 point estimate is reported as inconclusive, not as a sector failure.
+- **Interval honesty.** Reported DeLong and bootstrap intervals condition on the realized out-of-fold predictions and do not integrate training-procedure uncertainty; repeated nested CV puts that omitted component at sd ≈ 0.004 (boosting) and 0.006 (logistic).
 
 Reproduce with `python research/e4r_automated_robustness/verify_e4r.py`. Full protocol, artifacts and the generated report are in [the study directory](research/e4r_automated_robustness/README.md) and [FINAL_REPORT.md](research/e4r_automated_robustness/FINAL_REPORT.md).
 

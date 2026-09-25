@@ -91,11 +91,16 @@ protocol allows.
 | `temporal_incremental_test.json` | `Y ~ F0` vs `Y ~ F0 + temporal`, coefficient stability |
 | `subgroup_results.json` | sector, firm size, missingness |
 | `influence_analysis.json` | leave-one-out and leave-sector-out |
-| `negative_controls.json` | label permutation, temporal alignment destroyed |
+| `negative_controls.json` | label permutation, and the paired temporal-alignment control |
 | `calibration_diagnostics.json` | descriptive; scores stay `UNCALIBRATED` |
 | `threshold_robustness.json` | `SENSITIVITY_ONLY` sweep |
 | `statistical_tests.json` | DeLong, BCa, Holm |
 | `complexity_comparison.json` | fit time, dependencies, determinism |
+| `extension_config.json`, `EXTENSION_PROTOCOL.md` | the post-hoc hardening prespecification and its rationale |
+| `missingness_ablation.json` | four arms per family: full, no indicators, missingness-only, harmonized subset |
+| `boosting_temporal_increment.json` | `hist_gb_F0` vs `hist_gb_F2` |
+| `sector_heterogeneity.json` | per-sector ΔAUROC intervals, Cochran Q, permutation test |
+| `model_stability.json` | repeated nested CV: the training-procedure variance the main intervals omit |
 | `FINAL_REPORT.md` | generated from the artifacts above |
 | `manifest.json`, `verify_e4r.py` | hashes, environment, one-command verification |
 | `figures/` | 7 SVGs rendered from the artifacts |
@@ -118,11 +123,43 @@ Two structural facts are worth knowing before reading any number:
 
 1. **`B6_no_temporal` is `0.75 × B0`.** Since B0 lies in [0, 1] that is a strictly
    increasing map of B0, so `AUROC(B6_no_temporal)` equals `AUROC(B0)` *exactly*. The
-   temporal block is the only component of B6 that can reorder observations.
+   temporal block is the only component of B6 that can reorder observations. This is a
+   structural decomposition of a deterministic formula, not a causal finding.
 2. **The endpoint is a transition rule.** Four of the five conditions behind
    `financial_deterioration_12m` compare the FY2025 fact with the FY2024 fact and two are
    gated on the FY2024 value being positive. FY2024 facts are visible before the cutoff, so
    this is *not* leakage — but pre-cutoff magnitudes are strongly informative about the
    label. The leakage audit records this as a `REVIEW` disclosure with the univariate
-   signal screen that shows it, because any reader comparing B6 against a learned model
-   needs to know it.
+   signal screen that shows it.
+
+---
+
+## Post-hoc hardening pass
+
+A second post-hoc pass, described in `EXTENSION_PROTOCOL.md` and driven by
+`extension_config.json` (which cannot move `experiment_config.json`). It closes three gaps a
+reviewer would be right to push on:
+
+1. **Missingness confound audit.** Four arms per family — full F2 with indicators, full F2
+   without indicators, missingness-indicators-only, and a harmonized-availability subset
+   (≥ 7 of 9 fields). This separates financial-value signal from reporting-structure signal.
+   Missingness is **not** called leakage: the claim that would require is not made and is not
+   supported.
+2. **The real nonlinear temporal increment.** `hist_gb_F0` (static only) versus `hist_gb_F2`,
+   with a paired DeLong test and a 20 000-replicate BCa interval. The old
+   `hist_gb_F1 → hist_gb_F2` comparison could not answer whether temporal features add value
+   *on top of a strong static nonlinear learner*, because `hist_gb_F0` did not exist.
+3. **A genuinely paired temporal-shuffle control.** One shared configuration for both arms,
+   the original arm's folds asserted equal to the frozen run's, 200 (logistic) / 100
+   (boosting) replicates, and both sources of variability reported. The superseded 0.8741
+   against the headline 0.8851 is explained rather than deleted: it was the reduced-grid
+   original arm.
+
+Plus a **sector heterogeneity** section (per-sector intervals, Cochran Q, a permutation
+null) so a 68-observation sector is not read as a sector failure, and **repeated nested CV**
+so the training-procedure variance the main intervals omit is at least measured.
+
+`INTERPRETATION_POLICY.md` gained a "phrasing clarifications" section recording three
+changes: the temporal block must be described structurally rather than causally; Case F's
+sector marker now requires interval support (strictly harder to fire); and the OOF
+uncertainty limitation is stated explicitly. No threshold or case membership changed.

@@ -589,76 +589,9 @@ def stage_negative_controls(
         print(f"   NC1 {name:12s} mean AUROC={entry['mean']:.4f} sd={entry['sd']:.4f} "
               f"[{entry['p2_5']:.4f}, {entry['p97_5']:.4f}]")
 
-    # NC2 -- destroy the alignment between a company and its own temporal block.
-    fields = list(feature_sets["families"]["F2"]["fields"])
-    temporal_fields = list(feature_sets["families"]["F1"]["fields"])
-    temporal_positions = [fields.index(name) for name in temporal_fields]
-    matrix = np.asarray(dataset.matrix(fields), dtype=float)
-    groups = [dataset.masked_company_id[oid] for oid in dataset.observation_ids]
-    controls = config["negative_controls"]
-    shuffle_replicates = int(controls["temporal_shuffle_replicates"])
-    nc2_targets = [("logistic", "logistic_F2"), ("hist_gb", "hist_gb_F2")]
-
-    def run_nc2(block: np.ndarray, tag: str) -> dict:
-        out = {}
-        for family, label in nc2_targets:
-            result = e4r_models.nested_cv(
-                observation_ids=dataset.observation_ids,
-                matrix=block.tolist(),
-                labels=labels,
-                groups=groups,
-                feature_names=fields,
-                estimator_family=family,
-                model_id=f"{label}::{tag}",
-                feature_set="F2",
-                seed=config["seeds"]["master"],
-                n_outer=config["cross_validation"]["outer_splits"],
-                n_inner=config["cross_validation"]["inner_splits"],
-                reduced_grid=True,
-            )
-            scores = result.scores_in_order(dataset.observation_ids)
-            out[family] = {
-                "auroc": e4r_stats.roc_auc(labels, scores),
-                "pr_auc": e4r_stats.marginal_metric(
-                    e4r_stats.paired_rows(
-                        dataset.observation_ids, dataset.labels,
-                        {oid: s for oid, s in zip(dataset.observation_ids, scores, strict=True)},
-                        {oid: s for oid, s in zip(dataset.observation_ids, scores, strict=True)},
-                    ),
-                    "reference", "pr_auc",
-                ),
-                "fit_seconds": round(result.fit_seconds, 3),
-            }
-        return out
-
-    real = run_nc2(matrix, "real")
-    shuffled_runs = []
-    shuffle_rng = np.random.default_rng(config["seeds"]["temporal_shuffle"])
-    for index in range(shuffle_replicates):
-        block = matrix.copy()
-        order = shuffle_rng.permutation(block.shape[0])
-        block[:, temporal_positions] = block[order][:, temporal_positions]
-        shuffled_runs.append(run_nc2(block, f"shuffled_{index}"))
-        print(f"   NC2 replicate {index}: logistic={shuffled_runs[-1]['logistic']['auroc']:.4f} "
-              f"hist_gb={shuffled_runs[-1]['hist_gb']['auroc']:.4f}")
-
-    nc2_summary = {}
-    for family, _label in nc2_targets:
-        observed = [entry[family]["auroc"] for entry in shuffled_runs if entry[family]["auroc"] is not None]
-        nc2_summary[family] = {
-            "real_auroc": real[family]["auroc"],
-            "shuffled_replicates": len(observed),
-            "shuffled_mean_auroc": sum(observed) / len(observed) if observed else None,
-            "shuffled_min_auroc": min(observed) if observed else None,
-            "shuffled_max_auroc": max(observed) if observed else None,
-            "mean_drop_vs_real": (
-                (real[family]["auroc"] - sum(observed) / len(observed)) if observed and real[family]["auroc"] is not None else None
-            ),
-            "replicates_above_real": (
-                sum(1 for value in observed if real[family]["auroc"] is not None and value >= real[family]["auroc"])
-                if observed else None
-            ),
-        }
+    # NC2 -- the temporal-alignment control is owned by e4r_extension.stage_temporal_shuffle,
+    # which rebuilds it as a genuinely paired design (one shared configuration, identical
+    # folds). It is merged into this artifact by run_extensions.
     payload = {
         "status": e4r_data.STATUS,
         "NC1_label_permutation": {
@@ -669,13 +602,8 @@ def stage_negative_controls(
             "models": nc1_summary,
         },
         "NC2_temporal_alignment_destroyed": {
-            "purpose": "shuffle the temporal block across companies while static features and "
-                       "labels stay put; a real temporal contribution should degrade",
-            "shuffled_fields": temporal_fields,
-            "config": "reduced inner grid, identical for the real and shuffled arms",
-            "real": real,
-            "replicates": shuffled_runs,
-            "summary": nc2_summary,
+            "status": "COMPUTED_BY_EXTENSION",
+            "see": "extension_config.json -> temporal_shuffle",
         },
     }
     _write("negative_controls.json", payload)
@@ -757,6 +685,40 @@ def stage_complexity(dataset: e4r_data.Dataset, details: dict, config: dict) -> 
     return payload
 
 
+def run_extensions(
+    dataset: e4r_data.Dataset,
+    feature_sets: dict,
+    config: dict,
+    extension: dict,
+    score_vectors: dict[str, dict[str, float]],
+    seed: int,
+) -> dict:
+    """Run the post-hoc hardening stages and add their new scorers to the vector pool."""
+    import e4r_extension
+
+    missingness = e4r_extension.stage_missingness_ablation(
+        dataset, feature_sets, score_vectors, extension, seed
+    )
+    boosting, new_vectors = e4r_extension.stage_boosting_increment(
+        dataset, feature_sets, score_vectors, extension, seed
+    )
+    score_vectors.update(new_vectors)
+    shuffle = e4r_extension.stage_temporal_shuffle(
+        dataset, feature_sets, score_vectors, extension, seed, config["seeds"]["temporal_shuffle"]
+    )
+    heterogeneity = e4r_extension.stage_sector_heterogeneity(
+        dataset, score_vectors, config, extension, seed
+    )
+    stability = e4r_extension.stage_model_stability(dataset, feature_sets, extension, seed)
+    return {
+        "missingness": missingness,
+        "boosting": boosting,
+        "shuffle": shuffle,
+        "heterogeneity": heterogeneity,
+        "stability": stability,
+    }
+
+
 def build_manifest(config: dict, feature_sets: dict, integrity: dict, extra: dict) -> dict:
     outputs = [
         "README.md", "STUDY_PROTOCOL.md", "INTERPRETATION_POLICY.md", "experiment_config.json",
@@ -764,6 +726,8 @@ def build_manifest(config: dict, feature_sets: dict, integrity: dict, extra: dic
         "model_results.json", "temporal_ablation.json", "temporal_contribution_summary.json",
         "subgroup_results.json", "influence_analysis.json", "negative_controls.json",
         "calibration_diagnostics.json", "statistical_tests.json", "complexity_comparison.json",
+        "extension_config.json", "EXTENSION_PROTOCOL.md", "missingness_ablation.json",
+        "boosting_temporal_increment.json", "sector_heterogeneity.json", "model_stability.json",
         "FINAL_REPORT.md",
     ]
     files = []
@@ -805,6 +769,9 @@ def build_manifest(config: dict, feature_sets: dict, integrity: dict, extra: dic
         "seeds": config["seeds"],
         "config_hash": e4r_data.sha256_json(config),
         "feature_sets_hash": config["feature_sets_hash"],
+        "extension_config_hash": e4r_data.sha256_json(
+            json.loads(e4r_config.EXTENSION_PATH.read_text(encoding="utf-8"))
+        ),
         "source_artifacts": source,
         "source_integrity": {
             "status": integrity["status"],
@@ -829,9 +796,21 @@ def main() -> int:
         help="reload the out-of-fold ledger and model results instead of refitting; the ledger "
              "is the complete record of every score, so downstream stages are unchanged",
     )
+    parser.add_argument(
+        "--extensions",
+        action="store_true",
+        help="run only the post-hoc hardening stages, reading the frozen ledger for the "
+             "primary scores; use it to iterate on the extension without refitting the matrix",
+    )
+    parser.add_argument(
+        "--skip-extensions",
+        action="store_true",
+        help="skip the post-hoc hardening stages (not recommended: the report reads them)",
+    )
     args = parser.parse_args()
 
     config = e4r_config.assert_config_intact()
+    extension = e4r_config.assert_extension_intact()
     feature_sets = json.loads(e4r_config.FEATURE_SETS_PATH.read_text(encoding="utf-8"))
     bootstrap = 2000 if args.quick else int(config["statistics"]["bootstrap_replicates"])
 
@@ -844,6 +823,16 @@ def main() -> int:
     integrity["b6_reconstruction"] = {
         "max_abs_error": reconstruction["b6_max_abs_error"], "mismatches": reconstruction["b6_mismatches"]
     }
+
+    if args.extensions:
+        print("== extension-only run: reloading the frozen ledger ==")
+        ledger = json.loads((HERE / "oof_predictions.json").read_text(encoding="utf-8"))
+        score_vectors = {}
+        for row in ledger["records"]:
+            score_vectors.setdefault(row["model"], {})[row["observation_id"]] = float(row["predicted_score"])
+        run_extensions(dataset, feature_sets, config, extension, score_vectors, config["seeds"]["master"])
+        return finish(HERE, config, feature_sets, integrity, started)
+
     leakage = stage_leakage(dataset)
 
     ablation_vectors, _ablation = stage_ablation(dataset, bootstrap, config["seeds"]["bootstrap"])
@@ -933,21 +922,38 @@ def main() -> int:
     stage_calibration_thresholds(dataset, score_vectors, config)
     stage_complexity(dataset, models["details"], config)
 
-    print("== stage 15: figures and manifest ==")
+    print("== stage 15: post-hoc hardening extensions ==")
+    if args.skip_extensions:
+        print("   skipped by request")
+    else:
+        run_extensions(dataset, feature_sets, config, extension, score_vectors, config["seeds"]["master"])
+
+    return finish(HERE, config, feature_sets, integrity, started, leakage["status"])
+
+
+def finish(
+    base: Path,
+    config: dict,
+    feature_sets: dict,
+    integrity: dict,
+    started: float,
+    leakage_status: str = "SEE_ARTIFACT",
+) -> int:
+    """Render figures, write the report, then pin every output hash in the manifest."""
     import e4r_figures
     import e4r_report
 
-    e4r_figures.render_all(HERE)
+    print("== final: figures and manifest ==")
+    e4r_figures.render_all(base)
     # The manifest is built twice: once so the report can quote the commit and hashes, then
     # again so it can hash the report itself. It never lists itself.
-    build = lambda: build_manifest(
-        config, feature_sets, integrity, {"generated_utc": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())}
+    build = lambda: build_manifest(        config, feature_sets, integrity, {"generated_utc": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())}
     )
     _write("manifest.json", build())
-    e4r_report.write_final_report(HERE)
+    e4r_report.write_final_report(base)
     _write("manifest.json", build())
     print(f"\nE4-R complete in {time.time() - started:.1f}s; status {e4r_data.STATUS}")
-    print(f"leakage: {leakage['status']}")
+    print(f"leakage: {leakage_status}")
     return 0
 
 

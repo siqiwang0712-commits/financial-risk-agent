@@ -154,6 +154,122 @@ def main() -> int:
     thresholds = json.loads((HERE / "threshold_robustness.json").read_text(encoding="utf-8"))
     report.check("threshold sweep marked sensitivity-only", thresholds["status"] == "SENSITIVITY_ONLY")
 
+    print("== post-hoc hardening additions ==")
+    extension_hash = e4r_data.sha256_json(
+        json.loads((HERE / "extension_config.json").read_text(encoding="utf-8"))
+    )
+    report.check(
+        "extension_config.json unchanged since the run",
+        extension_hash == manifest.get("extension_config_hash"),
+        f"{extension_hash[:16]} vs {str(manifest.get('extension_config_hash'))[:16]}",
+    )
+    extension = json.loads((HERE / "extension_config.json").read_text(encoding="utf-8"))
+    report.check(
+        "the extension was built against the current frozen config",
+        extension["frozen_config_hash"] == e4r_data.sha256_json(config),
+        "a mismatch would mean experiment_config.json moved after the extension was frozen",
+    )
+
+    missingness = json.loads((HERE / "missingness_ablation.json").read_text(encoding="utf-8"))
+    for family, entry in sorted(missingness["families"].items()):
+        for arm_name, arm in sorted(entry["arms"].items()):
+            ids = sorted(arm["scores"])
+            recomputed = e4r_stats.roc_auc(
+                [labels[oid] for oid in ids], [arm["scores"][oid] for oid in ids]
+            )
+            report.close(f"missingness {family}/{arm_name} AUROC", recomputed, arm["auroc"], 1e-9)
+        comparison = missingness["comparisons"][family]["A_minus_B_full_F2_without_indicators"]
+        report.check(
+            f"missingness {family}: arm C (missingness-only) is reported",
+            "C_missingness_only" in entry["arms"],
+        )
+        report.close(
+            f"missingness {family}: B − A delta",
+            entry["arms"]["B_full_F2_without_indicators"]["auroc"]
+            - entry["arms"]["A_full_F2_with_indicators"]["auroc"],
+            comparison["delta_auroc"],
+            1e-9,
+        )
+    report.check(
+        "strict complete-case is refused rather than estimated",
+        missingness["strict_complete_case"]["estimable"] is False,
+        str(missingness["strict_complete_case"]),
+    )
+
+    increment = json.loads((HERE / "boosting_temporal_increment.json").read_text(encoding="utf-8"))
+    for name in ("hist_gb_F0", "hist_gb_F2"):
+        ids = sorted(increment["scores"][name])
+        recomputed = e4r_stats.roc_auc(
+            [labels[oid] for oid in ids], [increment["scores"][name][oid] for oid in ids]
+        )
+        report.close(f"boosting increment: {name} AUROC", recomputed, increment[
+            "reference_metrics" if name == "hist_gb_F0" else "challenger_metrics"
+        ]["auroc"], 1e-9)
+    report.close(
+        "boosting increment: F2 − F0 delta",
+        increment["challenger_metrics"]["auroc"] - increment["reference_metrics"]["auroc"],
+        increment["comparison"]["delta_auroc"],
+        1e-9,
+    )
+
+    controls = json.loads((HERE / "negative_controls.json").read_text(encoding="utf-8"))
+    shuffle = controls["NC2_temporal_alignment_destroyed"]
+    for family, minimum in (("logistic", 100), ("hist_gb", 100)):
+        entry = shuffle["models"][family]
+        report.check(
+            f"temporal shuffle: {family} has at least {minimum} replicates",
+            entry["replicates"] >= minimum,
+            str(entry["replicates"]),
+        )
+        report.check(
+            f"temporal shuffle: {family} original arm uses the frozen folds",
+            shuffle["reproduction_of_frozen_folds"][family]["folds_identical_to_frozen_run"] is True,
+        )
+        recomputed = sum(1 for row in entry["detail"] if row["drop"] > 0) / len(entry["detail"])
+        report.close(
+            f"temporal shuffle: {family} P(drop>0)",
+            recomputed, entry["P_drop_gt_0"], 1e-12,
+        )
+
+    heterogeneity = json.loads((HERE / "sector_heterogeneity.json").read_text(encoding="utf-8"))
+    dataset_sector = json.loads(
+        (e4r_data.REPLICATION_DIR / "cohort.json").read_text(encoding="utf-8")
+    )
+    sector_by_observation = {row["observation_id"]: row["sector"] for row in dataset_sector}
+    for row in heterogeneity["sectors"]:
+        if not row["estimable"]:
+            report.check(f"sector heterogeneity: {row['sector']} NOT_ESTIMABLE",
+                         row.get("status") == "NOT_ESTIMABLE")
+            continue
+        members = [oid for oid in order if sector_by_observation[oid] == row["sector"]]
+        recomputed = e4r_stats.delta_metric(
+            e4r_stats.paired_rows(members, labels, vectors["B0"], vectors["B6"]), "auroc"
+        )
+        report.close(f"sector heterogeneity: {row['sector']} ΔAUROC", recomputed, row["delta_auroc"], 1e-9)
+        if row["classification"] == "robust_positive":
+            report.check(f"sector heterogeneity: {row['sector']} classified on its interval",
+                         row["ci_low"] > 0)
+        elif row["classification"] == "possible_heterogeneity":
+            report.check(f"sector heterogeneity: {row['sector']} classified on its interval",
+                         row["ci_high"] < 0)
+    report.check(
+        "heterogeneity test reports a permutation p-value",
+        heterogeneity["heterogeneity"].get("permutation_p_value") is not None,
+    )
+
+    stability = json.loads((HERE / "model_stability.json").read_text(encoding="utf-8"))
+    for name, entry in sorted(stability["models"].items()):
+        values = [item["auroc"] for item in entry["repeats"]]
+        mean_value = sum(values) / len(values)
+        report.close(f"model stability: {name} mean is consistent with its repeats",
+                     mean_value, entry["mean_auroc"], 1e-12)
+    statistics_ids = [item["challenger"] for item in statistics["primary"]]
+    report.check(
+        "repeated-CV stability does not enter the primary family",
+        all("repeat" not in name for name in statistics_ids),
+        str(statistics_ids),
+    )
+
     failed = report.failed
     print(f"\n{len(report.checks) - len(failed)}/{len(report.checks)} checks passed")
     for item in failed:

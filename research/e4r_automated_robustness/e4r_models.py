@@ -39,10 +39,10 @@ if str(HERE) not in sys.path:
     sys.path.insert(0, str(HERE))
 
 
-def _pipeline(estimator) -> Pipeline:
+def _pipeline(estimator, add_indicator: bool = True) -> Pipeline:
     return Pipeline(
         [
-            ("impute", SimpleImputer(strategy="median", add_indicator=True)),
+            ("impute", SimpleImputer(strategy="median", add_indicator=add_indicator)),
             ("scale", StandardScaler()),
             ("model", estimator),
         ]
@@ -166,6 +166,7 @@ def nested_cv(
     apply_coverage_filter: bool = False,
     min_train_coverage: float = 0.4,
     reduced_grid: bool = False,
+    add_indicator: bool = True,
 ) -> NestedCVResult:
     """Run the complete nested loop and return out-of-fold scores."""
     X = np.asarray(matrix, dtype=float)
@@ -200,7 +201,7 @@ def nested_cv(
         for params in grid:
             fold_scores: list[float] = []
             for inner_train, inner_test in splits:
-                pipe = _pipeline(make_estimator(estimator_family, seed))
+                pipe = _pipeline(make_estimator(estimator_family, seed), add_indicator)
                 if params:
                     pipe.set_params(**params)
                 try:
@@ -233,7 +234,7 @@ def nested_cv(
                 fold_of[observation_ids[position]] = str(fold_index)
             continue
 
-        pipe = _pipeline(make_estimator(estimator_family, seed))
+        pipe = _pipeline(make_estimator(estimator_family, seed), add_indicator)
         if best_params:
             pipe.set_params(**best_params)
         try:

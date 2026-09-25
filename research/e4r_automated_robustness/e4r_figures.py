@@ -279,6 +279,144 @@ def figure_calibration() -> Path:
     return path
 
 
+def figure_missingness_ablation() -> Path:
+    payload = _read("missingness_ablation.json")
+    arms = [
+        "A_full_F2_with_indicators",
+        "B_full_F2_without_indicators",
+        "C_missingness_only",
+        "D_harmonized_availability",
+    ]
+    short = {
+        "A_full_F2_with_indicators": "A full F2\n+ indicators",
+        "B_full_F2_without_indicators": "B full F2\nno indicators",
+        "C_missingness_only": "C missingness\nonly",
+        "D_harmonized_availability": "D harmonized\nsubset",
+    }
+    families = sorted(payload["families"])
+    figure, axis = plt.subplots(figsize=(8.8, 4.8))
+    width = 0.36
+    for offset, (family, color) in enumerate(zip(families, (ACCENT, ACCENT_2), strict=False)):
+        present = [arm for arm in arms if arm in payload["families"][family]["arms"]]
+        values = [payload["families"][family]["arms"][arm]["auroc"] for arm in present]
+        lows = [payload["families"][family]["arms"][arm]["auroc_ci_low"] for arm in present]
+        highs = [payload["families"][family]["arms"][arm]["auroc_ci_high"] for arm in present]
+        positions = [arms.index(arm) + (offset - 0.5) * width for arm in present]
+        axis.bar(positions, values, width=width, color=color, alpha=0.85, label=family)
+        axis.errorbar(
+            positions,
+            values,
+            yerr=[[value - low for value, low in zip(values, lows, strict=True)],
+                  [high - value for value, high in zip(values, highs, strict=True)]],
+            fmt="none", ecolor=INK, capsize=3, linewidth=1,
+        )
+        for position, arm in zip(positions, present, strict=True):
+            entry = payload["families"][family]["arms"][arm]
+            axis.text(position, entry["auroc"] + 0.008, f"{entry['events']} ev", ha="center", fontsize=6.5, color=INK)
+    b6 = _read("model_results.json")["models"]["B6"]["auroc"]
+    axis.axhline(b6, color=WARN, linestyle="--", linewidth=1, label=f"B6 = {b6:.4f}")
+    axis.set_xticks(range(len(arms)))
+    axis.set_xticklabels([short[arm] for arm in arms], fontsize=8)
+    axis.set_ylim(0.4, 1.0)
+    axis.set_ylabel("out-of-fold AUROC")
+    axis.set_title("E4-R: how much of the learned-model advantage is reporting structure?")
+    axis.legend(fontsize=8, loc="lower right")
+    figure.tight_layout()
+    path = FIGURE_DIR / "missingness_ablation.svg"
+    _save_svg(figure, path)
+    plt.close(figure)
+    return path
+
+
+def figure_boosting_increment() -> Path:
+    payload = _read("boosting_temporal_increment.json")
+    names = ["hist_gb_F0", "hist_gb_F2"]
+    labels = ["F0 static only", "F2 static + temporal"]
+    values = [payload["reference_metrics"]["auroc"], payload["challenger_metrics"]["auroc"]]
+    figure, axis = plt.subplots(figsize=(6.6, 4.6))
+    axis.bar(range(len(names)), values, color=[MUTED, ACCENT], alpha=0.85)
+    for index, value in enumerate(values):
+        axis.text(index, value + 0.006, f"{value:.4f}", ha="center", fontsize=8, color=INK)
+    delta = payload["comparison"]["delta_auroc"]
+    low = payload["comparison"]["bootstrap_auroc"]["bca_low"]
+    high = payload["comparison"]["bootstrap_auroc"]["bca_high"]
+    axis.set_xticks(range(len(names)))
+    axis.set_xticklabels(labels, fontsize=9)
+    axis.set_ylim(0.7, 0.95)
+    axis.set_ylabel("out-of-fold AUROC")
+    axis.set_title(f"E4-R: hist_gb_F2 − hist_gb_F0 = {delta:+.4f} (BCa [{low:+.4f}, {high:+.4f}])", fontsize=10)
+    figure.tight_layout()
+    path = FIGURE_DIR / "boosting_temporal_increment.svg"
+    _save_svg(figure, path)
+    plt.close(figure)
+    return path
+
+
+def figure_temporal_shuffle() -> Path:
+    payload = _read("negative_controls.json")["NC2_temporal_alignment_destroyed"]
+    families = ["logistic", "hist_gb"]
+    figure, axes = plt.subplots(1, 2, figsize=(9.4, 4.2))
+    for axis, family in zip(axes, families, strict=True):
+        entry = payload["models"][family]
+        values = [row["auroc"] for row in entry["detail"]]
+        axis.hist(values, bins=30, color=ACCENT, alpha=0.75)
+        axis.axvline(entry["original_auroc"], color=INK, linewidth=1.6,
+                     label=f"original = {entry['original_auroc']:.4f}")
+        headline = _read("model_results.json")["models"]["hist_gb_F2"]["auroc"]
+        if family == "hist_gb":
+            axis.axvline(headline, color=WARN, linewidth=1.2, linestyle="--",
+                         label=f"headline full-grid = {headline:.4f}")
+        axis.set_title(f"{family}: {entry['replicates']} shuffled replicates", fontsize=9)
+        axis.set_xlabel("AUROC with the temporal block shuffled")
+        axis.set_ylabel("replicates")
+        axis.legend(fontsize=7)
+    figure.suptitle("E4-R: temporal-alignment negative control (paired design)", fontsize=10)
+    figure.tight_layout()
+    path = FIGURE_DIR / "temporal_shuffle_control.svg"
+    _save_svg(figure, path)
+    plt.close(figure)
+    return path
+
+
+def figure_sector_heterogeneity() -> Path:
+    payload = _read("sector_heterogeneity.json")
+    rows = [row for row in payload["sectors"] if row["estimable"]]
+    palette = {"robust_positive": ACCENT_2, "inconclusive": MUTED, "possible_heterogeneity": WARN}
+    figure, axis = plt.subplots(figsize=(8.2, 4.6))
+    positions = range(len(rows))
+    values = [row["delta_auroc"] for row in rows]
+    axis.bar(positions, values,
+             color=[palette[row["classification"]] for row in rows], alpha=0.85)
+    axis.errorbar(
+        list(positions), values,
+        yerr=[[value - row["ci_low"] for value, row in zip(values, rows, strict=True)],
+              [row["ci_high"] - value for value, row in zip(values, rows, strict=True)]],
+        fmt="none", ecolor=INK, capsize=4, linewidth=1,
+    )
+    axis.axhline(0, color="#b91c1c", linestyle=":", linewidth=1)
+    pooled = payload["heterogeneity"].get("pooled_delta_auroc")
+    if pooled is not None:
+        axis.axhline(pooled, color=INK, linestyle="--", linewidth=1, label=f"pooled Δ = {pooled:+.4f}")
+    for index, row in enumerate(rows):
+        axis.text(index, -0.004, f"n={row['n']}, {row['events']} ev\n{row['classification']}",
+                  ha="center", fontsize=7, color=INK)
+    axis.set_xticks(list(positions))
+    axis.set_xticklabels([row["sector"] for row in rows], fontsize=8)
+    axis.set_ylabel("ΔAUROC (B6 − B0) within sector")
+    permutation_p = payload["heterogeneity"].get("permutation_p_value")
+    axis.set_title(
+        "E4-R: sector heterogeneity"
+        + (f" (permutation p = {permutation_p:.3f})" if permutation_p is not None else ""),
+        fontsize=10,
+    )
+    axis.legend(fontsize=8)
+    figure.tight_layout()
+    path = FIGURE_DIR / "sector_heterogeneity.svg"
+    _save_svg(figure, path)
+    plt.close(figure)
+    return path
+
+
 def render_all(base: Path | None = None) -> list[str]:
     FIGURE_DIR.mkdir(parents=True, exist_ok=True)
     renderers = (
@@ -289,6 +427,10 @@ def render_all(base: Path | None = None) -> list[str]:
         figure_sector,
         figure_missingness,
         figure_calibration,
+        figure_missingness_ablation,
+        figure_boosting_increment,
+        figure_temporal_shuffle,
+        figure_sector_heterogeneity,
     )
     produced = []
     for renderer in renderers:

@@ -1,6 +1,6 @@
 # E4-R — Automated Robustness & Competitive Baseline Study
 
-**Status: `POST_HOC_AUTOMATED_ROBUSTNESS`** — git `f4f002f492d9`, Python 3.13.14.
+**Status: `POST_HOC_AUTOMATED_ROBUSTNESS`** — git `4194ee2f8f4b`, Python 3.13.14.
 
 E4-R is a **retrospective (POST_HOC)** study run on E4's published replication data. It is **not** `ESTABLISHED_E4`, **not** `CONFIRMATORY`, **not** `PROSPECTIVE` and **not** an `E5_RESULT`. It does not modify E4, does not create confirmatory evidence, and does not replace E5. It exists to make E5 designable.
 
@@ -8,6 +8,7 @@ E4-R is a **retrospective (POST_HOC)** study run on E4's published replication d
 - leakage audit: **REVIEW** (16/18 checks pass; disclosed as REVIEW, not leakage: endpoint_anchored_on_pre_cutoff_levels, missingness_indicators_carry_signal)
 - primary multiplicity control: Holm across P1–P3
 - bootstrap replicates: 20000
+- post-hoc hardening pass: `extension_config.json` (`282811607c05155d…`), sections 4 and H1–H8 below; it refines the reading and cannot upgrade any statement to confirmatory
 
 ## 1. Headline
 
@@ -32,7 +33,7 @@ E4-R is a **retrospective (POST_HOC)** study run on E4's published replication d
 **Case B.** B6 captures useful temporal information but its hand-designed aggregation is not competitive with a learned nonlinear tabular baseline.
 **Case D.** E4's gain appears materially dependent on temporal information.
 **Case F.** The aggregate E4 improvement is not uniformly robust across the evaluated population.
-  - sector Transportation_Utilities: ΔAUROC(B6−B0) = -0.0046 ≤ 0
+  - sector Transportation_Utilities: ΔAUROC(B6−B0) = -0.0046 but the interval [-0.0654, +0.0410] contains zero — a point-estimate loss that the data cannot confirm
 
 ## 3. The ten questions
 
@@ -40,7 +41,9 @@ E4-R is a **retrospective (POST_HOC)** study run on E4's published replication d
 Yes. B0 AUROC = 0.6791, B6 AUROC = 0.7054, Δ = +0.0264 (BCa 95% [+0.0109, +0.0434], Holm p = 0.00144). This is a replication sanity check on E4's own data, not a new confirmation.
 
 ### Q2. Is the temporal signal really the main incremental source?
-Removing the whole temporal block gives AUROC = 0.6791. Because `B6_no_temporal` is `0.75 × B0`, a strictly increasing map of B0, that value equals AUROC(B0) (0.6791) **exactly** — the check is structural, not empirical. The temporal block therefore accounts for the entire B6 − B0 separation (+0.0264); this meets the DESTROYED criterion (≥80% of the gain).
+Removing the temporal block collapses B6 to a strictly rank-equivalent transformation of B0 (`B6_no_temporal = 0.75 × B0`, and the `min(1, ·)` clamp never binds on [0, 1]), so `AUROC(B6_no_temporal) = AUROC(B0) = 0.6791` **exactly**. Therefore all of the B6 − B0 ranking separation is mechanically introduced through the temporal component. This is a *structural decomposition of a deterministic formula*, not a causal empirical finding, and it is not evidence that temporal variables explain 100% of anything: the statement is about where the reordering comes from inside B6's own arithmetic.
+
+Numerically, the temporal block moves AUROC by +0.0264 (meeting the DESTROYED criterion of ≥80% of the +0.0264 B6 − B0 gap).
 
 ### Q3. Which temporal component matters most?
 | term | trigger prevalence | ΔAUROC vs B6_full when removed (negative = removing it helps) | mean contribution |
@@ -72,7 +75,8 @@ Static-only logistic (`logistic_F0`) reaches 0.8274; adding the temporal block m
 ### Q7. Does adding temporal features stably help the learned models?
 - logistic: F0 0.8274 → F2 0.8190 (-0.0084)
 - boosting: F1 (temporal only) 0.8632 → F2 0.8851 (+0.0219)
-- NC2 (temporal block shuffled across companies, 10 replicates): logistic 0.8190 → 0.8171 (drop +0.0019); boosting 0.8741 → 0.8623 (drop +0.0118)
+- temporal block shuffled across companies (paired design, 200 logistic and 100 boosting replicates): logistic 0.8190 → 0.8177 (median drop +0.0013, P(drop>0) = 0.605); boosting 0.8741 → 0.8617 (median drop +0.0123, P(drop>0) = 1.000)
+- the *real* nonlinear temporal increment, tested head-on in §4 H3/H4: `hist_gb_F0` 0.8795 → `hist_gb_F2` 0.8851
 - temporal coefficient sign consistency across outer folds:
   - revenue_growth: mean -0.0933, consistent sign negative in 0.80 of folds
   - operating_cash_flow_growth: mean -0.0454, consistent sign negative in 0.60 of folds
@@ -94,9 +98,110 @@ B6 requires 9 packet fields, no fitting, no seed and no third-party dependency, 
 - The comparison bar for E5 is not B0; it is a strong nested-CV tabular baseline on the same feature set, because that is what any temporal claim has to beat.
 - E5 should prespecify the temporal block as a unit and report the ablation (`B6_no_temporal` is provably rank-equivalent to B0, so a null temporal effect is detectable and falsifiable).
 - E5's cohort gate must be fixed before scoring: sector and missingness subgroups here are small, and only a handful clear the n≥40 / events≥10 bar.
+- E5 should carry a **strong tabular baseline including a missingness-only arm**, because a model that never sees a financial value already approaches B6 here.
 - The instability markers in Case F are the specific failures E5's design has to be powered against.
 
-## 4. Robustness detail
+## 4. Hardening questions (post-hoc additions)
+
+These come from `extension_config.json`, a second post-hoc pass written after the first report. It refines how E4-R is read; it cannot upgrade any statement to confirmatory, and `experiment_config.json` was not touched.
+
+### H1. How much of the learned-model advantage survives removing missingness signals?
+| family | arm | n | events | AUROC | 95% CI |
+|---|---|---:|---:|---:|---|
+| hist_gb | A_full_F2_with_indicators | 675 | 235 | 0.8851 | [0.8578, 0.9112] |
+| hist_gb | B_full_F2_without_indicators | 675 | 235 | 0.8593 | [0.8272, 0.8896] |
+| hist_gb | C_missingness_only | 675 | 235 | 0.8351 | [0.8008, 0.8673] |
+| hist_gb | D_harmonized_availability | 413 | 63 | 0.7522 | [0.6807, 0.8194] |
+| logistic | A_full_F2_with_indicators | 675 | 235 | 0.8190 | [0.7824, 0.8541] |
+| logistic | B_full_F2_without_indicators | 675 | 235 | 0.6591 | [0.6120, 0.7060] |
+| logistic | C_missingness_only | 675 | 235 | 0.8293 | [0.7942, 0.8622] |
+| logistic | D_harmonized_availability | 413 | 63 | 0.6713 | [0.5954, 0.7422] |
+
+| family | comparison | ΔAUROC | 95% BCa | DeLong p |
+|---|---|---:|---|---:|
+| hist_gb | A_minus_B_full_F2_without_indicators | -0.0258 | [-0.0403, -0.0135] | 0.000112 |
+| hist_gb | A_minus_C_missingness_only | -0.0500 | [-0.0752, -0.0268] | 3.72e-05 |
+| hist_gb | A_restricted_minus_D_harmonized | -0.0395 | [-0.1030, +0.0193] | 0.205 |
+| logistic | A_minus_B_full_F2_without_indicators | -0.1599 | [-0.2090, -0.1102] | 1.22e-10 |
+| logistic | A_minus_C_missingness_only | +0.0103 | [-0.0036, +0.0301] | 0.226 |
+| logistic | A_restricted_minus_D_harmonized | +0.0189 | [-0.0748, +0.0983] | 0.663 |
+
+- **hist_gb**: removing the missingness indicators *lowers* AUROC significantly; a material share of the learned-model advantage is attributable to reporting/missingness structure
+- **logistic**: removing the missingness indicators *lowers* AUROC significantly; a material share of the learned-model advantage is attributable to reporting/missingness structure
+
+Strict complete-case (9 of 9 fields) leaves n = 154 with 10 events and is reported as `NOT_ESTIMABLE`: 10 events cannot support an AUROC estimate; reported for completeness only.
+
+Missingness is **not** called leakage anywhere in this study. Nothing here shows that a presence indicator carries outcome-side information; what it shows is that *whether a company reports a field at all* is a prediction-time-available characteristic that correlates with the outcome, which the open-cohort check in `leakage_audit.json` already flagged as a `REVIEW` disclosure.
+
+### H2. What does a missingness-only model reach?
+- hist_gb: AUROC 0.8351 from nine presence indicators alone, against 0.8851 for the full model (0.943× of it) and 0.7054 for B6.
+- logistic: AUROC 0.8293 from nine presence indicators alone, against 0.8190 for the full model (1.013× of it) and 0.7054 for B6.
+
+A model that never sees a single financial value reaches 0.8351, which is **+0.1297 above B6** and within 0.0500 of the best full-feature model. This is the single most important caveat in the study for anyone reading the learned-model numbers: on this cohort the availability pattern carries more usable signal than B6's five static flags and four growth terms together.
+
+### H3. hist_gb_F0 versus hist_gb_F2: which is stronger?
+`hist_gb_F0` (five static inputs) AUROC = 0.8795, PR-AUC = 0.8359. `hist_gb_F2` (static plus the four growth terms) AUROC = 0.8851, PR-AUC = 0.8387.
+
+ΔAUROC = +0.0056 (paired DeLong p = 0.388; BCa [-0.0069, +0.0187]).
+
+### H4. Do temporal features retain incremental value under a strong nonlinear learner?
+Temporal features add little incremental value once a strong nonlinear static learner is used: the paired interval contains zero.
+
+### H5. Does shuffling the temporal block degrade performance?
+| family | replicates | original AUROC | shuffled mean | shuffle 2.5–97.5% | median drop | drop 2.5–97.5% | P(drop>0) |
+|---|---:|---:|---:|---|---:|---|---:|
+| hist_gb | 100 | 0.8741 | 0.8617 | [0.8504, 0.8717] | +0.0123 | [+0.0023, +0.0237] | 1.000 |
+| logistic | 200 | 0.8190 | 0.8177 | [0.8064, 0.8293] | +0.0013 | [-0.0103, +0.0126] | 0.605 |
+
+- hist_gb: paired ΔAUROC (shuffled − original) at the median-drop replicate = -0.0123 (BCa [-0.0306, +0.0052]); 0/100 shuffled replicates reach the original.
+- logistic: paired ΔAUROC (shuffled − original) at the median-drop replicate = -0.0013 (BCa [-0.0251, +0.0237]); 79/200 shuffled replicates reach the original.
+
+**Audit note on the superseded control.** In the superseded version, the first version compared a reduced-grid original arm against the full-grid headline number, which is why it printed 0.8741 against 0.8851. The arms now share one configuration and the coincidence of the outer folds with the frozen run is asserted rather than assumed. Under the shared reduced configuration the original arm reproduces at the value below; the headline 0.8851 is the full-grid fit. The difference is the inner grid, not the folds, which the fold-identity assertion above demonstrates.
+
+| family | original arm folds identical to the frozen run |
+|---|---|
+| hist_gb | True |
+| logistic | True |
+
+### H6. Is sector heterogeneity real, or is the sample too small to tell?
+| sector | n | events | ΔAUROC | 95% BCa | classification |
+|---|---:|---:|---:|---|---|
+| Agriculture | 5 | 3 | — | — | NOT_ESTIMABLE |
+| Construction | 14 | 1 | — | — | NOT_ESTIMABLE |
+| Manufacturing | 319 | 139 | +0.0087 | [-0.0120, +0.0308] | inconclusive |
+| Mining | 33 | 16 | — | — | NOT_ESTIMABLE |
+| Other_Nonfinancial | 8 | 8 | — | — | NOT_ESTIMABLE |
+| Retail | 39 | 6 | — | — | NOT_ESTIMABLE |
+| Services | 173 | 42 | +0.0373 | [+0.0073, +0.0840] | robust_positive |
+| Transportation_Utilities | 68 | 14 | -0.0046 | [-0.0654, +0.0410] | inconclusive |
+| Wholesale | 16 | 6 | — | — | NOT_ESTIMABLE |
+
+Pooled ΔAUROC across the gated sectors (covering 560 of 675 observations, 0.830) = +0.0132.
+
+Cochran Q = 2.2155 on 2 degrees of freedom, I² = 0.097, χ² p = 0.395; permutation p = 0.246 over 2000 relabellings.
+
+The heterogeneity test does not reject a common effect (permutation p = 0.246), so the sector spread is compatible with sampling noise. No sector's interval supports a negative effect, so no sector can be described as one where B6 performs worse. Manufacturing, Transportation_Utilities are inconclusive: small, and the interval spans zero. Services shows a robust positive effect.
+
+### H7. Does the strong-ML-beats-B6 conclusion survive these robustness checks?
+After removing every missingness signal the weaker of the two families still reaches 0.6591 against B6's 0.7054 — a gap of -0.0463. The paired boosting-vs-B6 comparison is +0.0056 for the F2 increment and the primary P3 result is unchanged. The conclusion stands, with the attribution caveat in H1 attached to it.
+
+How much of the learned-model number is itself stable? Repeated nested cross-validation, which the primary comparisons do not integrate:
+
+| model | repeats | mean AUROC | sd | range | per-repeat AUROC |
+|---|---:|---:|---:|---:|---|
+| hist_gb_F2 | 5 | 0.8800 | 0.0039 | 0.0095 | 0.8851, 0.8767, 0.8814, 0.8756, 0.8814 |
+| logistic_F2 | 5 | 0.8214 | 0.0059 | 0.0145 | 0.8190, 0.8184, 0.8318, 0.8173, 0.8208 |
+
+Refitting moves the learned AUROCs by roughly 0.0059 (sd) across 5 repeats of 5x5 nested cross-validation per model, full prespecified grid. That is an order of magnitude larger than nothing, and it is the component the DeLong and bootstrap intervals below omit.
+
+### H8. What should E5's primary benchmark architecture be?
+- A **nested-CV strong tabular baseline on the same feature set**, not B0. Beating a five-flag heuristic is not evidence of anything.
+- Report the **missingness ablation alongside it**: at minimum full-features versus no-missing-indicators versus missingness-only, because a large share of the learned signal here is availability structure.
+- Prespecify the **temporal block as a unit** and report the ablation; the `B6_no_temporal` rank-equivalence makes a null temporal effect a falsifiable claim.
+- Fix the **sector gate and the harmonized-availability rule before scoring**, and report the heterogeneity diagnostic rather than a per-sector verdict.
+- Treat **reporting completeness as a first-class baseline**, not a nuisance: any temporal or agentic claim has to beat a model that only knows what was reported.
+
+## 5. Robustness detail
 
 ### Sector
 | sector | n | events | prevalence | B0 | B6 | Δ | Boosting-F2 |
@@ -120,7 +225,7 @@ OK — split on current.total_assets (feature-side, no outcome used); 675/675 ob
 | medium | 225 | 56 | 0.5967 | 0.6072 | +0.0105 | 0.8254 |
 | small | 225 | 149 | 0.6042 | 0.6242 | +0.0200 | 0.8471 |
 
-## 5. Negative controls
+## 6. Negative controls
 
 | scorer | mean AUROC under permuted labels | sd | 2.5% | 97.5% |
 |---|---:|---:|---:|---:|
@@ -131,7 +236,7 @@ OK — split on current.total_assets (feature-side, no outcome used); 675/675 ob
 
 NC1 is a machinery check (random labels must return chance), not an equal-AUROC test.
 
-## 6. Threshold sensitivity (`SENSITIVITY_ONLY`)
+## 7. Threshold sensitivity (`SENSITIVITY_ONLY`)
 
 | scorer | thr | recall | specificity | precision | F1 | FNR | review load |
 |---|---:|---:|---:|---:|---:|---:|---:|
@@ -142,7 +247,7 @@ NC1 is a machinery check (random labels must return chance), not an equal-AUROC 
 
 Only the prespecified grid is shown; no threshold was selected and the production configuration was not touched.
 
-## 7. Calibration (descriptive; scores remain UNCALIBRATED)
+## 8. Calibration (descriptive; scores remain UNCALIBRATED)
 
 | scorer | Brier | ECE | CITL | slope | unique values | zero/one mass |
 |---|---:|---:|---:|---:|---:|---:|
@@ -151,7 +256,7 @@ Only the prespecified grid is shown; no threshold was selected and the productio
 | logistic_F2 | 0.1519 | 0.0305 | -0.2331 | 0.6547 | 670 | 0.006 |
 | hist_gb_F2 | 0.1242 | 0.0323 | -0.0017 | 0.9687 | 663 | 0.000 |
 
-## 8. Complexity
+## 9. Complexity
 
 | scorer | family | fit seconds | dependencies | determinism |
 |---|---|---:|---|---|
@@ -169,17 +274,18 @@ Only the prespecified grid is shown; no threshold was selected and the productio
 | random_forest_F2 | random_forest | 87.65 | numpy, scipy, scikit-learn | deterministic under a fixed seed and single-threaded execution |
 | random_forest_F3 | random_forest | 138.83 | numpy, scipy, scikit-learn | deterministic under a fixed seed and single-threaded execution |
 
-## 9. Limitations
+## 10. Limitations
 
 - This cohort is E4-S's re-execution, not E4's exact 674 rows: E4's 270-CIK exclusion set is unpublished, so the sample is a ~94%-overlapping near-reproduction. E4-R inherits that limitation and adds no independent sample.
 - 675 observations with 235 events gives a paired ΔAUROC standard error near 0.008; differences inside ±0.02 are not resolvable here.
-- Only three sectors clear the n≥40 / events≥10 gate, so sector conclusions are thin.
+- Only three sectors clear the n≥40 / events≥10 gate, and those three cover 0.830 of the cohort; the heterogeneity test therefore speaks about most, but not all, of the sample.
 - Learned-model metrics are out-of-fold, which is the right estimator for a retrospective study but is still noisier than a single large held-out set would be.
+- **Reported intervals condition on the realized out-of-fold predictions and do not fully integrate training-procedure uncertainty.** The DeLong and bootstrap intervals treat each observation's OOF score as fixed; repeated nested cross-validation shows the learned AUROCs themselves move by 0.0059 (sd) when the fold seeds change, which those intervals omit. The repeated-CV numbers are descriptive and do not enter any primary comparison.
 - B0 and B6 are deterministic functions with nothing to fit; their scores are in-sample for this cohort. They carry no fitting advantage, but they also have no out-of-sample interpretation.
 - Part of the learners' advantage is *reporting* itself, not just reporting values: whether a field is present at all is predictive here (the strongest missingness indicator sits 0.225 from chance), and the imputer turns that into a feature. B0 and B6 cannot see it because they simply skip absent terms. See `leakage_audit.json`.
 - Calibration is descriptive only; no calibration map was fitted.
 
-## 10. Reproduction
+## 11. Reproduction
 
 ```bash
 python research/e4r_automated_robustness/verify_e4r.py

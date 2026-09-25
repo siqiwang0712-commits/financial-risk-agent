@@ -30,6 +30,7 @@ if str(HERE) not in sys.path:
 
 FEATURE_SETS_PATH = HERE / "feature_sets.json"
 CONFIG_PATH = HERE / "experiment_config.json"
+EXTENSION_PATH = HERE / "extension_config.json"
 
 MASTER_SEED = 20260925
 SEEDS = {
@@ -244,6 +245,34 @@ def assert_config_intact() -> dict:
     return config
 
 
+def freeze_extension() -> dict:
+    """Write the extension prespecification, leaving the frozen config untouched.
+
+    The extension is a *second* post-hoc pass. Editing experiment_config.json would move
+    the hash that pins the original prespecification, so the additions get their own file and
+    that file records the frozen config hash it was built against.
+    """
+    import e4r_extension
+
+    config = assert_config_intact()
+    payload = e4r_extension.build_extension_config(config)
+    write_if_absent(EXTENSION_PATH, payload)
+    return payload
+
+
+def assert_extension_intact() -> dict:
+    """Abort if the extension prespecification moved, or if it was built against a different frozen config."""
+    if not EXTENSION_PATH.is_file():
+        freeze_extension()
+    extension = json.loads(EXTENSION_PATH.read_text(encoding="utf-8"))
+    config = json.loads(CONFIG_PATH.read_text(encoding="utf-8"))
+    if extension["frozen_config_hash"] != e4r_data.sha256_json(config):
+        raise SystemExit(
+            "extension_config.json was built against a different experiment_config.json; refusing to run"
+        )
+    return extension
+
+
 def write_if_absent(path: Path, payload: dict) -> bool:
     """Write a prespecification file only if it does not already exist."""
     if path.exists():
@@ -258,8 +287,14 @@ def main() -> int:
     wrote_sets = write_if_absent(FEATURE_SETS_PATH, feature_sets)
     config = build_config(feature_sets)
     wrote_config = write_if_absent(CONFIG_PATH, config)
+    import e4r_extension
+
+    extension = e4r_extension.build_extension_config(config)
+    wrote_extension = write_if_absent(EXTENSION_PATH, extension)
     print(f"feature_sets.json: {'written' if wrote_sets else 'already present (unchanged)'}")
     print(f"experiment_config.json: {'written' if wrote_config else 'already present (unchanged)'}")
+    print(f"extension_config.json: {'written' if wrote_extension else 'already present (unchanged)'}")
+    print(f"extension hash: {e4r_data.sha256_json(extension)}")
     print(f"config hash: {e4r_data.sha256_json(config)}")
     print(f"feature-set hash: {config['feature_sets_hash']}")
     return 0

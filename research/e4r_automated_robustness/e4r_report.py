@@ -53,7 +53,14 @@ def _better(a, b, bca_low) -> bool:
     return (a - b) > EQUIV_BAND and bca_low is not None and bca_low > 0
 
 
-def apply_policy(model_results: dict, statistics: dict, ablation: dict, subgroup: dict, influence: dict) -> dict:
+def apply_policy(
+    model_results: dict,
+    statistics: dict,
+    ablation: dict,
+    subgroup: dict,
+    influence: dict,
+    heterogeneity: dict | None = None,
+) -> dict:
     models = model_results["models"]
     b0 = models["B0"]["auroc"]
     b6 = models["B6"]["auroc"]
@@ -109,11 +116,31 @@ def apply_policy(model_results: dict, statistics: dict, ablation: dict, subgroup
         })
 
     markers = []
+    # Tightened Case F marker. The frozen policy fired on "sector delta <= 0"; that reads a
+    # point estimate as a finding, which is exactly the error the heterogeneity stage exists to
+    # prevent. A sector now only marks instability when its bootstrap interval supports a
+    # negative effect, or when the interval is too wide to call and the point estimate is
+    # negative. This can only make Case F harder to fire, never easier.
+    classification = {
+        row["sector"]: row for row in (heterogeneity or {}).get("sectors", []) if row.get("estimable")
+    }
     for row in subgroup["sector"]["rows"]:
         if not row["estimable"]:
             continue
         delta = row["models"]["B6"]["auroc"] - row["models"]["B0"]["auroc"]
-        if delta <= 0:
+        entry = classification.get(row["subgroup"])
+        if entry and entry.get("classification") == "possible_heterogeneity":
+            markers.append(
+                f"sector {row['subgroup']}: ΔAUROC(B6−B0) = {delta:+.4f} with a bootstrap interval "
+                f"[{entry['ci_low']:+.4f}, {entry['ci_high']:+.4f}] that excludes zero"
+            )
+        elif entry and entry.get("classification") == "inconclusive" and delta < 0:
+            markers.append(
+                f"sector {row['subgroup']}: ΔAUROC(B6−B0) = {delta:+.4f} but the interval "
+                f"[{entry['ci_low']:+.4f}, {entry['ci_high']:+.4f}] contains zero — a point-estimate "
+                f"loss that the data cannot confirm"
+            )
+        elif entry is None and delta <= 0:
             markers.append(f"sector {row['subgroup']}: ΔAUROC(B6−B0) = {delta:+.4f} ≤ 0")
     loo = influence["leave_one_out"]
     if loo.get("deletions_flipping_sign"):
@@ -158,6 +185,275 @@ def apply_policy(model_results: dict, statistics: dict, ablation: dict, subgroup
     }
 
 
+def add_hardening_section(
+    add,
+    missingness: dict,
+    boosting_increment: dict,
+    shuffle_control: dict,
+    heterogeneity: dict,
+    stability: dict,
+    policy: dict,
+    models: dict,
+) -> None:
+    """The eight questions the post-hoc hardening pass exists to answer."""
+    add("## 4. Hardening questions (post-hoc additions)")
+    add("")
+    add("These come from `extension_config.json`, a second post-hoc pass written after the first "
+        "report. It refines how E4-R is read; it cannot upgrade any statement to confirmatory, and "
+        "`experiment_config.json` was not touched.")
+    add("")
+
+    def arm(family: str, name: str) -> dict:
+        return missingness["families"][family]["arms"][name]
+
+    def cmp(family: str, key: str) -> dict:
+        return missingness["comparisons"][family][key]
+
+    add("### H1. How much of the learned-model advantage survives removing missingness signals?")
+    add("| family | arm | n | events | AUROC | 95% CI |")
+    add("|---|---|---:|---:|---:|---|")
+    for family in sorted(missingness["families"]):
+        for name in (
+            "A_full_F2_with_indicators",
+            "B_full_F2_without_indicators",
+            "C_missingness_only",
+            "D_harmonized_availability",
+        ):
+            entry = arm(family, name)
+            add(f"| {family} | {name} | {entry['n']} | {entry['events']} | {fmt(entry['auroc'])} | "
+                f"[{fmt(entry['auroc_ci_low'])}, {fmt(entry['auroc_ci_high'])}] |")
+    add("")
+    add("| family | comparison | ΔAUROC | 95% BCa | DeLong p |")
+    add("|---|---|---:|---|---:|")
+    for family in sorted(missingness["comparisons"]):
+        for key, comparison in missingness["comparisons"][family].items():
+            add(f"| {family} | {key} | {fmt(comparison['delta_auroc'], 4, sign=True)} | "
+                f"[{fmt(comparison['bootstrap_auroc']['bca_low'], 4, sign=True)}, "
+                f"{fmt(comparison['bootstrap_auroc']['bca_high'], 4, sign=True)}] | "
+                f"{pfmt(comparison['delong']['p_value'])} |")
+    add("")
+    for family in sorted(missingness["comparisons"]):
+        comparison = missingness["comparisons"][family]["A_minus_B_full_F2_without_indicators"]
+        low = comparison["bootstrap_auroc"]["bca_low"] or 0.0
+        high = comparison["bootstrap_auroc"]["bca_high"] or 0.0
+        text = missingness_verdict(comparison["delta_auroc"], low, high)
+        add(f"- **{family}**: {text}")
+    add("")
+    strict = missingness["strict_complete_case"]
+    add(f"Strict complete-case (9 of 9 fields) leaves n = {strict['n']} with {strict['events']} "
+        f"events and is reported as `NOT_ESTIMABLE`: {strict['reason']}.")
+    add("")
+    add("Missingness is **not** called leakage anywhere in this study. Nothing here shows that a "
+        "presence indicator carries outcome-side information; what it shows is that *whether a "
+        "company reports a field at all* is a prediction-time-available characteristic that "
+        "correlates with the outcome, which the open-cohort check in `leakage_audit.json` already "
+        "flagged as a `REVIEW` disclosure.")
+    add("")
+
+    add("### H2. What does a missingness-only model reach?")
+    for family in sorted(missingness["families"]):
+        entry = arm(family, "C_missingness_only")
+        full = arm(family, "A_full_F2_with_indicators")
+        add(f"- {family}: AUROC {fmt(entry['auroc'])} from nine presence indicators alone, against "
+            f"{fmt(full['auroc'])} for the full model "
+            f"({fmt(entry['auroc'] / full['auroc'] if full['auroc'] else None, 3)}× of it) and "
+            f"{fmt(policy['b6'])} for B6.")
+    add("")
+    best_missing_only = max(arm(family, "C_missingness_only")["auroc"] for family in missingness["families"])
+    add(f"A model that never sees a single financial value reaches "
+        f"{fmt(best_missing_only)}, which is **{fmt(best_missing_only - policy['b6'], 4, sign=True)} "
+        f"above B6** and within "
+        f"{fmt(abs(best_missing_only - policy['boosting']), 4)} of the best full-feature model. "
+        f"This is the single most important caveat in the study for anyone reading the "
+        f"learned-model numbers: on this cohort the availability pattern carries more usable "
+        f"signal than B6's five static flags and four growth terms together.")
+    add("")
+
+    add("### H3. hist_gb_F0 versus hist_gb_F2: which is stronger?")
+    add(f"`hist_gb_F0` (five static inputs) AUROC = {fmt(boosting_increment['reference_metrics']['auroc'])}, "
+        f"PR-AUC = {fmt(boosting_increment['reference_metrics']['pr_auc'])}. "
+        f"`hist_gb_F2` (static plus the four growth terms) AUROC = "
+        f"{fmt(boosting_increment['challenger_metrics']['auroc'])}, PR-AUC = "
+        f"{fmt(boosting_increment['challenger_metrics']['pr_auc'])}.")
+    add("")
+    comparison = boosting_increment["comparison"]
+    add(f"ΔAUROC = {fmt(comparison['delta_auroc'], 4, sign=True)} "
+        f"(paired DeLong p = {pfmt(comparison['delong']['p_value'])}; "
+        f"BCa [{fmt(comparison['bootstrap_auroc']['bca_low'], 4, sign=True)}, "
+        f"{fmt(comparison['bootstrap_auroc']['bca_high'], 4, sign=True)}]).")
+    add("")
+
+    add("### H4. Do temporal features retain incremental value under a strong nonlinear learner?")
+    add(temporal_increment_verdict(comparison))
+    add("")
+
+    add("### H5. Does shuffling the temporal block degrade performance?")
+    add("| family | replicates | original AUROC | shuffled mean | shuffle 2.5–97.5% | median drop | drop 2.5–97.5% | P(drop>0) |")
+    add("|---|---:|---:|---:|---|---:|---|---:|")
+    for family in sorted(shuffle_control["models"]):
+        entry = shuffle_control["models"][family]
+        add(f"| {family} | {entry['replicates']} | {fmt(entry['original_auroc'])} | "
+            f"{fmt(entry['shuffled_mean_auroc'])} | "
+            f"[{fmt(entry['shuffled_p2_5'])}, {fmt(entry['shuffled_p97_5'])}] | "
+            f"{fmt(entry['drop_median'], 4, sign=True)} | "
+            f"[{fmt(entry['drop_ci_low'], 4, sign=True)}, {fmt(entry['drop_ci_high'], 4, sign=True)}] | "
+            f"{fmt(entry['P_drop_gt_0'], 3)} |")
+    add("")
+    for family in sorted(shuffle_control["models"]):
+        entry = shuffle_control["models"][family]
+        add(f"- {family}: paired ΔAUROC (shuffled − original) at the median-drop replicate = "
+            f"{fmt(entry['paired_bootstrap_of_drop_at_median_replicate']['delta_auroc'], 4, sign=True)} "
+            f"(BCa [{fmt(entry['paired_bootstrap_of_drop_at_median_replicate']['bootstrap_auroc']['bca_low'], 4, sign=True)}, "
+            f"{fmt(entry['paired_bootstrap_of_drop_at_median_replicate']['bootstrap_auroc']['bca_high'], 4, sign=True)}]); "
+            f"{entry['replicates_above_original']}/{entry['replicates']} shuffled replicates reach the original.")
+    add("")
+    add("**Audit note on the superseded control.** In the superseded version, "
+        + shuffle_control["audit_note"])
+    add("")
+    add("| family | original arm folds identical to the frozen run |")
+    add("|---|---|")
+    for family, entry in shuffle_control["reproduction_of_frozen_folds"].items():
+        add(f"| {family} | {entry['folds_identical_to_frozen_run']} |")
+    add("")
+
+    add("### H6. Is sector heterogeneity real, or is the sample too small to tell?")
+    add("| sector | n | events | ΔAUROC | 95% BCa | classification |")
+    add("|---|---:|---:|---:|---|---|")
+    for row in heterogeneity["sectors"]:
+        if row["estimable"]:
+            add(f"| {row['sector']} | {row['n']} | {row['events']} | {fmt(row['delta_auroc'], 4, sign=True)} | "
+                f"[{fmt(row['ci_low'], 4, sign=True)}, {fmt(row['ci_high'], 4, sign=True)}] | "
+                f"{row['classification']} |")
+        else:
+            add(f"| {row['sector']} | {row['n']} | {row['events']} | — | — | NOT_ESTIMABLE |")
+    add("")
+    stat = heterogeneity["heterogeneity"]
+    add(f"Pooled ΔAUROC across the gated sectors (covering {stat['population_size']} of "
+        f"{missingness['families'][min(missingness['families'])]['arms']['A_full_F2_with_indicators']['n']} "
+        f"observations, {fmt(stat['gated_share_of_cohort'], 3)}) = "
+        f"{fmt(stat['pooled_delta_auroc'], 4, sign=True)}.")
+    add("")
+    add(f"Cochran Q = {fmt(stat['cochran_q'], 4)} on {stat['degrees_of_freedom']} degrees of freedom, "
+        f"I² = {fmt(stat['i_squared'], 3)}, χ² p = {fmt(stat['chi_square_p_value'], 3)}; "
+        f"permutation p = {fmt(stat['permutation_p_value'], 3)} over "
+        f"{stat['permutation_replicates']} relabellings.")
+    add("")
+    add(sector_heterogeneity_verdict(heterogeneity))
+    add("")
+
+    add("### H7. Does the strong-ML-beats-B6 conclusion survive these robustness checks?")
+    weakest = min(
+        arm(family, "B_full_F2_without_indicators")["auroc"] for family in missingness["families"]
+    )
+    add(f"After removing every missingness signal the weaker of the two families still reaches "
+        f"{fmt(weakest)} against B6's {fmt(policy['b6'])} — a gap of "
+        f"{fmt(weakest - policy['b6'], 4, sign=True)}. The paired boosting-vs-B6 comparison is "
+        f"{fmt(comparison['delta_auroc'], 4, sign=True)} for the F2 increment and the primary P3 "
+        f"result is unchanged. The conclusion stands, with the attribution caveat in H1 attached to "
+        f"it.")
+    add("")
+    add("How much of the learned-model number is itself stable? Repeated nested cross-validation, "
+        "which the primary comparisons do not integrate:")
+    add("")
+    add("| model | repeats | mean AUROC | sd | range | per-repeat AUROC |")
+    add("|---|---:|---:|---:|---:|---|")
+    for name, entry in sorted(stability["models"].items()):
+        values = ", ".join(fmt(item["auroc"]) for item in entry["repeats"])
+        add(f"| {name} | {len(entry['repeats'])} | {fmt(entry['mean_auroc'])} | "
+            f"{fmt(entry['sd_auroc'])} | {fmt(entry['range_auroc'])} | {values} |")
+    add("")
+    add(f"Refitting moves the learned AUROCs by roughly "
+        f"{fmt(max(entry['sd_auroc'] for entry in stability['models'].values()), 4)} (sd) across "
+        f"{stability['design']}. That is an order of magnitude larger than nothing, and it is the "
+        f"component the DeLong and bootstrap intervals below omit.")
+    add("")
+
+    add("### H8. What should E5's primary benchmark architecture be?")
+    add("- A **nested-CV strong tabular baseline on the same feature set**, not B0. Beating a "
+        "five-flag heuristic is not evidence of anything.")
+    add("- Report the **missingness ablation alongside it**: at minimum full-features versus "
+        "no-missing-indicators versus missingness-only, because a large share of the learned "
+        "signal here is availability structure.")
+    add("- Prespecify the **temporal block as a unit** and report the ablation; the "
+        "`B6_no_temporal` rank-equivalence makes a null temporal effect a falsifiable claim.")
+    add("- Fix the **sector gate and the harmonized-availability rule before scoring**, and "
+        "report the heterogeneity diagnostic rather than a per-sector verdict.")
+    add("- Treat **reporting completeness as a first-class baseline**, not a nuisance: any "
+        "temporal or agentic claim has to beat a model that only knows what was reported.")
+    add("")
+
+
+def missingness_verdict(delta, low, high) -> str:
+    if low > 0:
+        return (
+            "removing the missingness indicators still leaves a positive gap; the learned "
+            "advantage is not merely reporting structure"
+        )
+    if high < 0:
+        return (
+            "removing the missingness indicators *lowers* AUROC significantly; a material share "
+            "of the learned-model advantage is attributable to reporting/missingness structure"
+        )
+    return (
+        "the interval contains zero: the data cannot separate financial-value signal from "
+        "reporting-structure signal at this sample size"
+    )
+
+
+def temporal_increment_verdict(comparison: dict) -> str:
+    delta = comparison["delta_auroc"]
+    low = comparison["bootstrap_auroc"]["bca_low"]
+    high = comparison["bootstrap_auroc"]["bca_high"]
+    if low is not None and low > 0 and delta > 0:
+        return (
+            "Temporal information retains incremental value even under a strong nonlinear learned "
+            "baseline."
+        )
+    if high is not None and high < 0:
+        return (
+            "Adding the temporal block makes the strong static learner *worse*; temporal "
+            "information adds no incremental value here."
+        )
+    return (
+        "Temporal features add little incremental value once a strong nonlinear static learner is "
+        "used: the paired interval contains zero."
+    )
+
+
+def sector_heterogeneity_verdict(heterogeneity: dict) -> str:
+    stat = heterogeneity["heterogeneity"]
+    p_value = stat.get("permutation_p_value")
+    rows = [row for row in heterogeneity["sectors"] if row["estimable"]]
+    negative = [row["sector"] for row in rows if row["classification"] == "possible_heterogeneity"]
+    positive = [row["sector"] for row in rows if row["classification"] == "robust_positive"]
+    inconclusive = [row["sector"] for row in rows if row["classification"] == "inconclusive"]
+    parts = []
+    if p_value is not None and p_value >= 0.05:
+        parts.append(
+            f"The heterogeneity test does not reject a common effect (permutation p = {p_value:.3f}), "
+            "so the sector spread is compatible with sampling noise."
+        )
+    elif p_value is not None:
+        parts.append(
+            f"The heterogeneity test rejects a common effect (permutation p = {p_value:.3f})."
+        )
+    if negative:
+        parts.append(f"Only {', '.join(negative)} shows an interval-supported negative effect.")
+    else:
+        parts.append(
+            "No sector's interval supports a negative effect, so no sector can be described as one "
+            "where B6 performs worse."
+        )
+    if inconclusive:
+        parts.append(
+            f"{', '.join(inconclusive)} {'is' if len(inconclusive) == 1 else 'are'} inconclusive: "
+            "small, and the interval spans zero."
+        )
+    if positive:
+        parts.append(f"{', '.join(positive)} shows a robust positive effect.")
+    return " ".join(parts)
+
+
 def write_final_report(base: Path | None = None) -> Path:
     root = base or HERE
 
@@ -176,6 +472,10 @@ def write_final_report(base: Path | None = None) -> Path:
     contribution = read("temporal_contribution_summary.json")
     leakage = read("leakage_audit.json")
     incremental = read("temporal_incremental_test.json")
+    missingness = read("missingness_ablation.json")
+    boosting_increment = read("boosting_temporal_increment.json")
+    heterogeneity = read("sector_heterogeneity.json")
+    stability = read("model_stability.json")
     try:
         manifest = json.loads((root / "manifest.json").read_text(encoding="utf-8"))
     except FileNotFoundError:
@@ -189,7 +489,7 @@ def write_final_report(base: Path | None = None) -> Path:
         }
     feature_sets = read("feature_sets.json")
 
-    policy = apply_policy(model_results, statistics, ablation, subgroup, influence)
+    policy = apply_policy(model_results, statistics, ablation, subgroup, influence, heterogeneity)
     models = model_results["models"]
 
     def auroc(name: str):
@@ -229,6 +529,9 @@ def write_final_report(base: Path | None = None) -> Path:
         + ")")
     add("- primary multiplicity control: Holm across P1–P3")
     add(f"- bootstrap replicates: {statistics['bootstrap_replicates']}")
+    add(f"- post-hoc hardening pass: `extension_config.json` "
+        f"(`{manifest.get('extension_config_hash', '')[:16]}…`), sections 4 and H1–H8 below; "
+        "it refines the reading and cannot upgrade any statement to confirmatory")
     add("")
 
     add("## 1. Headline")
@@ -272,13 +575,17 @@ def write_final_report(base: Path | None = None) -> Path:
     add("")
 
     add("### Q2. Is the temporal signal really the main incremental source?")
-    add(f"Removing the whole temporal block gives AUROC = "
-        f"{fmt(ablation['variants']['B6_no_temporal']['auroc'])}. Because `B6_no_temporal` is "
-        f"`0.75 × B0`, a strictly increasing map of B0, that value equals AUROC(B0) "
-        f"({fmt(policy['b0'])}) **exactly** — the check is structural, not empirical. The temporal "
-        f"block therefore accounts for the entire B6 − B0 separation "
-        f"({fmt(policy['temporal_gain'], 4, sign=True)}); "
-        f"{'this meets the DESTROYED criterion (≥80% of the gain)' if policy['destroyed'] else 'this does not meet the DESTROYED criterion'}.")
+    add("Removing the temporal block collapses B6 to a strictly rank-equivalent transformation of B0 "
+        "(`B6_no_temporal = 0.75 × B0`, and the `min(1, ·)` clamp never binds on [0, 1]), so "
+        f"`AUROC(B6_no_temporal) = AUROC(B0) = {fmt(policy['b0'])}` **exactly**. Therefore all of "
+        "the B6 − B0 ranking separation is mechanically introduced through the temporal component. "
+        "This is a *structural decomposition of a deterministic formula*, not a causal empirical "
+        "finding, and it is not evidence that temporal variables explain 100% of anything: the "
+        "statement is about where the reordering comes from inside B6's own arithmetic.")
+    add("")
+    add(f"Numerically, the temporal block moves AUROC by {fmt(policy['temporal_gain'], 4, sign=True)} "
+        f"({'meeting' if policy['destroyed'] else 'not meeting'} the DESTROYED criterion of ≥80% of "
+        f"the {fmt(policy['observed_gain_vs_b0'], 4, sign=True)} B6 − B0 gap).")
     add("")
 
     add("### Q3. Which temporal component matters most?")
@@ -348,17 +655,25 @@ def write_final_report(base: Path | None = None) -> Path:
     add("")
 
     add("### Q7. Does adding temporal features stably help the learned models?")
-    nc2 = controls["NC2_temporal_alignment_destroyed"]["summary"]
+    nc2 = controls["NC2_temporal_alignment_destroyed"]["models"]
     add(f"- logistic: F0 {fmt(auroc('logistic_F0'))} → F2 {fmt(auroc('logistic_F2'))} "
         f"({fmt(delta_between('logistic_F2', 'logistic_F0'), 4, sign=True)})")
     add(f"- boosting: F1 (temporal only) {fmt(auroc('hist_gb_F1'))} → F2 "
         f"{fmt(auroc('hist_gb_F2'))} "
         f"({fmt(delta_between('hist_gb_F2', 'hist_gb_F1'), 4, sign=True)})")
-    add(f"- NC2 (temporal block shuffled across companies, {controls['NC2_temporal_alignment_destroyed']['summary']['logistic']['shuffled_replicates']} replicates): "
-        f"logistic {fmt(nc2['logistic']['real_auroc'])} → {fmt(nc2['logistic']['shuffled_mean_auroc'])} "
-        f"(drop {fmt(nc2['logistic']['mean_drop_vs_real'], 4, sign=True)}); "
-        f"boosting {fmt(nc2['hist_gb']['real_auroc'])} → {fmt(nc2['hist_gb']['shuffled_mean_auroc'])} "
-        f"(drop {fmt(nc2['hist_gb']['mean_drop_vs_real'], 4, sign=True)})")
+    add(f"- temporal block shuffled across companies (paired design, "
+        f"{nc2['logistic']['replicates']} logistic and {nc2['hist_gb']['replicates']} boosting "
+        f"replicates): logistic {fmt(nc2['logistic']['original_auroc'])} → "
+        f"{fmt(nc2['logistic']['shuffled_mean_auroc'])} (median drop "
+        f"{fmt(nc2['logistic']['drop_median'], 4, sign=True)}, P(drop>0) = "
+        f"{fmt(nc2['logistic']['P_drop_gt_0'], 3)}); "
+        f"boosting {fmt(nc2['hist_gb']['original_auroc'])} → "
+        f"{fmt(nc2['hist_gb']['shuffled_mean_auroc'])} (median drop "
+        f"{fmt(nc2['hist_gb']['drop_median'], 4, sign=True)}, P(drop>0) = "
+        f"{fmt(nc2['hist_gb']['P_drop_gt_0'], 3)})")
+    add("- the *real* nonlinear temporal increment, tested head-on in §4 H3/H4: "
+        f"`hist_gb_F0` {fmt(boosting_increment['reference_metrics']['auroc'])} → `hist_gb_F2` "
+        f"{fmt(boosting_increment['challenger_metrics']['auroc'])}")
     add("- temporal coefficient sign consistency across outer folds:")
     for name in ("revenue_growth", "operating_cash_flow_growth", "total_debt_growth", "cash_growth"):
         entry = incremental["coefficient_stability_across_outer_folds"].get(name, {})
@@ -399,12 +714,25 @@ def write_final_report(base: Path | None = None) -> Path:
         "detectable and falsifiable).")
     add("- E5's cohort gate must be fixed before scoring: sector and missingness subgroups "
         "here are small, and only a handful clear the n≥40 / events≥10 bar.")
+    add("- E5 should carry a **strong tabular baseline including a missingness-only arm**, "
+        "because a model that never sees a financial value already approaches B6 here.")
     if policy["instability_markers"]:
         add("- The instability markers in Case F are the specific failures E5's design has to "
             "be powered against.")
     add("")
 
-    add("## 4. Robustness detail")
+    add_hardening_section(
+        add,
+        missingness,
+        boosting_increment,
+        controls["NC2_temporal_alignment_destroyed"],
+        heterogeneity,
+        stability,
+        policy,
+        models,
+    )
+
+    add("## 5. Robustness detail")
     add("")
     add("### Sector")
     add("| sector | n | events | prevalence | B0 | B6 | Δ | Boosting-F2 |")
@@ -437,7 +765,7 @@ def write_final_report(base: Path | None = None) -> Path:
                 add(f"| {row['subgroup']} | {row['n']} | {row['events']} | NOT_ESTIMABLE | — | — | — |")
     add("")
 
-    add("## 5. Negative controls")
+    add("## 6. Negative controls")
     add("")
     nc1 = controls["NC1_label_permutation"]
     add("| scorer | mean AUROC under permuted labels | sd | 2.5% | 97.5% |")
@@ -448,7 +776,7 @@ def write_final_report(base: Path | None = None) -> Path:
     add("NC1 is a machinery check (random labels must return chance), not an equal-AUROC test.")
     add("")
 
-    add("## 6. Threshold sensitivity (`SENSITIVITY_ONLY`)")
+    add("## 7. Threshold sensitivity (`SENSITIVITY_ONLY`)")
     add("")
     add("| scorer | thr | recall | specificity | precision | F1 | FNR | review load |")
     add("|---|---:|---:|---:|---:|---:|---:|---:|")
@@ -463,7 +791,7 @@ def write_final_report(base: Path | None = None) -> Path:
         "configuration was not touched.")
     add("")
 
-    add("## 7. Calibration (descriptive; scores remain UNCALIBRATED)")
+    add("## 8. Calibration (descriptive; scores remain UNCALIBRATED)")
     add("")
     add("| scorer | Brier | ECE | CITL | slope | unique values | zero/one mass |")
     add("|---|---:|---:|---:|---:|---:|---:|")
@@ -474,7 +802,7 @@ def write_final_report(base: Path | None = None) -> Path:
             f"{fmt(entry['extreme_mass'], 3)} |")
     add("")
 
-    add("## 8. Complexity")
+    add("## 9. Complexity")
     add("")
     add("| scorer | family | fit seconds | dependencies | determinism |")
     add("|---|---|---:|---|---|")
@@ -483,16 +811,25 @@ def write_final_report(base: Path | None = None) -> Path:
             f"{entry['dependencies']} | {entry['deterministic_reproducibility']} |")
     add("")
 
-    add("## 9. Limitations")
+    add("## 10. Limitations")
     add("")
     add("- This cohort is E4-S's re-execution, not E4's exact 674 rows: E4's 270-CIK exclusion "
         "set is unpublished, so the sample is a ~94%-overlapping near-reproduction. E4-R "
         "inherits that limitation and adds no independent sample.")
     add("- 675 observations with 235 events gives a paired ΔAUROC standard error near 0.008; "
         "differences inside ±0.02 are not resolvable here.")
-    add("- Only three sectors clear the n≥40 / events≥10 gate, so sector conclusions are thin.")
+    add("- Only three sectors clear the n≥40 / events≥10 gate, and those three cover "
+        f"{fmt(heterogeneity['heterogeneity'].get('gated_share_of_cohort'), 3)} of the cohort; "
+        "the heterogeneity test therefore speaks about most, but not all, of the sample.")
     add("- Learned-model metrics are out-of-fold, which is the right estimator for a "
         "retrospective study but is still noisier than a single large held-out set would be.")
+    add("- **Reported intervals condition on the realized out-of-fold predictions and do not "
+        "fully integrate training-procedure uncertainty.** The DeLong and bootstrap intervals "
+        "treat each observation's OOF score as fixed; repeated nested cross-validation shows the "
+        "learned AUROCs themselves move by "
+        f"{fmt(max(entry['sd_auroc'] for entry in stability['models'].values()), 4)} (sd) when the "
+        "fold seeds change, which those intervals omit. The repeated-CV numbers are descriptive "
+        "and do not enter any primary comparison.")
     add("- B0 and B6 are deterministic functions with nothing to fit; their scores are "
         "in-sample for this cohort. They carry no fitting advantage, but they also have no "
         "out-of-sample interpretation.")
@@ -506,7 +843,7 @@ def write_final_report(base: Path | None = None) -> Path:
     add("- Calibration is descriptive only; no calibration map was fitted.")
     add("")
 
-    add("## 10. Reproduction")
+    add("## 11. Reproduction")
     add("")
     add("```bash")
     add("python research/e4r_automated_robustness/verify_e4r.py")

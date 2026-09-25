@@ -33,6 +33,7 @@ for _path in (str(E4S_DIR), str(HERE)):
 # module use the same primitives the study's inference is built on rather than importing
 # from two places.
 from e4s_stats import (  # noqa: F401
+    METRICS,
     PairedObservation,
     cluster_bootstrap,
     delong_paired,
@@ -129,6 +130,58 @@ def _bootstrap_engine(rows, metric, samples, seed):
         if was_enabled:
             gc.enable()
     return observed, values, invalid
+
+
+def marginal_bootstrap(
+    observation_ids: list[str],
+    labels: dict[str, int],
+    scores: dict[str, float],
+    metric: str = "auroc",
+    samples: int = 20000,
+    seed: int = 20260925,
+) -> dict:
+    """Cluster bootstrap of a *single* scorer's metric.
+
+    The delta bootstrap answers "is A better than B"; this answers "how well is A measured",
+    which is what a missingness arm or a stability repeat needs. The resampling unit is the
+    observation (one per company), matching the rest of the study.
+    """
+    measure = METRICS[metric]
+    label_vector = [labels[oid] for oid in observation_ids]
+    score_vector = [scores[oid] for oid in observation_ids]
+    observed = measure(label_vector, score_vector)
+    rng = random.Random(seed)
+    values: list[float] = []
+    size = len(observation_ids)
+    was_enabled = gc.isenabled()
+    gc.disable()
+    try:
+        for index in range(samples):
+            picks = [rng.randrange(size) for _ in range(size)]
+            value = measure([label_vector[i] for i in picks], [score_vector[i] for i in picks])
+            if value is not None:
+                values.append(value)
+            if (index + 1) % 1000 == 0:
+                gc.collect()
+    finally:
+        gc.collect()
+        if was_enabled:
+            gc.enable()
+    if not values:
+        return {"metric": metric, "observed": observed, "samples": samples, "valid_replicates": 0}
+    mean_value = sum(values) / len(values)
+    return {
+        "metric": metric,
+        "observed": observed,
+        "samples": samples,
+        "valid_replicates": len(values),
+        "n": size,
+        "mean": mean_value,
+        "sd": math.sqrt(sum((value - mean_value) ** 2 for value in values) / (len(values) - 1)),
+        "median": percentile_linear(values, 0.5),
+        "ci_low": percentile_linear(values, 0.025),
+        "ci_high": percentile_linear(values, 0.975),
+    }
 
 
 def paired_bootstrap(

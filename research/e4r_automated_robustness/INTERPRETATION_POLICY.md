@@ -69,7 +69,51 @@ reported. Nothing is suppressed because it is inconvenient.
 
 ---
 
-## 3. What is *not* claimed
+## 3. Phrasing clarifications, added post-hoc (they decide nothing)
+
+These were added after the first report, alongside the hardening pass in
+`EXTENSION_PROTOCOL.md`. **No threshold, no case membership and no decision rule changed**, and no
+result was recomputed to accommodate them. They exist because two phrasings in the first report
+could be read as stronger than the arithmetic supports.
+
+### 3.1 The temporal block is a structural decomposition, not a causal finding
+
+The rank-equivalence `B6_no_temporal = 0.75 × B0` is a property of a deterministic formula. It
+must be written as:
+
+> Removing the temporal block collapses B6 to a strictly rank-equivalent transformation of B0;
+> therefore all B6–B0 ranking separation is mechanically introduced through the temporal
+> component.
+
+It must **not** be written as:
+
+> temporal variables causally explain 100% of the gain.
+
+The decomposition says where the reordering comes from inside B6's own arithmetic. It says nothing
+about causation, and nothing about the informational content of the underlying variables.
+
+### 3.2 Case F's sector marker now requires interval support
+
+The original marker fired on a negative point estimate. A point estimate from 68 observations with
+14 events is not a finding. The marker now fires when:
+
+- a gated sector's bootstrap interval for ΔAUROC lies entirely below zero; **or**
+- a gated sector's point estimate is negative and its interval spans zero — in which case the
+  marker is worded as a point-estimate loss the data cannot confirm.
+
+This makes Case F strictly harder to fire than before. It was tightened so that a small sector is
+not read as a sector failure.
+
+### 3.3 Intervals condition on the realized out-of-fold predictions
+
+Every reported DeLong and bootstrap interval treats each observation's out-of-fold score as fixed.
+It therefore **does not fully integrate training-procedure uncertainty**. `model_stability.json`
+measures that omitted component separately under repeated nested cross-validation; it is
+descriptive and does not enter any primary comparison.
+
+---
+
+## 4. What is *not* claimed
 
 - No p-value here is a confirmatory test of E4. Primary comparisons are Holm-corrected
   within the prespecified family, but the study remains `POST_HOC`.
@@ -85,10 +129,11 @@ reported. Nothing is suppressed because it is inconvenient.
 
 ---
 
-## 4. Failure discipline
+## 5. Failure discipline
 
 - `NOT_ESTIMABLE` is written wherever a quantity cannot be supported by the data. It is
   never replaced by an optimistic estimate.
 - No model is dropped for performing badly. No sector is dropped for looking unfavourable.
 - `experiment_config.json` is frozen before the first formal run; if it changes afterwards
-  the pipeline aborts.
+  the pipeline aborts. The post-hoc hardening additions live in `extension_config.json` and
+  cannot move that hash.

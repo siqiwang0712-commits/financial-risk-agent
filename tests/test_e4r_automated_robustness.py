@@ -32,6 +32,18 @@ def _require(name: str) -> dict:
     return json.loads(path.read_text(encoding="utf-8"))
 
 
+_LABEL_CACHE: dict[str, int] | None = None
+
+
+def _row_labels() -> dict[str, int]:
+    """Observation id -> label, taken from the published ledger."""
+    global _LABEL_CACHE  # one small cache for the whole module
+    if _LABEL_CACHE is None:
+        payload = _require("oof_predictions.json")
+        _LABEL_CACHE = {row["observation_id"]: int(row["label"]) for row in payload["records"]}
+    return _LABEL_CACHE
+
+
 @pytest.fixture(scope="module")
 def dataset() -> e4r_data.Dataset:
     return e4r_data.build_dataset()
@@ -380,10 +392,12 @@ def test_shuffled_temporal_control_preserves_the_column_marginals() -> None:
 def test_negative_control_payload_records_both_arms() -> None:
     payload = _require("negative_controls.json")
     control = payload["NC2_temporal_alignment_destroyed"]
-    assert control["real"], "the control needs an unshuffled arm to compare against"
-    assert control["replicates"], "the control needs shuffled replicates"
-    for family in control["summary"].values():
-        assert family["shuffled_replicates"] >= 1
+    assert control["models"], "the control needs both arms"
+    for family in ("logistic", "hist_gb"):
+        entry = control["models"][family]
+        assert entry["original_auroc"] is not None, "the unshuffled arm must be reported"
+        assert entry["replicates"] >= 1, "the shuffled arm must be reported"
+        assert entry["detail"], "per-replicate values must be published"
 
 
 # ---------------------------------------------------------------------------
@@ -630,3 +644,170 @@ def test_influence_reports_sign_flips_explicitly() -> None:
     assert summary["n_units"] == payload.get("n_units", summary["n_units"])
     assert "deletions_flipping_sign" in summary
     assert len(summary["top_20_by_absolute_influence"]) <= 20
+
+
+# ---------------------------------------------------------------------------
+# post-hoc hardening pass
+# ---------------------------------------------------------------------------
+
+
+def test_extension_config_is_frozen_and_tied_to_the_frozen_config() -> None:
+    extension = _require("extension_config.json")
+    config = json.loads((HERE / "experiment_config.json").read_text(encoding="utf-8"))
+    assert extension["status"] == "POST_HOC_AUTOMATED_ROBUSTNESS"
+    assert extension["frozen_config_untouched"] is True
+    assert extension["frozen_config_hash"] == e4r_data.sha256_json(config)
+    manifest = _require("manifest.json")
+    assert manifest["extension_config_hash"] == e4r_data.sha256_json(extension)
+
+
+def test_the_frozen_config_still_matches_its_own_hash() -> None:
+    """The hardening pass must not have moved the original prespecification."""
+    config = json.loads((HERE / "experiment_config.json").read_text(encoding="utf-8"))
+    feature_sets = json.loads((HERE / "feature_sets.json").read_text(encoding="utf-8"))
+    manifest = _require("manifest.json")
+    assert e4r_data.sha256_json(config) == manifest["config_hash"]
+    assert e4r_data.sha256_json(feature_sets) == manifest["feature_sets_hash"]
+
+
+def test_missingness_arms_are_recomputable_from_their_embedded_scores() -> None:
+    payload = _require("missingness_ablation.json")
+    for family, entry in payload["families"].items():
+        for arm_name, arm in entry["arms"].items():
+            ids = sorted(arm["scores"])
+            recomputed = e4r_stats.roc_auc(
+                [_row_labels()[oid] for oid in ids], [arm["scores"][oid] for oid in ids]
+            )
+            assert recomputed == pytest.approx(arm["auroc"], abs=1e-9), f"{family}/{arm_name}"
+        assert "C_missingness_only" in entry["arms"], family
+
+
+def test_missingness_ablation_covers_four_arms_for_both_families() -> None:
+    payload = _require("missingness_ablation.json")
+    expected = {
+        "A_full_F2_with_indicators",
+        "B_full_F2_without_indicators",
+        "C_missingness_only",
+        "D_harmonized_availability",
+    }
+    for family, entry in payload["families"].items():
+        assert set(entry["arms"]) == expected, family
+        for comparison in (
+            "A_minus_B_full_F2_without_indicators",
+            "A_minus_C_missingness_only",
+            "A_restricted_minus_D_harmonized",
+        ):
+            assert comparison in payload["comparisons"][family], (family, comparison)
+
+
+def test_strict_complete_case_is_refused_rather_than_estimated() -> None:
+    payload = _require("missingness_ablation.json")
+    strict = payload["strict_complete_case"]
+    assert strict["estimable"] is False
+    assert strict["events"] < 20, "a complete-case arm with this few events cannot support AUROC"
+    assert strict["reason"]
+
+
+def test_boosting_increment_reports_both_arms_and_the_delta() -> None:
+    payload = _require("boosting_temporal_increment.json")
+    for name in ("hist_gb_F0", "hist_gb_F2"):
+        ids = sorted(payload["scores"][name])
+        recomputed = e4r_stats.roc_auc(
+            [_row_labels()[oid] for oid in ids], [payload["scores"][name][oid] for oid in ids]
+        )
+        key = "reference_metrics" if name == "hist_gb_F0" else "challenger_metrics"
+        assert recomputed == pytest.approx(payload[key]["auroc"], abs=1e-9)
+    delta = payload["challenger_metrics"]["auroc"] - payload["reference_metrics"]["auroc"]
+    assert delta == pytest.approx(payload["comparison"]["delta_auroc"], abs=1e-12)
+    assert payload["comparison"]["delong"]["p_value"] is not None
+    assert payload["comparison"]["bootstrap_auroc"]["valid_replicates"] == 20000
+
+
+def test_temporal_shuffle_is_paired_and_meets_the_replicate_floor() -> None:
+    payload = _require("negative_controls.json")["NC2_temporal_alignment_destroyed"]
+    for family in ("logistic", "hist_gb"):
+        entry = payload["models"][family]
+        assert entry["replicates"] >= 100, family
+        assert payload["reproduction_of_frozen_folds"][family]["folds_identical_to_frozen_run"] is True
+        assert 0.0 <= entry["P_drop_gt_0"] <= 1.0
+        assert len(entry["detail"]) == entry["replicates"]
+        mean_drop = sum(row["drop"] for row in entry["detail"]) / len(entry["detail"])
+        assert mean_drop == pytest.approx(entry["drop_mean"], abs=1e-12)
+
+
+def test_negative_controls_document_the_superseded_arm() -> None:
+    payload = _require("negative_controls.json")
+    assert "NC2_superseded_note" in payload
+    assert payload["NC2_temporal_alignment_destroyed"]["audit_note"]
+
+
+def test_sector_heterogeneity_classification_matches_the_interval_rule() -> None:
+    payload = _require("sector_heterogeneity.json")
+    for row in payload["sectors"]:
+        if not row["estimable"]:
+            assert row["status"] == "NOT_ESTIMABLE"
+            continue
+        if row["classification"] == "robust_positive":
+            assert row["ci_low"] > 0
+        elif row["classification"] == "possible_heterogeneity":
+            assert row["ci_high"] < 0
+        else:
+            assert row["classification"] == "inconclusive"
+            assert row["ci_low"] <= 0 <= row["ci_high"]
+
+
+def test_no_sector_is_called_a_failure_without_interval_support() -> None:
+    payload = _require("sector_heterogeneity.json")
+    for row in payload["sectors"]:
+        if not row["estimable"] or row["delta_auroc"] >= 0:
+            continue
+        assert row["classification"] in {"inconclusive", "possible_heterogeneity"}
+        if row["classification"] == "inconclusive":
+            assert row["ci_low"] < 0 < row["ci_high"]
+
+
+def test_heterogeneity_reports_both_tests_and_the_gated_share() -> None:
+    payload = _require("sector_heterogeneity.json")
+    entry = payload["heterogeneity"]
+    assert entry["status"] == "OK"
+    assert entry["permutation_p_value"] is not None
+    assert 0.0 < entry["permutation_p_value"] <= 1.0
+    assert entry["chi_square_p_value"] is not None
+    assert 0.0 < entry["gated_share_of_cohort"] <= 1.0
+    assert entry["population_size"] > 0
+
+
+def test_model_stability_mean_matches_its_repeats() -> None:
+    payload = _require("model_stability.json")
+    assert payload["models"], "the stability stage must report at least one model"
+    for name, entry in payload["models"].items():
+        values = [item["auroc"] for item in entry["repeats"]]
+        assert len(values) >= 5, name
+        assert sum(values) / len(values) == pytest.approx(entry["mean_auroc"], abs=1e-12)
+        assert entry["range_auroc"] == pytest.approx(max(values) - min(values), abs=1e-12)
+
+
+def test_repeated_cv_does_not_enter_the_primary_family() -> None:
+    statistics = _require("statistical_tests.json")
+    for item in statistics["primary"]:
+        assert "repeat" not in item["challenger"]
+        assert "repeat" not in item["reference"]
+    extension = _require("extension_config.json")
+    assert "does not enter any primary comparison" in extension["model_stability"]["scope"]
+
+
+def test_report_answers_the_hardening_questions_and_keeps_its_caveats() -> None:
+    text = (HERE / "FINAL_REPORT.md").read_text(encoding="utf-8")
+    for heading in ("### H1.", "### H2.", "### H3.", "### H4.", "### H5.", "### H6.", "### H7.", "### H8."):
+        assert heading in text, heading
+    assert "do not \nfully integrate training-procedure uncertainty" in text or (
+        "fully integrate training-procedure uncertainty" in text
+    )
+    assert "structural" in text.lower()
+    assert "UNCALIBRATED" in text
+
+
+def test_report_keeps_the_status_boundaries() -> None:
+    text = (HERE / "FINAL_REPORT.md").read_text(encoding="utf-8")
+    assert "ESTABLISHED_E4" in text and "CONFIRMATORY" in text and "E5_RESULT" in text
+    assert "POST_HOC_AUTOMATED_ROBUSTNESS" in text

@@ -1,15 +1,16 @@
 {
  "config_hash": "f47974607b7dd306c3cc75e8ff6314aefe9c91e9a39b58ed1e990f0786857723",
  "experiment_id": "E4-R",
+ "extension_config_hash": "282811607c05155da984cb81f4fa5873ab46103025c7d2ffc39f0fdfe0480d27",
  "feature_sets_hash": "09a5267044109ddd8d73336408579e27bb1c3c5e638f81251f1c5bdd75f932cd",
- "generated_utc": "2026-09-25T14:14:16Z",
- "git_commit": "f4f002f492d9668bd3df1e595760896a8f6158c1",
+ "generated_utc": "2026-09-25T16:28:34Z",
+ "git_commit": "4194ee2f8f4bf472c1fb2cac8d69bc42a08d52d9",
  "outputs": [
   {
-   "bytes": 6192,
+   "bytes": 8664,
    "path": "research/e4r_automated_robustness/README.md",
    "present": true,
-   "sha256": "cbf4b08af1ac6133d92dc70bcf5c05c7f4818efdcb2c541c1f49498c820e93c5"
+   "sha256": "4e6b31a1cd1d2e8e5985b8ecd0165483e313c55f39e99252a97f3e2a5a2e8bbf"
   },
   {
    "bytes": 9633,
@@ -18,10 +19,10 @@
    "sha256": "8ace00e61917b51d6f8d8b0579e57488936c1f8b199e9cf134cbacbd0b8b6f3b"
   },
   {
-   "bytes": 4323,
+   "bytes": 6497,
    "path": "research/e4r_automated_robustness/INTERPRETATION_POLICY.md",
    "present": true,
-   "sha256": "f4c3d606bb6db69b3e29f4cf27eedb4464e101a895bc1afa5643e10ab87335e2"
+   "sha256": "5eebfeb3b4989523fecca2d1131dbf845d38c3898cb4e48cb3b8a8e35b41be89"
   },
   {
    "bytes": 11161,
@@ -84,10 +85,10 @@
    "sha256": "afad870ead67d3c354b4eca560674cf82bdb39588e173887e04f582a8659ea7b"
   },
   {
-   "bytes": 5217,
+   "bytes": 43981,
    "path": "research/e4r_automated_robustness/negative_controls.json",
    "present": true,
-   "sha256": "49c2d07f23a15e57476ed9a857072238f545a3b3049c35b5e2a5226283b23373"
+   "sha256": "fa7c7a5b37d8f30a3b9a3979959a89700c133b17eee8f88e29f8360ab3d0d321"
   },
   {
    "bytes": 13294,
@@ -108,16 +109,58 @@
    "sha256": "989e5457e03290701f4563f5402b8210787dade7a39cdfde4f4c7c6389a1be3c"
   },
   {
-   "bytes": 12075,
+   "bytes": 3011,
+   "path": "research/e4r_automated_robustness/extension_config.json",
+   "present": true,
+   "sha256": "282811607c05155da984cb81f4fa5873ab46103025c7d2ffc39f0fdfe0480d27"
+  },
+  {
+   "bytes": 6065,
+   "path": "research/e4r_automated_robustness/EXTENSION_PROTOCOL.md",
+   "present": true,
+   "sha256": "2a6b530b831ec910b7b813c0beec362c3f4f86d303a38d939032875238b4d556"
+  },
+  {
+   "bytes": 229339,
+   "path": "research/e4r_automated_robustness/missingness_ablation.json",
+   "present": true,
+   "sha256": "67352fa4964ed753da21619952b4c2659a10db6ff8bb9b9128c33c002afe8f99"
+  },
+  {
+   "bytes": 56810,
+   "path": "research/e4r_automated_robustness/boosting_temporal_increment.json",
+   "present": true,
+   "sha256": "2334b262b8c72c2af1c27873f22c030245c35200505e7ef73c782abd0206c3ee"
+  },
+  {
+   "bytes": 3577,
+   "path": "research/e4r_automated_robustness/sector_heterogeneity.json",
+   "present": true,
+   "sha256": "22de2da58a6c86dbc146409cbf37778ac3f5912ddbd544a8e391adfed267b499"
+  },
+  {
+   "bytes": 5723,
+   "path": "research/e4r_automated_robustness/model_stability.json",
+   "present": true,
+   "sha256": "b6eba7cf61c4989a70eb5a9716a41d96501a7143c429af5d4218e679b3879db5"
+  },
+  {
+   "bytes": 22063,
    "path": "research/e4r_automated_robustness/FINAL_REPORT.md",
    "present": true,
-   "sha256": "e6a3e2fb1019275a254fb05aa6e16e1f54851d35ce4a235dd7a93cde9744ee89"
+   "sha256": "d8fbd39e23dd73c9306a3fee54ba9d0fd97686f750671261ac1882b121f232c0"
   },
   {
    "bytes": 21545,
    "path": "research/e4r_automated_robustness/figures/auroc_comparison.svg",
    "present": true,
    "sha256": "5b65d6b9a0b0ea80266dfee335631a7e7aad5db4fbee26388a6f88f40c2eef75"
+  },
+  {
+   "bytes": 8726,
+   "path": "research/e4r_automated_robustness/figures/boosting_temporal_increment.svg",
+   "present": true,
+   "sha256": "d64b984f2a29840303fc42d6ce1f9aa1271c936da31cb86bd4ca40871d3673c9"
   },
   {
    "bytes": 26575,
@@ -132,6 +175,12 @@
    "sha256": "99267dc5d61b15d4d7e4d84df080648c6005ab51c73ef068033403040c9d6de2"
   },
   {
+   "bytes": 20109,
+   "path": "research/e4r_automated_robustness/figures/missingness_ablation.svg",
+   "present": true,
+   "sha256": "5ab275113734d2174b4cfe6cb1c7598123c0118321754e04e641700a904c8d45"
+  },
+  {
    "bytes": 15931,
    "path": "research/e4r_automated_robustness/figures/missingness_robustness.svg",
    "present": true,
@@ -144,6 +193,12 @@
    "sha256": "eab184f9aafb0472692c257c888e4ae1127caa75721df2ae43f0de092cf47be9"
   },
   {
+   "bytes": 14300,
+   "path": "research/e4r_automated_robustness/figures/sector_heterogeneity.svg",
+   "present": true,
+   "sha256": "452194b174f2d32e13cb34c295a4efaebd81583415c3d027ebcb1e0435a3f785"
+  },
+  {
    "bytes": 15833,
    "path": "research/e4r_automated_robustness/figures/sector_robustness.svg",
    "present": true,
@@ -154,6 +209,12 @@
    "path": "research/e4r_automated_robustness/figures/temporal_ablation.svg",
    "present": true,
    "sha256": "c25bda543f9e86f0696b9ebf420145f9e1cde641a79a810b1960105d7791a949"
+  },
+  {
+   "bytes": 38705,
+   "path": "research/e4r_automated_robustness/figures/temporal_shuffle_control.svg",
+   "present": true,
+   "sha256": "81ce95bc31be9713d3552e4a574444567864c69c4d39d588dd6e86fce1005074"
   }
  ],
  "packages": {

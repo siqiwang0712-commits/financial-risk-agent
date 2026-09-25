@@ -1,0 +1,122 @@
+{
+ "classification_rule": {
+  "inconclusive": "the interval contains 0",
+  "possible_heterogeneity": "bootstrap 95% CI upper bound < 0",
+  "robust_positive": "bootstrap 95% CI lower bound > 0"
+ },
+ "gate": {
+  "min_events": 10,
+  "min_n": 40
+ },
+ "heterogeneity": {
+  "chi_square_p_value": 0.3954472087827877,
+  "cochran_q": 2.2155389562645125,
+  "degrees_of_freedom": 2,
+  "gate_note": "Sectors below the frozen n>=40 / events>=10 gate are excluded from both the statistic and the permutation, so the heterogeneity test speaks only about gated sectors - and the gated sectors cover 560/675 of the cohort.",
+  "gated_share_of_cohort": 0.8296296296296296,
+  "i_squared": 0.09728511234481735,
+  "permutation_note": "Three sectors make the chi-square approximation unreliable, so the permutation null is the reported test. It permutes sector labels across the pooled eligible observations while preserving sector sizes; holding the weights fixed is the standard approximation and is stated rather than hidden. Expect low power: Q has two degrees of freedom here.",
+  "permutation_p_value": 0.24587706146926536,
+  "permutation_replicates": 2000,
+  "permutation_statistic": "the same inverse-variance-weighted Q, with the weights held at their observed values so the permuted statistic is on the same scale as the observed one",
+  "pooled_delta_auroc": 0.013166232723765102,
+  "population_size": 560,
+  "sectors_used": [
+   "Manufacturing",
+   "Services",
+   "Transportation_Utilities"
+  ],
+  "statistic": "Cochran Q on inversely-variance-weighted per-sector delta AUROC",
+  "status": "OK"
+ },
+ "sectors": [
+  {
+   "classification": null,
+   "estimable": false,
+   "events": 3,
+   "n": 5,
+   "sector": "Agriculture",
+   "status": "NOT_ESTIMABLE"
+  },
+  {
+   "classification": null,
+   "estimable": false,
+   "events": 1,
+   "n": 14,
+   "sector": "Construction",
+   "status": "NOT_ESTIMABLE"
+  },
+  {
+   "bootstrap_sd": 0.010817752400040825,
+   "ci_high": 0.030826900748920444,
+   "ci_low": -0.012021339730317545,
+   "classification": "inconclusive",
+   "classification_rule": "the interval contains 0",
+   "delta_auroc": 0.008693045563549218,
+   "estimable": true,
+   "events": 139,
+   "n": 319,
+   "sector": "Manufacturing",
+   "status": "OK"
+  },
+  {
+   "classification": null,
+   "estimable": false,
+   "events": 16,
+   "n": 33,
+   "sector": "Mining",
+   "status": "NOT_ESTIMABLE"
+  },
+  {
+   "classification": null,
+   "estimable": false,
+   "events": 8,
+   "n": 8,
+   "sector": "Other_Nonfinancial",
+   "status": "NOT_ESTIMABLE"
+  },
+  {
+   "classification": null,
+   "estimable": false,
+   "events": 6,
+   "n": 39,
+   "sector": "Retail",
+   "status": "NOT_ESTIMABLE"
+  },
+  {
+   "bootstrap_sd": 0.019245411448340535,
+   "ci_high": 0.08398059743884036,
+   "ci_low": 0.007320140407747956,
+   "classification": "robust_positive",
+   "classification_rule": "bootstrap 95% CI lower bound > 0",
+   "delta_auroc": 0.0372591784805526,
+   "estimable": true,
+   "events": 42,
+   "n": 173,
+   "sector": "Services",
+   "status": "OK"
+  },
+  {
+   "bootstrap_sd": 0.02575732480282025,
+   "ci_high": 0.04097647942204981,
+   "ci_low": -0.06542483186515113,
+   "classification": "inconclusive",
+   "classification_rule": "the interval contains 0",
+   "delta_auroc": -0.00462962962962965,
+   "estimable": true,
+   "events": 14,
+   "n": 68,
+   "sector": "Transportation_Utilities",
+   "status": "OK"
+  },
+  {
+   "classification": null,
+   "estimable": false,
+   "events": 6,
+   "n": 16,
+   "sector": "Wholesale",
+   "status": "NOT_ESTIMABLE"
+  }
+ ],
+ "status": "POST_HOC_AUTOMATED_ROBUSTNESS"
+}

@@ -1,0 +1,62 @@
+{
+ "boosting_temporal_increment": {
+  "bootstrap_replicates": 20000,
+  "challenger": "hist_gb_F2",
+  "definition": "F0 = the five static B0 inputs; F2 = F0 plus the four B6 growth terms",
+  "reference": "hist_gb_F0"
+ },
+ "extension_id": "E4-R-EXT",
+ "frozen_config_hash": "f47974607b7dd306c3cc75e8ff6314aefe9c91e9a39b58ed1e990f0786857723",
+ "frozen_config_untouched": true,
+ "missingness_ablation": {
+  "arms": {
+   "A_full_F2_with_indicators": "F2 financial values plus the imputer's median-imputation missing indicators - identical to the frozen headline runs, so arm A is not refitted",
+   "B_full_F2_without_indicators": "the same F2 financial values with add_indicator=False: no missingness signal can reach the learner",
+   "C_missingness_only": "only the nine F2 presence/absence indicators; no financial value is supplied",
+   "D_harmonized_availability": "observations with at least 7 of the 9 F2 fields observed, refitted within the subset"
+  },
+  "bootstrap_replicates": 20000,
+  "complete_case_note": "strict complete-case (9 of 9 fields) leaves 154 observations and 10 events, which cannot support an AUROC estimate; it is reported descriptively only",
+  "families": [
+   "logistic",
+   "hist_gb"
+  ],
+  "harmonized_availability_rule": "at least 7 of 9 F2 fields observed",
+  "paired_against": "A_full_F2_with_indicators"
+ },
+ "model_stability": {
+  "grid": "full prespecified grid",
+  "inner_splits": 5,
+  "models": [
+   "logistic_F2",
+   "hist_gb_F2"
+  ],
+  "outer_splits": 5,
+  "repeats": 5,
+  "scope": "stability description only; it does not enter any primary comparison",
+  "seed_rule": "20260925 + 101 * repeat"
+ },
+ "rationale": "second post-hoc pass over the same retrospective cohort; it can refine how E4-R is read but cannot turn any statement into confirmatory evidence",
+ "sector_heterogeneity": {
+  "bootstrap_replicates": 2000,
+  "classification": {
+   "inconclusive": "the interval contains 0",
+   "possible_heterogeneity": "bootstrap 95% CI upper bound < 0",
+   "robust_positive": "bootstrap 95% CI lower bound > 0"
+  },
+  "gate": "the frozen n >= 40 and events >= 10 rule",
+  "permutation_replicates": 2000,
+  "statistic": "Cochran Q on inversely-variance-weighted per-sector delta AUROC"
+ },
+ "status": "POST_HOC_AUTOMATED_ROBUSTNESS",
+ "temporal_shuffle": {
+  "drop_ci": "paired cluster bootstrap over observations, 20000 resamples, at the median replicate",
+  "grid": "reduced inner grid, applied identically to the original and shuffled arms",
+  "pairing": "identical outer folds, identical inner folds, identical preprocessing and the same random seed; only the temporal block is permuted across companies",
+  "replicates": {
+   "hist_gb": 100,
+   "logistic": 200
+  },
+  "why_not_the_frozen_arm": "the first version compared a reduced-grid original arm against the full-grid headline number, which is why it printed 0.8741 against 0.8851. The arms now share one configuration and the coincidence of the outer folds with the frozen run is asserted rather than assumed."
+ }
+}
