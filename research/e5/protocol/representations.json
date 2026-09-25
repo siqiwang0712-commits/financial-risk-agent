@@ -1,0 +1,112 @@
+{
+ "status": "PROSPECTIVE_NOT_FROZEN",
+ "protocol_document": "research/e5/protocol/AGENT_REPRESENTATIONS.md",
+ "source_of_truth": "backend/finrisk/e4_agent.py::packet",
+
+ "representations": {
+  "A0": {
+   "fields": ["case_id", "raw_fy2024", "raw_same_filing_fy2023"],
+   "role": "secondary_diagnostic",
+   "note": "raw facts only; no engineered metrics, no deltas"
+  },
+  "A1": {
+   "fields": ["case_id", "engineered_features", "missingness"],
+   "role": "secondary_diagnostic",
+   "note": "the metrics dict already includes a {key}_growth entry per metric, so year-over-year deltas are present"
+  },
+  "A2": {
+   "fields": ["case_id", "raw_fy2024", "raw_same_filing_fy2023", "engineered_features", "missingness", "traditional_model_outputs"],
+   "role": "primary_default",
+   "note": "A2 also carries the traditional-model outputs, but not any B0/B2/B6/Hybrid final score"
+  },
+  "A3": {
+   "fields": ["case_id", "raw_fy2024", "raw_same_filing_fy2023", "engineered_features", "missingness", "traditional_model_outputs", "temporal_evidence"],
+   "role": "eligible_alternative_primary",
+   "eligible": false,
+   "eligibility_blocker": "requires a multi-period extraction extension from the same accession plus a temporal_evidence builder, implemented and frozen before the cohort is enumerated; E4's build_features extracts only two periods",
+   "note": "adds horizon (>= 3 fiscal years), not extra deltas: A2 already contains every delta B6 uses"
+  }
+ },
+
+ "primary_rule": {
+  "exactly_one_of": ["A2", "A3"],
+  "other_becomes": "ablation",
+  "excluded_from_primary_family_if_ablation": true,
+  "freeze_in": "protocol commit"
+ },
+
+ "confound_surface": {
+  "statement": "A1 and A2 packets contain every input that B0 and B6 use",
+  "evidence": [
+   "ratio_risk_score consumes current_ratio, debt_to_assets, net_margin, cfo_to_net_income, fcf_margin (numeric_benchmark.py:10-27)",
+   "temporal_risk_score = 0.75 * ratio_risk_score + 0.25 * adverse/observed over revenue_growth, operating_cash_flow_growth, total_debt_growth, cash_growth (numeric_benchmark.py:30-46)",
+   "run_numeric passes metrics = row['metrics'] to both (e4_core.py:595, 603-604)",
+   "packet() exposes the same dict as engineered_features (e4_agent.py:78)",
+   "B6's own reason codes name those four growth keys (e4_core.py:611)"
+  ],
+  "consequences": [
+   "A2 vs B6 compares aggregation strategies over an identical feature set, not information access",
+   "the Agent can reproduce B6 exactly in principle, so a high H1 result may be imitation rather than reasoning",
+   "the Hybrid 0.5*B6 + 0.5*A2 fuses two aggregations of the same inputs"
+  ],
+  "affected_hypotheses": ["H1", "H2", "H3"],
+  "resolution": "report the aggregation-equivalence diagnostic and phrase H1 as an aggregation question"
+ },
+
+ "aggregation_equivalence_diagnostic": {
+  "role": "diagnostic_not_primary",
+  "enters_holm_family": false,
+  "report_for": "every Agent arm",
+  "measures": [
+   "spearman_agent_vs_B6",
+   "spearman_agent_vs_B0",
+   "r_squared_agent_on_B0_and_B6",
+   "share_agent_scores_within_0.05_of_B6",
+   "paired_delta_auroc_against_agent_regressed_on_B0_and_B6"
+  ],
+  "interpretation_rule": "if the Agent's advantage disappears once (B0, B6) are partialled out, report that the Agent re-weighted the baselines rather than adding information"
+ },
+
+ "temporal_evidence_schema": {
+  "fiscal_years": "ascending int list; A3 requires at least 3 years",
+  "years_available": "int",
+  "series": {
+   "<metric>": {
+    "values": "list aligned to fiscal_years; null means not reported",
+    "years_observed": "int",
+    "years_missing": "int",
+    "direction": ["improving", "deteriorating", "stable", "mixed", "not_comparable"],
+    "direction_basis": ["level", "trend"]
+   }
+  },
+  "comparability": {
+   "all_periods_full_year": "bool",
+   "period_length_days": "int list",
+   "restatement_present": "bool",
+   "accounting_policy_change": "bool | null"
+  },
+  "trajectory_class": ["persistent_deterioration", "single_year_dip", "recovery", "stable", "volatile", "not_comparable"],
+  "rules": [
+   "every year must come from the same accession as the feature filing",
+   "no aggregate risk score and no monotone transform of B6",
+   "direction is defined on the raw series by a published rule with a dead band for stable",
+   "trajectory_class is defined on the raw series, not on any risk score",
+   "missingness is explicit: null plus years_missing, never a silently dropped year"
+  ]
+ },
+
+ "forbidden_packet_keys": [
+  "cik", "accession", "ticker", "company_name", "outcome", "label",
+  "B0", "B2", "B6", "score",
+  "ratio_risk_score", "temporal_risk_score", "hybrid_score",
+  "prediction", "threshold", "label_status", "financial_deterioration_12m"
+ ],
+ "forbidden_packet_values": "any value equal to a baseline score for that observation, or any affine transform of one",
+ "monotone_rederivation_check": {
+  "method": "ordinary least squares fit of B6 from the packet's numeric fields, on the frozen packets",
+  "rule": "if fitted R^2 is at or above the prespecified ceiling, the representation is a re-encoding of the baseline and must be reported as such",
+  "ceiling": null,
+  "ceiling_frozen_in": "protocol commit"
+ },
+ "guard_extension_required": "extend the packet() forbidden-key guard to the list above and cover it with a test"
+}

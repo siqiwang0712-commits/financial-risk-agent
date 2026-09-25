@@ -286,3 +286,132 @@ def test_narrative_annotation_schema_is_complete() -> None:
                   "evidence_sufficiency", "contradicts_structured_financials", "temporal_change"):
         assert field in schema, f"annotation schema is missing {field}"
     assert schema["evidence_sufficiency"] == ["sufficient", "partial", "absent"]
+
+
+# ----------------------------------------------------------------------------------
+# Agent representations: the documented field lists must match the frozen builder,
+# and the confound claim must be measurable rather than asserted
+# ----------------------------------------------------------------------------------
+
+REPRESENTATIONS_DOC = PROTOCOL_DIR / "AGENT_REPRESENTATIONS.md"
+REPRESENTATIONS_JSON = PROTOCOL_DIR / "representations.json"
+REPLICATION_FEATURES = REPO_ROOT / "research" / "e4_statistical_audit" / "replication" / "features.json.gz"
+REPLICATION_PREDICTIONS = (
+    REPO_ROOT / "research" / "e4_statistical_audit" / "replication" / "numeric_predictions.json"
+)
+
+
+def _representations() -> dict:
+    return json.loads(REPRESENTATIONS_JSON.read_text(encoding="utf-8"))
+
+
+def _replication_observations() -> list[dict]:
+    import gzip
+
+    return json.loads(gzip.decompress(REPLICATION_FEATURES.read_bytes()))
+
+
+def test_representation_document_and_schema_are_present() -> None:
+    assert REPRESENTATIONS_DOC.is_file()
+    assert REPRESENTATIONS_JSON.is_file()
+    assert _representations()["status"] == "PROSPECTIVE_NOT_FROZEN"
+
+
+def test_documented_representation_fields_match_the_frozen_packet_builder() -> None:
+    """The documentation must describe what ``packet()`` actually emits, not what it should.
+
+    This is checked against the frozen builder on real observations, so a future edit to
+    either the code or the document fails here.
+    """
+    packet = pytest.importorskip("finrisk.e4_agent").packet
+    documented = _representations()["representations"]
+    observation = _replication_observations()[0]
+    for representation in ("A0", "A1", "A2"):
+        emitted = set(packet(observation, representation))
+        assert emitted == set(documented[representation]["fields"]), (
+            f"{representation}: documented {sorted(documented[representation]['fields'])} "
+            f"but packet() emits {sorted(emitted)}"
+        )
+
+
+def test_b0_and_b6_are_recoverable_from_the_a2_packet() -> None:
+    """The confound claim in AGENT_REPRESENTATIONS.md section 2, measured.
+
+    If the baselines can be recomputed from the Agent's own packet, then A2 vs B6 is a
+    comparison of aggregation rather than of information access. Any drift here would
+    invalidate that section, so the claim is pinned by a test.
+    """
+    agent = pytest.importorskip("finrisk.e4_agent")
+    benchmark = pytest.importorskip("finrisk.numeric_benchmark")
+    packet = agent.packet
+    temporal_risk_score = benchmark.temporal_risk_score
+    ratio_risk_score = benchmark.ratio_risk_score
+
+    published = {
+        (row["observation_id"], row["model_id"]): row["score"]
+        for row in json.loads(REPLICATION_PREDICTIONS.read_text(encoding="utf-8"))
+    }
+    checked = 0
+    worst = {"B0": 0.0, "B6": 0.0}
+    for observation in _replication_observations():
+        engineered = packet(observation, "A2")["engineered_features"]
+        recomputed = {
+            "B0": ratio_risk_score(engineered),
+            "B6": temporal_risk_score(engineered),
+        }
+        for model_id, value in recomputed.items():
+            expected = published.get((observation["observation_id"], model_id))
+            if value is None or expected is None:
+                continue
+            checked += 1
+            worst[model_id] = max(worst[model_id], abs(value - expected))
+
+    assert checked > 0, "no comparable baseline scores found"
+    # Published scores are rounded to 10 decimals by _record, so the residual is float noise.
+    assert worst["B0"] < 1e-9, f"B0 is not recoverable from the A2 packet: {worst['B0']}"
+    assert worst["B6"] < 1e-9, f"B6 is not recoverable from the A2 packet: {worst['B6']}"
+
+
+def test_forbidden_key_list_covers_the_frozen_guard() -> None:
+    frozen_guard = {"cik", "accession", "ticker", "company_name", "outcome", "label",
+                    "B0", "B2", "B6", "score"}
+    declared = set(_representations()["forbidden_packet_keys"])
+    assert frozen_guard <= declared, f"the E5 list drops frozen guard keys: {frozen_guard - declared}"
+    for extra in ("ratio_risk_score", "temporal_risk_score", "hybrid_score", "prediction", "threshold"):
+        assert extra in declared
+
+
+def test_a3_is_ineligible_until_the_extraction_exists() -> None:
+    """A3 must not enter the confirmatory family without the multi-period extraction."""
+    a3 = _representations()["representations"]["A3"]
+    assert a3["eligible"] is False
+    assert "temporal_evidence" in a3["fields"]
+    assert "build_features" in a3["eligibility_blocker"]
+    assert "temporal_evidence" in a3["fields"]
+    assert a3["note"].startswith("adds horizon")
+
+
+def test_exactly_one_representation_is_primary() -> None:
+    rule = _representations()["primary_rule"]
+    assert rule["exactly_one_of"] == ["A2", "A3"]
+    assert rule["excluded_from_primary_family_if_ablation"] is True
+
+
+def test_aggregation_equivalence_diagnostic_stays_out_of_the_primary_family() -> None:
+    diagnostic = _representations()["aggregation_equivalence_diagnostic"]
+    assert diagnostic["enters_holm_family"] is False
+    assert diagnostic["role"] == "diagnostic_not_primary"
+    assert "paired_delta_auroc_against_agent_regressed_on_B0_and_B6" in diagnostic["measures"]
+
+
+def test_monotone_rederivation_ceiling_is_an_open_freeze_decision() -> None:
+    check = _representations()["monotone_rederivation_check"]
+    assert check["ceiling"] is None, "the ceiling must be declared in the protocol commit, not now"
+    assert check["ceiling_frozen_in"] == "protocol commit"
+
+
+def test_a3_temporal_evidence_schema_is_complete() -> None:
+    schema = _representations()["temporal_evidence_schema"]
+    for field in ("fiscal_years", "years_available", "series", "comparability", "trajectory_class"):
+        assert field in schema, f"temporal_evidence schema is missing {field}"
+    assert "same accession" in " ".join(schema["rules"])

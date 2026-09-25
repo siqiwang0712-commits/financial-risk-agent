@@ -17,6 +17,8 @@ The freeze candidate lives in `protocol/`:
 |---|---|
 | `protocol/STUDY_PROTOCOL.md` | the protocol itself: isolation, estimand, systems, hypothesis hierarchy, power, adjudication, governance |
 | `protocol/INFERENCE_POLICY.md` | prespecified primary inference, permitted secondary procedures, forbidden procedures |
+| `protocol/AGENT_REPRESENTATIONS.md` | exact A0–A3 field lists, the A2/B6 confound surface (measured), the aggregation-equivalence diagnostic, and the A3 definition |
+| `protocol/representations.json` | the same in machine-readable form: field lists, forbidden keys, `temporal_evidence` schema, A3 eligibility |
 | `protocol/AGENT_QUALIFICATION_PROTOCOL.md` | outcome-blind model selection and its hard gates |
 | `protocol/OUTCOME_ADJUDICATION_PROTOCOL.md` | blinded two-tier adjudication and its reporting requirements |
 | `protocol/GOVERNANCE_WORKFLOW.md` | the nine stage commits and the freeze-manifest schema |
@@ -58,7 +60,12 @@ Ready:
 - one-company-per-semantic-request inference policy;
 - Agent qualification gates and lexicographic selection rule;
 - blinded adjudication protocol with a disagreement rule;
-- staged, hash-chained governance workflow with a verifier.
+- staged, hash-chained governance workflow with a verifier;
+- A0–A3 defined exactly as the frozen `packet()` builds them, with a test that fails if the
+  documentation and the code drift apart;
+- the A2/B6 confound surface measured and written down, with the aggregation-equivalence
+  diagnostic prespecified so a "the Agent re-weighted the baselines" result cannot be
+  reported as "the Agent adds value".
 
 Blocking:
 
@@ -67,5 +74,10 @@ Blocking:
   published before the cohort freeze.
 - The minimum meaningful ΔAUROC is a design choice that must be declared in the freeze
   commit; the power analysis reports a curve so the choice can be defended.
+- The monotone-re-derivation ceiling in `protocol/representations.json` is still `null` and
+  must be declared in the freeze commit.
+- **A3 needs a multi-period extraction** from the same accession, implemented and frozen
+  before the cohort is enumerated. E4's `build_features` extracts only two periods, so A3 is
+  currently ineligible and A2 is primary.
 - The E5 feature and outcome periods must actually become available before the cohort can
   be enumerated.

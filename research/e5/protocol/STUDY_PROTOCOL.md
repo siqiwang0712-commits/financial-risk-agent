@@ -87,13 +87,30 @@ B1 (logistic), B2 (rule engine), B3 (Altman/Beneish/Piotroski/Ohlson), A0 and A1
 **secondary / ablation / diagnostic only** and are excluded from the primary inference
 family.
 
-**Representation choice.** Exactly one Agent representation is nominated as primary. The
-default nomination is **A2** (raw facts + engineered metrics + traditional-model outputs),
-because E4's A2 was the only representation that carried traditional-model evidence and
-because a single primary representation keeps the inference family small. A new
-`A3 = A2 + explicit temporal trajectory` may be nominated *instead* of A2 only if its
-definition and prompt are frozen in the protocol commit, before any cohort or outcome
-access. A2 and A3 must not both be primary.
+**Representation choice.** Exactly one Agent representation is nominated as primary; see
+`AGENT_REPRESENTATIONS.md` for the exact field list of each representation as the frozen
+`packet()` builds it. The default nomination is **A2** (raw facts + engineered metrics +
+traditional-model outputs). A new `A3 = A2 + explicit temporal trajectory` may be nominated
+*instead* of A2 only if its definition, extraction code and prompt are frozen in the
+protocol commit, before any cohort or outcome access. A2 and A3 must not both be primary.
+
+**Confound to confront, not inherit.** `AGENT_REPRESENTATIONS.md` §2 shows, with code
+citations, that A1 and A2 packets contain **every input that B0 and B6 use**: the baselines
+and the Agent read the same `row["metrics"]` dict. Two things follow and are binding on E5:
+
+- H1/H2 compare **aggregation strategies over an identical feature set**, not information
+  access. The Agent is given B6's inputs, so a high H1 result may be successful imitation of
+  B6 rather than evidence of reasoning. E4's protocol claim that A2 carries "no B0/B2/B6/
+  Hybrid final score" is true about the *score* and misleading about the *information*.
+- The **aggregation-equivalence diagnostic** in §3 of that document is prespecified and
+  reported for every Agent arm. If the Agent's advantage disappears once `(B0, B6)` are
+  partialled out, the finding is that the Agent re-weighted the baselines, and it must be
+  reported in those words.
+
+A3's rationale is therefore **horizon**, not extra deltas: A2 already contains every
+year-over-year delta B6 uses. A3 must expose a multi-year series from the same accession,
+which no baseline sees. If the multi-period extraction is not implemented and frozen before
+the cohort is enumerated, A3 is ineligible and A2 is primary.
 
 **Hybrid.** The primary hybrid is the transparent fixed fusion
 `H = 0.5 × B6 + 0.5 × A2`, carried over unchanged from E4 so that the E4→E5 comparison is
@@ -141,7 +158,7 @@ At most three primary comparisons. Everything else is secondary.
 
 | ID | Comparison | Question |
 |---|---|---|
-| **H1** | A2 vs B6 | Can a strong Agent beat the deterministic temporal baseline outright? |
+| **H1** | A2 vs B6 | Given **the same feature set as B6**, does a strong Agent produce a better *ranking* than B6's fixed `0.75/0.25` blend with hard thresholds? (An aggregation question — see §3.) |
 | **H2** | H vs B6 | Does the Agent add **incremental** value on top of B6? |
 | **H3** | H vs A2 | Are the deterministic temporal signal and Agent reasoning **complementary**? |
 
