@@ -1,11 +1,14 @@
 # Results
 
-The current research result surface is FinRisk v0.3.4 / E4.
+The current research result surface is FinRisk v0.3.4 / E4 and the two post-hoc
+studies that read it.
 
 - [Experiment overview](EXPERIMENT_OVERVIEW.md)
 - [Current E4 result summary](EXPERIMENT_RESULTS.md)
 - [Canonical E4 validation report](e4/public/VALIDATION_REPORT.md)
 - [E4 post-completion audit](e4_posthoc/AUDIT_REPORT.md)
+- [E4-S statistical audit](e4_statistical_audit/README.md)
+- [E4-R robustness and competitive-baseline study](e4r_automated_robustness/README.md)
 - [Current release verification](EXPERIMENT_REPRODUCIBILITY.md)
 
 Earlier pilot and v0.3.1 outputs remain preserved as historical audit records,

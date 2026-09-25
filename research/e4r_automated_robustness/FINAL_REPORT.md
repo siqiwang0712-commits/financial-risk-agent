@@ -1,6 +1,6 @@
 # E4-R — Automated Robustness & Competitive Baseline Study
 
-**Status: `POST_HOC_AUTOMATED_ROBUSTNESS`** — git `394ad96dd4f7`, Python 3.13.14.
+**Status: `POST_HOC_AUTOMATED_ROBUSTNESS`** — git `749b5d3dd37b`, Python 3.13.14.
 
 E4-R is a **retrospective (POST_HOC)** study run on E4's published replication data. It is **not** `ESTABLISHED_E4`, **not** `CONFIRMATORY`, **not** `PROSPECTIVE` and **not** an `E5_RESULT`. It does not modify E4, does not create confirmatory evidence, and does not replace E5. It exists to make E5 designable.
 

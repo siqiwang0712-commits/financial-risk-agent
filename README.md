@@ -250,6 +250,16 @@ python scripts/verify_e4_public_artifacts.py
 python -m pytest -q tests/test_e4.py tests/test_e4_posthoc.py tests/test_e4_public_release.py
 ```
 
+The two post-hoc studies that read E4 ship their own one-command verifiers. Both
+run on a public checkout; only E4-R needs the `research` extra
+(`python -m pip install -e ".[research]"`), because its tabular baselines use a
+numeric stack the product runtime deliberately does not ship.
+
+```bash
+python research/e4_statistical_audit/verify_audit.py    # re-checks every E4 hash, recomputes the inference
+python research/e4r_automated_robustness/verify_e4r.py  # re-checks the study's hashes and headline statistics
+```
+
 Historical v0.3.1 artifacts remain available for audit but are no longer part
 of the current release test gate or primary research presentation.
 
@@ -287,6 +297,8 @@ A previously recorded live Company Facts rebuild received HTTP 403. That is pres
 | Experiment index and evidence status | [Experiment overview](research/EXPERIMENT_OVERVIEW.md) |
 | Cross-study result summary | [Experiment results](research/EXPERIMENT_RESULTS.md) |
 | Frozen replay and artifact policy | [Experiment reproducibility](research/EXPERIMENT_REPRODUCIBILITY.md) |
+| Does E4's inference test the hypothesis E4 states? | [E4-S statistical audit](research/e4_statistical_audit/AUDIT_REPORT.md) |
+| How does B6 compare to tabular learning? | [E4-R robustness study](research/e4r_automated_robustness/FINAL_REPORT.md) |
 | Evaluation design | [Evaluation protocol](research/evaluation_protocol.md) |
 | Results and negative findings | [Results](research/results.md) |
 | Error analysis | [Error analysis](research/error_analysis.md) |
@@ -390,6 +402,11 @@ For the current E4 evidence-status map and artifact index, see the
 [experiment overview](research/EXPERIMENT_OVERVIEW.md) and
 [cross-study results](research/EXPERIMENT_RESULTS.md).
 
+E4 is followed by two post-hoc studies that read it and exist to make E5
+designable: **E4-S**, which audits E4's inference, and **E4-R**, which tests
+robustness and competitive baselines. Neither one modifies E4, and neither
+licenses a confirmatory claim.
+
 ### E4 external validation
 
 E4 evaluates the locked `v0.3.4` implementation on **2,000 company-disjoint FY2024 10-K filers** selected before outcomes were visible. The predefined financial-deterioration endpoint verified 674 companies (235 events; prevalence 34.9%). Performance estimates apply to the deterministically verifiable subset, not to bankruptcy, default, credit loss or insolvency probability.
@@ -433,36 +450,57 @@ The frozen CPU backend was Qwen2.5 0.5B Instruct (Q4_K_M) through Ollama 0.12.3.
 
 `ChatGPT5.6 Sol` is the project-internal display name for a Codex sub-Agent comparator; it is not an OpenAI model name or official ChatGPT model, and the platform did not expose the exact underlying model ID. On the same 50 frozen anonymous E4-B packets it completed 150/150 A0/A1/A2 judgments. Only 18 cases had deterministic `VERIFIED` outcomes and only five were events: AUROC was 0.815 for A0, 0.800 for A1, 0.738 for A2, and 0.708 for the fixed `0.5 × B6 + 0.5 × A2` hybrid. These outcome-blind predictions were commissioned after E4 outcomes existed, so all results are `POST_HOC`, `UNCALIBRATED`, and insufficiently powered; they do not alter E4 or establish model superiority. Full traceability and results are in [the comparator methodology](research/e4_posthoc/model_capacity/sol_codex_agent/METHODOLOGY.md).
 
-### E4-R Automated Robustness Study
+### E4-S statistical audit
 
-`research/e4r_automated_robustness/` is a **POST_HOC** retrospective study run on E4's published replication data. It **does not modify E4**, **does not create confirmatory evidence**, **does not replace E5**, and evaluates robustness and competitive baselines only.
+Status `POST_E4_STATISTICAL_AUDIT`. E4-S re-tests E4's primary inference under a correctly specified paired test and re-executes the frozen pipeline from public inputs. It modifies nothing under `research/e4/`: a SHA-256 manifest of every published E4 artifact, enforced in the test suite, proves it.
 
-On the same 675 verified observations (235 events), it asks whether B6's temporal improvement is robust and whether conventional tabular learning can explain or beat it.
+E4's per-observation rows were never published, so the audit re-ran the frozen v0.3.4 pipeline with an empty 270-CIK exclusion (a documented deviation) and publishes its own cohort, predictions and paired rows. That cohort is **675 observations / 235 events**, **~94% overlapping** with E4's 674 (47 of 50 sampled E4-B companies are present in the replication cohort): a near-reproduction, not an independent sample.
+
+| Method | Null it actually tests | ΔAUROC | 95% interval | p |
+|---|---|---:|---|---:|
+| E4 frozen label permutation (2,000 replicates) | `H0_independence` | +0.0303 | — | 0.0005 (attainable floor) |
+| paired DeLong (the prespecified target) | `H0_equality` | +0.0264 | [+0.0101, +0.0426] | 0.00144 |
+| cluster BCa bootstrap (20,000 replicates) | `H0_equality` | +0.0264 | [+0.0111, +0.0438] | — |
+| score-swap randomization (20,000 replicates) | `H0_exch` | +0.0264 | — | 0.00450 |
+
+Verdict `CONSISTENT_SUPPORT`: every test that targets the equality hypothesis rejects in the same direction with the same point estimate. Two findings travel with it and must be reported together:
+
+- **E4's published p-value is not a test of the hypothesis E4 states.** It shuffles labels while holding each `(B0, B6)` pair fixed, so its reference distribution is that of ΔAUROC under `H0_independence` — the outcome is independent of *both* scores. Rejecting it shows at least one score carries signal; it does not show B6 carries more than B0. The value is also exactly `1/2001`, the attainable floor at 2,000 permutations.
+- **At E4's design point the procedure is nonetheless close to nominal.** Measured size 0.025 against a nominal 0.05 (0.025 for DeLong), and power 0.930 against DeLong's 0.935. E4's numbers are unaffected; only its justification changes. The simulation is Monte-Carlo with 200 replicates, so rates are resolved to roughly ±0.03.
+
+Canonical detail: [E4-S audit report](research/e4_statistical_audit/AUDIT_REPORT.md), [method cross-check](research/e4_statistical_audit/inference_crosscheck.json) and the [replication packet](research/e4_statistical_audit/replication/README.md).
+
+### E4-R automated robustness and competitive baselines
+
+`research/e4r_automated_robustness/` is a **`POST_HOC_AUTOMATED_ROBUSTNESS`** retrospective study run on E4-S's published replication packet. It **does not modify E4**, **does not create confirmatory evidence**, **does not replace E5**, and evaluates robustness and competitive baselines only. Its configuration is frozen before the run and the pipeline aborts if the hash moves.
+
+On the same 675 / 235 cohort, eleven nested-CV baselines (5×5 company-level stratified folds, preprocessing fitted inside the fold) and seven B6 ablations:
 
 | Scorer | Out-of-fold AUROC | PR-AUC |
 |---|---:|---:|
 | B0 (frozen heuristic) | 0.679 | 0.541 |
 | B6 (frozen heuristic) | 0.705 | 0.581 |
 | Logistic, static only | 0.827 | 0.769 |
+| Logistic, temporal only | 0.805 | 0.717 |
 | Logistic, static + temporal (prespecified linear challenger) | 0.819 | 0.754 |
+| Gradient boosting, temporal only | 0.863 | 0.776 |
 | Gradient boosting, static + temporal (prespecified nonlinear challenger) | 0.885 | 0.839 |
 
-Findings, all `POST_HOC_AUTOMATED_ROBUSTNESS`:
+P1 `B6 − B0` reproduces: ΔAUROC **+0.0264**, paired DeLong p = 0.00144, Holm-adjusted p = 0.00144, 20,000-replicate BCa **[+0.0109, +0.0434]**. P2 `logistic_F2 − B6` is **+0.1136** (Holm p = 1.2e-05) and P3 `hist_gb_F2 − B6` is **+0.1797** (Holm p = <1e-15 (underflow)).
 
-- B6 > B0 reproduces: ΔAUROC **+0.0264**, paired DeLong p = 0.0014, Holm-adjusted p = 0.0014, 20,000-replicate BCa 95% CI **[+0.011, +0.043]**.
-- The gain is entirely temporal: `B6_no_temporal` is `0.75 × B0`, a strictly rank-equivalent transformation, so all B6–B0 ranking separation is mechanically introduced through the temporal component. This is a structural decomposition of a deterministic formula, not a causal finding.
-- The gain is **not** concentrated in one term. The largest single-term effect (revenue growth) is 41% of the temporal gain, and dropping the cash-growth term slightly *improves* AUROC.
-- B6 is **not competitive** here: the prespecified boosting challenger beats it by **+0.180** AUROC (Δ 95% CI [+0.139, +0.224]; the DeLong p underflows double precision at z = 8.39), and a logistic model on the four temporal features alone already reaches 0.805.
-- No single observation deletion reverses the sign of ΔAUROC(B6−B0), and label permutation returns every scorer to AUROC ≈ 0.50.
-- No confirmed leakage. Two checks are disclosed as `REVIEW`, not leakage: the endpoint is a transition rule anchored on pre-cutoff levels, and missingness indicators are themselves predictive.
+Three pre-registered interpretation cases fire:
 
-A **post-hoc hardening pass** ([EXTENSION_PROTOCOL.md](research/e4r_automated_robustness/EXTENSION_PROTOCOL.md)) then closed three gaps a reviewer would be right to push on. It cannot upgrade any statement, and `experiment_config.json` was not touched.
+- **Case B** — B6's hand-designed aggregation is not competitive with a learned nonlinear tabular baseline.
+- **Case D** — E4's gain depends materially on the temporal block. This is a *structural* result: `B6_no_temporal = 0.75 × B0` is a strictly increasing map of B0, so its AUROC equals B0's exactly and all B6 − B0 ranking separation is mechanically introduced through the temporal component. It is not a causal finding, and the gain is not concentrated in one term — removing `cash_growth` slightly *improves* AUROC.
+- **Case F** — the aggregate improvement is not uniformly robust across the population, though only as a marker: `Transportation_Utilities`'s −0.005 point estimate has an interval containing zero.
 
-- **A material share of the learned-model advantage is reporting structure.** Removing the imputer's missing-value indicators costs the logistic **−0.160** AUROC (95% CI [−0.209, −0.110]) and the boosting model **−0.026** ([−0.040, −0.014]). A model given **only** the nine presence/absence flags — no financial value at all — reaches **0.835** (boosting) and **0.829** (logistic), i.e. **+0.13 above B6**. This is not called leakage: nothing shows an indicator carries outcome-side information, and the audit's timestamp checks pass.
-- **Temporal features add little once a strong static nonlinear learner is used.** `hist_gb_F0` (static only) reaches **0.880** against `hist_gb_F2`'s 0.885: Δ **+0.0056**, paired DeLong p = 0.39, BCa [−0.007, +0.019].
-- **The shuffled-temporal control is now genuinely paired** (one shared configuration, the original arm's folds asserted equal to the frozen run's). Shuffling the temporal block costs the boosting model a median **+0.012** AUROC with 0 of 100 replicates reaching the original, and the logistic only +0.001 with P(drop>0) = 0.61.
-- **Sector heterogeneity is not established.** No gated sector has an interval-supported negative effect, and a 2,000-replicate permutation test does not reject a common effect (p = 0.25, I² = 0.10). `Transportation_Utilities`'s −0.005 point estimate is reported as inconclusive, not as a sector failure.
-- **Interval honesty.** Reported DeLong and bootstrap intervals condition on the realized out-of-fold predictions and do not integrate training-procedure uncertainty; repeated nested CV puts that omitted component at sd ≈ 0.004 (boosting) and 0.006 (logistic).
+A **post-hoc hardening pass** ([EXTENSION_PROTOCOL.md](research/e4r_automated_robustness/EXTENSION_PROTOCOL.md)) then closed four gaps a reviewer would be right to push on. It cannot upgrade any statement, and `experiment_config.json` was not touched.
+
+- **A material share of the learned-model advantage is reporting structure.** Removing the imputer's missing-value indicators costs the logistic **−0.1599** AUROC (95% BCa [−0.2090, −0.1102]) and the boosting model **−0.0258** ([−0.0403, −0.0135]). A model given **only** the nine presence/absence flags — no financial value at all — reaches **0.835** (boosting) and **0.829** (logistic), i.e. above B6's 0.705. This is **not** called leakage: nothing shows an indicator carries outcome-side information, and the timestamp checks pass. Strict complete-case leaves 154 observations and 10 events and is reported as `NOT_ESTIMABLE` rather than estimated.
+- **Temporal features add little once a strong static nonlinear learner is used.** `hist_gb_F0` (static only) reaches 0.880 against `hist_gb_F2`'s 0.885: Δ **+0.0056**, paired DeLong p = 0.39, BCa [−0.0069, +0.0187]. The superseded `F1 → F2` comparison could not answer this because `hist_gb_F0` did not exist.
+- **The shuffled-temporal control is now genuinely paired** (one shared configuration; the original arm's folds asserted equal to the frozen run's). Shuffling costs the boosting model a median +0.0123 AUROC with 0 of 100 replicates reaching the original; the logistic moves +0.0013 with P(drop>0) = 0.605. The superseded 0.8741-versus-0.8851 discrepancy is explained as an inner-grid difference and retained as an audit note rather than deleted.
+- **Sector heterogeneity is not established.** No gated sector has an interval-supported negative effect, and a 2,000-replicate permutation test does not reject a common effect (p = 0.25, I² = 0.10); the gated sectors cover 83.0% of the cohort.
+- **Interval honesty.** The reported DeLong and bootstrap intervals condition on the realized out-of-fold predictions and do not integrate training-procedure uncertainty; repeated 5×5 nested CV measures that omitted component at sd ≈ 0.0039 (boosting) and 0.0059 (logistic), and it does not enter any primary comparison.
 
 Reproduce with `python research/e4r_automated_robustness/verify_e4r.py`. Full protocol, artifacts and the generated report are in [the study directory](research/e4r_automated_robustness/README.md) and [FINAL_REPORT.md](research/e4r_automated_robustness/FINAL_REPORT.md).
 

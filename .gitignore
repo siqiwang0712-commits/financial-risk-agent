@@ -32,6 +32,9 @@ coverage/
 .DS_Store
 .idea/
 .vscode/
+# Agent workspace state (working memory and local notes). Project content lives in
+# `research/`; nothing here is a published artifact.
+.workbuddy/
 data/private/
 uploads/
 reports/generated/

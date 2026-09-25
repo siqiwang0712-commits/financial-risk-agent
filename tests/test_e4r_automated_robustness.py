@@ -379,7 +379,7 @@ def test_label_permutation_returns_to_chance() -> None:
 
 def test_shuffled_temporal_control_preserves_the_column_marginals() -> None:
     """Shuffling a block across rows must preserve each column's multiset."""
-    import numpy as np
+    np = pytest.importorskip("numpy")
 
     original = np.array([[1.0, 10.0], [2.0, 20.0], [3.0, 30.0], [4.0, 40.0]])
     order = np.random.default_rng(0).permutation(original.shape[0])

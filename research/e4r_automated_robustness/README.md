@@ -37,7 +37,9 @@ Extra dependencies (not shipped by the product runtime, installed as the `resear
 ## Source
 
 Everything comes from `research/e4_statistical_audit/replication/` — the E4-S replication
-packet. Before any analysis the pipeline:
+packet. E4-R therefore depends on E4-S: without the audit's published cohort, predictions and
+paired rows, none of E4-R's numbers would be independently checkable, because E4 never
+published its own per-observation rows. Before any analysis the pipeline:
 
 1. verifies the SHA-256 of every file in the replication `manifest.json`;
 2. verifies the frozen E4 artifact manifest (proving E4-R did not mutate E4);
@@ -163,3 +165,22 @@ so the training-procedure variance the main intervals omit is at least measured.
 changes: the temporal block must be described structurally rather than causally; Case F's
 sector marker now requires interval support (strictly harder to fire); and the OOF
 uncertainty limitation is stated explicitly. No threshold or case membership changed.
+
+---
+
+## Where this fits
+
+E4-R is the last link of the post-hoc chain. It reads E4-S, and what it produces is a design
+constraint for E5 rather than a result about E4.
+
+| Step | Study | Directory |
+|---|---|---|
+| 1 | E4 — external validation | [`research/e4/`](../e4/public/VALIDATION_REPORT.md) |
+| 2 | E4 post-completion audit | [`research/e4_posthoc/`](../e4_posthoc/AUDIT_REPORT.md) |
+| 3 | E4-S — statistical audit | [`research/e4_statistical_audit/`](../e4_statistical_audit/README.md) |
+| 4 | **E4-R — automated robustness and competitive baselines** | this directory |
+| 5 | E5 — confirmatory study | [`research/e5/`](../e5/README.md) |
+
+The project-level index of that chain is
+[`research/EXPERIMENT_OVERVIEW.md`](../EXPERIMENT_OVERVIEW.md); the compact result surface is
+[`research/EXPERIMENT_RESULTS.md`](../EXPERIMENT_RESULTS.md).

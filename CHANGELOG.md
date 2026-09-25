@@ -27,6 +27,17 @@
 - No prediction model, score calibration or frozen experiment changed. E1/E2/E3 and
   `research/results/public_v1` remain byte-preserved historical artifacts. The FinRisk score
   remains an explainable heuristic index and reliability remains `UNCALIBRATED`.
+- Published the two post-hoc studies that read E4 and wired them into the research index.
+  The E4-S statistical audit (`research/e4_statistical_audit`) re-tests E4's primary
+  inference and re-executes the frozen pipeline from public inputs; the E4-R automated
+  robustness study (`research/e4r_automated_robustness`) tests whether B6's temporal gain is
+  robust and how it compares with strong tabular baselines. Neither modifies a frozen E4
+  artifact, neither creates confirmatory evidence, and both are labelled
+  `POST_E4_STATISTICAL_AUDIT` and `POST_HOC_AUTOMATED_ROBUSTNESS` in the evidence vocabulary.
+- The README's research section is generated from the committed artifacts again: the two new
+  subsections are rendered by `scripts/render_e4_readme.py` and checked back against those
+  artifacts by `tests/test_research_navigation.py`, so the prose cannot drift from the
+  numbers. Relative links across the research surface are now resolved mechanically too.
 
 ## [0.3.3] - 2026-09-19
 

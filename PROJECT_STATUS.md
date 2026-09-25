@@ -128,13 +128,34 @@ Status date: 2026-09-23. This remains a research prototype. Predictive superiori
 - CI runs the complete backend suite with PostgreSQL 17 plus an explicit production-overlay Docker smoke test.
 - 28 frontend tests across four semantic test files, the CI-enforced official-registry production npm audit, a locally verified full npm audit, TypeScript checking and the Next.js standalone production build pass.
 - Ruff, E1/E2/E3 read-only hash replay and `git diff --check` pass.
-- Current-HEAD local verification collected 382 Python tests: 369 passed and 13 were skipped. GitHub Actions run 35865807564 completed successfully on Python 3.11/3.12 and the Docker smoke job.
+- Current-HEAD local verification on a dependency-locked environment collected 641 Python
+  tests: 624 passed and 17 skipped, at 90.60% coverage against the 90% gate (the skipped
+  cases are the ones that need PostgreSQL or the optional `research` numeric extra). The
+  recorded GitHub Actions run 35865807564 completed successfully on Python 3.11/3.12 and the
+  Docker smoke job.
 - v0.3.3 release suite against PostgreSQL 17 on a fresh database, in CI order: 335 passed, 0 failed, 0 skipped at 90.92% coverage (gate 90%); in-memory mode 323 passed, 12 skipped. Readiness against a migrated, an empty and a partially migrated database; a datastore outage answering a controlled `503` with `Retry-After` and self-healing on recovery; the rate limiter exercised against real PostgreSQL with a small row cap; and `pip-audit --strict --no-deps -r requirements.lock` clean at the time of preparation.
 - PostgreSQL 17 migration, authenticated document analysis, HTTP failure contracts, repository selection, API-restart persistence and the explicit timeout/retry contract passed locally through the production Compose overlay. The same smoke passed in CI; production deployment remains unvalidated.
 - Independent v0.3.1 public-pilot and fusion replay artifacts generated under `research/results/v0.3.1`; the `public_v1` directory matches the v0.3.0 tag and the replay runner now refuses to overwrite it.
 
 ## Experiments Completed
 
+- E4 external validation on locked v0.3.4: 2,000 company-disjoint FY2024 filers selected
+  before outcomes were visible, 674 deterministically verified outcomes and 235 events. B6
+  over B0 is `ESTABLISHED_E4` (+0.030 paired AUROC, 95% CI +0.014 to +0.048, Holm-adjusted
+  p=0.0015); the Local Agent and Hybrid comparisons stayed `EXPLORATORY_E4` because only five
+  paired events were available. Canonical detail: `research/e4/public`.
+- E4-S statistical audit: E4's P1 p-value targets `H0_independence` rather than the
+  `H0_equality` claim attached to it and sits at the attainable floor `1/2001`; at E4's
+  design point the procedure is nonetheless close to nominal, so E4's numbers stand and only
+  its justification changes. E4's exact per-observation rows remain
+  `NOT_INDEPENDENTLY_REPRODUCIBLE`. Canonical detail:
+  `research/e4_statistical_audit`.
+- E4-R automated robustness study: on E4-S's replication cohort, B6 − B0 reproduces
+  (+0.0264, Holm p=0.0014) and the gain is entirely mechanical through the temporal block,
+  but strong tabular baselines beat B6 decisively (+0.180 AUROC for the prespecified boosting
+  challenger) and a material share of that advantage is reporting/missingness structure
+  rather than financial-value signal. Remains `POST_HOC_AUTOMATED_ROBUSTNESS`. Canonical
+  detail: `research/e4r_automated_robustness`.
 - `finrisk-sec-mini-v1`: Apple/Microsoft/Intel FY2024, company-disjoint train/validation/test.
 - Five baselines and five ablations run on frozen observations.
 - Full Hybrid: risk F1 0.000, contradiction F1 0.667, decision coverage 2/3, covered accuracy 0.500 [0,1], ECE 0.407.
@@ -145,6 +166,12 @@ Status date: 2026-09-23. This remains a research prototype. Predictive superiori
 
 ## Experiments Pending
 
+- E5, the confirmatory study: it needs a genuinely new, untouched time window, a prospective
+  cohort freeze, and a published 270-CIK exclusion set so company-disjointness from the
+  earlier cohort can be proven. Its primary benchmark must be a strong nested-CV tabular
+  baseline on the same feature set rather than B0, with a missingness-only arm alongside it —
+  a model that never sees a financial value already approaches B6 on this cohort. See
+  `research/e5/README.md`.
 - Acquire the required official 2025 SEC outcome archives from a permitted network to resolve the 25 right-censored records, and complete human-adjudicated extraction validation; current extraction figures measure machine reconciliation agreement only.
 - Run the real LLM baseline with a frozen model/prompt/pricing configuration.
 - Double annotation, adjudication, more companies/sectors and a locked confirmatory test.

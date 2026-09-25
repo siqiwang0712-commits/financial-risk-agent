@@ -1,7 +1,7 @@
 # E4-S — POST-E4 Statistical Audit
 
-Status: **COMPLETE** — audit of the frozen E4 primary inference, with no modification to any
-frozen E4 artifact.
+**Status: `POST_E4_STATISTICAL_AUDIT`** — audit of the frozen E4 primary inference, with no
+modification to any frozen E4 artifact.
 
 Scope: determine whether E4's P1 conclusion survives a correctly specified
 correlated-model inference, and whether E4's own inference procedure tests the hypothesis
@@ -11,6 +11,8 @@ Nothing under `research/e4/` was regenerated or re-tuned. A SHA-256 manifest of 
 published E4 artifact is recorded in `e4_frozen_artifact_manifest.json`, and
 `tests/test_e4_statistical_audit.py::test_frozen_e4_artifacts_are_byte_identical` enforces
 it.
+
+Directory entry point, run instructions and file index: [`README.md`](README.md).
 
 ---
 
@@ -52,7 +54,7 @@ the observed labels' association with the scores. Enumerating every label assign
 small dataset shows that two datasets sharing the score vectors and event count but
 assigning labels in *opposite* orders produce **identical** null distributions, even though
 their observed deltas differ by more than 0.05. See
-`test_label_permutation_null_depends_only_on_scores_and_label_count`.
+`test_label_permutation_null_ignores_the_label_score_association`.
 
 Two further properties of the published numbers:
 
@@ -368,9 +370,10 @@ argument.
 
 ## 8. Aggregation-equivalence diagnostic on E4's own Agent outputs
 
-`AGENT_REPRESENTATIONS.md` §2 shows that the A2 packet contains B0's and B6's complete input
-set. That is a statement about what the Agent *could* do. This section measures what E4's
-Agent actually did, using the Codex comparator's 150 published structured judgments
+[`AGENT_REPRESENTATIONS.md`](../e5/protocol/AGENT_REPRESENTATIONS.md) §2 shows that the A2
+packet contains B0's and B6's complete input set. That is a statement about what the Agent
+*could* do. This section measures what E4's Agent actually did, using the Codex comparator's
+150 published structured judgments
 (50 cases × A0/A1/A2) joined to the replication cohort by reproducing their packet hashes.
 47 of the 50 cases match, consistently across all three representations. Source:
 `aggregation_equivalence.json`.
@@ -448,11 +451,12 @@ override.
 **For E5.** Three changes are mandatory and are now in the protocol:
 
 1. the primary test is paired DeLong; the label-permutation design is reported only under
-   its own null (`INFERENCE_POLICY.md`);
+   its own null ([`INFERENCE_POLICY.md`](../e5/protocol/INFERENCE_POLICY.md));
 2. `previous_270.json` must be published before the cohort freeze, and every
-   result-affecting environment variable must be frozen (`STUDY_PROTOCOL.md` §15);
+   result-affecting environment variable must be frozen
+   ([`STUDY_PROTOCOL.md`](../e5/protocol/STUDY_PROTOCOL.md) §15);
 3. the harness must be committed and tagged before the cohort exists, in the nine-stage
-   sequence of `GOVERNANCE_WORKFLOW.md`.
+   sequence of [`GOVERNANCE_WORKFLOW.md`](../e5/protocol/GOVERNANCE_WORKFLOW.md).
 
 ---
 
@@ -487,7 +491,6 @@ override.
 | `AUDIT_REPORT.md` | this report |
 | `HANDOVER_VERIFICATION.md` | claim-by-claim verification of the handover brief |
 | `verify_audit.py` | the verifier a third party runs: re-checks every hash and recomputes the real-data inference |
-| `verify_previous_270.py` | one-command path to verify a candidate 270-CIK list and rebuild E4's exact cohort |
 | `verify_previous_270.py` | one-command path to verify a candidate 270-CIK list and rebuild E4's exact cohort |
 | `verification_result.json` | the verifier's own output |
 | `paired_auc_inference.json` | original E4 values, internal-consistency checks, surrogate reconstruction, reproducibility blocker |

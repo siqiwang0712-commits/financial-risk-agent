@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import json
 import sys
 from pathlib import Path
 from typing import Any
@@ -17,10 +18,42 @@ from finrisk.e4_evaluation import (
 )
 
 MODELS = ("B0", "B2", "B3", "B6", "A0", "A1", "A2", "H0")
+RESEARCH = ROOT / "research"
 
 
 def _fmt(value: float | None, digits: int = 3) -> str:
     return "NA" if value is None else f"{value:.{digits}f}"
+
+
+def _signed(value: float | None, digits: int = 4) -> str:
+    """Signed number with the typographic minus the rest of the README uses."""
+    return "NA" if value is None else f"{value:+.{digits}f}".replace("-", "\u2212")
+
+
+def _pvalue(value: float | None) -> str:
+    """p-values in scientific form; one that underflows to 0.0 is reported as a bound."""
+    if value is None:
+        return "NA"
+    if value == 0.0:
+        return "<1e-15 (underflow)"
+    return f"{value:.2g}"
+
+
+def _read_artifact(path: Path) -> dict[str, Any] | None:
+    """Load a study artifact, or return ``None`` when it is absent or unreadable.
+
+    The README research section is rendered from committed artifacts so the prose cannot
+    drift from the numbers. The two post-hoc studies are checked in alongside E4, but E4's
+    own replay must not depend on them: a missing artifact degrades that one subsection to
+    a link instead of breaking the render.
+    """
+    if not path.is_file():
+        return None
+    try:
+        loaded = json.loads(path.read_text(encoding="utf-8"))
+    except (json.JSONDecodeError, OSError):
+        return None
+    return loaded if isinstance(loaded, dict) else None
 
 
 def _paired_table(artifacts: Path) -> list[dict[str, Any]]:
@@ -118,6 +151,253 @@ def _svg_deltas(primary: list[dict[str, Any]]) -> str:
     return f'<svg xmlns="http://www.w3.org/2000/svg" width="940" height="250" viewBox="0 0 940 250"><rect width="100%" height="100%" fill="#fff"/><text x="30" y="25" font-size="20" font-weight="bold">Primary paired ΔAUROC (95% bootstrap CI)</text>{"".join(elements)}</svg>\n'
 
 
+def _e4s_section() -> list[str]:
+    """The E4-S subsection, rendered from the audit's own artifacts."""
+    base = RESEARCH / "e4_statistical_audit"
+    crosscheck = _read_artifact(base / "inference_crosscheck.json")
+    replication = _read_artifact(base / "replication_crosscheck.json")
+    calibration = _read_artifact(base / "method_calibration.json")
+    detail = (
+        "Canonical detail: [E4-S audit report](research/e4_statistical_audit/AUDIT_REPORT.md), "
+        "[method cross-check](research/e4_statistical_audit/inference_crosscheck.json) and the "
+        "[replication packet](research/e4_statistical_audit/replication/README.md)."
+    )
+    heading = [
+        "### E4-S statistical audit",
+        "",
+        ("Status `POST_E4_STATISTICAL_AUDIT`. E4-S re-tests E4's primary inference under a "
+        "correctly specified paired test and re-executes the frozen pipeline from public "
+        "inputs. It modifies nothing under `research/e4/`: a SHA-256 manifest of every "
+        "published E4 artifact, enforced in the test suite, proves it."),
+        "",
+    ]
+    if not crosscheck or not replication or not calibration:
+        return [
+            *heading,
+            "Its artifacts are not present in this checkout, so only the entry point is linked here.",
+            "",
+            detail,
+            "",
+        ]
+
+    published = next(
+        method
+        for method in crosscheck["methods"]
+        if method["method"] == "e4_published_label_permutation"
+    )
+    real = replication["audit_independent_implementation"]
+    delong = real["delong"]
+    bca = real["auroc_bootstrap"]["bca"]
+    swap_p = real["score_swap_randomization"]["p_value"]
+    cohort = replication["cohort_provenance"]
+    size = calibration["scenarios"]["H0_equality_informative_scores"]["methods"]
+    nominal = calibration["scenarios"]["H0_equality_informative_scores"]["nominal_alpha"]
+    power = calibration["scenarios"]["alternative_E4_effect"]["methods"]
+    return [
+        *heading,
+        (f"E4's per-observation rows were never published, so the audit re-ran the frozen "
+        f"v0.3.4 pipeline with an empty 270-CIK exclusion (a documented deviation) and "
+        f"publishes its own cohort, predictions and paired rows. That cohort is "
+        f"**{cohort['n_pairs']} observations / {cohort['events']} events**, **~94% "
+        f"overlapping** with E4's 674 ({cohort['measured_overlap']}): a near-reproduction, "
+        f"not an independent sample."),
+        "",
+        "| Method | Null it actually tests | ΔAUROC | 95% interval | p |",
+        "|---|---|---:|---|---:|",
+        (f"| E4 frozen label permutation (2,000 replicates) | `H0_independence` | "
+        f"{_signed(published['delta'])} | — | {published['p_value']:.4f} (attainable floor) |"),
+        (f"| paired DeLong (the prespecified target) | `H0_equality` | {_signed(delong['observed_delta'])} | "
+        f"[{_signed(delong['z_ci_low'])}, {_signed(delong['z_ci_high'])}] | {delong['p_value']:.5f} |"),
+        (f"| cluster BCa bootstrap (20,000 replicates) | `H0_equality` | "
+        f"{_signed(real['auroc_bootstrap']['observed'])} | [{_signed(bca[0])}, {_signed(bca[1])}] | — |"),
+        (f"| score-swap randomization (20,000 replicates) | `H0_exch` | "
+        f"{_signed(real['score_swap_randomization']['observed_delta'])} | — | {swap_p:.5f} |"),
+        "",
+        (f"Verdict `{crosscheck['headline']}`: every test that targets the equality hypothesis "
+        f"rejects in the same direction with the same point estimate. Two findings travel "
+        f"with it and must be reported together:"),
+        "",
+        ("- **E4's published p-value is not a test of the hypothesis E4 states.** It shuffles "
+        "labels while holding each `(B0, B6)` pair fixed, so its reference distribution is "
+        "that of ΔAUROC under `H0_independence` — the outcome is independent of *both* "
+        "scores. Rejecting it shows at least one score carries signal; it does not show B6 "
+        "carries more than B0. The value is also exactly `1/2001`, the attainable floor at "
+        "2,000 permutations."),
+        (f"- **At E4's design point the procedure is nonetheless close to nominal.** Measured "
+        f"size {size['label_permutation_as_implemented']['empirical_rejection_rate']:.3f} "
+        f"against a nominal {nominal} ({size['delong_paired']['empirical_rejection_rate']:.3f} "
+        f"for DeLong), and power {power['label_permutation_as_implemented']['empirical_rejection_rate']:.3f} "
+        f"against DeLong's {power['delong_paired']['empirical_rejection_rate']:.3f}. E4's "
+        f"numbers are unaffected; only its justification changes. The simulation is "
+        f"Monte-Carlo with "
+        f"{calibration['monte_carlo_precision']['replicates']} replicates, so rates are "
+        f"resolved to roughly ±0.03."),
+        "",
+        detail,
+        "",
+    ]
+
+
+def _e4r_section() -> list[str]:
+    """The E4-R subsection, rendered from the robustness study's own artifacts."""
+    base = RESEARCH / "e4r_automated_robustness"
+    model_results = _read_artifact(base / "model_results.json")
+    statistics = _read_artifact(base / "statistical_tests.json")
+    missingness = _read_artifact(base / "missingness_ablation.json")
+    boosting = _read_artifact(base / "boosting_temporal_increment.json")
+    controls = _read_artifact(base / "negative_controls.json")
+    sector = _read_artifact(base / "sector_heterogeneity.json")
+    stability = _read_artifact(base / "model_stability.json")
+    detail = (
+        "Reproduce with `python research/e4r_automated_robustness/verify_e4r.py`. Full "
+        "protocol, artifacts and the generated report are in "
+        "[the study directory](research/e4r_automated_robustness/README.md) and "
+        "[FINAL_REPORT.md](research/e4r_automated_robustness/FINAL_REPORT.md)."
+    )
+    heading = [
+        "### E4-R automated robustness and competitive baselines",
+        "",
+        ("`research/e4r_automated_robustness/` is a **`POST_HOC_AUTOMATED_ROBUSTNESS`** "
+        "retrospective study run on E4-S's published replication packet. It **does not "
+        "modify E4**, **does not create confirmatory evidence**, **does not replace E5**, "
+        "and evaluates robustness and competitive baselines only. Its configuration is "
+        "frozen before the run and the pipeline aborts if the hash moves."),
+        "",
+    ]
+    if not model_results or not statistics:
+        return [
+            *heading,
+            "Its artifacts are not present in this checkout, so only the entry point is linked here.",
+            "",
+            detail,
+            "",
+        ]
+
+    scorers = (
+        ("B0", "B0 (frozen heuristic)"),
+        ("B6", "B6 (frozen heuristic)"),
+        ("logistic_F0", "Logistic, static only"),
+        ("logistic_F1", "Logistic, temporal only"),
+        ("logistic_F2", "Logistic, static + temporal (prespecified linear challenger)"),
+        ("hist_gb_F1", "Gradient boosting, temporal only"),
+        ("hist_gb_F2", "Gradient boosting, static + temporal (prespecified nonlinear challenger)"),
+    )
+    models = model_results["models"]
+    primary = {row["id"]: row for row in statistics["primary"]}
+    lines = [
+        *heading,
+        (f"On the same {primary['P1']['n_pairs']} / {primary['P1']['events']} cohort, eleven "
+        f"nested-CV baselines (5×5 company-level stratified folds, preprocessing fitted "
+        f"inside the fold) and seven B6 ablations:"),
+        "",
+        "| Scorer | Out-of-fold AUROC | PR-AUC |",
+        "|---|---:|---:|",
+    ]
+    for key, label in scorers:
+        entry = models.get(key)
+        if entry is None:
+            continue
+        lines.append(f"| {label} | {_fmt(entry['auroc'])} | {_fmt(entry['pr_auc'])} |")
+    lines.extend([
+        "",
+        (f"P1 `B6 − B0` reproduces: ΔAUROC **{_signed(primary['P1']['delta_auroc'])}**, paired "
+        f"DeLong p = {primary['P1']['delong']['p_value']:.5f}, Holm-adjusted p = "
+        f"{primary['P1']['holm_adjusted_p']:.5f}, 20,000-replicate BCa "
+        f"**[{_signed(primary['P1']['bootstrap_auroc']['bca_low'])}, "
+        f"{_signed(primary['P1']['bootstrap_auroc']['bca_high'])}]**. "
+        f"P2 `logistic_F2 − B6` is **{_signed(primary['P2']['delta_auroc'])}** (Holm p = "
+        f"{_pvalue(primary['P2']['holm_adjusted_p'])}) and P3 `hist_gb_F2 − B6` is "
+        f"**{_signed(primary['P3']['delta_auroc'])}** (Holm p = "
+        f"{_pvalue(primary['P3']['holm_adjusted_p'])})."),
+        "",
+        "Three pre-registered interpretation cases fire:",
+        "",
+        ("- **Case B** — B6's hand-designed aggregation is not competitive with a learned "
+        "nonlinear tabular baseline."),
+        ("- **Case D** — E4's gain depends materially on the temporal block. This is a "
+        "*structural* result: `B6_no_temporal = 0.75 × B0` is a strictly increasing map of B0, "
+        "so its AUROC equals B0's exactly and all B6 − B0 ranking separation is mechanically "
+        "introduced through the temporal component. It is not a causal finding, and the gain "
+        "is not concentrated in one term — removing `cash_growth` slightly *improves* AUROC."),
+        ("- **Case F** — the aggregate improvement is not uniformly robust across the "
+        "population, though only as a marker: `Transportation_Utilities`'s −0.005 point "
+        "estimate has an interval containing zero."),
+        "",
+    ])
+
+    if missingness and boosting and controls and sector and stability:
+        log_cmp = missingness["comparisons"]["logistic"]["A_minus_B_full_F2_without_indicators"]
+        hg_cmp = missingness["comparisons"]["hist_gb"]["A_minus_B_full_F2_without_indicators"]
+        log_only = missingness["families"]["logistic"]["arms"]["C_missingness_only"]["auroc"]
+        hg_only = missingness["families"]["hist_gb"]["arms"]["C_missingness_only"]["auroc"]
+        strict = missingness["strict_complete_case"]
+        increment = boosting["comparison"]
+        shuffle = controls["NC2_temporal_alignment_destroyed"]["models"]
+        heterogeneity = sector["heterogeneity"]
+        stability_models = stability["models"]
+        lines.extend([
+            ("A **post-hoc hardening pass** "
+            "([EXTENSION_PROTOCOL.md](research/e4r_automated_robustness/EXTENSION_PROTOCOL.md)) "
+            "then closed four gaps a reviewer would be right to push on. It cannot upgrade any "
+            "statement, and `experiment_config.json` was not touched."),
+            "",
+            (f"- **A material share of the learned-model advantage is reporting structure.** "
+            f"Removing the imputer's missing-value indicators costs the logistic "
+            f"**{_signed(log_cmp['delta_auroc'])}** AUROC (95% BCa "
+            f"[{_signed(log_cmp['bootstrap_auroc']['bca_low'])}, "
+            f"{_signed(log_cmp['bootstrap_auroc']['bca_high'])}]) and the boosting model "
+            f"**{_signed(hg_cmp['delta_auroc'])}** "
+            f"([{_signed(hg_cmp['bootstrap_auroc']['bca_low'])}, "
+            f"{_signed(hg_cmp['bootstrap_auroc']['bca_high'])}]). A model given **only** the "
+            f"nine presence/absence flags — no financial value at all — reaches "
+            f"**{_fmt(hg_only)}** (boosting) and **{_fmt(log_only)}** (logistic), i.e. above "
+            f"B6's {_fmt(models['B6']['auroc'])}. This is **not** called leakage: nothing "
+            f"shows an indicator carries outcome-side information, and the timestamp checks "
+            f"pass. Strict complete-case leaves {strict['n']} observations and "
+            f"{strict['events']} events and is reported as `NOT_ESTIMABLE` rather than "
+            f"estimated."),
+            (f"- **Temporal features add little once a strong static nonlinear learner is "
+            f"used.** `hist_gb_F0` (static only) reaches "
+            f"{_fmt(boosting['reference_metrics']['auroc'])} against `hist_gb_F2`'s "
+            f"{_fmt(boosting['challenger_metrics']['auroc'])}: Δ "
+            f"**{_signed(increment['delta_auroc'])}**, paired DeLong p = "
+            f"{increment['delong']['p_value']:.2f}, BCa "
+            f"[{_signed(increment['bootstrap_auroc']['bca_low'])}, "
+            f"{_signed(increment['bootstrap_auroc']['bca_high'])}]. The superseded `F1 → F2` "
+            f"comparison could not answer this because `hist_gb_F0` did not exist."),
+            (f"- **The shuffled-temporal control is now genuinely paired** (one shared "
+            f"configuration; the original arm's folds asserted equal to the frozen run's). "
+            f"Shuffling costs the boosting model a median "
+            f"{_signed(shuffle['hist_gb']['drop_median'])} AUROC with "
+            f"{shuffle['hist_gb']['replicates_above_original']} of "
+            f"{shuffle['hist_gb']['replicates']} replicates reaching the original; the "
+            f"logistic moves {_signed(shuffle['logistic']['drop_median'])} with "
+            f"P(drop>0) = {shuffle['logistic']['P_drop_gt_0']:.3f}. The superseded "
+            f"0.8741-versus-0.8851 discrepancy is explained as an inner-grid difference and "
+            f"retained as an audit note rather than deleted."),
+            (f"- **Sector heterogeneity is not established.** No gated sector has an "
+            f"interval-supported negative effect, and a "
+            f"{heterogeneity['permutation_replicates']:,}-replicate permutation test does not "
+            f"reject a common effect (p = {heterogeneity['permutation_p_value']:.2f}, "
+            f"I² = {heterogeneity['i_squared']:.2f}); the gated sectors cover "
+            f"{heterogeneity['gated_share_of_cohort']:.1%} of the cohort."),
+            (f"- **Interval honesty.** The reported DeLong and bootstrap intervals condition on "
+            f"the realized out-of-fold predictions and do not integrate training-procedure "
+            f"uncertainty; repeated 5×5 nested CV measures that omitted component at "
+            f"sd ≈ {stability_models['hist_gb_F2']['sd_auroc']:.4f} (boosting) and "
+            f"{stability_models['logistic_F2']['sd_auroc']:.4f} (logistic), and it does not "
+            f"enter any primary comparison."),
+            "",
+        ])
+    lines.extend([detail, ""])
+    return lines
+
+
+def _post_hoc_sections() -> list[str]:
+    """The two post-hoc studies, placed between E4's own results and the boundary sections."""
+    return [*_e4s_section(), *_e4r_section()]
+
+
 def _readme_section(summary: dict[str, Any]) -> str:
     b0 = summary["e4a_results"]["B0"]
     b6 = summary["e4a_results"]["B6"]
@@ -130,6 +410,11 @@ def _readme_section(summary: dict[str, Any]) -> str:
         "For the current E4 evidence-status map and artifact index, see the",
         "[experiment overview](research/EXPERIMENT_OVERVIEW.md) and",
         "[cross-study results](research/EXPERIMENT_RESULTS.md).",
+        "",
+        "E4 is followed by two post-hoc studies that read it and exist to make E5",
+        "designable: **E4-S**, which audits E4's inference, and **E4-R**, which tests",
+        "robustness and competitive baselines. Neither one modifies E4, and neither",
+        "licenses a confirmatory claim.",
         "",
         "### E4 external validation",
         "",
@@ -170,6 +455,11 @@ def _readme_section(summary: dict[str, Any]) -> str:
         "",
         "`ChatGPT5.6 Sol` is the project-internal display name for a Codex sub-Agent comparator; it is not an OpenAI model name or official ChatGPT model, and the platform did not expose the exact underlying model ID. On the same 50 frozen anonymous E4-B packets it completed 150/150 A0/A1/A2 judgments. Only 18 cases had deterministic `VERIFIED` outcomes and only five were events: AUROC was 0.815 for A0, 0.800 for A1, 0.738 for A2, and 0.708 for the fixed `0.5 × B6 + 0.5 × A2` hybrid. These outcome-blind predictions were commissioned after E4 outcomes existed, so all results are `POST_HOC`, `UNCALIBRATED`, and insufficiently powered; they do not alter E4 or establish model superiority. Full traceability and results are in [the comparator methodology](research/e4_posthoc/model_capacity/sol_codex_agent/METHODOLOGY.md).",
         "",
+    ])
+    # The two post-hoc studies that read E4 belong inside this section, in dependency order,
+    # and they are rendered from their own committed artifacts like everything else here.
+    lines.extend(_post_hoc_sections())
+    lines.extend([
         "### Robustness and data integrity",
         "",
         f"All eight SEC archives passed SHA-256, CRC, required-member and size checks. Verified endpoint coverage was {summary['outcomes']['verified_coverage']:.1%}; {summary['outcomes']['status_counts']['REQUIRES_HUMAN_REVIEW']} cases required human review and {summary['outcomes']['status_counts']['INSUFFICIENT_DATA']} had insufficient outcome data. Prediction-time diagnostics show that verification was selective, so propensity weighting is post-hoc sensitivity analysis only and does not remove selection bias. Independent SEC–Zenodo processing/source concordance matched within 5% for {summary['source_concordance']['within_5pct']:.1%} of {summary['source_concordance']['n']:,} matched values; this is not extraction accuracy. Deterministic replay was canonical byte-identical.",
