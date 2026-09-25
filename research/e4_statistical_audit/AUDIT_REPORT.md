@@ -103,6 +103,30 @@ companies are present in the re-execution. The re-execution is a near-reproducti
 ~94%-overlapping cohort, **not** an independent sample. Its value is that it makes every
 inference method computable on real data at E4's design point.
 
+### 3.1 The audit publishes its own rows
+
+An audit that criticises a study for reporting an inference whose input rows are
+unpublished must not do the same thing. The re-execution's cohort, per-observation
+predictions, labels and paired analysis rows are published under
+`replication/`, with a SHA-256 manifest and a `replication/README.md` stating the
+provenance and the deviation.
+
+`verify_audit.py` is the artifact a reviewer runs. It re-checks the SHA-256 of every
+published E4 artifact (proving this audit did not mutate E4), re-checks the SHA-256 of
+every published replication artifact, and recomputes the marginal AUROCs, ΔAUROC, the
+paired DeLong test, the 20,000-replicate BCa interval, the label-permutation null and the
+score-swap null from the published rows, asserting each against
+`replication_crosscheck.json`. It exits non-zero on any failure.
+
+```
+python research/e4_statistical_audit/verify_audit.py          # 20000 replicates
+python research/e4_statistical_audit/verify_audit.py --quick  # 2000 replicates
+```
+
+Publishing the cohort with CIKs is deliberate: it makes the sample checkable against public
+SEC filings, and it lets anyone holding the 270-CIK list reconstruct E4's exact cohort and
+compute the true overlap rather than the 47/50 estimate.
+
 ---
 
 ## 4. Method cross-check on real paired data
@@ -312,6 +336,12 @@ override.
 - The real-data cross-check runs on a **~94%-overlapping cohort**, not on E4's exact rows.
   Its point estimate (+0.02636) differs from E4's published +0.03031 by 0.004, which is well
   inside sampling noise but is not zero.
+- The overlap figure is itself an estimate: it is measured on the 50 E4-B companies, which
+  is a hash-selected subset of the 2,000 and therefore unbiased but small (47/50 gives a 95%
+  interval of roughly 83% to 99%). The exact overlap cannot be computed without the
+  270-CIK list.
+- The audit's own numbers are reproducible from the published rows via `verify_audit.py`,
+  but that only makes the audit checkable — it does not make E4's rows available.
 - The calibration study is Monte Carlo with 200 replicates, so rates are resolved to about
   ±0.03 at 95% confidence. It cannot detect small deviations from nominal.
 - The calibration study and the surrogate both assume a bivariate normal score model, which
@@ -330,13 +360,16 @@ override.
 |---|---|
 | `AUDIT_REPORT.md` | this report |
 | `HANDOVER_VERIFICATION.md` | claim-by-claim verification of the handover brief |
+| `verify_audit.py` | the verifier a third party runs: re-checks every hash and recomputes the real-data inference |
+| `verification_result.json` | the verifier's own output |
 | `paired_auc_inference.json` | original E4 values, internal-consistency checks, surrogate reconstruction, reproducibility blocker |
 | `bootstrap_diagnostics.json` | replicate counts, percentile conventions, Monte Carlo precision |
 | `inference_crosscheck.json` | method-by-method verdict table and the `CONSISTENT_SUPPORT` determination |
 | `method_calibration.json` | empirical size and power of each procedure under `H0_equality` |
 | `replication_crosscheck.json` | all methods on the independent re-execution's real paired data |
+| `replication/` | the published cohort, features, predictions, labels, paired analysis rows and manifest, plus `README.md` |
 | `e4_frozen_artifact_manifest.json` | SHA-256 of every published E4 artifact, proving non-mutation |
 | `e4s_stats.py` | independent statistical primitives |
 | `method_calibration.py` | generators, size/power study, dispersion matching |
 | `run_e4_statistical_audit.py` | the runner that produces the artifacts above |
-| `tests/test_e4_statistical_audit.py` | primitives, DeLong, bootstrap, both permutation designs, the deterministic null-invariance proof, and artifact integrity |
+| `tests/test_e4_statistical_audit.py` | primitives, DeLong, bootstrap, both permutation designs, the deterministic null-invariance proof, replication reproduction, and artifact integrity |

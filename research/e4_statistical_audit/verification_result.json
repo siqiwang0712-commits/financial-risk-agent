@@ -1,0 +1,226 @@
+{
+ "checks": [
+  {
+   "check": "e4-frozen: research/e4/protocol/EXECUTION_RESTART_REPORT.md",
+   "detail": "",
+   "status": "PASS"
+  },
+  {
+   "check": "e4-frozen: research/e4/protocol/STUDY_PROTOCOL.md",
+   "detail": "",
+   "status": "PASS"
+  },
+  {
+   "check": "e4-frozen: research/e4/protocol/experiment_config.json",
+   "detail": "",
+   "status": "PASS"
+  },
+  {
+   "check": "e4-frozen: research/e4/protocol/protocol_freeze.json",
+   "detail": "",
+   "status": "PASS"
+  },
+  {
+   "check": "e4-frozen: research/e4/public/CONCLUSION.md",
+   "detail": "",
+   "status": "PASS"
+  },
+  {
+   "check": "e4-frozen: research/e4/public/VALIDATION_REPORT.md",
+   "detail": "",
+   "status": "PASS"
+  },
+  {
+   "check": "e4-frozen: research/e4/public/agent_stability_summary.json",
+   "detail": "",
+   "status": "PASS"
+  },
+  {
+   "check": "e4-frozen: research/e4/public/auroc_ci.svg",
+   "detail": "",
+   "status": "PASS"
+  },
+  {
+   "check": "e4-frozen: research/e4/public/batch_sensitivity_summary.json",
+   "detail": "",
+   "status": "PASS"
+  },
+  {
+   "check": "e4-frozen: research/e4/public/paired_delta_auroc.svg",
+   "detail": "",
+   "status": "PASS"
+  },
+  {
+   "check": "e4-frozen: research/e4/public/readme_summary.json",
+   "detail": "",
+   "status": "PASS"
+  },
+  {
+   "check": "e4-frozen: research/e4/public/render_replay_verification.json",
+   "detail": "",
+   "status": "PASS"
+  },
+  {
+   "check": "e4-frozen: research/e4/public/reproducibility_summary.json",
+   "detail": "",
+   "status": "PASS"
+  },
+  {
+   "check": "e4-frozen: research/e4/public/source_concordance_summary.json",
+   "detail": "",
+   "status": "PASS"
+  },
+  {
+   "check": "replication: research/e4_statistical_audit/replication/analysis.json",
+   "detail": "",
+   "status": "PASS"
+  },
+  {
+   "check": "replication: research/e4_statistical_audit/replication/cohort.json",
+   "detail": "",
+   "status": "PASS"
+  },
+  {
+   "check": "replication: research/e4_statistical_audit/replication/cohort_report.json",
+   "detail": "",
+   "status": "PASS"
+  },
+  {
+   "check": "replication: research/e4_statistical_audit/replication/feature_report.json",
+   "detail": "",
+   "status": "PASS"
+  },
+  {
+   "check": "replication: research/e4_statistical_audit/replication/features.json.gz",
+   "detail": "",
+   "status": "PASS"
+  },
+  {
+   "check": "replication: research/e4_statistical_audit/replication/input_inventory.json",
+   "detail": "",
+   "status": "PASS"
+  },
+  {
+   "check": "replication: research/e4_statistical_audit/replication/numeric_predictions.json",
+   "detail": "",
+   "status": "PASS"
+  },
+  {
+   "check": "replication: research/e4_statistical_audit/replication/numeric_report.json",
+   "detail": "",
+   "status": "PASS"
+  },
+  {
+   "check": "replication: research/e4_statistical_audit/replication/outcome_report.json",
+   "detail": "",
+   "status": "PASS"
+  },
+  {
+   "check": "replication: research/e4_statistical_audit/replication/outcomes.json",
+   "detail": "",
+   "status": "PASS"
+  },
+  {
+   "check": "replication: research/e4_statistical_audit/replication/summaries.json",
+   "detail": "",
+   "status": "PASS"
+  },
+  {
+   "check": "cohort: n_pairs",
+   "detail": "675 vs 675",
+   "status": "PASS"
+  },
+  {
+   "check": "cohort: events",
+   "detail": "235 vs 235",
+   "status": "PASS"
+  },
+  {
+   "check": "marginal: B0 AUROC",
+   "detail": "observed 0.6790570599613153, expected 0.6790570599613153, gap 0.000e+00",
+   "status": "PASS"
+  },
+  {
+   "check": "marginal: B6 AUROC",
+   "detail": "observed 0.7054158607350097, expected 0.7054158607350097, gap 0.000e+00",
+   "status": "PASS"
+  },
+  {
+   "check": "delta AUROC",
+   "detail": "observed 0.026358800773694457, expected 0.026358800773694457, gap 0.000e+00",
+   "status": "PASS"
+  },
+  {
+   "check": "delta PR-AUC",
+   "detail": "observed 0.03958174835864847, expected 0.03958174835864847, gap 0.000e+00",
+   "status": "PASS"
+  },
+  {
+   "check": "DeLong delta",
+   "detail": "observed 0.026358800773694457, expected 0.026358800773694457, gap 0.000e+00",
+   "status": "PASS"
+  },
+  {
+   "check": "DeLong SE",
+   "detail": "observed 0.008272051242746922, expected 0.008272051242746922, gap 0.000e+00",
+   "status": "PASS"
+  },
+  {
+   "check": "DeLong z",
+   "detail": "observed 3.186489058177234, expected 3.186489058177234, gap 0.000e+00",
+   "status": "PASS"
+  },
+  {
+   "check": "DeLong p",
+   "detail": "observed 0.0014401093495102213, expected 0.0014401093495102213, gap 0.000e+00",
+   "status": "PASS"
+  },
+  {
+   "check": "bootstrap SE",
+   "detail": "observed 0.008201053789721798, expected 0.008269346775845303, gap 6.829e-05",
+   "status": "PASS"
+  },
+  {
+   "check": "bootstrap BCa low",
+   "detail": "observed 0.011262440361053633, expected 0.011138482686425602, gap 1.240e-04",
+   "status": "PASS"
+  },
+  {
+   "check": "bootstrap BCa high",
+   "detail": "observed 0.04378973388390177, expected 0.043834865384833915, gap 4.513e-05",
+   "status": "PASS"
+  },
+  {
+   "check": "permutation null SD",
+   "detail": "observed 0.00794468235793632, expected 0.007687359397801283, gap 2.573e-04",
+   "status": "PASS"
+  },
+  {
+   "check": "swap null SD",
+   "detail": "observed 0.009352070574766986, expected 0.009437043454098692, gap 8.497e-05",
+   "status": "PASS"
+  },
+  {
+   "check": "DeLong rejects H0_equality at alpha=0.05",
+   "detail": "p = 0.0014401093495102213",
+   "status": "PASS"
+  },
+  {
+   "check": "BCa interval excludes zero in the positive direction",
+   "detail": "bca = (0.011262440361053633, 0.04378973388390177)",
+   "status": "PASS"
+  },
+  {
+   "check": "inference_crosscheck headline is CONSISTENT_SUPPORT",
+   "detail": "CONSISTENT_SUPPORT",
+   "status": "PASS"
+  },
+  {
+   "check": "E4's published P1 permutation p-value equals the attainable floor",
+   "detail": "1/2001",
+   "status": "PASS"
+  }
+ ],
+ "replicates": 2000,
+ "status": "PASS"
+}

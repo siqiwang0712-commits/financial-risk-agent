@@ -27,3 +27,8 @@ research/results/v0.3.1/benchmark_forensics/*.json text eol=lf
 research/e4/** text eol=lf
 research/e5/** text eol=lf
 research/e4_statistical_audit/** text eol=lf
+
+# The published replication bundle ships one gzipped intermediate. The `eol=lf` rule
+# above would otherwise force a text filter on it, so it is marked binary explicitly;
+# later rules win.
+research/e4_statistical_audit/replication/*.gz binary

@@ -31,6 +31,7 @@ from e4s_stats import (  # noqa: E402
     delta_metric,
     holm_adjust,
     label_permutation_as_implemented,
+    marginal_metric,
     midranks,
     normal_cdf,
     normal_quantile,
@@ -406,3 +407,111 @@ def test_audit_does_not_write_into_the_frozen_e4_directory() -> None:
         if p.is_file()
     }
     assert present == recorded, "the audit added or removed files under research/e4"
+
+
+# ----------------------------------------------------------------------------------
+# Published replication artifacts: the audit must be verifiable by a third party
+# ----------------------------------------------------------------------------------
+
+REPLICATION_DIR = AUDIT_DIR / "replication"
+
+
+def _replication_manifest() -> dict:
+    return json.loads((REPLICATION_DIR / "manifest.json").read_text(encoding="utf-8"))
+
+
+def test_replication_artifacts_match_their_published_hashes() -> None:
+    """The audit criticised E4 for unpublished rows; its own rows must be published and
+    hash-verified."""
+    for entry in _replication_manifest()["files"]:
+        path = REPO_ROOT / entry["path"]
+        assert path.is_file(), f"published replication artifact missing: {entry['path']}"
+        assert hashlib.sha256(path.read_bytes()).hexdigest() == entry["sha256"], (
+            f"published replication artifact modified: {entry['path']}"
+        )
+
+
+def test_replication_publishes_the_rows_needed_to_recompute_the_inference() -> None:
+    analysis = json.loads((REPLICATION_DIR / "analysis.json").read_text(encoding="utf-8"))
+    required = {"observation_id", "masked_company_id", "model_id", "score", "label"}
+    assert analysis, "analysis.json is empty"
+    for row in analysis[:50]:
+        assert required <= set(row), f"analysis row is missing fields: {required - set(row)}"
+    models = {row["model_id"] for row in analysis}
+    assert {"B0", "B6"} <= models
+
+
+def test_replication_cohort_has_one_observation_per_company() -> None:
+    cohort = json.loads((REPLICATION_DIR / "cohort.json").read_text(encoding="utf-8"))
+    assert len({row["cik"] for row in cohort}) == len(cohort)
+    assert len({row["observation_id"] for row in cohort}) == len(cohort)
+    assert len(cohort) == 2000
+
+
+def test_replication_cohort_is_disjoint_from_the_published_development_corpus() -> None:
+    """The frozen cohort algorithm excludes the historical development and public-pilot
+    companies; the published cohort must show that exclusion held."""
+    cohort = json.loads((REPLICATION_DIR / "cohort.json").read_text(encoding="utf-8"))
+    cohort_ciks = {str(row["cik"]).zfill(10) for row in cohort}
+    development = json.loads(
+        (REPO_ROOT / "research" / "empirical_v1" / "numeric_corpus.json").read_text(encoding="utf-8")
+    )
+    development_ciks = {str(row["cik"]).zfill(10) for row in development}
+    public = json.loads(
+        (REPO_ROOT / "research" / "benchmark" / "public_company_observations.json").read_text(encoding="utf-8")
+    )
+    public_ciks = {
+        str(row.get("cik", "")).zfill(10) for row in public.get("examples", []) if row.get("cik")
+    }
+    assert not (cohort_ciks & development_ciks), "cohort overlaps the historical development corpus"
+    assert not (cohort_ciks & public_ciks), "cohort overlaps the public pilot"
+
+
+def test_replication_rows_reproduce_the_published_real_data_inference() -> None:
+    """Recompute the audit's headline real-data statistics from the published rows."""
+    analysis = json.loads((REPLICATION_DIR / "analysis.json").read_text(encoding="utf-8"))
+    published = json.loads((AUDIT_DIR / "replication_crosscheck.json").read_text(encoding="utf-8"))
+
+    labels = {row["observation_id"]: int(row["label"]) for row in analysis}
+    by_model: dict[str, dict[str, float]] = {}
+    for row in analysis:
+        by_model.setdefault(row["model_id"], {})[row["observation_id"]] = row["score"]
+    common = sorted(set(by_model["B0"]) & set(by_model["B6"]))
+    rows = [
+        PairedObservation(
+            cluster_id=observation_id,
+            label=labels[observation_id],
+            reference_score=by_model["B0"][observation_id],
+            challenger_score=by_model["B6"][observation_id],
+        )
+        for observation_id in common
+        if labels[observation_id] in (0, 1)
+    ]
+
+    assert len(rows) == published["cohort_provenance"]["n_pairs"]
+    assert sum(row.label for row in rows) == published["cohort_provenance"]["events"]
+    assert marginal_metric(rows, "reference", "auroc") == pytest.approx(published["marginals"]["B0_auroc"], abs=1e-12)
+    assert marginal_metric(rows, "challenger", "auroc") == pytest.approx(published["marginals"]["B6_auroc"], abs=1e-12)
+    assert delta_metric(rows, "auroc") == pytest.approx(published["audit_independent_implementation"]["delta_auroc"], abs=1e-12)
+
+    delong = delong_paired(rows)
+    expected = published["audit_independent_implementation"]["delong"]
+    assert delong["observed_delta"] == pytest.approx(expected["observed_delta"], abs=1e-12)
+    assert delong["standard_error_delta"] == pytest.approx(expected["standard_error_delta"], abs=1e-12)
+    assert delong["p_value"] == pytest.approx(expected["p_value"], abs=1e-12)
+    assert delong["p_value"] < 0.05, "the published real-data inference must reject H0_equality"
+
+
+def test_verifier_reports_a_pass_on_the_published_artifacts() -> None:
+    """The verifier is the artifact a reviewer runs; it must actually pass."""
+    import subprocess
+
+    result = subprocess.run(
+        [sys.executable, str(AUDIT_DIR / "verify_audit.py"), "--quick"],
+        capture_output=True,
+        text=True,
+        cwd=str(REPO_ROOT),
+    )
+    assert result.returncode == 0, f"verify_audit.py failed:\n{result.stdout}\n{result.stderr}"
+    assert "checks passed" in result.stdout
+    assert "FAIL" not in result.stdout

@@ -1,0 +1,79 @@
+{
+ "description": "Artifacts of the independent re-execution of the frozen FinRisk v0.3.4 E4-A pipeline, published so that every statistic in replication_crosscheck.json can be recomputed without any unpublished input.",
+ "files": [
+  {
+   "bytes": 1420023,
+   "encoding": "canonical JSON, UTF-8, LF",
+   "path": "research/e4_statistical_audit/replication/analysis.json",
+   "sha256": "eaf80c00e53069a2a4d001c4f1f98232ed72bbc7c83e84d131bb81c4aad42cde"
+  },
+  {
+   "bytes": 919768,
+   "encoding": "canonical JSON, UTF-8, LF",
+   "path": "research/e4_statistical_audit/replication/cohort.json",
+   "sha256": "3270f108518fad9599e8902c1143d2b36842480579b82a315c0633b0a3803be1"
+  },
+  {
+   "bytes": 363,
+   "encoding": "canonical JSON, UTF-8, LF",
+   "path": "research/e4_statistical_audit/replication/cohort_report.json",
+   "sha256": "f6281c8a7fff04dc72e48dff36530dce98a5fe1184a99062f608d167281f2899"
+  },
+  {
+   "bytes": 1389,
+   "encoding": "canonical JSON, UTF-8, LF",
+   "path": "research/e4_statistical_audit/replication/feature_report.json",
+   "sha256": "26872ab2eaca745aacb02cffc5ae158a16ca1e6934d9b295c54c9022bb0fd73f"
+  },
+  {
+   "bytes": 1171459,
+   "encoding": "gzip (mtime=0), contains canonical JSON, UTF-8, LF",
+   "path": "research/e4_statistical_audit/replication/features.json.gz",
+   "sha256": "62e2d3cc1c8fe6152ad6ea1aabd2a4a85863411368effb6aa8769d31ff599801",
+   "uncompressed_bytes": 13929067
+  },
+  {
+   "bytes": 5025,
+   "encoding": "canonical JSON, UTF-8, LF",
+   "path": "research/e4_statistical_audit/replication/input_inventory.json",
+   "sha256": "f06f1804bc83c165ce211ae4ae88985ffe00105ab50786e2df349e30bc5b98d7"
+  },
+  {
+   "bytes": 3834066,
+   "encoding": "canonical JSON, UTF-8, LF",
+   "path": "research/e4_statistical_audit/replication/numeric_predictions.json",
+   "sha256": "c02a5d758f9166bdda2965a00fbd496fb8d21f35ad09a208817011dd5e87cb39"
+  },
+  {
+   "bytes": 606,
+   "encoding": "canonical JSON, UTF-8, LF",
+   "path": "research/e4_statistical_audit/replication/numeric_report.json",
+   "sha256": "075b052fab5bbcefc1affbe66672067ba741f5a2e2b356c21884bae62320c8dd"
+  },
+  {
+   "bytes": 998,
+   "encoding": "canonical JSON, UTF-8, LF",
+   "path": "research/e4_statistical_audit/replication/outcome_report.json",
+   "sha256": "a791173fc145b283e812ba32d5df73ef0dbfd2455a5ddb57b065f9a32d9d75b0"
+  },
+  {
+   "bytes": 1350056,
+   "encoding": "canonical JSON, UTF-8, LF",
+   "path": "research/e4_statistical_audit/replication/outcomes.json",
+   "sha256": "15acb5d1a89f60deb212c8dc17cfb423942a37e7b9c403d98a047ba7ae99bab2"
+  },
+  {
+   "bytes": 2823,
+   "encoding": "canonical JSON, UTF-8, LF",
+   "path": "research/e4_statistical_audit/replication/summaries.json",
+   "sha256": "2523cc579de2fffd51120af2bd2b4b21ce224e0ff68763ebc17c8030e56b7ac0"
+  }
+ ],
+ "provenance": {
+  "cohort_deviation": "previous_270.json is unpublished, so the 270-CIK exclusion could not be applied. The candidate pool is 229 usable candidates larger than E4's (3888 vs 3659) and the stratified sample therefore differs in composition. This is an independent re-execution, not a re-derivation of E4.",
+  "inputs": "8 SEC FSDS archives and 3 Zenodo files, each verified against the frozen data_hashes and ZENODO_MD5",
+  "measured_overlap_with_e4": "47 of 50 sampled E4-B companies are present in this cohort, proved by reproducing their published packet hashes",
+  "pipeline": "frozen v0.3.4 scoring library; E4 harness from HEAD e2d4133",
+  "scoring_library_identity": "byte-identical between the E4-locked commit 4273b070 and HEAD e2d4133; the only backend change across that range is the addition of the E4 harness"
+ }
+}
