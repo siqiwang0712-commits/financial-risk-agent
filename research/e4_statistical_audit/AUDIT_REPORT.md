@@ -299,7 +299,74 @@ future study reuses them for power planning.
 
 ---
 
-## 7. Findings register
+## 7. Calibration cross-check
+
+E4's post-hoc audit published descriptive calibration diagnostics and the project uses them
+as evidence that every score is `UNCALIBRATED`. Source: `calibration_crosscheck.json`.
+E4's figures are on its own 674 verified observations; the audit recomputes them on the
+published 675-observation replication cohort.
+
+| Diagnostic | E4 (n = 674) | Replication (n = 675) |
+|---|---:|---:|
+| B0 ECE | 0.16724 | 0.16985 |
+| B6 ECE | 0.12956 | 0.12788 |
+| B0 Brier | 0.22810 | 0.22638 |
+| B6 Brier | 0.20870 | 0.20814 |
+| B0 calibration-in-the-large | −0.06976 | −0.06640 |
+| B6 calibration-in-the-large | −0.07878 | −0.07532 |
+| B0 calibration slope | 0.06109 | 0.05802 |
+| B6 calibration slope | 0.09096 | 0.08467 |
+
+Every figure reproduces to within about 0.006, so E4's published calibration diagnostics
+are confirmed.
+
+### 7.1 The calibration slope is converged but ill-conditioned — do not lead with it
+
+A slope of 0.06 alongside an AUROC of 0.68 looks contradictory, and the obvious suspicion is
+that E4's hand-rolled optimiser (`e4_posthoc._calibration_slope`: 1500 fixed-rate gradient
+steps, no convergence test) had not converged. **It had.** The gradient norm at the frozen
+solution is `3.09e-05` (B0) and `2.73e-05` (B6), and an independent Newton–Raphson (IRLS) fit
+agrees with the frozen slope to four decimal places (`ratio = 0.99983` / `0.99986`). The
+published slope is a real fit.
+
+It is nonetheless a **poor diagnostic for these scores**, and the audit recommends not
+leading with it. The reason is visible in the score support:
+
+| | B0 | B6 |
+|---|---:|---:|
+| distinct score values | **11** | 39 |
+| observations at score exactly 0 | 285 / 675 | 175 / 675 |
+| event rate at score 0 | **26.0%** | **22.3%** |
+| reliability curve monotone? | **no** (4 drops) | **no** (2 drops) |
+| top-bin event rate vs the bin below | 0.632 vs 0.713 | 0.643 vs 0.806 |
+
+B0 is a mean of five threshold breaches, so it takes only eleven distinct values and puts
+42% of the sample at exactly zero — where the event rate is 26%, not 0%. A single
+logistic-linear recalibration cannot represent a coarse step function whose mass sits at an
+extreme with a non-zero response rate, so the fitted slope collapses towards zero even though
+the score ranks well. The slope is measuring the inadequacy of the recalibration model, not
+the absence of signal.
+
+### 7.2 What the evidence for `UNCALIBRATED` actually is
+
+The defensible, easily-communicated facts are these, and they are stronger than the slope:
+
+1. **A score of zero does not mean no risk.** 285 of 675 companies scored exactly 0 on B0,
+   and 26.0% of them deteriorated within the window. For B6 it is 22.3%.
+2. **The reliability curve is non-monotone.** For B0 the highest bin has a *lower* event rate
+   (0.632) than the bin below it (0.713), so a higher score is not monotonically more risky.
+3. **Mean score sits below prevalence**: 0.2818 vs 0.3487 (B0) and 0.2728 vs 0.3487 (B6), so
+   both scores systematically understate the base rate.
+4. **ECE is large**: 0.170 (B0) and 0.128 (B6).
+
+Nothing here calibrates anything, and the replication *strengthens* rather than weakens the
+project's `UNCALIBRATED` position. The finding is about which number to cite: the slope is
+the one most likely to be misread, and the support diagnostics are the ones that carry the
+argument.
+
+---
+
+## 8. Findings register
 
 | ID | Severity | Finding | Fixable now? |
 |---|---|---|---|
@@ -313,6 +380,7 @@ future study reuses them for power planning.
 | E4S-08 | MODERATE | E4's score distribution is not well described by a Gaussian copula: its published dispersion ratio (permutation null / bootstrap) cannot be reproduced by that model at any correlation | no — informational; affects future power planning |
 | E4S-09 | MINOR | E4's bootstrap uses a nearest-rank percentile; the standard is linear interpolation. The two differ measurably at 5,000 replicates | yes — report both |
 | E4S-10 | MINOR | With `core.autocrlf=true`, a Windows checkout produces CRLF working-tree copies of `research/e4/public/*.json` and `research/e4/protocol/*`, which carry no `eol=lf` attribute (unlike `research/results/public_v1/*`) | yes — extend `.gitattributes` |
+| E4S-11 | MODERATE | The published calibration slope (0.061 / 0.091) is a converged but **ill-conditioned** diagnostic for these scores: B0 takes 11 distinct values with 42% of mass at exactly 0, where the event rate is 26%. Cite the support diagnostics and ECE/CITL instead — the slope invites the misreading that the score carries no signal | yes — this audit adds the support diagnostics |
 
 A hypothesis the audit tested and **did not** confirm is recorded rather than dropped: the
 expectation that the implemented permutation test would be materially anti-conservative is
@@ -323,7 +391,7 @@ package as explicit requirements.
 
 ---
 
-## 8. What this means for E4 and for E5
+## 9. What this means for E4 and for E5
 
 **For E4.** The narrow P1 claim survives, and now on three independent footing: the frozen
 bootstrap, a 20,000-replicate BCa bootstrap, and a paired DeLong test — all on real data at
@@ -345,7 +413,7 @@ override.
 
 ---
 
-## 9. Limitations of this audit
+## 10. Limitations of this audit
 
 - The real-data cross-check runs on a **~94%-overlapping cohort**, not on E4's exact rows.
   Its point estimate (+0.02636) differs from E4's published +0.03031 by 0.004, which is well
@@ -365,10 +433,11 @@ override.
 - The audit does not re-derive E4's outcome labels, does not attempt to reproduce the Agent
   arm (E4-B), and makes no claim about the Codex comparator.
 - No calibration claim is made anywhere: every E4 score remains `UNCALIBRATED`.
+- The calibration cross-check confirms E4's published figures but recommends replacing the calibration *slope* with the support diagnostics when making the `UNCALIBRATED` case (§7).
 
 ---
 
-## 10. Artifacts
+## 11. Artifacts
 
 | File | Contents |
 |---|---|
@@ -383,6 +452,8 @@ override.
 | `inference_crosscheck.json` | method-by-method verdict table and the `CONSISTENT_SUPPORT` determination |
 | `method_calibration.json` | empirical size and power of each procedure under `H0_equality` |
 | `replication_crosscheck.json` | all methods on the independent re-execution's real paired data |
+| `calibration_crosscheck.py` | recomputes E4's calibration diagnostics and diagnoses the score support |
+| `calibration_crosscheck.json` | E4's published calibration figures beside the replication's, plus the support diagnostics and the converged-optimiser check |
 | `replication/` | the published cohort, features, predictions, labels, paired analysis rows and manifest, plus `README.md` |
 | `e4_frozen_artifact_manifest.json` | SHA-256 of every published E4 artifact, proving non-mutation |
 | `e4s_stats.py` | independent statistical primitives |

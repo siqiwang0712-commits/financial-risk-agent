@@ -1,0 +1,343 @@
+{
+ "calibration_slope_finding": {
+  "B0": {
+   "auroc_implies_the_score_is_informative": true,
+   "gradient_norm_at_frozen_solution": 3.085775029257924e-05,
+   "note": "The frozen optimizer is converged and agrees with Newton-Raphson, so the published slope is a real fit, not a numerical artefact. It is nevertheless an ill-conditioned diagnostic for these scores: the support is coarse with a large spike at zero whose event rate is far above zero, which a single logistic-linear recalibration cannot represent. Use the support diagnostics and ECE/CITL to make the uncalibrated case, not the slope alone.",
+   "ratio_newton_over_frozen": 0.9998307648349875,
+   "slope_frozen_optimizer": 0.058017316538254246,
+   "slope_newton": 0.05800749796811631,
+   "verdict": "OPTIMIZER_CONVERGED"
+  },
+  "B6": {
+   "auroc_implies_the_score_is_informative": true,
+   "gradient_norm_at_frozen_solution": 2.7294382993343836e-05,
+   "note": "The frozen optimizer is converged and agrees with Newton-Raphson, so the published slope is a real fit, not a numerical artefact. It is nevertheless an ill-conditioned diagnostic for these scores: the support is coarse with a large spike at zero whose event rate is far above zero, which a single logistic-linear recalibration cannot represent. Use the support diagnostics and ECE/CITL to make the uncalibrated case, not the slope alone.",
+   "ratio_newton_over_frozen": 0.999855504262328,
+   "slope_frozen_optimizer": 0.08466555527243255,
+   "slope_newton": 0.08465332146056806,
+   "verdict": "OPTIMIZER_CONVERGED"
+  }
+ },
+ "e4_published": {
+  "B0": {
+   "brier": 0.2281029508731619,
+   "calibration_in_the_large": -0.06975766567551928,
+   "calibration_regression": {
+    "intercept": -0.3314030072500083,
+    "slope": 0.06109449288769317
+   },
+   "ece": 0.16723541047759644,
+   "event_prevalence": 0.3486646884272997,
+   "events": 235,
+   "mean_score": 0.2789070227517804,
+   "n": 674
+  },
+  "B6": {
+   "brier": 0.2087019607237978,
+   "calibration_in_the_large": -0.07877720079287831,
+   "calibration_regression": {
+    "intercept": -0.30481686697028376,
+    "slope": 0.09095850148639341
+   },
+   "ece": 0.1295561325430267,
+   "event_prevalence": 0.3486646884272997,
+   "events": 235,
+   "mean_score": 0.2698874876344214,
+   "n": 674
+  }
+ },
+ "evidence_status": "POST_E4_STATISTICAL_AUDIT",
+ "reliability": "UNCALIBRATED",
+ "replication": {
+  "B0": {
+   "brier": 0.22637901234488889,
+   "calibration_in_the_large": -0.06639506172651854,
+   "calibration_regression_frozen_optimizer": {
+    "gradient_norm": 3.085775029257924e-05,
+    "intercept": -0.35450212056558095,
+    "learning_rate": 0.03,
+    "slope": 0.058017316538254246,
+    "steps": 1500
+   },
+   "calibration_regression_newton": {
+    "gradient_norm": 4.705399307423445e-16,
+    "intercept": -0.35468623814507866,
+    "slope": 0.05800749796811631
+   },
+   "ece": 0.16985185184474072,
+   "event_prevalence": 0.34814814814814815,
+   "events": 235,
+   "mean_score": 0.2817530864216296,
+   "n": 675,
+   "non_empty_bins": 9,
+   "reliability_bins": [
+    {
+     "event_rate": 0.2596491228070175,
+     "lower": 0.0,
+     "mean_score": 0.0,
+     "n": 285,
+     "upper": 0.1
+    },
+    {
+     "event_rate": 0.12195121951219512,
+     "lower": 0.2,
+     "mean_score": 0.23211382113821138,
+     "n": 123,
+     "upper": 0.3
+    },
+    {
+     "event_rate": 0.2830188679245283,
+     "lower": 0.3,
+     "mean_score": 0.3333333333,
+     "n": 53,
+     "upper": 0.4
+    },
+    {
+     "event_rate": 0.23076923076923078,
+     "lower": 0.4,
+     "mean_score": 0.4,
+     "n": 13,
+     "upper": 0.5
+    },
+    {
+     "event_rate": 0.5185185185185185,
+     "lower": 0.5,
+     "mean_score": 0.5,
+     "n": 54,
+     "upper": 0.6
+    },
+    {
+     "event_rate": 0.7127659574468085,
+     "lower": 0.6,
+     "mean_score": 0.664539007124468,
+     "n": 94,
+     "upper": 0.7
+    },
+    {
+     "event_rate": 0.5714285714285714,
+     "lower": 0.7,
+     "mean_score": 0.75,
+     "n": 14,
+     "upper": 0.8
+    },
+    {
+     "event_rate": 1,
+     "lower": 0.8,
+     "mean_score": 0.8,
+     "n": 1,
+     "upper": 0.9
+    },
+    {
+     "event_rate": 0.631578947368421,
+     "lower": 0.9,
+     "mean_score": 1.0,
+     "n": 38,
+     "upper": 1.0
+    }
+   ],
+   "score_quantiles": {
+    "at_one": 38,
+    "at_zero": 285,
+    "max": 1.0,
+    "min": 0.0,
+    "p01": 0.0,
+    "p25": 0.0,
+    "p50": 0.25,
+    "p75": 0.5,
+    "p99": 1.0
+   },
+   "support_diagnostics": {
+    "distinct_score_values": 11,
+    "event_rate_at_lowest_score": 0.2596491228070175,
+    "event_rate_at_score_zero": 0.2596491228070175,
+    "interpretation": "A score of zero is followed by deterioration in a substantial share of cases, and the reliability curve is not monotone, so neither the score nor a logistic recalibration of it can be read as a probability. The near-zero calibration slope reflects the coarse, spike-at-zero support rather than an absence of ranking signal.",
+    "observations_at_lowest_score": 285,
+    "observations_at_score_zero": 285,
+    "reliability_curve_drops": [
+     {
+      "from_lower": 0.0,
+      "from_rate": 0.2596491228070175,
+      "to_lower": 0.2,
+      "to_rate": 0.12195121951219512
+     },
+     {
+      "from_lower": 0.3,
+      "from_rate": 0.2830188679245283,
+      "to_lower": 0.4,
+      "to_rate": 0.23076923076923078
+     },
+     {
+      "from_lower": 0.6,
+      "from_rate": 0.7127659574468085,
+      "to_lower": 0.7,
+      "to_rate": 0.5714285714285714
+     },
+     {
+      "from_lower": 0.8,
+      "from_rate": 1,
+      "to_lower": 0.9,
+      "to_rate": 0.631578947368421
+     }
+    ],
+    "reliability_curve_monotone": false,
+    "support_examples": [
+     0.0,
+     0.2,
+     0.25,
+     0.3333333333,
+     0.4,
+     0.5,
+     0.6,
+     0.6666666667,
+     0.75,
+     0.8,
+     1.0
+    ]
+   }
+  },
+  "B6": {
+   "brier": 0.2081392489713856,
+   "calibration_in_the_large": -0.07532098765599998,
+   "calibration_regression_frozen_optimizer": {
+    "gradient_norm": 2.7294382993343836e-05,
+    "intercept": -0.3393624388045087,
+    "learning_rate": 0.03,
+    "slope": 0.08466555527243255,
+    "steps": 1500
+   },
+   "calibration_regression_newton": {
+    "gradient_norm": 2.805498495430408e-17,
+    "intercept": -0.33952367717078513,
+    "slope": 0.08465332146056806
+   },
+   "ece": 0.12787654321096295,
+   "event_prevalence": 0.34814814814814815,
+   "events": 235,
+   "mean_score": 0.27282716049214817,
+   "n": 675,
+   "non_empty_bins": 10,
+   "reliability_bins": [
+    {
+     "event_rate": 0.2151394422310757,
+     "lower": 0.0,
+     "mean_score": 0.022244355904382472,
+     "n": 251,
+     "upper": 0.1
+    },
+    {
+     "event_rate": 0.21348314606741572,
+     "lower": 0.1,
+     "mean_score": 0.1669943820269663,
+     "n": 89,
+     "upper": 0.2
+    },
+    {
+     "event_rate": 0.2976190476190476,
+     "lower": 0.2,
+     "mean_score": 0.24776785713690475,
+     "n": 84,
+     "upper": 0.3
+    },
+    {
+     "event_rate": 0.23636363636363636,
+     "lower": 0.3,
+     "mean_score": 0.35265151514909093,
+     "n": 55,
+     "upper": 0.4
+    },
+    {
+     "event_rate": 0.2692307692307692,
+     "lower": 0.4,
+     "mean_score": 0.43942307691923077,
+     "n": 26,
+     "upper": 0.5
+    },
+    {
+     "event_rate": 0.5909090909090909,
+     "lower": 0.5,
+     "mean_score": 0.521780303030303,
+     "n": 66,
+     "upper": 0.6
+    },
+    {
+     "event_rate": 0.7608695652173914,
+     "lower": 0.6,
+     "mean_score": 0.6413043478347826,
+     "n": 46,
+     "upper": 0.7
+    },
+    {
+     "event_rate": 0.8064516129032258,
+     "lower": 0.7,
+     "mean_score": 0.7491935483903226,
+     "n": 31,
+     "upper": 0.8
+    },
+    {
+     "event_rate": 0.6428571428571429,
+     "lower": 0.8,
+     "mean_score": 0.8690476190428571,
+     "n": 14,
+     "upper": 0.9
+    },
+    {
+     "event_rate": 0.6923076923076923,
+     "lower": 0.9,
+     "mean_score": 0.980769230776923,
+     "n": 13,
+     "upper": 1.0
+    }
+   ],
+   "score_quantiles": {
+    "at_one": 10,
+    "at_zero": 175,
+    "max": 1.0,
+    "min": 0.0,
+    "p01": 0.0,
+    "p25": 0.0,
+    "p50": 0.1875,
+    "p75": 0.5,
+    "p99": 1.0
+   },
+   "support_diagnostics": {
+    "distinct_score_values": 39,
+    "event_rate_at_lowest_score": 0.22285714285714286,
+    "event_rate_at_score_zero": 0.22285714285714286,
+    "interpretation": "A score of zero is followed by deterioration in a substantial share of cases, and the reliability curve is not monotone, so neither the score nor a logistic recalibration of it can be read as a probability. The near-zero calibration slope reflects the coarse, spike-at-zero support rather than an absence of ranking signal.",
+    "observations_at_lowest_score": 175,
+    "observations_at_score_zero": 175,
+    "reliability_curve_drops": [
+     {
+      "from_lower": 0.2,
+      "from_rate": 0.2976190476190476,
+      "to_lower": 0.3,
+      "to_rate": 0.23636363636363636
+     },
+     {
+      "from_lower": 0.7,
+      "from_rate": 0.8064516129032258,
+      "to_lower": 0.8,
+      "to_rate": 0.6428571428571429
+     }
+    ],
+    "reliability_curve_monotone": false,
+    "support_examples": [
+     0.0,
+     0.0625,
+     0.0833333333,
+     0.125,
+     0.15,
+     0.1666666667,
+     0.1875,
+     0.2125,
+     0.2333333333,
+     0.25,
+     0.2708333333,
+     0.275
+    ]
+   }
+  }
+ },
+ "scope": "Descriptive calibration diagnostics recomputed on the published replication cohort, compared against the values E4 published on its own 674 verified observations. Nothing here calibrates a score."
+}

@@ -18,6 +18,7 @@ import sys
 import tempfile
 from pathlib import Path
 
+import calibration_crosscheck
 import pytest
 import verify_previous_270
 from e4s_stats import (
@@ -604,3 +605,98 @@ def test_committed_verification_result_is_a_full_replicate_run() -> None:
         "the committed verification result must come from a full 20000-replicate run"
     )
     assert not [check for check in payload["checks"] if check["status"] != "PASS"]
+
+
+# ----------------------------------------------------------------------------------
+# Calibration cross-check
+# ----------------------------------------------------------------------------------
+
+CALIBRATION_JSON = AUDIT_DIR / "calibration_crosscheck.json"
+
+
+def test_calibration_crosscheck_artifact_is_present() -> None:
+    payload = json.loads(CALIBRATION_JSON.read_text(encoding="utf-8"))
+    assert payload["evidence_status"] == "POST_E4_STATISTICAL_AUDIT"
+    assert payload["reliability"] == "UNCALIBRATED"
+    for model in ("B0", "B6"):
+        assert model in payload["replication"]
+        assert model in payload["e4_published"]
+
+
+def test_expected_calibration_error_matches_the_frozen_formula() -> None:
+    """E4's ECE is sum n_b * |mean_score_b - event_rate_b| / n over fixed [i/10,(i+1)/10) bins."""
+    labels = [1, 1, 0, 0]
+    scores = [0.95, 0.85, 0.05, 0.15]
+    # Four distinct bins, each holding exactly one observation:
+    #   [0.0,0.1): score 0.05, label 0 -> |0.05 - 0.0| = 0.05
+    #   [0.1,0.2): score 0.15, label 0 -> |0.15 - 0.0| = 0.15
+    #   [0.8,0.9): score 0.85, label 1 -> |0.85 - 1.0| = 0.15
+    #   [0.9,1.0): score 0.95, label 1 -> |0.95 - 1.0| = 0.05
+    expected = (0.05 + 0.15 + 0.15 + 0.05) / 4
+    assert calibration_crosscheck.expected_calibration_error(labels, scores) == pytest.approx(expected)
+
+    # A perfectly separating score with a single bin still incurs no ECE only when the bin's
+    # mean score equals its event rate; two scores in one bin must average.
+    assert calibration_crosscheck.expected_calibration_error([1, 0], [0.9, 0.9]) == pytest.approx(0.4)
+
+
+def test_replication_reproduces_e4s_published_calibration_figures() -> None:
+    """The published calibration diagnostics must be independently reproducible."""
+    payload = json.loads(CALIBRATION_JSON.read_text(encoding="utf-8"))
+    tolerances = {"B0": 0.01, "B6": 0.01}
+    for model, tolerance in tolerances.items():
+        published = payload["e4_published"][model]
+        replicated = payload["replication"][model]
+        assert replicated["ece"] == pytest.approx(published["ece"], abs=tolerance), f"{model} ECE"
+        assert replicated["brier"] == pytest.approx(published["brier"], abs=tolerance), f"{model} Brier"
+        assert replicated["calibration_in_the_large"] == pytest.approx(
+            published["calibration_in_the_large"], abs=tolerance
+        ), f"{model} CITL"
+        assert replicated["calibration_regression_frozen_optimizer"]["slope"] == pytest.approx(
+            published["calibration_regression"]["slope"], abs=tolerance
+        ), f"{model} calibration slope"
+
+
+def test_calibration_slope_is_converged_not_an_optimizer_artefact() -> None:
+    """The audit's first suspicion was wrong; this pins the refutation.
+
+    A slope near 0.06 alongside an AUROC of 0.68 looks like an unconverged optimiser. It is
+    not: the gradient at the frozen solution is ~3e-05 and Newton-Raphson agrees.
+    """
+    payload = json.loads(CALIBRATION_JSON.read_text(encoding="utf-8"))
+    for model in ("B0", "B6"):
+        finding = payload["calibration_slope_finding"][model]
+        assert finding["verdict"] == "OPTIMIZER_CONVERGED"
+        assert finding["gradient_norm_at_frozen_solution"] < 1e-4
+        assert finding["ratio_newton_over_frozen"] == pytest.approx(1.0, abs=0.01)
+        assert "ill-conditioned" in finding["note"]
+
+
+def test_calibration_slope_is_ill_conditioned_by_the_score_support() -> None:
+    """The explanation for the small slope: a coarse support with a spike at zero."""
+    payload = json.loads(CALIBRATION_JSON.read_text(encoding="utf-8"))
+    b0 = payload["replication"]["B0"]["support_diagnostics"]
+    assert b0["distinct_score_values"] <= 20, "B0 is a mean of five threshold breaches"
+    assert b0["observations_at_score_zero"] > 0.3 * payload["replication"]["B0"]["n"]
+    assert b0["event_rate_at_score_zero"] > 0.15, (
+        "a score of zero must not mean no risk; that is the real UNCALIBRATED evidence"
+    )
+    assert b0["reliability_curve_monotone"] is False
+
+
+def test_calibration_rows_reproduce_the_published_diagnostics() -> None:
+    """Recompute the diagnostics from the published rows and match the artifact."""
+    payload = json.loads(CALIBRATION_JSON.read_text(encoding="utf-8"))
+    rows = calibration_crosscheck.load_paired_rows()
+    for model in ("B0", "B6"):
+        labels, scores = rows[model]
+        recorded = payload["replication"][model]
+        assert len(labels) == recorded["n"]
+        assert sum(labels) == recorded["events"]
+        assert calibration_crosscheck.expected_calibration_error(labels, scores) == pytest.approx(
+            recorded["ece"], abs=1e-12
+        )
+        assert calibration_crosscheck.brier(labels, scores) == pytest.approx(recorded["brier"], abs=1e-12)
+        assert calibration_crosscheck.calibration_in_the_large(labels, scores) == pytest.approx(
+            recorded["calibration_in_the_large"], abs=1e-12
+        )
