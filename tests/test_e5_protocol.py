@@ -7,32 +7,19 @@ They deliberately do not check for study results, because no E5 result exists.
 
 from __future__ import annotations
 
-import importlib.util
 import json
-import sys
+import random
 from pathlib import Path
 
+import power_analysis
 import pytest
+import verify_freeze_chain
+from e4s_stats import delong_paired
+from method_calibration import generate_paired
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 E5_DIR = REPO_ROOT / "research" / "e5"
 PROTOCOL_DIR = E5_DIR / "protocol"
-AUDIT_DIR = REPO_ROOT / "research" / "e4_statistical_audit"
-
-sys.path.insert(0, str(AUDIT_DIR))
-sys.path.insert(0, str(PROTOCOL_DIR))
-
-
-def _load(name: str, path: Path):
-    spec = importlib.util.spec_from_file_location(name, path)
-    module = importlib.util.module_from_spec(spec)
-    sys.modules[name] = module
-    spec.loader.exec_module(module)
-    return module
-
-
-verify_freeze_chain = _load("verify_freeze_chain", PROTOCOL_DIR / "verify_freeze_chain.py")
-power_analysis = _load("e5_power_analysis", PROTOCOL_DIR / "power_analysis.py")
 
 
 # ----------------------------------------------------------------------------------
@@ -191,17 +178,11 @@ def test_analytic_power_increases_with_score_correlation() -> None:
 
 def test_analytic_power_agrees_with_monte_carlo() -> None:
     """The analytic approximation must track the simulation, or one of them is wrong."""
-    from e4s_stats import delong_paired
-    from method_calibration import generate_paired
-    import random
-
     selected, delta, correlation = 1200, 0.03, 0.90
-    analytic = power_analysis.analytic_power(
-        int(round(selected * 0.60 * 0.99)), delta, correlation
-    )
+    n_evaluable = round(selected * 0.60 * 0.99)
+    analytic = power_analysis.analytic_power(n_evaluable, delta, correlation)
     assert analytic is not None
-    n_evaluable = int(round(selected * 0.60 * 0.99))
-    n_events = int(round(n_evaluable * power_analysis.PLANNING["e4_event_prevalence"]))
+    n_events = round(n_evaluable * power_analysis.PLANNING["e4_event_prevalence"])
     n_non_events = n_evaluable - n_events
     rejections = 0
     replicates = 150

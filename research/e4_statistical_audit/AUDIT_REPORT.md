@@ -132,6 +132,11 @@ python research/e4_statistical_audit/verify_audit.py          # 20000 replicates
 python research/e4_statistical_audit/verify_audit.py --quick  # 2000 replicates
 ```
 
+The verifier writes `verification_result.json` by default. Use `--out <path>` to send it
+elsewhere — the test suite does exactly that, so a quick run inside `pytest` cannot
+silently replace the committed 20,000-replicate result with a 2,000-replicate one. A test
+pins the committed file at 20,000 replicates.
+
 Publishing the cohort with CIKs is deliberate: it makes the sample checkable against public
 SEC filings, and it lets anyone holding the 270-CIK list reconstruct E4's exact cohort and
 compute the true overlap rather than the 47/50 estimate.

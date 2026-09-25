@@ -12,29 +12,15 @@ from __future__ import annotations
 
 import hashlib
 import json
-import math
 import random
+import subprocess
 import sys
+import tempfile
 from pathlib import Path
 
 import pytest
-
-REPO_ROOT = Path(__file__).resolve().parents[1]
-AUDIT_DIR = REPO_ROOT / "research" / "e4_statistical_audit"
-sys.path.insert(0, str(AUDIT_DIR))
-
-
-def _load_module(name: str, path: Path):
-    """Load a standalone audit script by path (they are scripts, not a package)."""
-    import importlib.util
-
-    spec = importlib.util.spec_from_file_location(name, path)
-    module = importlib.util.module_from_spec(spec)
-    sys.modules[name] = module
-    spec.loader.exec_module(module)
-    return module
-
-from e4s_stats import (  # noqa: E402
+import verify_previous_270
+from e4s_stats import (
     PairedObservation,
     average_precision,
     cluster_bootstrap,
@@ -53,14 +39,16 @@ from e4s_stats import (  # noqa: E402
     roc_auc_bruteforce,
     score_swap_randomization,
 )
-from method_calibration import (  # noqa: E402
+from method_calibration import (
     E4_AUROC_B0,
     E4_AUROC_B6,
     calibrate,
     generate_paired,
     implied_sd_from_interval,
-    realised_correlation,
 )
+
+REPO_ROOT = Path(__file__).resolve().parents[1]
+AUDIT_DIR = REPO_ROOT / "research" / "e4_statistical_audit"
 
 
 # ----------------------------------------------------------------------------------
@@ -515,14 +503,22 @@ def test_replication_rows_reproduce_the_published_real_data_inference() -> None:
 
 def test_verifier_reports_a_pass_on_the_published_artifacts() -> None:
     """The verifier is the artifact a reviewer runs; it must actually pass."""
-    import subprocess
-
-    result = subprocess.run(
-        [sys.executable, str(AUDIT_DIR / "verify_audit.py"), "--quick"],
-        capture_output=True,
-        text=True,
-        cwd=str(REPO_ROOT),
-    )
+    # Write the result to a scratch path: a quick run must not overwrite the committed
+    # 20000-replicate verification_result.json.
+    with tempfile.TemporaryDirectory() as scratch:
+        result = subprocess.run(
+            [
+                sys.executable,
+                str(AUDIT_DIR / "verify_audit.py"),
+                "--quick",
+                "--out",
+                str(Path(scratch) / "verification_result.json"),
+            ],
+            capture_output=True,
+            text=True,
+            cwd=str(REPO_ROOT),
+            check=False,
+        )
     assert result.returncode == 0, f"verify_audit.py failed:\n{result.stdout}\n{result.stderr}"
     assert "checks passed" in result.stdout
     assert "FAIL" not in result.stdout
@@ -531,9 +527,6 @@ def test_verifier_reports_a_pass_on_the_published_artifacts() -> None:
 # ----------------------------------------------------------------------------------
 # previous_270 recovery tooling
 # ----------------------------------------------------------------------------------
-
-verify_previous_270 = _load_module("verify_previous_270", AUDIT_DIR / "verify_previous_270.py")
-
 
 def test_pinned_previous_270_hash_matches_the_documented_value() -> None:
     """The blocker is only meaningful if the pinned constant is the one the audit cites.
@@ -596,3 +589,18 @@ def test_cohort_comparison_counts_shared_and_distinct_companies() -> None:
     assert result["in_replication_only"] == 1
     assert result["symmetric_difference"] == 2
     assert result["index_mapping_examples"][0]["same_index"] is False
+
+
+def test_committed_verification_result_is_a_full_replicate_run() -> None:
+    """Guard against a quick-mode run silently downgrading the committed evidence.
+
+    ``verify_audit.py`` writes its result file by default. The test above points it at a
+    scratch path precisely so that running the suite cannot replace the committed
+    20,000-replicate result with a 2,000-replicate one; this test pins that property.
+    """
+    payload = json.loads((AUDIT_DIR / "verification_result.json").read_text(encoding="utf-8"))
+    assert payload["status"] == "PASS"
+    assert payload["replicates"] == 20000, (
+        "the committed verification result must come from a full 20000-replicate run"
+    )
+    assert not [check for check in payload["checks"] if check["status"] != "PASS"]

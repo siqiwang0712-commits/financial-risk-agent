@@ -115,6 +115,14 @@ def load_paired_rows() -> list[PairedObservation]:
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--quick", action="store_true", help="2000 replicates instead of 20000")
+    parser.add_argument(
+        "--out",
+        default=str(HERE / "verification_result.json"),
+        help=(
+            "where to write the result. Point this at a scratch path when running under a "
+            "test suite, so a quick run cannot overwrite the committed 20000-replicate result."
+        ),
+    )
     args = parser.parse_args()
 
     replicates = 2000 if args.quick else 20000
@@ -206,7 +214,9 @@ def main() -> int:
     # newline="" keeps the file LF on Windows, matching the repo convention for research
     # artifacts. Without it Python translates to CRLF and the working tree diverges from
     # the committed blob.
-    with (HERE / "verification_result.json").open("w", encoding="utf-8", newline="") as handle:
+    out_path = Path(args.out)
+    out_path.parent.mkdir(parents=True, exist_ok=True)
+    with out_path.open("w", encoding="utf-8", newline="") as handle:
         handle.write(
             json.dumps(
                 {"status": "PASS" if not failed else "FAIL", "replicates": replicates, "checks": report.checks},

@@ -177,27 +177,27 @@
   },
   {
    "check": "bootstrap SE",
-   "detail": "observed 0.008201053789721798, expected 0.008269346775845303, gap 6.829e-05",
+   "detail": "observed 0.008269346775845303, expected 0.008269346775845303, gap 0.000e+00",
    "status": "PASS"
   },
   {
    "check": "bootstrap BCa low",
-   "detail": "observed 0.011262440361053633, expected 0.011138482686425602, gap 1.240e-04",
+   "detail": "observed 0.011138482686425602, expected 0.011138482686425602, gap 0.000e+00",
    "status": "PASS"
   },
   {
    "check": "bootstrap BCa high",
-   "detail": "observed 0.04378973388390177, expected 0.043834865384833915, gap 4.513e-05",
+   "detail": "observed 0.043834865384833915, expected 0.043834865384833915, gap 0.000e+00",
    "status": "PASS"
   },
   {
    "check": "permutation null SD",
-   "detail": "observed 0.00794468235793632, expected 0.007687359397801283, gap 2.573e-04",
+   "detail": "observed 0.007687359397801283, expected 0.007687359397801283, gap 0.000e+00",
    "status": "PASS"
   },
   {
    "check": "swap null SD",
-   "detail": "observed 0.009352070574766986, expected 0.009437043454098692, gap 8.497e-05",
+   "detail": "observed 0.009437043454098692, expected 0.009437043454098692, gap 0.000e+00",
    "status": "PASS"
   },
   {
@@ -207,7 +207,7 @@
   },
   {
    "check": "BCa interval excludes zero in the positive direction",
-   "detail": "bca = (0.011262440361053633, 0.04378973388390177)",
+   "detail": "bca = (0.011138482686425602, 0.043834865384833915)",
    "status": "PASS"
   },
   {
@@ -221,6 +221,6 @@
    "status": "PASS"
   }
  ],
- "replicates": 2000,
+ "replicates": 20000,
  "status": "PASS"
 }
