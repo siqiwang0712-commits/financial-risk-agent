@@ -3,7 +3,7 @@ from pathlib import Path
 
 from finrisk.parser import DocumentParser
 from finrisk.pipeline import FinRiskPipeline
-from finrisk.report import render_text_report
+from finrisk.report import export_pdf, render_text_report
 
 ROOT=Path(__file__).resolve().parents[1]
 def test_text_parsing():
@@ -23,6 +23,23 @@ def test_end_to_end_synthetic():
     assert 0<=a.overall_score<=100 and 0<a.confidence<=1
     assert a.triggered_rules and a.contradictions
     assert "not bankruptcy probabilities" in render_text_report(a)
+
+
+def test_pdf_export_uses_the_current_decision_report(tmp_path):
+    data = json.loads((ROOT / "examples" / "synthetic_company.json").read_text())
+    pipeline = FinRiskPipeline(ROOT)
+    assessment = pipeline.assess(
+        data["company"],
+        data["fiscal_year"],
+        data["current"],
+        data["previous"],
+        {int(key): value for key, value in data["pages"].items()},
+    )
+    destination = tmp_path / "nested" / "assessment.pdf"
+    assert export_pdf(assessment, destination, pipeline.decide(assessment)) == destination
+    content = destination.read_bytes()
+    assert content.startswith(b"%PDF-")
+    assert len(content) > 1_000
 
 
 def test_narrative_boolean_inherits_verified_source():
