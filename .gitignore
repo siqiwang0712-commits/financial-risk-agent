@@ -36,6 +36,8 @@ data/private/
 uploads/
 reports/generated/
 research/results/*
+research/e4/_artifacts/
+research/e4/_cache/
 !research/results/public_v1/
 !research/results/public_v1/*.csv
 !research/results/public_v1/*.json

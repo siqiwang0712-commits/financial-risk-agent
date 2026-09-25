@@ -1,0 +1,60 @@
+{
+  "SOL_H0": {
+    "auroc": 0.7076923076923077,
+    "coverage": 1.0,
+    "event_prevalence": 0.2777777777777778,
+    "events": 5,
+    "inference_status": "EXPLORATORY_INSUFFICIENT_POWER",
+    "n_decisions": 18,
+    "pr_auc": 0.582983682983683,
+    "recall": 0.4,
+    "specificity": 0.9230769230769231
+  },
+  "completed_predictions": 150,
+  "confirmatory_impact": "NONE; frozen E4 conclusions are unchanged.",
+  "display_name": "ChatGPT5.6 Sol",
+  "evidence_status": "POST_HOC",
+  "failures": 0,
+  "identity_notice": "Project-internal codename; not an OpenAI model name or official ChatGPT model. Executed by a Codex sub-agent; exact underlying model ID was not exposed by the platform.",
+  "metrics": {
+    "SOL_A0": {
+      "auroc": 0.8153846153846154,
+      "coverage": 1.0,
+      "event_prevalence": 0.2777777777777778,
+      "events": 5,
+      "inference_status": "EXPLORATORY_INSUFFICIENT_POWER",
+      "n_decisions": 18,
+      "pr_auc": 0.776923076923077,
+      "recall": 0.6,
+      "specificity": 0.6923076923076923
+    },
+    "SOL_A1": {
+      "auroc": 0.8,
+      "coverage": 1.0,
+      "event_prevalence": 0.2777777777777778,
+      "events": 5,
+      "inference_status": "EXPLORATORY_INSUFFICIENT_POWER",
+      "n_decisions": 18,
+      "pr_auc": 0.7112087912087912,
+      "recall": 0.8,
+      "specificity": 0.6153846153846154
+    },
+    "SOL_A2": {
+      "auroc": 0.7384615384615385,
+      "coverage": 1.0,
+      "event_prevalence": 0.2777777777777778,
+      "events": 5,
+      "inference_status": "EXPLORATORY_INSUFFICIENT_POWER",
+      "n_decisions": 18,
+      "pr_auc": 0.6515262515262517,
+      "recall": 0.8,
+      "specificity": 0.6153846153846154
+    }
+  },
+  "prediction_coverage": 1.0,
+  "reliability": "UNCALIBRATED",
+  "requested_predictions": 150,
+  "verified_cases": 18,
+  "verified_endpoint_coverage": 0.36,
+  "verified_events": 5
+}

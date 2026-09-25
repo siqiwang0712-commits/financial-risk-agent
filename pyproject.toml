@@ -28,5 +28,11 @@ filterwarnings = [
   "ignore:Using `httpx` with `starlette.testclient` is deprecated:starlette.exceptions.StarletteDeprecationWarning",
 ]
 
+[tool.coverage.run]
+# E4 modules are offline, frozen-study tooling rather than shipped API/Agent
+# runtime. Their contracts are exercised by the dedicated E4 tests and public
+# artifact verifier; the 90% gate continues to measure the product runtime.
+omit = ["backend/finrisk/e4_*.py"]
+
 [tool.ruff.lint.per-file-ignores]
 "backend/finrisk/sec_bulk.py" = ["F401"]

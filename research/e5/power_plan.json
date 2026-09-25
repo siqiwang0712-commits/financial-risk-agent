@@ -1,0 +1,22 @@
+{
+  "status": "DRAFT_NOT_FROZEN",
+  "primary_goal": "At least 100 paired positive events after endpoint and Agent attrition",
+  "planning_inputs_from_e4": {
+    "verified_rate": 0.337,
+    "event_rate_among_verified": 0.3486646884,
+    "a2_schema_success_rate": 0.9
+  },
+  "recommended_selected_agent_cohort": 1200,
+  "projected_at_e4_rates": {
+    "verified": 404.4,
+    "events_before_schema_loss": 141.0,
+    "paired_events_after_90pct_schema_success": 126.9
+  },
+  "minimum_unlock_gate": {
+    "projected_paired_events": 100,
+    "qualified_schema_success_rate": 0.99,
+    "notes": "Recalculate prospectively from outcome-blind operational rates and a prespecified paired-effect model. Do not tune to E4 test labels."
+  },
+  "multiplicity": "At most three primary comparisons with a frozen Holm or hierarchical procedure",
+  "not_a_power_claim": "These projections do not prove 80% power for an unknown Agent effect; final simulation/analytic power must be frozen before E5 outcomes exist."
+}

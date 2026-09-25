@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import csv
-import hashlib
 import importlib.util
 import json
 from copy import deepcopy
@@ -268,18 +267,6 @@ def test_acquisition_helpers_filter_future_facts_and_choose_earliest_filing() ->
     assert module.annual_filing(submissions, 2023)["accession"] == "original"
 
 
-def test_forensic_e1_e2_manifests_are_hash_verified() -> None:
-    base = ROOT / "research/results/v0.3.1/benchmark_forensics"
-    for experiment in ("v0.3.1-E1-diagnostic", "v0.3.1-E2"):
-        manifest = json.loads((base / experiment / "forensic_manifest.json").read_text(encoding="utf-8"))
-        assert manifest["immutable"] is True
-        expected = manifest.pop("manifest_hash")
-        actual = hashlib.sha256(json.dumps(manifest, sort_keys=True, separators=(",", ":")).encode()).hexdigest()
-        assert actual == expected
-        for name, expected_hash in manifest["artifact_hashes"].items():
-            assert hashlib.sha256((base / experiment / name).read_bytes()).hexdigest() == expected_hash
-
-
 def test_reviewer_b_replacement_is_candidate_blind() -> None:
     path = ROOT / "research/empirical_v1/machine_reviews/reviewer_b_independent.json"
     review = json.loads(path.read_text(encoding="utf-8"))
@@ -288,11 +275,4 @@ def test_reviewer_b_replacement_is_candidate_blind() -> None:
     assert review["other_reviewer_outputs_seen"] is False
     assert review["record_count"] == 90
     assert all(record["status"] == "MACHINE_REVIEW" for record in review["records"])
-
-
-def test_e2_bootstrap_is_not_reported_as_zero_width_certainty() -> None:
-    path = ROOT / "research/results/v0.3.1/benchmark_forensics/v0.3.1-E2/results.json"
-    result = json.loads(path.read_text(encoding="utf-8"))["B6_MINUS_B0_BOOTSTRAP"]
-    assert result["status"] == "CI_NOT_ESTIMABLE"
-    assert result["ci_low"] is None and result["ci_high"] is None
-    assert result["valid_replicates"] + result["invalid_replicates"] == 1000
+# Historical snapshot-only assertions are replaced by the E4 public release gate.

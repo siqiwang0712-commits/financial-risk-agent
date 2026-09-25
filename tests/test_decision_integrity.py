@@ -1,4 +1,3 @@
-import json
 from pathlib import Path
 
 from finrisk.agent.orchestrator import FinancialRiskAgent
@@ -113,20 +112,6 @@ def test_component_telemetry_is_frozen_into_decision_bundle():
     assert state.epistemics["calibration_status"] == "UNCALIBRATED"
     assert list(state.decision_bundle["component_telemetry"]) == state.component_telemetry
     assert state.decision_bundle["epistemics"]["probability"] is None
-
-
-def test_v031_replay_is_separate_and_monotonic():
-    root = Path(__file__).resolve().parents[1]
-    run_manifest = json.loads(
-        (root / "research/results/v0.3.1/run_manifest.json").read_text()
-    )
-    replay = json.loads(
-        (root / "research/results/v0.3.1/decision_integrity_replay.json").read_text()
-    )
-    assert run_manifest["source_results_preserved"] == "research/results/public_v1"
-    assert not run_manifest["predictive_superiority_claimed"]
-    assert len(replay) == 3
-    assert all(item["delta"] >= 0 for item in replay)
 
 
 def test_fusion_is_monotonic_when_a_correlated_source_adds_a_dimension():

@@ -1,0 +1,41 @@
+{
+  "case_count": 50,
+  "completed_predictions": 150,
+  "config_hash": "88500fd0b2902682939cb59570b5f017902350de7d67bae77fd514168ede16be",
+  "display_name": "ChatGPT5.6 Sol",
+  "evidence_status": "POST_HOC",
+  "exact_underlying_model_id": "NOT_EXPOSED_BY_PLATFORM",
+  "execution_constraints": [
+    "independent case judgments",
+    "no identity",
+    "no outcome at prediction time",
+    "no internet",
+    "no cross-case normalization",
+    "no tuning"
+  ],
+  "executor": "Codex sub-agent",
+  "failures": [],
+  "frozen_prompt_hashes": {
+    "A0": "8e0337848596e3322197996c3394e3dcaf163a3d981905eb60d83cbb1bfefa92",
+    "A1": "dcfc90c16cf10add89fd280c60116962c1a5cd9a902626a3651e95579081b522",
+    "A2": "7e8472679ac54de230b95492b2f213e39be38429df1e63440536eab30fe0354d"
+  },
+  "hybrid_formula": "SOL_H0 = 0.5 * B6 + 0.5 * SOL_A2",
+  "identity_notice": "Not an OpenAI model name or official ChatGPT model.",
+  "identity_status": "PROJECT_INTERNAL_EXPERIMENTAL_CODENAME",
+  "inference_reproducibility": "Outputs are frozen; exact inference replay is not guaranteed because the platform did not expose the underlying model ID or platform system prompt.",
+  "metric_subset": "VERIFIED binary outcomes only",
+  "outcome_rule": "deterministic_forward_outcome_rule_v1",
+  "packet_manifest_sha256": "f44671808da5b24bc8f1c42de9610b0ae9fc7b6a4289919ce15262e5f4138cdc",
+  "prediction_file_sha256": "c28a288afed14768d7f137e8abbf3e02c9ede3cf9e761233887f729c9dc999d8",
+  "reliability": "UNCALIBRATED",
+  "representations": [
+    "A0",
+    "A1",
+    "A2"
+  ],
+  "requested_predictions": 150,
+  "source_e4_commit": "4273b070678240fe7cbdf01a17527afcc71c500e",
+  "threshold": 0.5,
+  "version": "sol-codex-posthoc-v1"
+}

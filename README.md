@@ -237,29 +237,21 @@ The included company fixture is explicitly `synthetic`. It validates mechanics, 
 
 ### Reproducing the research
 
-Replay the frozen E1/E2/E3 experiments (read-only; verifies manifest and artifact bytes without regenerating anything):
+The consolidated [experiment overview](research/EXPERIMENT_OVERVIEW.md),
+[results summary](research/EXPERIMENT_RESULTS.md), and
+[reproducibility guide](research/EXPERIMENT_REPRODUCIBILITY.md) describe the
+current v0.3.4/E4 evidence, public artifacts and replay boundaries.
+
+Verify the checked-in E4 public result surface and run the current research
+tests without regenerating frozen predictions or labels:
 
 ```bash
-python scripts/replay_frozen_experiment.py v0.3.1-E1-diagnostic
-python scripts/replay_frozen_experiment.py v0.3.1-E2
-python scripts/replay_frozen_experiment.py v0.3.1-E3
+python scripts/verify_e4_public_artifacts.py
+python -m pytest -q tests/test_e4.py tests/test_e4_posthoc.py tests/test_e4_public_release.py
 ```
 
-Replay the public pilot into `research/results/v0.3.1/public_pilot_replay`:
-
-```powershell
-$env:PYTHONPATH="backend"
-python scripts/run_public_benchmark.py
-```
-
-The checked-in `research/results/public_v1` directory is the immutable v0.3.0 snapshot; the runner refuses to use it as an output directory.
-
-Run the empirical validation gate (exits non-zero when corpus integrity fails):
-
-```bash
-python scripts/prepare_empirical_foundation.py
-python scripts/run_empirical_validation.py
-```
+Historical v0.3.1 artifacts remain available for audit but are no longer part
+of the current release test gate or primary research presentation.
 
 Rebuilding SEC snapshots requires an identifying User-Agent, and importing official bulk data expects the ZIP in `data/sec-bulk`:
 
@@ -291,7 +283,10 @@ A previously recorded live Company Facts rebuild received HTTP 403. That is pres
 | Flagship real-data walkthrough | [Case Study 001 — Intel FY2024](docs/case_study_001.md) |
 | Release history | [CHANGELOG](CHANGELOG.md) |
 | Implemented / partial / not-implemented inventory | [PROJECT_STATUS](PROJECT_STATUS.md) |
-| Dataset and label provenance | [Dataset card](research/dataset_card.md) |
+| E4 cohort, data and endpoint protocol | [E4 study protocol](research/e4/protocol/STUDY_PROTOCOL.md) |
+| Experiment index and evidence status | [Experiment overview](research/EXPERIMENT_OVERVIEW.md) |
+| Cross-study result summary | [Experiment results](research/EXPERIMENT_RESULTS.md) |
+| Frozen replay and artifact policy | [Experiment reproducibility](research/EXPERIMENT_REPRODUCIBILITY.md) |
 | Evaluation design | [Evaluation protocol](research/evaluation_protocol.md) |
 | Results and negative findings | [Results](research/results.md) |
 | Error analysis | [Error analysis](research/error_analysis.md) |
@@ -370,7 +365,7 @@ See [Decision-grade controls](docs/decision_grade_controls.md).
 
 FinRisk models a filing as an update from `R(t-1)` to `R(t)`, not an isolated score. `RiskDelta` separates dimension, metric and evidence changes, and attaches each attribution driver to evidence-path identifiers. The temporal graph adds `SUPPORTS`, `CONTRADICTS`, `SUPERSEDES`, `DERIVED_FROM`, `CONFIRMS`, `WEAKENS` and `INVALIDATES` relationships.
 
-This capability is code-complete and fixture-tested, and it is exercised through the enterprise snapshot/timeline API and the E3 numeric trajectories. The Agent's own `risk_trajectory` field is derived from the current run only: the single-process local path does not persist history, so it reports `insufficient_history` unless a snapshot store supplies prior periods. Real multi-period attribution quality remains **NOT VALIDATED**.
+This capability is code-complete and fixture-tested, and its structured temporal score was externally exercised as B6 in E4. The Agent's own `risk_trajectory` field is derived from the current run only: the single-process local path does not persist history, so it reports `insufficient_history` unless a snapshot store supplies prior periods. Real multi-period document/evidence attribution quality remains **NOT VALIDATED**.
 
 ## Analyst Workbench
 
@@ -391,44 +386,74 @@ When the API upstream is unreachable, the Workbench falls back to a bundled samp
 
 ## Research results
 
-The checked-in public pilot runs five baselines on **three company-disjoint FY2024 observations**: Apple, Microsoft and Intel. It is intentionally too small for inferential claims, but it is reproducible and preserves a valuable negative result.
+For the current E4 evidence-status map and artifact index, see the
+[experiment overview](research/EXPERIMENT_OVERVIEW.md) and
+[cross-study results](research/EXPERIMENT_RESULTS.md).
 
-<img src="research/results/public_v1/baseline-risk-f1.svg" alt="Executed n=3 pilot baseline F1 results" width="760" />
+### E4 external validation
 
-| Baseline | Decision coverage | Risk F1 | Balanced accuracy |
-|---|---:|---:|---:|
-| LLM Only¹ | 3/3 | 0.000 | 0.500 |
-| Ratios Only | 3/3 | **1.000** | **1.000** |
-| Rule Engine | 3/3 | 0.667 | 0.750 |
-| Traditional Models | 3/3 | 0.500 | 0.500 |
-| Full Hybrid² | 2/3 | 0.000 | 0.500 |
+E4 evaluates the locked `v0.3.4` implementation on **2,000 company-disjoint FY2024 10-K filers** selected before outcomes were visible. The predefined financial-deterioration endpoint verified 674 companies (235 events; prevalence 34.9%). Performance estimates apply to the deterministically verifiable subset, not to bankruptcy, default, credit loss or insolvency probability.
 
-¹ The recorded pilot used the deterministic offline semantic provider. A paid LLM baseline was **NOT RUN** because no API credential was supplied.
+Evidence status: B6 over B0 is `ESTABLISHED_E4`; H0 over B0 and H0 over A2 are `EXPLORATORY_E4`.
 
-² This row scores the expert-weighted aggregate over risk dimensions (`scoring.aggregate`); the Agent decision path uses hierarchical escalation instead, so the row does not describe the strategy the product decides with.
+B6 achieved AUROC **0.708** (95% CI 0.663–0.750) and PR-AUC 0.584, compared with B0 AUROC 0.678 (0.633–0.721) and PR-AUC 0.541.
 
-**Full Hybrid did not outperform Ratios Only.** This is a negative, underpowered result. It is not evidence of predictive superiority or probability calibration, and most bootstrap intervals span `[0, 1]`.
+<img src="research/e4/public/auroc_ci.svg" alt="E4-B paired AUROC confidence intervals" width="820" />
 
-The separate v0.3.1 numeric corpus (90 observations, 30 companies) yields six labelled test observations from five held-out companies, with one positive endpoint. Every baseline missed that positive case (AUROC 0.100–0.200, FNR 1.0), so the confidence interval is deliberately reported as `CI_NOT_ESTIMABLE`.
+### Comparative benchmark
 
-Full detail, ablations, robustness checks and RQ-by-RQ status live in [Results](research/results.md) and [Error analysis](research/error_analysis.md).
+All rows below use the same E4-B paired, verified observations. Agent failures remain in coverage and are not imputed.
 
-### Research questions
+| System | N / events | AUROC (95% CI) | PR-AUC (95% CI) | Recall | Specificity | Coverage |
+|---|---:|---:|---:|---:|---:|---:|
+| B0 | 18 / 5 | 0.531 (0.179–0.971) | 0.500 (0.111–0.889) | 0.400 | 0.923 | 100.0% |
+| B2 | 18 / 5 | 0.646 (0.333–0.906) | 0.389 (0.156–0.785) | 0.800 | 0.385 | 100.0% |
+| B3 | 18 / 5 | 0.500 (0.312–0.682) | 0.333 (0.125–0.571) | 1.000 | 0.231 | 100.0% |
+| B6 | 18 / 5 | 0.608 (0.167–0.977) | 0.544 (0.159–0.917) | 0.200 | 1.000 | 100.0% |
+| A0 | 18 / 5 | 0.692 (0.323–0.965) | 0.459 (0.173–0.889) | 1.000 | 0.000 | 100.0% |
+| A1 | 18 / 5 | 0.477 (0.133–0.808) | 0.299 (0.118–0.660) | 1.000 | 0.000 | 100.0% |
+| A2 | 16 / 5 | 0.436 (0.136–0.771) | 0.343 (0.142–0.705) | 1.000 | 0.000 | 88.9% |
+| H0 | 16 / 5 | 0.582 (0.182–1.000) | 0.604 (0.153–1.000) | 0.600 | 0.364 | 88.9% |
 
-- **RQ1 — Grounding:** Does hybrid reasoning reduce unsupported claims relative to semantic-only analysis?
-- **RQ2 — Consistency:** Do cross-modal checks improve narrative–numeric contradiction detection?
-- **RQ3 — Classification:** Does Full Hybrid improve company-level risk classification under company-disjoint evaluation?
-- **RQ4 — Robustness:** How sensitive are decisions to narrative, rules, models, trends, missing evidence and perturbations?
+### Incremental value
 
-Current evidence is diagnostic only: RQ3 is not supported by the pilot, RQ2 has one true positive and one false positive, and RQ1 still requires a frozen real-provider benchmark. A hosted-provider smoke test established connectivity and schema conformance only.
+P1 showed a positive paired AUROC improvement for B6 over B0: Δ +0.030 (95% CI +0.014 to +0.048; Holm-adjusted p=0.0015).
+
+P2 H0 versus B0 (Δ +0.055, 95% CI -0.071 to +0.191) and P3 H0 versus A2 (Δ +0.145, -0.286 to +0.527) were exploratory and the paired improvements were not established.
+
+<img src="research/e4/public/paired_delta_auroc.svg" alt="Primary paired AUROC deltas" width="820" />
+
+### Local Agent benchmark
+
+The benchmark communicated with a locally hosted Agent through an HTTP API. No external hosted inference API was used.
+
+The frozen CPU backend was Qwen2.5 0.5B Instruct (Q4_K_M) through Ollama 0.12.3. Agent and H0 estimates are exploratory because only five verified events were available in the fully paired E4-B subset. The Agent produced five permanent schema failures across the 150 official A0/A1/A2 records; these remain coverage failures. Stability runs at fixed temperature and seed had zero score SD among successful cases, while single-case versus batched inference showed material score sensitivity despite high decision agreement. This finding applies only to the tested 0.5B Local Agent and does not establish that stronger LLMs or Agents lack incremental value.
+
+### Post-hoc Codex sub-Agent comparator
+
+`ChatGPT5.6 Sol` is the project-internal display name for a Codex sub-Agent comparator; it is not an OpenAI model name or official ChatGPT model, and the platform did not expose the exact underlying model ID. On the same 50 frozen anonymous E4-B packets it completed 150/150 A0/A1/A2 judgments. Only 18 cases had deterministic `VERIFIED` outcomes and only five were events: AUROC was 0.815 for A0, 0.800 for A1, 0.738 for A2, and 0.708 for the fixed `0.5 × B6 + 0.5 × A2` hybrid. These outcome-blind predictions were commissioned after E4 outcomes existed, so all results are `POST_HOC`, `UNCALIBRATED`, and insufficiently powered; they do not alter E4 or establish model superiority. Full traceability and results are in [the comparator methodology](research/e4_posthoc/model_capacity/sol_codex_agent/METHODOLOGY.md).
+
+### Robustness and data integrity
+
+All eight SEC archives passed SHA-256, CRC, required-member and size checks. Verified endpoint coverage was 33.7%; 571 cases required human review and 755 had insufficient outcome data. Prediction-time diagnostics show that verification was selective, so propensity weighting is post-hoc sensitivity analysis only and does not remove selection bias. Independent SEC–Zenodo processing/source concordance matched within 5% for 90.9% of 17,757 matched values; this is not extraction accuracy. Deterministic replay was canonical byte-identical.
+
+### Research boundary
+
+E4 evaluates structured financial risk ranking, temporal structured signal, Local Agent reasoning, and a deterministic + Agent structured hybrid. It does **not** validate calibrated default probability, universal bankruptcy prediction, production or regulatory use, a full narrative/document Agent, MD&A or Risk-Factor grounding, or full FinRisk Agent external validation. All systems remain `UNCALIBRATED`.
+
+Full frozen methods and results are in [E4 Validation Report](research/e4/public/VALIDATION_REPORT.md) and [E4 Conclusion](research/e4/public/CONCLUSION.md). The post-completion limitations and sensitivity audit is in [E4 Post-completion Audit](research/e4_posthoc/AUDIT_REPORT.md).
+
+### Historical studies
+
+Earlier pilot and v0.3.1 experiments remain preserved as historical audit records, but they are retired from the current test gate and primary result surface. Current claims and release verification are based on the locked v0.3.4/E4 artifacts described above.
 
 ## Project maturity
 
 | Status | What it means here |
 |---|---|
-| **VALIDATED — limited local scope** | Automated tests and ≥90% coverage gate; Ruff, TypeScript and production frontend build; deterministic finance fixtures; 90-observation SEC numeric ingestion and PIT integrity; corrected B0/B1/B2/B6 execution |
+| **VALIDATED — limited research scope** | Automated tests and ≥90% coverage gate; Ruff, TypeScript and production frontend build; deterministic finance fixtures; the locked 2,000-company E4 cohort; and E4 public-artifact integrity. B6 over B0 is established only on the 674 deterministically verified E4 outcomes. |
 | **IMPLEMENTED, NOT EXTERNALLY VALIDATED** | XBRL/PDF reconciliation, temporal state/attribution, applicability routing, selective automation, constrained provider, critic/verifier, DecisionBundle, risk-case mitigation workflow, RBAC/API keys, PostgreSQL migrations and Workbench |
-| **PLANNED / NOT RUN** | Human-adjudicated document/evidence benchmark, paid-LLM evaluation, calibrated risk model, production identity/object storage/worker/telemetry deployment |
+| **PLANNED / NOT RUN** | Human-adjudicated document/evidence benchmark, prospectively frozen stronger-model comparison, calibrated risk model, production identity/object storage/worker/telemetry deployment |
 
 ## API surface
 
@@ -537,7 +562,7 @@ npm run typecheck
 npm run build
 ```
 
-The release gate covers Python 3.11 and 3.12 with a 90% minimum coverage threshold, Ruff, frontend semantic tests, a CI-enforced official-registry production dependency audit, TypeScript, the Next.js production build, prospective provenance validation and read-only E1/E2/E3 replay.
+The release gate covers Python 3.11 and 3.12 with a 90% minimum coverage threshold, Ruff, frontend semantic tests, a CI-enforced official-registry production dependency audit, TypeScript, the Next.js production build, prospective provenance validation and v0.3.4/E4 public-artifact verification.
 
 ## Security and governance
 
@@ -551,7 +576,7 @@ These are implemented controls in a prototype, not certification claims. Review 
 
 ## Limitations
 
-The public pilot covers three company-year observations with single-reviewer labels. The E3 numeric corpus covers 90 observations across 30 companies. Neither establishes predictive superiority, and no paid-provider LLM benchmark has been run.
+E4 performance applies to the 674 deterministically verified observations, not the full 2,000-company cohort. Agent/Hybrid comparisons have only five paired events, all scores remain `UNCALIBRATED`, the endpoint is financial deterioration rather than default, and full-document Agent validation has not been run. The post-hoc Codex comparator does not change those boundaries.
 
 Rules, weights, fusion thresholds and evidence-coverage confidence are not externally calibrated. Component telemetry records observed deltas, not causal attribution. PostgreSQL, Docker, identity, object storage, worker and telemetry configurations have not been validated in a production environment.
 

@@ -1,0 +1,222 @@
+{
+  "endpoint_attrition": {
+    "selected_cases": 50,
+    "status_counts": {
+      "INSUFFICIENT_DATA": 15,
+      "REQUIRES_HUMAN_REVIEW": 17,
+      "VERIFIED": 18
+    },
+    "verified_cases": 18,
+    "verified_coverage": 0.36
+  },
+  "evidence_status": "POST_HOC",
+  "hybrid": {
+    "auroc_95ci": {
+      "ci_high": 0.9692307692307692,
+      "ci_low": 0.375,
+      "cluster_count": 18,
+      "invalid_replicates": 20,
+      "metric": "auroc",
+      "observed": 0.7076923076923077,
+      "valid_replicates": 4980
+    },
+    "candidate_cases": 50,
+    "formula": "0.5 * B6 + 0.5 * SOL_A2",
+    "model_id": "SOL_H0",
+    "pr_auc_95ci": {
+      "ci_high": 0.9464285714285714,
+      "ci_low": 0.17142857142857143,
+      "cluster_count": 18,
+      "invalid_replicates": 20,
+      "metric": "pr_auc",
+      "observed": 0.582983682983683,
+      "valid_replicates": 4980
+    },
+    "verified_metrics": {
+      "auroc": 0.7076923076923077,
+      "balanced_accuracy": 0.6615384615384616,
+      "brier_descriptive": 0.17560502507627468,
+      "company_count": 18,
+      "confusion_matrix": {
+        "fn": 3,
+        "fp": 1,
+        "tn": 12,
+        "tp": 2
+      },
+      "coverage": 1.0,
+      "event_companies": 5,
+      "event_prevalence": 0.2777777777777778,
+      "events": 5,
+      "f1": 0.5,
+      "false_negative_rate": 0.6,
+      "inference_status": "EXPLORATORY_INSUFFICIENT_POWER",
+      "n": 18,
+      "n_decisions": 18,
+      "pr_auc": 0.582983682983683,
+      "precision": 0.6666666666666666,
+      "recall": 0.4,
+      "reliability": "UNCALIBRATED",
+      "specificity": 0.9230769230769231,
+      "threshold": 0.5
+    }
+  },
+  "identity": {
+    "display_name": "ChatGPT5.6 Sol",
+    "notice": "Not an OpenAI model name or official ChatGPT model. Executed by a Codex sub-agent; exact underlying model ID was not exposed by the platform.",
+    "status": "PROJECT_INTERNAL_EXPERIMENTAL_CODENAME"
+  },
+  "models": {
+    "SOL_A0": {
+      "auroc_95ci": {
+        "ci_high": 1.0,
+        "ci_low": 0.5,
+        "cluster_count": 18,
+        "invalid_replicates": 20,
+        "metric": "auroc",
+        "observed": 0.8153846153846154,
+        "valid_replicates": 4980
+      },
+      "pr_auc_95ci": {
+        "ci_high": 1.0,
+        "ci_low": 0.29166666666666663,
+        "cluster_count": 18,
+        "invalid_replicates": 20,
+        "metric": "pr_auc",
+        "observed": 0.776923076923077,
+        "valid_replicates": 4980
+      },
+      "prediction_coverage": 1.0,
+      "requested": 50,
+      "valid_predictions": 50,
+      "verified_metrics": {
+        "auroc": 0.8153846153846154,
+        "balanced_accuracy": 0.6461538461538461,
+        "brier_descriptive": 0.20672222222222222,
+        "company_count": 18,
+        "confusion_matrix": {
+          "fn": 2,
+          "fp": 4,
+          "tn": 9,
+          "tp": 3
+        },
+        "coverage": 1.0,
+        "event_companies": 5,
+        "event_prevalence": 0.2777777777777778,
+        "events": 5,
+        "f1": 0.5,
+        "false_negative_rate": 0.4,
+        "inference_status": "EXPLORATORY_INSUFFICIENT_POWER",
+        "n": 18,
+        "n_decisions": 18,
+        "pr_auc": 0.776923076923077,
+        "precision": 0.42857142857142855,
+        "recall": 0.6,
+        "reliability": "UNCALIBRATED",
+        "specificity": 0.6923076923076923,
+        "threshold": 0.5
+      }
+    },
+    "SOL_A1": {
+      "auroc_95ci": {
+        "ci_high": 1.0,
+        "ci_low": 0.49230769230769234,
+        "cluster_count": 18,
+        "invalid_replicates": 20,
+        "metric": "auroc",
+        "observed": 0.8,
+        "valid_replicates": 4980
+      },
+      "pr_auc_95ci": {
+        "ci_high": 1.0,
+        "ci_low": 0.23809523809523808,
+        "cluster_count": 18,
+        "invalid_replicates": 20,
+        "metric": "pr_auc",
+        "observed": 0.7112087912087912,
+        "valid_replicates": 4980
+      },
+      "prediction_coverage": 1.0,
+      "requested": 50,
+      "valid_predictions": 50,
+      "verified_metrics": {
+        "auroc": 0.8,
+        "balanced_accuracy": 0.7076923076923077,
+        "brier_descriptive": 0.21707222222222222,
+        "company_count": 18,
+        "confusion_matrix": {
+          "fn": 1,
+          "fp": 5,
+          "tn": 8,
+          "tp": 4
+        },
+        "coverage": 1.0,
+        "event_companies": 5,
+        "event_prevalence": 0.2777777777777778,
+        "events": 5,
+        "f1": 0.5714285714285714,
+        "false_negative_rate": 0.19999999999999996,
+        "inference_status": "EXPLORATORY_INSUFFICIENT_POWER",
+        "n": 18,
+        "n_decisions": 18,
+        "pr_auc": 0.7112087912087912,
+        "precision": 0.4444444444444444,
+        "recall": 0.8,
+        "reliability": "UNCALIBRATED",
+        "specificity": 0.6153846153846154,
+        "threshold": 0.5
+      }
+    },
+    "SOL_A2": {
+      "auroc_95ci": {
+        "ci_high": 1.0,
+        "ci_low": 0.4166666666666667,
+        "cluster_count": 18,
+        "invalid_replicates": 20,
+        "metric": "auroc",
+        "observed": 0.7384615384615385,
+        "valid_replicates": 4980
+      },
+      "pr_auc_95ci": {
+        "ci_high": 1.0,
+        "ci_low": 0.18154761904761904,
+        "cluster_count": 18,
+        "invalid_replicates": 20,
+        "metric": "pr_auc",
+        "observed": 0.6515262515262517,
+        "valid_replicates": 4980
+      },
+      "prediction_coverage": 1.0,
+      "requested": 50,
+      "valid_predictions": 50,
+      "verified_metrics": {
+        "auroc": 0.7384615384615385,
+        "balanced_accuracy": 0.7076923076923077,
+        "brier_descriptive": 0.21081111111111112,
+        "company_count": 18,
+        "confusion_matrix": {
+          "fn": 1,
+          "fp": 5,
+          "tn": 8,
+          "tp": 4
+        },
+        "coverage": 1.0,
+        "event_companies": 5,
+        "event_prevalence": 0.2777777777777778,
+        "events": 5,
+        "f1": 0.5714285714285714,
+        "false_negative_rate": 0.19999999999999996,
+        "inference_status": "EXPLORATORY_INSUFFICIENT_POWER",
+        "n": 18,
+        "n_decisions": 18,
+        "pr_auc": 0.6515262515262517,
+        "precision": 0.4444444444444444,
+        "recall": 0.8,
+        "reliability": "UNCALIBRATED",
+        "specificity": 0.6153846153846154,
+        "threshold": 0.5
+      }
+    }
+  },
+  "reliability": "UNCALIBRATED",
+  "threshold": 0.5
+}

@@ -1,0 +1,14 @@
+{
+  "interpretation": "Post-E4 evidence-status overlay. The canonical research/e4/public/readme_summary.json remains frozen and unchanged.",
+  "claims": [
+    {"claim": "B6 temporal structured signal improved B0 on the deterministically verified E4-A subset", "status": "ESTABLISHED_E4"},
+    {"claim": "H0 improved B0", "status": "EXPLORATORY_E4"},
+    {"claim": "H0 improved A2", "status": "EXPLORATORY_E4"},
+    {"claim": "Verification weighting removes selection bias", "status": "POST_HOC"},
+    {"claim": "GPT-5 external comparator", "status": "NOT_TESTED"},
+    {"claim": "Stronger local-model capacity", "status": "NOT_TESTED"},
+    {"claim": "ChatGPT5.6 Sol project-internal Codex sub-Agent comparator", "status": "POST_HOC"},
+    {"claim": "Full narrative/document Agent external validation", "status": "NOT_TESTED"},
+    {"claim": "Agent schema diagnostics for future runs", "status": "IMPLEMENTED_NOT_VALIDATED"}
+  ]
+}
