@@ -34,13 +34,12 @@ import random
 import sys
 from dataclasses import asdict, dataclass
 from pathlib import Path
-from statistics import mean
 
 AUDIT_DIR = Path(__file__).resolve().parents[2] / "e4_statistical_audit"
 sys.path.insert(0, str(AUDIT_DIR))
 
-from e4s_stats import delong_paired, normal_cdf  # noqa: E402
-from method_calibration import generate_paired  # noqa: E402
+from e4s_stats import delong_paired, normal_cdf
+from method_calibration import generate_paired
 
 # Planning inputs. Every one of these is either an E4 *operational* rate (allowed for
 # planning) or an a-priori design choice. None is an E4 test-set optimum.
@@ -111,7 +110,7 @@ def analytic_power(
     ``Var(dAUC) = Var(A1) + Var(A2) - 2 rho sqrt(Var(A1) Var(A2))``. The challenger's
     variance is evaluated at ``auc_reference + delta``.
     """
-    n_events = int(round(n_evaluable * event_prevalence))
+    n_events = round(n_evaluable * event_prevalence)
     n_non_events = n_evaluable - n_events
     if n_events < 2 or n_non_events < 2:
         return None
@@ -149,7 +148,7 @@ def analytic_power_table(
             key = f"delta={delta:.2f}|rho={correlation:.2f}"
             row: dict[str, float] = {}
             for selected in selected_grid:
-                n_evaluable = int(round(selected * verified_rate * schema_success_rate))
+                n_evaluable = round(selected * verified_rate * schema_success_rate)
                 result = analytic_power(n_evaluable, delta, correlation, auc_reference, event_prevalence, alpha)
                 row[f"selected={selected}"] = result["power"] if result else float("nan")
             table[key] = row
@@ -158,8 +157,8 @@ def analytic_power_table(
 
 def simulate_power(inputs: PowerInputs, replicates: int = 300, seed: int = 20260925) -> dict:
     counts = expected_counts(inputs)
-    n_evaluable = max(2, int(round(counts["expected_evaluable"])))
-    n_events = max(1, int(round(n_evaluable * inputs.event_prevalence)))
+    n_evaluable = max(2, round(counts["expected_evaluable"]))
+    n_events = max(1, round(n_evaluable * inputs.event_prevalence))
     n_non_events = max(1, n_evaluable - n_events)
     if n_events + n_non_events < 4:
         return {**asdict(inputs), "replicates": replicates, "power": None, "reason": "cohort too small"}

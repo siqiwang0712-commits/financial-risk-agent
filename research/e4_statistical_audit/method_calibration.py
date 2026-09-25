@@ -48,9 +48,10 @@ from __future__ import annotations
 
 import math
 import random
+from collections.abc import Sequence
 from dataclasses import dataclass
 from statistics import mean
-from typing import Any, Sequence
+from typing import Any
 
 from e4s_stats import (
     PairedObservation,
@@ -238,7 +239,6 @@ def calibrate(
     ``auc_reference == auc_challenger`` exercises ``H0_equality`` and yields empirical
     size. Unequal AUCs yield empirical power.
     """
-    rng = random.Random(seed)
     tallies = {
         "label_permutation_as_implemented": {"reject": 0, "p_values": []},
         "score_swap_randomization": {"reject": 0, "p_values": []},

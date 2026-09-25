@@ -25,7 +25,12 @@ testpaths = ["tests"]
 # `backend` is the product runtime. The two research directories hold the E4-S audit and
 # the E5 protocol as standalone modules, so declaring them here lets the tests import them
 # normally instead of mutating `sys.path` after the import block (which ruff flags).
-pythonpath = ["backend", "research/e4_statistical_audit", "research/e5/protocol"]
+pythonpath = [
+  "backend",
+  "research/e4_statistical_audit",
+  "research/e5/protocol",
+  "research/e5/harness",
+]
 addopts = "-q"
 markers = [
   "slow: statistical calibration studies that run many simulated replicates",

@@ -507,3 +507,39 @@ def test_production_compose_has_explicit_safe_migration_contract():
     assert 'FINRISK_ENABLE_ORG_BOOTSTRAP: "0"' in production
     assert "service_completed_successfully" in production
     assert 'restart: "no"' in production
+
+
+def test_frozen_forensic_artifacts_keep_their_original_crlf_bytes():
+    """Guard the byte representation, not just the parsed content.
+
+    `.gitattributes` marks `research/results/v0.3.1/benchmark_forensics/**/*.json` as
+    `-text` precisely because their hashes are computed over the original CRLF bytes. A
+    blanket "normalise line endings" pass over `research/` silently rewrites them, and the
+    only thing that notices is the hash check above - which reports a mismatch without
+    naming the cause. This test names it.
+
+    The forensic manifests are the ones documented as CRLF; the derived cross-experiment
+    reports alongside them are explicitly `eol=lf`, so they are excluded.
+    """
+    forensics = ROOT / "research/results/v0.3.1/benchmark_forensics"
+    # every JSON in a version subdirectory is a frozen forensic manifest
+    frozen = sorted(
+        path for path in forensics.rglob("*.json") if path.parent.name.startswith("v0.3.1-")
+    )
+    assert frozen, "no frozen forensic manifests found; the layout changed"
+
+    normalised = [
+        str(path.relative_to(ROOT))
+        for path in frozen
+        if b"\r\n" not in path.read_bytes()
+    ]
+    assert not normalised, (
+        "these frozen artifacts lost their original CRLF byte representation: "
+        f"{normalised}. Do not run a blanket line-ending normalisation over research/."
+    )
+
+
+def test_gitattributes_still_protects_the_frozen_forensic_manifests():
+    """The `-text` rule is what keeps the bytes stable; removing it would be the bug."""
+    attributes = (ROOT / ".gitattributes").read_text(encoding="utf-8")
+    assert "research/results/v0.3.1/benchmark_forensics/**/*.json -text" in attributes

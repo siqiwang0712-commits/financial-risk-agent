@@ -16,16 +16,14 @@ from __future__ import annotations
 
 import hashlib
 import json
-import math
 import sys
 from pathlib import Path
-from statistics import mean
 
 AUDIT_DIR = Path(__file__).resolve().parent
 REPO_ROOT = AUDIT_DIR.parents[1]
 sys.path.insert(0, str(AUDIT_DIR))
 
-from e4s_stats import (  # noqa: E402
+from e4s_stats import (
     cluster_bootstrap,
     delong_paired,
     delta_metric,
@@ -33,7 +31,7 @@ from e4s_stats import (  # noqa: E402
     marginal_metric,
     score_swap_randomization,
 )
-from method_calibration import (  # noqa: E402
+from method_calibration import (
     E4_AUROC_B0,
     E4_AUROC_B6,
     E4_N_EVENTS,

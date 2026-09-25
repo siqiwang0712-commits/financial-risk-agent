@@ -38,7 +38,7 @@ REPO_ROOT = HERE.parents[1]
 sys.path.insert(0, str(HERE))
 sys.path.insert(0, str(REPO_ROOT / "backend"))
 
-from e4s_stats import percentile_linear  # noqa: E402
+from e4s_stats import percentile_linear
 
 REPLICATION_DIR = HERE / "replication"
 CODEX_PREDICTIONS = (

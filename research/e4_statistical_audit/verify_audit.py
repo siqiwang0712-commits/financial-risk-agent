@@ -29,7 +29,7 @@ HERE = Path(__file__).resolve().parent
 REPO_ROOT = HERE.parents[1]
 sys.path.insert(0, str(HERE))
 
-from e4s_stats import (  # noqa: E402
+from e4s_stats import (
     PairedObservation,
     cluster_bootstrap,
     delong_paired,

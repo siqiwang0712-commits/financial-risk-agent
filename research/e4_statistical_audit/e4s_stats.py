@@ -28,9 +28,10 @@ from __future__ import annotations
 
 import math
 import random
+from collections.abc import Callable, Iterable, Sequence
 from dataclasses import dataclass, field
 from statistics import mean
-from typing import Any, Callable, Iterable, Sequence
+from typing import Any
 
 # --------------------------------------------------------------------------------------
 # Normal distribution helpers (pure Python; no SciPy dependency)

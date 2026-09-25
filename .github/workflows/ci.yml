@@ -37,7 +37,10 @@ jobs:
       # `--strict` turns any such skip into a fatal error. requirements.lock is a
       # complete resolution, so audit it directly instead.
       - run: pip-audit --strict --no-deps -r requirements.lock
-      - run: ruff check backend tests scripts
+      # `research` holds the study modules, verifiers and harness. They are Python that
+      # can silently invalidate a frozen manifest if they drift, so they are linted and
+      # typed like any other source directory.
+      - run: ruff check backend tests scripts research
       - run: git diff --check HEAD^ HEAD
       - run: python scripts/validate_postgres_migration.py
       - run: pytest --cov=finrisk --cov-report=term-missing --cov-fail-under=90

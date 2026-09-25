@@ -20,6 +20,7 @@ import hashlib
 import json
 import sys
 from datetime import datetime
+from itertools import pairwise
 from pathlib import Path
 
 PROTOCOL_DIR = Path(__file__).resolve().parent
@@ -102,10 +103,10 @@ def verify(manifests: dict[str, dict], repo_root: Path) -> dict:
             fail("timestamp", f"{stage} has no created_at_utc")
             continue
         try:
-            stamps.append((stage, datetime.fromisoformat(value.replace("Z", "+00:00"))))
+            stamps.append((stage, datetime.fromisoformat(value)))
         except ValueError:
             fail("timestamp", f"{stage} has an unparsable created_at_utc: {value}")
-    for (earlier, first), (later, second) in zip(stamps, stamps[1:]):
+    for (earlier, first), (later, second) in pairwise(stamps):
         if second < first:
             fail("timestamp_monotonic", f"{later} ({second}) precedes {earlier} ({first})")
     if stamps and not any(f["check"] == "timestamp_monotonic" for f in findings):
@@ -129,7 +130,7 @@ def verify(manifests: dict[str, dict], repo_root: Path) -> dict:
             ok("artifact_hash", f"{stage}: {len(artifacts)} artifact hashes verified")
 
     # chain
-    for previous, current in zip(present, present[1:]):
+    for previous, current in pairwise(present):
         recorded = manifests[current].get("previous_manifest_hash")
         if recorded is None:
             fail("chain", f"{current} has no previous_manifest_hash")
