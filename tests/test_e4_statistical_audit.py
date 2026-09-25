@@ -568,7 +568,7 @@ def test_previous_270_verifier_reports_shape_information(tmp_path: Path) -> None
     assert result["count"] == 270
     assert result["cik_count"] == 270
     assert result["unique_ciks"] == 270
-    assert result["all_ten_digits"] is True
+    assert result["shape_violations"] == []
     assert result["status"] == "REJECTED_HASH_MISMATCH"
 
 
@@ -779,3 +779,98 @@ def test_aggregation_diagnostic_records_what_it_cannot_conclude() -> None:
     assert "residual-AUROC" in note
     assert "NOT computed here" in note
     assert "5 events" in note
+
+
+# ----------------------------------------------------------------------------------
+# previous_270: every rejection path, and the machine-readable blocker
+# ----------------------------------------------------------------------------------
+
+BLOCKER_JSON = REPO_ROOT / "research" / "e5" / "cohort_blocker.json"
+
+
+@pytest.mark.parametrize(
+    ("label", "payload", "expected_fragment"),
+    [
+        ("wrong count", [{"cik": f"{i:010d}"} for i in range(269)], "expected 270"),
+        ("duplicate ciks", [{"cik": "0000000001"} for _ in range(270)], "duplicate cik"),
+        ("non-object entries", [1] * 270, "not JSON objects"),
+        ("missing cik field", [{"ticker": "X"} for _ in range(270)], "lack a 'cik' field"),
+        ("not a list", {"cik": []}, "expected a JSON list"),
+    ],
+)
+def test_previous_270_shape_validation_names_each_defect(
+    tmp_path: Path, label: str, payload: object, expected_fragment: str
+) -> None:
+    """The shape validator must reject each malformed shape for a *named* reason.
+
+    A blanket "hash mismatch" would hide which contract was broken, so the shape check is a
+    separate function that does not depend on the hash gate.
+    """
+    violations = verify_previous_270.validate_shape(payload)
+    assert violations, f"{label} should be rejected"
+    assert any(expected_fragment in violation for violation in violations), violations
+
+
+def test_previous_270_shape_validation_accepts_a_well_formed_list() -> None:
+    assert verify_previous_270.validate_shape([{"cik": f"{i:010d}"} for i in range(270)]) == []
+
+
+def test_previous_270_rejects_a_malformed_file_and_a_missing_file(tmp_path: Path) -> None:
+    broken = tmp_path / "broken.json"
+    broken.write_text("{not json", encoding="utf-8")
+    assert verify_previous_270.verify_candidate(broken)["status"] == "NOT_JSON"
+    assert verify_previous_270.verify_candidate(tmp_path / "absent.json")["status"] == "MISSING"
+
+
+def test_previous_270_hash_gate_dominates_but_still_reports_shape(tmp_path: Path) -> None:
+    """Authenticity is the primary gate; shape diagnostics are reported alongside it."""
+    candidate = tmp_path / "candidate.json"
+    candidate.write_text(json.dumps([{"cik": "0000000001"} for _ in range(270)]), encoding="utf-8")
+    result = verify_previous_270.verify_candidate(candidate)
+    assert result["status"] == "REJECTED_HASH_MISMATCH"
+    assert result["hash_matches"] is False
+    assert result["shape_violations"], "shape diagnostics must not be discarded"
+
+
+def test_blocker_record_is_machine_readable_and_fail_closed() -> None:
+    """While this record says BLOCKED, the cohort freeze cannot be verified as complete."""
+    record = json.loads(BLOCKER_JSON.read_text(encoding="utf-8"))
+    assert record["status"] == "BLOCKED"
+    assert record["fail_closed"] is True
+    assert record["blocking_stage"] == "cohort-freeze"
+    assert record["pinned_sha256"] == verify_previous_270.PREVIOUS_270_SHA256
+    assert record["resolution"]["step_2"].startswith("python research/e4_statistical_audit/verify_previous_270.py")
+    assert record["consequences"] and record["search_evidence"]
+
+
+def test_blocker_status_tracks_the_candidate_verification(tmp_path: Path) -> None:
+    """The record must be able to flip to RESOLVED once a genuine file is supplied."""
+    assert verify_previous_270.blocker_status(None)["status"] == "BLOCKED"
+    fake = tmp_path / "candidate.json"
+    fake.write_text(json.dumps([{"cik": f"{i:010d}"} for i in range(270)]), encoding="utf-8")
+    record = verify_previous_270.blocker_status(fake)
+    assert record["status"] == "BLOCKED", "a hash mismatch must not resolve the blocker"
+    assert record["candidate_verification"]["status"] == "REJECTED_HASH_MISMATCH"
+
+
+def test_harness_and_blocker_agree_that_the_cohort_stage_cannot_complete() -> None:
+    """Cross-check: the harness fails closed exactly while the blocker says BLOCKED."""
+    import e5_harness
+
+    record = json.loads(BLOCKER_JSON.read_text(encoding="utf-8"))
+    assert record["status"] == "BLOCKED"
+    manifest = e5_harness.build_manifest(
+        "cohort-freeze",
+        previous=None,
+        artifacts=[],
+        disjointness={
+            "historical_disjointness": "UNPROVEN",
+            "blocker_id": record["blocker_id"],
+        },
+    )
+    import tempfile
+
+    with tempfile.TemporaryDirectory() as tmp:
+        e5_harness.write_manifest(Path(tmp), manifest)
+        report = e5_harness.verify(Path(tmp))
+    assert any("historical company-disjointness proven" in check["check"] for check in report.failures)

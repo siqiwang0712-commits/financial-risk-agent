@@ -1,0 +1,27 @@
+{
+ "artifact": "research/e4/_cache/previous_270.json",
+ "blocker_id": "E5-COHORT-DISJOINTNESS",
+ "blocking_stage": "cohort-freeze",
+ "candidate_verification": null,
+ "consequences": [
+  "E4's exact 674 paired rows remain NOT_INDEPENDENTLY_REPRODUCIBLE",
+  "the E4-A re-execution in research/e4_statistical_audit/replication/ is a near-reproduction on a ~94%-overlapping cohort, not a reproduction",
+  "E5's cohort freeze cannot be verified as company-disjoint"
+ ],
+ "fail_closed": true,
+ "pinned_hash_source": "backend/finrisk/e4_core.py::PREVIOUS_270_SHA256",
+ "pinned_sha256": "d73b371ccb026f556387cf6ff8ba204a4fde0664dcd780f099f12aa005e36603",
+ "reason": "E4's cohort algorithm excludes 270 prior external-validation companies, and the list itself is not published - only its SHA-256 is pinned. Without it an outside party cannot rebuild E4's exact 2,000-company cohort, and E5 cannot prove that its own cohort is company-disjoint from that prior cohort.",
+ "resolution": {
+  "step_1": "publish research/e4/_cache/previous_270.json, or any file whose SHA-256 equals the pinned value",
+  "step_2": "python research/e4_statistical_audit/verify_previous_270.py --candidate <path>",
+  "step_3": "python research/e4_statistical_audit/verify_previous_270.py --candidate <path> --rebuild --feature-dir <dir with 2024q3..2025q2.zip>",
+  "step_4": "re-run the numeric pipeline on the rebuilt cohort for a true E4-A reproduction"
+ },
+ "search_evidence": [
+  "research/e4/_cache/ was added to .gitignore in commit 96e60ae, the same commit that published the E4 protocol and results",
+  "a scan of every CSV, JSON and TXT under research/ found no list of 200-400 CIKs",
+  "the E4 post-hoc audit records that no prospectively frozen reserve cohort exists"
+ ],
+ "status": "BLOCKED"
+}
