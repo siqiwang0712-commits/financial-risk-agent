@@ -1,0 +1,92 @@
+{
+ "direction_consistent_across_methods": true,
+ "evidence_status": "POST_E4_STATISTICAL_AUDIT",
+ "headline": "CONSISTENT_SUPPORT",
+ "methods": [
+  {
+   "ci": [
+    0.0136488241235031,
+    0.04808618726460545
+   ],
+   "delta": 0.03030582077254884,
+   "evidence_status": "ORIGINAL_E4",
+   "method": "e4_published_label_permutation",
+   "note": "p equals the attainable floor 1/(B+1); the value is censored.",
+   "null_hypothesis": "H0_independence (outcome independent of both scores)",
+   "p_value": 0.0004997501249375312,
+   "tests_stated_hypothesis": false,
+   "verdict": "NOT_A_TEST_OF_AUC_EQUALITY"
+  },
+  {
+   "ci": null,
+   "delta": 0.0303106673775021,
+   "evidence_status": "SURROGATE_RECONSTRUCTION",
+   "method": "label_permutation_as_implemented",
+   "note": "Reproduced at 20000 replicates; same design as the frozen implementation.",
+   "null_hypothesis": "H0_independence (outcome independent of both scores)",
+   "p_value": 0.000199990000499975,
+   "tests_stated_hypothesis": false,
+   "verdict": "NOT_A_TEST_OF_AUC_EQUALITY"
+  },
+  {
+   "ci": [
+    -0.015591528134541678,
+    0.015494959530848661
+   ],
+   "delta": 0.0303106673775021,
+   "evidence_status": "SURROGATE_RECONSTRUCTION",
+   "method": "score_swap_randomization",
+   "note": "Valid but conservative permutation design for the equality hypothesis.",
+   "null_hypothesis": "H0_exch (two score vectors exchangeable; implies equal AUROC)",
+   "p_value": 4.999750012499375e-05,
+   "tests_stated_hypothesis": true,
+   "verdict": "SUPPORTS_POSITIVE_DELTA"
+  },
+  {
+   "ci": [
+    0.014908636600702473,
+    0.04571269815430172
+   ],
+   "delta": 0.0303106673775021,
+   "evidence_status": "SURROGATE_RECONSTRUCTION",
+   "method": "delong_paired",
+   "note": "Standard asymptotic test for two correlated ROC AUCs.",
+   "null_hypothesis": "H0_equality (AUROC challenger = AUROC reference)",
+   "p_value": 0.00011472062636208591,
+   "tests_stated_hypothesis": true,
+   "verdict": "SUPPORTS_POSITIVE_DELTA"
+  },
+  {
+   "ci": [
+    0.01523766203098669,
+    0.045747142082013165
+   ],
+   "delta": 0.0303106673775021,
+   "evidence_status": "SURROGATE_RECONSTRUCTION",
+   "method": "cluster_bootstrap_percentile",
+   "note": "Company-cluster percentile bootstrap; 20000 replicates.",
+   "null_hypothesis": "H0_equality (interval-based)",
+   "p_value": null,
+   "tests_stated_hypothesis": true,
+   "verdict": "SUPPORTS_POSITIVE_DELTA"
+  },
+  {
+   "ci": [
+    0.015322560058895901,
+    0.04591870829979195
+   ],
+   "delta": 0.0303106673775021,
+   "evidence_status": "SURROGATE_RECONSTRUCTION",
+   "method": "cluster_bootstrap_bca",
+   "note": "Bias-corrected and accelerated with a delete-one-cluster jackknife.",
+   "null_hypothesis": "H0_equality (interval-based)",
+   "p_value": null,
+   "tests_stated_hypothesis": true,
+   "verdict": "SUPPORTS_POSITIVE_DELTA"
+  }
+ ],
+ "scope_warning": "The equality-test rows are computed on the SURROGATE_RECONSTRUCTION. They quantify method behaviour at E4's design point; they are not E4's own DeLong/BCa results, which are NOT_INDEPENDENTLY_REPRODUCIBLE because the frozen per-observation predictions are not published.",
+ "verdicts": [
+  "SUPPORTS_POSITIVE_DELTA"
+ ]
+}

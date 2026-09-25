@@ -1,0 +1,20 @@
+{
+ "description": "SHA-256 of every published E4 artifact at HEAD e2d4133; used to prove the audit did not mutate E4.",
+ "files": {
+  "research/e4/protocol/EXECUTION_RESTART_REPORT.md": "57a0863afd20bce877f9064d4bcf14caab92bd10bfe5e633b110314e1f5043bc",
+  "research/e4/protocol/STUDY_PROTOCOL.md": "f732aef1697c2246156857c5b9f76a8d8de12cfa5d12a4239cdbd847ab5e683e",
+  "research/e4/protocol/experiment_config.json": "277dfe81ee993c6643d97e1514d6340482dd8ce81603131ecc17e6eea82f0e69",
+  "research/e4/protocol/protocol_freeze.json": "4aea2564b6c960c414ecf5c1f1d80e9a7880c5974c03252d6cbb1dc9fb3b750a",
+  "research/e4/public/CONCLUSION.md": "37eb4fdafbcb786ea9f2e042173fcd87b94bc0f5c84b3a7b38b9e0957103ecc0",
+  "research/e4/public/VALIDATION_REPORT.md": "a3ebe389aa98fb24478f6a48934e3ff654b9237eda7363688995e40bf8e16500",
+  "research/e4/public/agent_stability_summary.json": "09545b1fdefd2e83d15a0b232aa549b1e9da5219cd371fce4d77d60f78c75eee",
+  "research/e4/public/auroc_ci.svg": "3585c3c6b95f001c173c86c454fd31792694f24396e8fa878be68d221b161125",
+  "research/e4/public/batch_sensitivity_summary.json": "274258b76717881ec7adb6af24e2c92739e803c8bc3f50a384571f9baaa209f5",
+  "research/e4/public/paired_delta_auroc.svg": "d1227520459e8f7e3f144563146311c341a180616271f661fd051430a457b826",
+  "research/e4/public/readme_summary.json": "842d3cabce409631ec59b0c6db368e23f545cbefd3b7eba016334d657675c583",
+  "research/e4/public/render_replay_verification.json": "311019f5d76cc0c17f37440b24f719e876d4dd5fa0c693b355c90a3da141e486",
+  "research/e4/public/reproducibility_summary.json": "e92d8a9df5d617d732e944924656b3534e09c4b1cef0982001300e5824543eb5",
+  "research/e4/public/source_concordance_summary.json": "9779f51b57096863e2dd4e3565561171687e7483c63b8efa3cbefbb81733e5f3"
+ },
+ "source_commit": "e2d4133e34134254755e68072d2567928b1ed49a"
+}

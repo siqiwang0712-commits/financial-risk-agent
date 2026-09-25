@@ -1,0 +1,65 @@
+{
+ "audit": "E4-S bootstrap diagnostics",
+ "audit_reproduction": {
+  "auroc": {
+   "bca": [
+    0.015322560058895901,
+    0.04591870829979195
+   ],
+   "bias": 3.1734834212985424e-05,
+   "cluster_count": 674,
+   "invalid_replicates": 0,
+   "observed": 0.0303106673775021,
+   "percentile_linear": [
+    0.01523766203098669,
+    0.045747142082013165
+   ],
+   "percentile_nearest_rank": [
+    0.015232820630547983,
+    0.04574692780337941
+   ],
+   "standard_error": 0.00786837338951341,
+   "valid_replicates": 20000
+  },
+  "bca_note": "BCa uses a delete-one-cluster jackknife for the acceleration constant, which is the correct resampling unit for company-clustered observations.",
+  "percentile_conventions_reported": [
+   "nearest_rank (E4-compatible)",
+   "linear (standard)"
+  ],
+  "pr_auc": {
+   "bca": [
+    0.009085941801201598,
+    0.056889757872708537
+   ],
+   "bias": -0.00045830351419847565,
+   "cluster_count": 674,
+   "invalid_replicates": 0,
+   "observed": 0.03262502648415744,
+   "percentile_linear": [
+    0.008186777408959182,
+    0.05600230603088287
+   ],
+   "percentile_nearest_rank": [
+    0.008171097303611652,
+    0.05600215929382807
+   ],
+   "standard_error": 0.012214090218191934,
+   "valid_replicates": 20000
+  },
+  "replicates_requested": 20000
+ },
+ "monte_carlo_error": {
+  "audit_replicates": 20000,
+  "e4_replicates": 5000,
+  "note": "With B replicates the Monte Carlo standard error of a 2.5% percentile is approximately sqrt(p(1-p)/B) / density. At B=20000 this is roughly an order of magnitude smaller than at E4's B=5000, so E4's interval endpoints carry more simulation noise than the audit's."
+ },
+ "original_e4_published": {
+  "implied_sd": 0.008785203047795745,
+  "interval": [
+   0.0136488241235031,
+   0.04808618726460545
+  ],
+  "percentile_convention": "nearest rank: index = floor((n-1) * p), clamped (E4 _percentile)",
+  "replicates": 5000
+ }
+}

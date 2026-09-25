@@ -1,0 +1,223 @@
+{
+ "audit": "E4-S POST-E4 statistical audit",
+ "evidence_labels": [
+  "ORIGINAL_E4",
+  "POST_E4_STATISTICAL_AUDIT",
+  "SURROGATE_RECONSTRUCTION",
+  "NOT_INDEPENDENTLY_REPRODUCIBLE"
+ ],
+ "internal_consistency": {
+  "dispersion": {
+   "label_permutation_null_implied_sd": 0.007722563979914185,
+   "marginal_B0_implied_sd": 0.022519465204884938,
+   "marginal_B6_implied_sd": 0.02212755161777024,
+   "observation": "The label-permutation null is NARROWER than the paired bootstrap distribution of the same statistic. A permutation null that is narrower than the sampling distribution of the observed effect is not automatically conservative.",
+   "paired_bootstrap_implied_sd": 0.008785203047795745,
+   "ratio_permutation_over_bootstrap": 0.879042173288393
+  },
+  "holm_consistency": {
+   "consistent": true,
+   "expected_holm_if_P1_rank1_of_3": 0.0014992503748125937,
+   "note": "P1 is the smallest of the three primary p-values, so Holm multiplies it by 3.",
+   "published_holm": 0.0014992503748125937,
+   "published_p1": 0.0004997501249375312
+  },
+  "metric_identities": {
+   "delta_equals_b6_minus_b0": 0.0,
+   "events_equals_verified_events": true,
+   "identical_within_1e_12": true,
+   "one_observation_per_company": true,
+   "verified_n_equals_paired_n": true
+  },
+  "permutation_p_value_at_floor": {
+   "equal": true,
+   "floor": 0.0004997501249375312,
+   "interpretation": "The published permutation p-value equals the minimum attainable value for 2000 permutations, i.e. no permutation replicate reached the observed effect. The p-value is therefore a censored lower bound, not a resolved quantity.",
+   "published_p": 0.0004997501249375312
+  }
+ },
+ "original_e4": {
+  "claim_gate": "POSITIVE_PAIRED_AUROC_IMPROVEMENT",
+  "evidence_status": "ORIGINAL_E4",
+  "marginals": {
+   "B0": {
+    "auroc": 0.6776523045606553,
+    "ci": {
+     "ci_high": 0.7213448802852777,
+     "ci_low": 0.6330701987799229,
+     "cluster_count": 674,
+     "invalid_replicates": 0,
+     "metric": "auroc",
+     "observed": 0.6776523045606553,
+     "valid_replicates": 5000
+    },
+    "events": 235,
+    "n": 674,
+    "pr_auc": 0.5405254830474869
+   },
+   "B6": {
+    "auroc": 0.7079581253332041,
+    "ci": {
+     "ci_high": 0.7497783517076555,
+     "ci_low": 0.6630399432338941,
+     "cluster_count": 674,
+     "invalid_replicates": 0,
+     "metric": "auroc",
+     "observed": 0.7079581253332041,
+     "valid_replicates": 5000
+    },
+    "events": 235,
+    "n": 674,
+    "pr_auc": 0.583717341546959
+   }
+  },
+  "p1": {
+   "bootstrap_ci_high": 0.04808618726460545,
+   "bootstrap_ci_low": 0.0136488241235031,
+   "bootstrap_replicates": 5000,
+   "challenger": "B6",
+   "events": 235,
+   "holm_adjusted_p": 0.0014992503748125937,
+   "metric": "auroc",
+   "n_pairs": 674,
+   "observed_delta_auroc": 0.03030582077254884,
+   "permutation_null_ci_high": 0.015450976590898113,
+   "permutation_null_ci_low": -0.014820917946978096,
+   "permutation_p_value": 0.0004997501249375312,
+   "permutation_replicates": 2000,
+   "reference": "B0"
+  },
+  "source_artifact": "research/e4/public/readme_summary.json",
+  "source_artifact_sha256": "842d3cabce409631ec59b0c6db368e23f545cbefd3b7eba016334d657675c583"
+ },
+ "reproducibility_blocker": {
+  "consequence": "E4's P1 delta, bootstrap interval and permutation p-value can be read from the published summary but cannot be recomputed or attacked from published data. The E4 post-hoc audit's claim of independent integrity verification was performed with access to the local artifacts and is not reproducible by an external party from the repository alone.",
+  "missing_artifacts": [
+   "research/e4/_artifacts/predictions.json (frozen per-observation predictions)",
+   "research/e4/_artifacts/outcomes.json (frozen labels)",
+   "research/e4/_artifacts/features.json",
+   "research/e4/_cache/previous_270.json (270-CIK exclusion set, hash-pinned only)"
+  ],
+  "published_hashes_without_content": {
+   "outcomes_json_sha256": "be82dab0f41af191b9b729187a135ff3533bdde5326d716dade431ae33465f68",
+   "predictions_json_sha256": "6ad033b0149183775e9d37f1011dafb20c255f85105984f5c0ce1b31ec47448d",
+   "previous_270_sha256": "d73b371ccb026f556387cf6ff8ba204a4fde0664dcd780f099f12aa005e36603"
+  },
+  "status": "NOT_INDEPENDENTLY_REPRODUCIBLE"
+ },
+ "surrogate": {
+  "auroc_bootstrap": {
+   "bca": [
+    0.015322560058895901,
+    0.04591870829979195
+   ],
+   "bias": 3.1734834212985424e-05,
+   "cluster_count": 674,
+   "invalid_replicates": 0,
+   "observed": 0.0303106673775021,
+   "percentile_linear": [
+    0.01523766203098669,
+    0.045747142082013165
+   ],
+   "percentile_nearest_rank": [
+    0.015232820630547983,
+    0.04574692780337941
+   ],
+   "standard_error": 0.00786837338951341,
+   "valid_replicates": 20000
+  },
+  "delong": {
+   "auc_challenger": 0.7079581253332041,
+   "auc_reference": 0.677647457955702,
+   "covariance": 0.0004117808489010454,
+   "events": 235,
+   "metric": "auroc",
+   "n_pairs": 674,
+   "observed_delta": 0.0303106673775021,
+   "p_value": 0.00011472062636208591,
+   "standard_error_delta": 0.00785832336629085,
+   "status": "OK",
+   "test": "delong_1988_paired",
+   "variance_challenger": 0.0004257780328229211,
+   "variance_delta": 6.175324612919277e-05,
+   "variance_reference": 0.0004595369111083625,
+   "z": 3.85714178008035,
+   "z_ci_high": 0.04571269815430172,
+   "z_ci_low": 0.014908636600702473
+  },
+  "design": {
+   "auc_challenger": 0.7079581253332041,
+   "auc_reference": 0.6776523045606553,
+   "n_events": 235,
+   "n_non_events": 439
+  },
+  "evidence_status": "SURROGATE_RECONSTRUCTION",
+  "label_permutation_as_implemented": {
+   "at_p_value_floor": false,
+   "null_ci_linear": [
+    -0.01542213929142629,
+    0.015422018126302502
+   ],
+   "null_ci_nearest_rank": [
+    -0.015431590171085197,
+    0.015421896961178683
+   ],
+   "null_mean": -5.832646730964967e-05,
+   "null_standard_deviation": 0.007898429621560251,
+   "observed_delta": 0.0303106673775021,
+   "p_value": 0.000199990000499975,
+   "p_value_floor": 4.999750012499375e-05,
+   "test": "label_permutation_as_implemented",
+   "valid_permutations": 20000
+  },
+  "matched_dispersion": {
+   "achieved_bootstrap_sd": 0.007971050885197837,
+   "achieved_permutation_null_sd": 0.008192604708538581,
+   "identification_note": "The paired bootstrap SD and the label-permutation null SD are two independent functions of the score correlation, so the correlation is identified rather than chosen. The residual gap between achieved and target dispersion bounds the surrogate's fidelity.",
+   "realised_score_correlation": 0.9447100791491352,
+   "selected_input_correlation": 0.94,
+   "target_bootstrap_sd": 0.008785203047795745,
+   "target_permutation_null_sd": 0.007722563979914185
+  },
+  "pr_auc_bootstrap": {
+   "bca": [
+    0.009085941801201598,
+    0.056889757872708537
+   ],
+   "bias": -0.00045830351419847565,
+   "cluster_count": 674,
+   "invalid_replicates": 0,
+   "observed": 0.03262502648415744,
+   "percentile_linear": [
+    0.008186777408959182,
+    0.05600230603088287
+   ],
+   "percentile_nearest_rank": [
+    0.008171097303611652,
+    0.05600215929382807
+   ],
+   "standard_error": 0.012214090218191934,
+   "valid_replicates": 20000
+  },
+  "purpose": "E4's frozen per-observation predictions are not published, so P1 cannot be recomputed from raw data. This block reconstructs a paired sample whose AUROCs and dispersion match E4's published sufficient statistics, in order to quantify how far the inference methods disagree at E4's design point. It is NOT an E4 re-analysis and must not be quoted as E4's DeLong result.",
+  "recomputed_observed": {
+   "auc_challenger": 0.7079581253332041,
+   "auc_reference": 0.677647457955702,
+   "delta_auroc": 0.0303106673775021,
+   "delta_pr_auc": 0.03262502648415744
+  },
+  "score_swap_randomization": {
+   "null_ci_linear": [
+    -0.015591528134541678,
+    0.015494959530848661
+   ],
+   "null_hypothesis": "H0_exch: the two score vectors are exchangeable given the outcome (implies equal AUROC)",
+   "null_mean": -4.765012358842637e-05,
+   "null_standard_deviation": 0.007958260334626769,
+   "observed_delta": 0.0303106673775021,
+   "p_value": 4.999750012499375e-05,
+   "test": "score_swap_randomization",
+   "valid_permutations": 20000
+  }
+ }
+}

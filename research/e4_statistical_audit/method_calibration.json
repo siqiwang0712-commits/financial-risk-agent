@@ -1,0 +1,119 @@
+{
+ "evidence_status": "POST_E4_STATISTICAL_AUDIT",
+ "monte_carlo_precision": {
+  "note": "The Monte Carlo standard error of a rejection rate near 0.05 with 200 replicates is about 0.015, so sizes are resolved to roughly +/-0.03 at 95% confidence. This is sufficient to separate nominal calibration from the materially miscalibrated regime, but not to resolve small deviations.",
+  "permutation_samples_per_replicate": 1000,
+  "replicates": 200
+ },
+ "purpose": "Empirical size of each procedure under H0_equality. A test whose rejection rate under H0_equality differs materially from the nominal alpha does not control the error rate for the hypothesis E4 states.",
+ "scenarios": {
+  "H0_equality_informative_scores": {
+   "design": {
+    "auc_challenger": 0.6776523045606553,
+    "auc_reference": 0.6776523045606553,
+    "correlation": 0.92,
+    "n_events": 235,
+    "n_non_events": 439,
+    "null_under_test": "H0_equality",
+    "permutation_samples": 1000,
+    "replicates": 200,
+    "swap_samples": 1000,
+    "true_delta": 0.0
+   },
+   "methods": {
+    "delong_paired": {
+     "empirical_rejection_rate": 0.025,
+     "median_p_value": 0.5150169013392776,
+     "p_value_at_floor_fraction": 0.0,
+     "replicates": 200
+    },
+    "label_permutation_as_implemented": {
+     "empirical_rejection_rate": 0.025,
+     "median_p_value": 0.5204795204795205,
+     "p_value_at_floor_fraction": 0.0,
+     "replicates": 200
+    },
+    "score_swap_randomization": {
+     "empirical_rejection_rate": 0.035,
+     "median_p_value": 0.5204795204795205,
+     "p_value_at_floor_fraction": 0.0,
+     "replicates": 200
+    }
+   },
+   "nominal_alpha": 0.05,
+   "observed_delta_mean": -0.00017205447583967194
+  },
+  "H0_independence_scores_at_0_5": {
+   "design": {
+    "auc_challenger": 0.5,
+    "auc_reference": 0.5,
+    "correlation": 0.92,
+    "n_events": 235,
+    "n_non_events": 439,
+    "null_under_test": "H0_equality",
+    "permutation_samples": 1000,
+    "replicates": 200,
+    "swap_samples": 1000,
+    "true_delta": 0.0
+   },
+   "methods": {
+    "delong_paired": {
+     "empirical_rejection_rate": 0.075,
+     "median_p_value": 0.47529206768012067,
+     "p_value_at_floor_fraction": 0.0,
+     "replicates": 200
+    },
+    "label_permutation_as_implemented": {
+     "empirical_rejection_rate": 0.075,
+     "median_p_value": 0.4645354645354645,
+     "p_value_at_floor_fraction": 0.005,
+     "replicates": 200
+    },
+    "score_swap_randomization": {
+     "empirical_rejection_rate": 0.075,
+     "median_p_value": 0.47352647352647353,
+     "p_value_at_floor_fraction": 0.0,
+     "replicates": 200
+    }
+   },
+   "nominal_alpha": 0.05,
+   "observed_delta_mean": -0.00021300828769447
+  },
+  "alternative_E4_effect": {
+   "design": {
+    "auc_challenger": 0.7079581253332041,
+    "auc_reference": 0.6776523045606553,
+    "correlation": 0.92,
+    "n_events": 235,
+    "n_non_events": 439,
+    "null_under_test": "alternative",
+    "permutation_samples": 1000,
+    "replicates": 200,
+    "swap_samples": 1000,
+    "true_delta": 0.03030582077254884
+   },
+   "methods": {
+    "delong_paired": {
+     "empirical_rejection_rate": 0.935,
+     "median_p_value": 0.0008505735999349007,
+     "p_value_at_floor_fraction": 0.525,
+     "replicates": 200
+    },
+    "label_permutation_as_implemented": {
+     "empirical_rejection_rate": 0.93,
+     "median_p_value": 0.001998001998001998,
+     "p_value_at_floor_fraction": 0.39,
+     "replicates": 200
+    },
+    "score_swap_randomization": {
+     "empirical_rejection_rate": 0.935,
+     "median_p_value": 0.001998001998001998,
+     "p_value_at_floor_fraction": 0.43,
+     "replicates": 200
+    }
+   },
+   "nominal_alpha": 0.05,
+   "observed_delta_mean": 0.03008098676876848
+  }
+ }
+}

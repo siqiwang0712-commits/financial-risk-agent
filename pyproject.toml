@@ -24,6 +24,9 @@ where = ["backend"]
 testpaths = ["tests"]
 pythonpath = ["backend"]
 addopts = "-q"
+markers = [
+  "slow: statistical calibration studies that run many simulated replicates",
+]
 filterwarnings = [
   "ignore:Using `httpx` with `starlette.testclient` is deprecated:starlette.exceptions.StarletteDeprecationWarning",
 ]

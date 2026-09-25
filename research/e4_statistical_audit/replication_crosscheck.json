@@ -1,0 +1,130 @@
+{
+ "audit_independent_implementation": {
+  "auroc_bootstrap": {
+   "bca": [
+    0.011138482686425602,
+    0.043834865384833915
+   ],
+   "bias": 1.3376241231464331e-05,
+   "observed": 0.026358800773694457,
+   "percentile_linear": [
+    0.01039647427329059,
+    0.04298208374409318
+   ],
+   "percentile_nearest_rank": [
+    0.010394754297193276,
+    0.0429817234452996
+   ],
+   "standard_error": 0.008269346775845303,
+   "valid_replicates": 20000
+  },
+  "delong": {
+   "auc_challenger": 0.7054158607350097,
+   "auc_reference": 0.6790570599613153,
+   "covariance": 0.00046219761465365807,
+   "events": 235,
+   "metric": "auroc",
+   "n_pairs": 675,
+   "observed_delta": 0.026358800773694457,
+   "p_value": 0.0014401093495102213,
+   "standard_error_delta": 0.008272051242746922,
+   "status": "OK",
+   "test": "delong_1988_paired",
+   "variance_challenger": 0.00048675123125507754,
+   "variance_delta": 6.84268317626309e-05,
+   "variance_reference": 0.0005060708298148696,
+   "z": 3.186489058177234,
+   "z_ci_high": 0.04257172328774822,
+   "z_ci_low": 0.010145878259640695
+  },
+  "delta_auroc": 0.026358800773694457,
+  "delta_pr_auc": 0.03958174835864847,
+  "label_permutation_as_implemented": {
+   "at_p_value_floor": false,
+   "null_ci_linear": [
+    -0.015048476789168213,
+    0.014976305609284288
+   ],
+   "null_ci_nearest_rank": [
+    -0.015053191489361684,
+    0.014975822050290133
+   ],
+   "null_mean": -6.98498549323018e-05,
+   "null_standard_deviation": 0.007687359397801283,
+   "observed_delta": 0.026358800773694457,
+   "p_value": 0.0006999650017499125,
+   "p_value_floor": 4.999750012499375e-05,
+   "test": "label_permutation_as_implemented",
+   "valid_permutations": 20000
+  },
+  "pr_auc_bootstrap": {
+   "bca": [
+    0.018855234109191425,
+    0.05948725775964494
+   ],
+   "observed": 0.03958174835864847,
+   "percentile_linear": [
+    0.020617416234009065,
+    0.061713578018238346
+   ],
+   "percentile_nearest_rank": [
+    0.02061564757148482,
+    0.0617130608997285
+   ],
+   "standard_error": 0.010463837113821806,
+   "valid_replicates": 20000
+  },
+  "score_swap_randomization": {
+   "null_ci_linear": [
+    -0.018534937137330787,
+    0.018351184719535778
+   ],
+   "null_hypothesis": "H0_exch: the two score vectors are exchangeable given the outcome (implies equal AUROC)",
+   "null_mean": -5.395067698259376e-06,
+   "null_standard_deviation": 0.009437043454098692,
+   "observed_delta": 0.026358800773694457,
+   "p_value": 0.004499775011249437,
+   "test": "score_swap_randomization",
+   "valid_permutations": 20000
+  }
+ },
+ "cohort_provenance": {
+  "cohort_deviation": "previous_270.json is unpublished, so the 270-CIK exclusion could not be applied; the pool is 229 usable candidates larger (3888 vs 3659) and the stratified sample therefore differs in composition.",
+  "events": 235,
+  "measured_overlap": "47 of 50 sampled E4-B companies are present in the replication cohort",
+  "n_pairs": 675,
+  "source": "independent re-execution of the frozen v0.3.4 E4-A pipeline"
+ },
+ "evidence_status": "REPLICATION_COHORT_INFERENCE",
+ "frozen_e4_implementation": {
+  "paired_delta": {
+   "challenger": "B6",
+   "ci_high": 0.042831011131003294,
+   "ci_low": 0.010050274476461563,
+   "events": 235,
+   "invalid_replicates": 0,
+   "metric": "auroc",
+   "n_pairs": 675,
+   "observed_delta": 0.026358800773694457,
+   "reference": "B0",
+   "valid_replicates": 5000
+  },
+  "paired_permutation": {
+   "null_ci_high": 0.015101547388781389,
+   "null_ci_low": -0.015285299806576391,
+   "observed_delta": 0.026358800773694457,
+   "p_value": 0.0014992503748125937,
+   "valid_permutations": 2000
+  }
+ },
+ "marginals": {
+  "B0_auroc": 0.6790570599613153,
+  "B0_pr_auc": 0.5412172740851958,
+  "B6_auroc": 0.7054158607350097,
+  "B6_pr_auc": 0.5807990224438443
+ },
+ "reimplementation_agreement": {
+  "delta_difference": 0.0,
+  "note": "The frozen routine and the audit re-implementation must return the same observed delta on the same rows; a non-zero difference would indicate a re-implementation error rather than a method disagreement."
+ }
+}
