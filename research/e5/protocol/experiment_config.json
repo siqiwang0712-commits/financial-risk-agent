@@ -1,0 +1,142 @@
+{
+ "study": "E5",
+ "status": "PROSPECTIVE_NOT_FROZEN",
+ "freeze_rule": "This file is frozen by the protocol commit. Any later change must be a new, separately committed amendment that records both the old and the new hash.",
+ "supersedes": "research/e5/STUDY_PROTOCOL_DRAFT.md",
+ "source_commit_at_freeze": null,
+ "protocol_document": "research/e5/protocol/STUDY_PROTOCOL.md",
+
+ "isolation": {
+  "feature_fiscal_year": 2026,
+  "feature_archives": ["2026q3.zip", "2026q4.zip", "2027q1.zip", "2027q2.zip"],
+  "outcome_archives": ["2027q3.zip", "2027q4.zip", "2028q1.zip", "2028q2.zip"],
+  "outcome_window_months": 12,
+  "require_newer_than_e4": true,
+  "require_company_disjoint_from": ["E1", "E2", "E3", "public_v1", "historical_development", "E4", "previous_270"],
+  "unused_e4_companies_eligible": false,
+  "blocking_prerequisite": "research/e4/_cache/previous_270.json is unpublished; company-disjointness against the prior 270-CIK cohort cannot be proven until it is published."
+ },
+
+ "cohort": {
+  "algorithm": "proportional SIC strata, largest remainder, ascending SHA-256 within stratum",
+  "salt": "finrisk-e5-cohort-v1:",
+  "eligibility": "original FY2026 10-K; non-financial SIC; computable B0 component; same-filing temporal component",
+  "agent_cohort_cap": null,
+  "agent_cohort_from_power_analysis": true
+ },
+
+ "confirmatory_systems": {
+  "locked_references": ["B0", "B6"],
+  "primary_agent_representation": "A2",
+  "primary_agent_representation_alternatives_allowed": ["A3"],
+  "primary_representation_rule": "Exactly one of A2 or A3 is primary. Both may not be primary. A3 must be defined and frozen in the protocol commit to be eligible.",
+  "primary_hybrid": "H = 0.5 * B6 + 0.5 * A2",
+  "hybrid_weight_source": "frozen transparent rule; a learned fusion requires a development set disjoint from E5 and from every E4 company, with coefficients frozen before outcome access",
+  "secondary_and_ablation": ["B1", "B2", "B3", "A0", "A1"],
+  "threshold": 0.5,
+  "threshold_sensitivity_range": [0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8]
+ },
+
+ "hypotheses": {
+  "primary_family": [
+   {"id": "H1", "challenger": "A2", "reference": "B6", "question": "can a strong Agent beat the deterministic temporal baseline outright"},
+   {"id": "H2", "challenger": "H", "reference": "B6", "question": "does the Agent add incremental value on top of B6"},
+   {"id": "H3", "challenger": "H", "reference": "A2", "question": "are the deterministic temporal signal and Agent reasoning complementary"}
+  ],
+  "primary_test": "paired_delong_1988",
+  "primary_interval": "company_cluster_bca_bootstrap",
+  "bootstrap_replicates": 20000,
+  "bootstrap_jackknife_unit": "company",
+  "multiplicity": "holm_step_down_over_H1_H2_H3",
+  "family_wise_alpha": 0.05,
+  "claim_gate": "holm_adjusted_p < 0.05 AND paired_bca_ci_low > 0 AND minimum_paired_events_met",
+  "forbidden_primary": ["label_permutation_as_test_of_auc_equality", "post_hoc_test_selection", "threshold_retuning"],
+  "secondary_procedures": ["score_swap_randomization", "label_permutation_reported_under_its_own_null", "threshold_sensitivity"]
+ },
+
+ "outcome": {
+  "endpoint": "deterministic_forward_outcome_rule_v1",
+  "tiers": ["VERIFIED_DETERMINISTIC", "REQUIRES_HUMAN_REVIEW"],
+  "adjudication": {
+   "reviewer_a": true,
+   "reviewer_b": true,
+   "adjudicator_c": true,
+   "blinding": "reviewers see only endpoint-construction evidence; never any score, prediction, threshold, model identity or the other reviewer's verdict",
+   "report": ["raw_agreement", "cohen_kappa", "disagreement_rate", "adjudication_rate", "per_reviewer_positive_rate", "final_evaluable_coverage"],
+   "coercion_of_insufficient_data": false
+  },
+  "minimum_evaluable_coverage": null,
+  "minimum_paired_events": 100,
+  "reweighting": "sensitivity analysis only; never a substitute for missing labels"
+ },
+
+ "agent_inference_policy": {
+  "one_company_per_semantic_request": true,
+  "cross_company_context_sharing": false,
+  "concurrency_at_transport_layer_only": true,
+  "justification": "E4 measured a mean absolute batch-vs-single score difference of 0.101 with a rank correlation of only ~0.313; a ranking study cannot tolerate shared semantic context across companies.",
+  "retry_policy": "one unchanged retry, then deterministic left/right bisection to a single permanent failure",
+  "failure_recording": "deterministic error code plus a hash of the masked invalid response",
+  "forbidden_inputs": ["web", "tools", "shell", "repository", "future_data", "other_model_output", "deterministic_final_scores"]
+ },
+
+ "agent_qualification": {
+  "protocol_document": "research/e5/protocol/AGENT_QUALIFICATION_PROTOCOL.md",
+  "packet_count_range": [100, 200],
+  "packet_provenance": "historical or synthetic, non-E5, outcome-blind",
+  "gates": {
+   "schema_success_min": 0.99,
+   "case_id_equality": "exact",
+   "missing_outputs": 0,
+   "risk_score_range": [0.0, 1.0],
+   "batch_size_sensitivity": "rank correlation and mean score difference within frozen tolerance at sizes 1, small, target",
+   "determinism_at_temperature_zero": true
+  },
+  "selection_rule": ["schema_success", "context_fit", "reproducibility", "hardware_feasibility", "latency"],
+  "selection_may_use_e5_outcomes": false,
+  "selected_model": null,
+  "selected_model_digest": null
+ },
+
+ "calibration": {
+  "status": "UNCALIBRATED_UNLESS_THREE_DISTINCT_SPLITS_EXIST",
+  "required_splits": ["development", "calibration", "final_validation"],
+  "report_if_attempted": ["calibration_intercept", "calibration_slope", "brier", "ece", "calibration_plot", "discrimination"],
+  "refit_on_validation": false
+ },
+
+ "power": {
+  "analysis_file": "research/e5/protocol/power_analysis.json",
+  "minimum_meaningful_delta_auroc": null,
+  "target_power": [0.80, 0.90],
+  "planning_inputs": {
+   "verified_rate": 0.60,
+   "event_prevalence": 0.3486646884272997,
+   "schema_success_rate": 0.99,
+   "auc_reference": 0.7079581253332041
+  },
+  "unlock_gate": "projected paired positive events >= 100 after endpoint and schema attrition at the frozen minimum meaningful effect",
+  "gate_may_be_lowered_after_outcome_access": false
+ },
+
+ "environment_variables": {
+  "FINRISK_SEC_MAX_ARCHIVE_MEMBER_BYTES": "2147483648",
+  "_note": "The frozen v0.3.4 default is 268435456 (256 MB) and SEC FSDS num.txt members are 500-600 MB, so E4's outcome stage required this override. E4 recorded it nowhere. E5 records every result-affecting variable explicitly."
+ },
+
+ "governance": {
+  "workflow_document": "research/e5/protocol/GOVERNANCE_WORKFLOW.md",
+  "stage_commits": ["protocol", "agent-qualification", "cohort-freeze", "feature-freeze", "prediction-freeze", "outcome-unlock", "adjudication", "evaluation", "results"],
+  "amend_pushed_commits": false,
+  "manifest_chain": "each stage manifest records the previous stage's manifest hash",
+  "verifier": "research/e5/protocol/verify_freeze_chain.py"
+ },
+
+ "narrative_track": {
+  "name": "E5-Narrative",
+  "separate_from_structured_e5": true,
+  "inputs": ["MD&A", "Risk Factors", "Liquidity", "Debt", "footnotes", "auditor commentary", "going-concern evidence"],
+  "ground_truth": "human-adjudicated",
+  "metrics": ["claim_extraction", "evidence_grounding", "citation_correctness", "contradiction_detection", "temporal_change_detection", "unsupported_claim_rate", "abstention_quality"]
+ }
+}
