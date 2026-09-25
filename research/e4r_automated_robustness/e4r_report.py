@@ -447,7 +447,7 @@ def sector_heterogeneity_verdict(heterogeneity: dict) -> str:
     if inconclusive:
         parts.append(
             f"{', '.join(inconclusive)} {'is' if len(inconclusive) == 1 else 'are'} inconclusive: "
-            "small, and the interval spans zero."
+            "the interval spans zero, so the point estimate is not distinguishable from no effect."
         )
     if positive:
         parts.append(f"{', '.join(positive)} shows a robust positive effect.")

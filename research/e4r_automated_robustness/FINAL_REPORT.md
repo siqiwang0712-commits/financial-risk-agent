@@ -1,6 +1,6 @@
 # E4-R — Automated Robustness & Competitive Baseline Study
 
-**Status: `POST_HOC_AUTOMATED_ROBUSTNESS`** — git `4194ee2f8f4b`, Python 3.13.14.
+**Status: `POST_HOC_AUTOMATED_ROBUSTNESS`** — git `394ad96dd4f7`, Python 3.13.14.
 
 E4-R is a **retrospective (POST_HOC)** study run on E4's published replication data. It is **not** `ESTABLISHED_E4`, **not** `CONFIRMATORY`, **not** `PROSPECTIVE` and **not** an `E5_RESULT`. It does not modify E4, does not create confirmatory evidence, and does not replace E5. It exists to make E5 designable.
 
@@ -180,7 +180,7 @@ Pooled ΔAUROC across the gated sectors (covering 560 of 675 observations, 0.830
 
 Cochran Q = 2.2155 on 2 degrees of freedom, I² = 0.097, χ² p = 0.395; permutation p = 0.246 over 2000 relabellings.
 
-The heterogeneity test does not reject a common effect (permutation p = 0.246), so the sector spread is compatible with sampling noise. No sector's interval supports a negative effect, so no sector can be described as one where B6 performs worse. Manufacturing, Transportation_Utilities are inconclusive: small, and the interval spans zero. Services shows a robust positive effect.
+The heterogeneity test does not reject a common effect (permutation p = 0.246), so the sector spread is compatible with sampling noise. No sector's interval supports a negative effect, so no sector can be described as one where B6 performs worse. Manufacturing, Transportation_Utilities are inconclusive: the interval spans zero, so the point estimate is not distinguishable from no effect. Services shows a robust positive effect.
 
 ### H7. Does the strong-ML-beats-B6 conclusion survive these robustness checks?
 After removing every missingness signal the weaker of the two families still reaches 0.6591 against B6's 0.7054 — a gap of -0.0463. The paired boosting-vs-B6 comparison is +0.0056 for the F2 increment and the primary P3 result is unchanged. The conclusion stands, with the attribution caveat in H1 attached to it.
