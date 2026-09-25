@@ -19,3 +19,11 @@ research/results/v0.3.1/*.svg text eol=lf
 research/results/v0.3.1/benchmark_forensics/**/*.json -text
 # Derived cross-experiment reports are not immutable byte-hashed artifacts.
 research/results/v0.3.1/benchmark_forensics/*.json text eol=lf
+
+# Frozen study artifacts under research/e4 and research/e5 carry content hashes and are
+# compared byte-for-byte across platforms. They previously inherited only `* text=auto`,
+# so a Windows checkout with core.autocrlf=true produced CRLF working-tree copies of
+# research/e4/public/*.json and research/e4/protocol/*. Pin them to LF.
+research/e4/** text eol=lf
+research/e5/** text eol=lf
+research/e4_statistical_audit/** text eol=lf
