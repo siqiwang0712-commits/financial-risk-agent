@@ -61,9 +61,13 @@ def verify() -> dict[str, Any]:
 
     sol_manifest = _read(SOL / "manifest.json")
     sol_predictions = _read(SOL / "predictions.json")
-    prediction_hash = hashlib.sha256(
-        (SOL / "predictions.json").read_bytes()
-    ).hexdigest()
+    prediction_bytes = (
+        (SOL / "predictions.json")
+        .read_text(encoding="utf-8")
+        .replace("\r\n", "\n")
+        .encode("utf-8")
+    )
+    prediction_hash = hashlib.sha256(prediction_bytes).hexdigest()
     if prediction_hash != sol_manifest["prediction_file_sha256"]:
         raise RuntimeError("post-hoc comparator prediction hash mismatch")
     if (

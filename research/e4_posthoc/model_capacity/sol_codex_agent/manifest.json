@@ -27,7 +27,7 @@
   "metric_subset": "VERIFIED binary outcomes only",
   "outcome_rule": "deterministic_forward_outcome_rule_v1",
   "packet_manifest_sha256": "f44671808da5b24bc8f1c42de9610b0ae9fc7b6a4289919ce15262e5f4138cdc",
-  "prediction_file_sha256": "c28a288afed14768d7f137e8abbf3e02c9ede3cf9e761233887f729c9dc999d8",
+  "prediction_file_sha256": "8c79cd41eba09eba5ebfd44ba70243258a63fd5d640e8886d630016e4b68ea10",
   "reliability": "UNCALIBRATED",
   "representations": [
     "A0",

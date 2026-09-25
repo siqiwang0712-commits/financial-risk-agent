@@ -39,7 +39,13 @@ def test_sol_codex_comparator_is_complete_and_traceable() -> None:
     assert len({(row["masked_company_id"], row["model_id"]) for row in predictions}) == 150
     assert {row["model_id"] for row in predictions} == {"SOL_A0", "SOL_A1", "SOL_A2"}
     assert {row["config_hash"] for row in predictions} == {manifest["config_hash"]}
-    assert hashlib.sha256((output / "predictions.json").read_bytes()).hexdigest() == manifest["prediction_file_sha256"]
+    prediction_bytes = (
+        (output / "predictions.json")
+        .read_text(encoding="utf-8")
+        .replace("\r\n", "\n")
+        .encode("utf-8")
+    )
+    assert hashlib.sha256(prediction_bytes).hexdigest() == manifest["prediction_file_sha256"]
 
     for row in predictions:
         assert len(row["input_hash"]) == 64
