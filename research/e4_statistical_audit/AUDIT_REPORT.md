@@ -79,6 +79,15 @@ reporting only the first would overstate the practical impact.
 published; only their SHA-256 values are. E4's exact 674 paired rows are therefore
 `NOT_INDEPENDENTLY_REPRODUCIBLE`.
 
+The single most consequential missing file is the 270-CIK exclusion set, pinned in
+`backend/finrisk/e4_core.py` as
+`PREVIOUS_270_SHA256 = "d73b371ccb026f556387cf6ff8ba204a4fde0664dcd780f099f12aa005e36603"`.
+The repository contains no list of 200–400 CIKs anywhere, so it cannot be recovered from
+what is published: it has to be released. `verify_previous_270.py` is the one-command path
+for when it is — it checks a candidate against that frozen constant and, if genuine, runs
+the frozen `build_cohort` to rebuild E4's exact cohort and report the true overlap with the
+published replication cohort.
+
 Rather than stop there, the audit re-executed the frozen v0.3.4 pipeline from public
 inputs. Full detail in `HANDOVER_VERIFICATION.md`; essentials:
 
@@ -361,6 +370,8 @@ override.
 | `AUDIT_REPORT.md` | this report |
 | `HANDOVER_VERIFICATION.md` | claim-by-claim verification of the handover brief |
 | `verify_audit.py` | the verifier a third party runs: re-checks every hash and recomputes the real-data inference |
+| `verify_previous_270.py` | one-command path to verify a candidate 270-CIK list and rebuild E4's exact cohort |
+| `verify_previous_270.py` | one-command path to verify a candidate 270-CIK list and rebuild E4's exact cohort |
 | `verification_result.json` | the verifier's own output |
 | `paired_auc_inference.json` | original E4 values, internal-consistency checks, surrogate reconstruction, reproducibility blocker |
 | `bootstrap_diagnostics.json` | replicate counts, percentile conventions, Monte Carlo precision |

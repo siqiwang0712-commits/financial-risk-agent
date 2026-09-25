@@ -23,6 +23,17 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 AUDIT_DIR = REPO_ROOT / "research" / "e4_statistical_audit"
 sys.path.insert(0, str(AUDIT_DIR))
 
+
+def _load_module(name: str, path: Path):
+    """Load a standalone audit script by path (they are scripts, not a package)."""
+    import importlib.util
+
+    spec = importlib.util.spec_from_file_location(name, path)
+    module = importlib.util.module_from_spec(spec)
+    sys.modules[name] = module
+    spec.loader.exec_module(module)
+    return module
+
 from e4s_stats import (  # noqa: E402
     PairedObservation,
     average_precision,
@@ -515,3 +526,73 @@ def test_verifier_reports_a_pass_on_the_published_artifacts() -> None:
     assert result.returncode == 0, f"verify_audit.py failed:\n{result.stdout}\n{result.stderr}"
     assert "checks passed" in result.stdout
     assert "FAIL" not in result.stdout
+
+
+# ----------------------------------------------------------------------------------
+# previous_270 recovery tooling
+# ----------------------------------------------------------------------------------
+
+verify_previous_270 = _load_module("verify_previous_270", AUDIT_DIR / "verify_previous_270.py")
+
+
+def test_pinned_previous_270_hash_matches_the_documented_value() -> None:
+    """The blocker is only meaningful if the pinned constant is the one the audit cites.
+
+    The fallback literal is checked against the frozen module's *source text*, so it cannot
+    drift even when the full FinRisk dependency stack is not importable.
+    """
+    pinned = verify_previous_270.PREVIOUS_270_SHA256
+    assert pinned == "d73b371ccb026f556387cf6ff8ba204a4fde0664dcd780f099f12aa005e36603"
+    source = (REPO_ROOT / "backend" / "finrisk" / "e4_core.py").read_text(encoding="utf-8")
+    assert f'PREVIOUS_270_SHA256 = "{pinned}"' in source, (
+        "the audit's pinned hash no longer matches finrisk.e4_core"
+    )
+    report = (AUDIT_DIR / "AUDIT_REPORT.md").read_text(encoding="utf-8")
+    assert pinned[:12] in report
+
+
+def test_previous_270_verifier_rejects_a_wrong_hash(tmp_path: Path) -> None:
+    candidate = tmp_path / "previous_270.json"
+    candidate.write_text(json.dumps([{"cik": "0000000001"}]), encoding="utf-8")
+    result = verify_previous_270.verify_candidate(candidate)
+    assert result["status"] == "REJECTED_HASH_MISMATCH"
+    assert result["hash_matches"] is False
+
+
+def test_previous_270_verifier_reports_a_missing_file(tmp_path: Path) -> None:
+    result = verify_previous_270.verify_candidate(tmp_path / "absent.json")
+    assert result["status"] == "MISSING"
+
+
+def test_previous_270_verifier_reports_shape_information(tmp_path: Path) -> None:
+    candidate = tmp_path / "candidate.json"
+    rows = [{"cik": f"{i:010d}"} for i in range(270)]
+    candidate.write_text(json.dumps(rows), encoding="utf-8")
+    result = verify_previous_270.verify_candidate(candidate)
+    # The hash cannot match a synthetic file, but the shape diagnostics must still be filled in.
+    assert result["count"] == 270
+    assert result["cik_count"] == 270
+    assert result["unique_ciks"] == 270
+    assert result["all_ten_digits"] is True
+    assert result["status"] == "REJECTED_HASH_MISMATCH"
+
+
+def test_cohort_comparison_counts_shared_and_distinct_companies() -> None:
+    e4 = [
+        {"cik": "0000000001", "observation_id": "E4_OBS_000001"},
+        {"cik": "0000000002", "observation_id": "E4_OBS_000002"},
+        {"cik": "0000000003", "observation_id": "E4_OBS_000003"},
+    ]
+    replication = [
+        {"cik": "0000000001", "observation_id": "R_OBS_000001"},
+        {"cik": "0000000003", "observation_id": "R_OBS_000002"},
+        {"cik": "0000000004", "observation_id": "R_OBS_000003"},
+    ]
+    result = verify_previous_270.compare_cohorts(e4, replication)
+    assert result["e4_cohort_size"] == 3
+    assert result["replication_cohort_size"] == 3
+    assert result["shared"] == 2
+    assert result["in_e4_only"] == 1
+    assert result["in_replication_only"] == 1
+    assert result["symmetric_difference"] == 2
+    assert result["index_mapping_examples"][0]["same_index"] is False
