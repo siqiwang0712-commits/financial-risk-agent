@@ -366,7 +366,49 @@ argument.
 
 ---
 
-## 8. Findings register
+## 8. Aggregation-equivalence diagnostic on E4's own Agent outputs
+
+`AGENT_REPRESENTATIONS.md` §2 shows that the A2 packet contains B0's and B6's complete input
+set. That is a statement about what the Agent *could* do. This section measures what E4's
+Agent actually did, using the Codex comparator's 150 published structured judgments
+(50 cases × A0/A1/A2) joined to the replication cohort by reproducing their packet hashes.
+47 of the 50 cases match, consistently across all three representations. Source:
+`aggregation_equivalence.json`.
+
+| Representation | n | Spearman vs B0 | Spearman vs B6 | R² on (B0, B6) | within ±0.05 of B6 | mean abs diff vs B6 | median Agent | median B6 |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|
+| A0 | 47 | 0.525 | 0.610 | 0.371 | 6.4% | 0.330 | 0.65 | 0.25 |
+| A1 | 47 | 0.580 | 0.648 | 0.377 | 8.5% | 0.357 | 0.65 | 0.25 |
+| A2 | 47 | 0.535 | 0.590 | 0.313 | 6.4% | 0.326 | 0.63 | 0.25 |
+
+### 8.1 How to read it
+
+1. **The Agent did not collapse onto the baseline.** R² on `(B0, B6)` is 0.31–0.38 and only
+   6–9% of its scores land within ±0.05 of B6. The confound is therefore *available* but was
+   not *realized* by this comparator.
+2. **It does track the baseline moderately.** Spearman against B6 is 0.59–0.65, so roughly a
+   third of the ranking variance is shared. That shared part is exactly why the residual
+   diagnostic matters: if an Agent's AUROC exceeds B6's, some of that excess is shared signal
+   rather than new information.
+3. **Its scale is entirely different.** Median Agent score 0.63–0.65 against B6's 0.25, mean
+   absolute difference ≈ 0.33. AUROC is rank-based so the level shift does not affect it, but
+   it is a further reason no Agent score may be read as a probability.
+
+### 8.2 What this cannot conclude
+
+The residual-AUROC part of the diagnostic — the paired ΔAUROC of the Agent against its own
+regression on `(B0, B6)` — is **not** computable here. E4-B has 5 events, and an AUROC
+difference on 5 events is uninterpretable. It is deferred to E5, and it is the part that
+would actually separate "the Agent re-weighted the baselines" from "the Agent added
+information".
+
+The provenance also caps the claim: the Codex comparator is `POST_HOC` and its exact
+underlying model ID was never exposed, so these correlations diagnose an E4 artifact rather
+than any named model's capability.
+
+---
+
+## 9. Findings register
 
 | ID | Severity | Finding | Fixable now? |
 |---|---|---|---|
@@ -381,6 +423,7 @@ argument.
 | E4S-09 | MINOR | E4's bootstrap uses a nearest-rank percentile; the standard is linear interpolation. The two differ measurably at 5,000 replicates | yes — report both |
 | E4S-10 | MINOR | With `core.autocrlf=true`, a Windows checkout produces CRLF working-tree copies of `research/e4/public/*.json` and `research/e4/protocol/*`, which carry no `eol=lf` attribute (unlike `research/results/public_v1/*`) | yes — extend `.gitattributes` |
 | E4S-11 | MODERATE | The published calibration slope (0.061 / 0.091) is a converged but **ill-conditioned** diagnostic for these scores: B0 takes 11 distinct values with 42% of mass at exactly 0, where the event rate is 26%. Cite the support diagnostics and ECE/CITL instead — the slope invites the misreading that the score carries no signal | yes — this audit adds the support diagnostics |
+| E4S-12 | MINOR | The A2 packet's contents make baseline imitation possible (E4S-11's neighbour), but E4's Codex comparator did not collapse onto B6: R² on (B0,B6) is 0.31–0.38 with 6–9% of scores within ±0.05 of B6. It does track B6 moderately (Spearman 0.59–0.65), so the residual diagnostic is required before any Agent advantage can be read as new information | yes — `aggregation_equivalence.json` |
 
 A hypothesis the audit tested and **did not** confirm is recorded rather than dropped: the
 expectation that the implemented permutation test would be materially anti-conservative is
@@ -391,7 +434,7 @@ package as explicit requirements.
 
 ---
 
-## 9. What this means for E4 and for E5
+## 10. What this means for E4 and for E5
 
 **For E4.** The narrow P1 claim survives, and now on three independent footing: the frozen
 bootstrap, a 20,000-replicate BCa bootstrap, and a paired DeLong test — all on real data at
@@ -413,7 +456,7 @@ override.
 
 ---
 
-## 10. Limitations of this audit
+## 11. Limitations of this audit
 
 - The real-data cross-check runs on a **~94%-overlapping cohort**, not on E4's exact rows.
   Its point estimate (+0.02636) differs from E4's published +0.03031 by 0.004, which is well
@@ -437,7 +480,7 @@ override.
 
 ---
 
-## 11. Artifacts
+## 12. Artifacts
 
 | File | Contents |
 |---|---|
@@ -454,6 +497,8 @@ override.
 | `replication_crosscheck.json` | all methods on the independent re-execution's real paired data |
 | `calibration_crosscheck.py` | recomputes E4's calibration diagnostics and diagnoses the score support |
 | `calibration_crosscheck.json` | E4's published calibration figures beside the replication's, plus the support diagnostics and the converged-optimiser check |
+| `aggregation_equivalence.py` | joins E4's published Agent outputs to the replication cohort via reproduced packet hashes |
+| `aggregation_equivalence.json` | the 47/50 case mapping and the outcome-free aggregation-equivalence diagnostic |
 | `replication/` | the published cohort, features, predictions, labels, paired analysis rows and manifest, plus `README.md` |
 | `e4_frozen_artifact_manifest.json` | SHA-256 of every published E4 artifact, proving non-mutation |
 | `e4s_stats.py` | independent statistical primitives |

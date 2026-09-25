@@ -18,6 +18,7 @@ import sys
 import tempfile
 from pathlib import Path
 
+import aggregation_equivalence
 import calibration_crosscheck
 import pytest
 import verify_previous_270
@@ -700,3 +701,81 @@ def test_calibration_rows_reproduce_the_published_diagnostics() -> None:
         assert calibration_crosscheck.calibration_in_the_large(labels, scores) == pytest.approx(
             recorded["calibration_in_the_large"], abs=1e-12
         )
+
+
+# ----------------------------------------------------------------------------------
+# Aggregation-equivalence diagnostic on E4's published Agent outputs
+# ----------------------------------------------------------------------------------
+
+AGGREGATION_JSON = AUDIT_DIR / "aggregation_equivalence.json"
+
+
+def test_spearman_matches_a_hand_computed_value() -> None:
+    assert aggregation_equivalence.spearman([1.0, 2.0, 3.0], [1.0, 2.0, 3.0]) == pytest.approx(1.0)
+    assert aggregation_equivalence.spearman([1.0, 2.0, 3.0], [3.0, 2.0, 1.0]) == pytest.approx(-1.0)
+    # ties get midranks, so a constant vector has no correlation to report
+    assert aggregation_equivalence.spearman([1.0, 1.0, 1.0], [1.0, 2.0, 3.0]) is None
+
+
+def test_ols_r_squared_recovers_a_known_linear_relationship() -> None:
+    target = [1.0, 3.0, 5.0, 7.0, 9.0]
+    predictor = [0.0, 1.0, 2.0, 3.0, 4.0]
+    assert aggregation_equivalence.ols_r_squared(target, [predictor]) == pytest.approx(1.0, abs=1e-9)
+    # a predictor with no relationship explains almost nothing
+    noisy = aggregation_equivalence.ols_r_squared(target, [[1.0, 0.0, 1.0, 0.0, 1.0]])
+    assert noisy is not None and noisy < 0.2
+
+
+def test_aggregation_equivalence_artifact_is_present_and_well_formed() -> None:
+    payload = json.loads(AGGREGATION_JSON.read_text(encoding="utf-8"))
+    assert payload["evidence_status"] == "POST_E4_STATISTICAL_AUDIT"
+    alignment = payload["cohort_alignment"]
+    assert alignment["e4b_case_count"] == 50
+    assert alignment["matched"] == 47
+    assert alignment["consistent_across_representations"] == 47
+    assert len(alignment["unmatched"]) == 3
+    for representation in ("A0", "A1", "A2"):
+        entry = payload["aggregation_equivalence"][representation]
+        assert entry["n"] == alignment["matched"]
+        assert entry["status"] == "DESCRIPTIVE_ONLY"
+
+
+def test_e4b_indices_are_recomputable_from_the_published_salt() -> None:
+    """The 50 E4-B indices depend only on the salt, so they are reproducible."""
+    indices = aggregation_equivalence.e4b_indices()
+    assert len(indices) == 50
+    assert len(set(indices)) == 50
+    assert all(1 <= index <= 2000 for index in indices)
+    published = json.loads(
+        (REPO_ROOT / "research" / "e4_posthoc" / "model_capacity" / "sol_codex_agent"
+         / "predictions.json").read_text(encoding="utf-8")
+    )
+    published_ids = sorted({row["observation_id"] for row in published})
+    assert [f"E4_OBS_{index:06d}" for index in indices] == published_ids
+
+
+def test_agent_scores_do_not_collapse_onto_the_baseline() -> None:
+    """The measured answer to the confound: available, but not realised.
+
+    A2 is given B6's inputs, so imitation is possible. If the comparator had simply
+    reproduced B6, R^2 on (B0, B6) would approach 1 and most scores would sit within a few
+    hundredths of B6. Neither holds, so the diagnostic must not be reported as if the Agent
+    were merely a re-expression of the baseline - and equally, the moderate rank agreement
+    must not be ignored.
+    """
+    payload = json.loads(AGGREGATION_JSON.read_text(encoding="utf-8"))
+    for representation, entry in payload["aggregation_equivalence"].items():
+        assert entry["r_squared_agent_on_B0_and_B6"] < 0.5, f"{representation} looks like imitation"
+        assert entry["share_within_0_05_of_B6"] < 0.2, f"{representation} sits on top of B6"
+        # but the rankings are not independent either
+        assert 0.4 < entry["spearman_agent_vs_B6"] < 0.8, f"{representation} rank agreement"
+        assert entry["mean_absolute_difference_vs_B6"] > 0.1, "the level shift is real"
+
+
+def test_aggregation_diagnostic_records_what_it_cannot_conclude() -> None:
+    """The residual-AUROC part needs labels E4-B cannot supply."""
+    payload = json.loads(AGGREGATION_JSON.read_text(encoding="utf-8"))
+    note = payload["labels_note"]
+    assert "residual-AUROC" in note
+    assert "NOT computed here" in note
+    assert "5 events" in note

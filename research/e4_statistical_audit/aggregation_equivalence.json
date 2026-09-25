@@ -1,0 +1,506 @@
+{
+ "aggregation_equivalence": {
+  "A0": {
+   "mean_absolute_difference_vs_B6": 0.3298758865255319,
+   "median_B6": 0.25,
+   "median_agent_score": 0.65,
+   "n": 47,
+   "r_squared_agent_on_B0_and_B6": 0.3712124650652453,
+   "share_within_0_05_of_B6": 0.06382978723404255,
+   "share_within_0_10_of_B6": 0.0851063829787234,
+   "spearman_agent_vs_B0": 0.5245919403894868,
+   "spearman_agent_vs_B6": 0.6100733231027528,
+   "status": "DESCRIPTIVE_ONLY"
+  },
+  "A1": {
+   "mean_absolute_difference_vs_B6": 0.3570035461,
+   "median_B6": 0.25,
+   "median_agent_score": 0.65,
+   "n": 47,
+   "r_squared_agent_on_B0_and_B6": 0.37683624922377545,
+   "share_within_0_05_of_B6": 0.0851063829787234,
+   "share_within_0_10_of_B6": 0.0851063829787234,
+   "spearman_agent_vs_B0": 0.5798289165171708,
+   "spearman_agent_vs_B6": 0.6480001043282425,
+   "status": "DESCRIPTIVE_ONLY"
+  },
+  "A2": {
+   "mean_absolute_difference_vs_B6": 0.32625886524893616,
+   "median_B6": 0.25,
+   "median_agent_score": 0.63,
+   "n": 47,
+   "r_squared_agent_on_B0_and_B6": 0.31338723550093994,
+   "share_within_0_05_of_B6": 0.06382978723404255,
+   "share_within_0_10_of_B6": 0.10638297872340426,
+   "spearman_agent_vs_B0": 0.5351330329836169,
+   "spearman_agent_vs_B6": 0.5897620820581614,
+   "status": "DESCRIPTIVE_ONLY"
+  }
+ },
+ "cohort_alignment": {
+  "consistent_across_representations": 47,
+  "e4b_case_count": 50,
+  "matched": 47,
+  "unmatched": [
+   "E4_OBS_001909",
+   "E4_OBS_001933",
+   "E4_OBS_001980"
+  ]
+ },
+ "evidence_status": "POST_E4_STATISTICAL_AUDIT",
+ "interpretation": "A high Spearman against B6 with a high R^2 on (B0, B6) means the Agent's structured judgment largely re-expresses the deterministic baselines, which is what the A2 packet's contents make possible. That is a statement about aggregation, not about reasoning capability, and it must not be reported as the Agent adding information.",
+ "labels_note": "The correlations are outcome-free and are therefore reported on every matched case. The residual-AUROC part of the diagnostic in AGENT_REPRESENTATIONS.md requires labels and is NOT computed here: E4-B has 5 events, at which any AUROC difference is uninterpretable. It is deferred to E5.",
+ "mapping": {
+  "E4_OBS_000014": {
+   "consistent": true,
+   "per_representation": {
+    "A0": "R_OBS_000014",
+    "A1": "R_OBS_000014",
+    "A2": "R_OBS_000014"
+   },
+   "replication_observation_id": "R_OBS_000014"
+  },
+  "E4_OBS_000036": {
+   "consistent": true,
+   "per_representation": {
+    "A0": "R_OBS_000036",
+    "A1": "R_OBS_000036",
+    "A2": "R_OBS_000036"
+   },
+   "replication_observation_id": "R_OBS_000036"
+  },
+  "E4_OBS_000147": {
+   "consistent": true,
+   "per_representation": {
+    "A0": "R_OBS_000150",
+    "A1": "R_OBS_000150",
+    "A2": "R_OBS_000150"
+   },
+   "replication_observation_id": "R_OBS_000150"
+  },
+  "E4_OBS_000174": {
+   "consistent": true,
+   "per_representation": {
+    "A0": "R_OBS_000179",
+    "A1": "R_OBS_000179",
+    "A2": "R_OBS_000179"
+   },
+   "replication_observation_id": "R_OBS_000179"
+  },
+  "E4_OBS_000183": {
+   "consistent": true,
+   "per_representation": {
+    "A0": "R_OBS_000188",
+    "A1": "R_OBS_000188",
+    "A2": "R_OBS_000188"
+   },
+   "replication_observation_id": "R_OBS_000188"
+  },
+  "E4_OBS_000194": {
+   "consistent": true,
+   "per_representation": {
+    "A0": "R_OBS_000199",
+    "A1": "R_OBS_000199",
+    "A2": "R_OBS_000199"
+   },
+   "replication_observation_id": "R_OBS_000199"
+  },
+  "E4_OBS_000245": {
+   "consistent": true,
+   "per_representation": {
+    "A0": "R_OBS_000254",
+    "A1": "R_OBS_000254",
+    "A2": "R_OBS_000254"
+   },
+   "replication_observation_id": "R_OBS_000254"
+  },
+  "E4_OBS_000267": {
+   "consistent": true,
+   "per_representation": {
+    "A0": "R_OBS_000278",
+    "A1": "R_OBS_000278",
+    "A2": "R_OBS_000278"
+   },
+   "replication_observation_id": "R_OBS_000278"
+  },
+  "E4_OBS_000360": {
+   "consistent": true,
+   "per_representation": {
+    "A0": "R_OBS_000384",
+    "A1": "R_OBS_000384",
+    "A2": "R_OBS_000384"
+   },
+   "replication_observation_id": "R_OBS_000384"
+  },
+  "E4_OBS_000393": {
+   "consistent": true,
+   "per_representation": {
+    "A0": "R_OBS_000419",
+    "A1": "R_OBS_000419",
+    "A2": "R_OBS_000419"
+   },
+   "replication_observation_id": "R_OBS_000419"
+  },
+  "E4_OBS_000428": {
+   "consistent": true,
+   "per_representation": {
+    "A0": "R_OBS_000458",
+    "A1": "R_OBS_000458",
+    "A2": "R_OBS_000458"
+   },
+   "replication_observation_id": "R_OBS_000458"
+  },
+  "E4_OBS_000458": {
+   "consistent": true,
+   "per_representation": {
+    "A0": "R_OBS_000490",
+    "A1": "R_OBS_000490",
+    "A2": "R_OBS_000490"
+   },
+   "replication_observation_id": "R_OBS_000490"
+  },
+  "E4_OBS_000523": {
+   "consistent": true,
+   "per_representation": {
+    "A0": "R_OBS_000558",
+    "A1": "R_OBS_000558",
+    "A2": "R_OBS_000558"
+   },
+   "replication_observation_id": "R_OBS_000558"
+  },
+  "E4_OBS_000531": {
+   "consistent": true,
+   "per_representation": {
+    "A0": "R_OBS_000566",
+    "A1": "R_OBS_000566",
+    "A2": "R_OBS_000566"
+   },
+   "replication_observation_id": "R_OBS_000566"
+  },
+  "E4_OBS_000536": {
+   "consistent": true,
+   "per_representation": {
+    "A0": "R_OBS_000571",
+    "A1": "R_OBS_000571",
+    "A2": "R_OBS_000571"
+   },
+   "replication_observation_id": "R_OBS_000571"
+  },
+  "E4_OBS_000545": {
+   "consistent": true,
+   "per_representation": {
+    "A0": "R_OBS_000580",
+    "A1": "R_OBS_000580",
+    "A2": "R_OBS_000580"
+   },
+   "replication_observation_id": "R_OBS_000580"
+  },
+  "E4_OBS_000554": {
+   "consistent": true,
+   "per_representation": {
+    "A0": "R_OBS_000592",
+    "A1": "R_OBS_000592",
+    "A2": "R_OBS_000592"
+   },
+   "replication_observation_id": "R_OBS_000592"
+  },
+  "E4_OBS_000615": {
+   "consistent": true,
+   "per_representation": {
+    "A0": "R_OBS_000656",
+    "A1": "R_OBS_000656",
+    "A2": "R_OBS_000656"
+   },
+   "replication_observation_id": "R_OBS_000656"
+  },
+  "E4_OBS_000669": {
+   "consistent": true,
+   "per_representation": {
+    "A0": "R_OBS_000713",
+    "A1": "R_OBS_000713",
+    "A2": "R_OBS_000713"
+   },
+   "replication_observation_id": "R_OBS_000713"
+  },
+  "E4_OBS_000676": {
+   "consistent": true,
+   "per_representation": {
+    "A0": "R_OBS_000720",
+    "A1": "R_OBS_000720",
+    "A2": "R_OBS_000720"
+   },
+   "replication_observation_id": "R_OBS_000720"
+  },
+  "E4_OBS_000735": {
+   "consistent": true,
+   "per_representation": {
+    "A0": "R_OBS_000781",
+    "A1": "R_OBS_000781",
+    "A2": "R_OBS_000781"
+   },
+   "replication_observation_id": "R_OBS_000781"
+  },
+  "E4_OBS_000784": {
+   "consistent": true,
+   "per_representation": {
+    "A0": "R_OBS_000831",
+    "A1": "R_OBS_000831",
+    "A2": "R_OBS_000831"
+   },
+   "replication_observation_id": "R_OBS_000831"
+  },
+  "E4_OBS_000826": {
+   "consistent": true,
+   "per_representation": {
+    "A0": "R_OBS_000874",
+    "A1": "R_OBS_000874",
+    "A2": "R_OBS_000874"
+   },
+   "replication_observation_id": "R_OBS_000874"
+  },
+  "E4_OBS_000878": {
+   "consistent": true,
+   "per_representation": {
+    "A0": "R_OBS_000929",
+    "A1": "R_OBS_000929",
+    "A2": "R_OBS_000929"
+   },
+   "replication_observation_id": "R_OBS_000929"
+  },
+  "E4_OBS_000891": {
+   "consistent": true,
+   "per_representation": {
+    "A0": "R_OBS_000942",
+    "A1": "R_OBS_000942",
+    "A2": "R_OBS_000942"
+   },
+   "replication_observation_id": "R_OBS_000942"
+  },
+  "E4_OBS_000901": {
+   "consistent": true,
+   "per_representation": {
+    "A0": "R_OBS_000952",
+    "A1": "R_OBS_000952",
+    "A2": "R_OBS_000952"
+   },
+   "replication_observation_id": "R_OBS_000952"
+  },
+  "E4_OBS_000957": {
+   "consistent": true,
+   "per_representation": {
+    "A0": "R_OBS_001016",
+    "A1": "R_OBS_001016",
+    "A2": "R_OBS_001016"
+   },
+   "replication_observation_id": "R_OBS_001016"
+  },
+  "E4_OBS_001032": {
+   "consistent": true,
+   "per_representation": {
+    "A0": "R_OBS_001094",
+    "A1": "R_OBS_001094",
+    "A2": "R_OBS_001094"
+   },
+   "replication_observation_id": "R_OBS_001094"
+  },
+  "E4_OBS_001103": {
+   "consistent": true,
+   "per_representation": {
+    "A0": "R_OBS_001169",
+    "A1": "R_OBS_001169",
+    "A2": "R_OBS_001169"
+   },
+   "replication_observation_id": "R_OBS_001169"
+  },
+  "E4_OBS_001136": {
+   "consistent": true,
+   "per_representation": {
+    "A0": "R_OBS_001205",
+    "A1": "R_OBS_001205",
+    "A2": "R_OBS_001205"
+   },
+   "replication_observation_id": "R_OBS_001205"
+  },
+  "E4_OBS_001148": {
+   "consistent": true,
+   "per_representation": {
+    "A0": "R_OBS_001220",
+    "A1": "R_OBS_001220",
+    "A2": "R_OBS_001220"
+   },
+   "replication_observation_id": "R_OBS_001220"
+  },
+  "E4_OBS_001160": {
+   "consistent": true,
+   "per_representation": {
+    "A0": "R_OBS_001233",
+    "A1": "R_OBS_001233",
+    "A2": "R_OBS_001233"
+   },
+   "replication_observation_id": "R_OBS_001233"
+  },
+  "E4_OBS_001167": {
+   "consistent": true,
+   "per_representation": {
+    "A0": "R_OBS_001240",
+    "A1": "R_OBS_001240",
+    "A2": "R_OBS_001240"
+   },
+   "replication_observation_id": "R_OBS_001240"
+  },
+  "E4_OBS_001203": {
+   "consistent": true,
+   "per_representation": {
+    "A0": "R_OBS_001276",
+    "A1": "R_OBS_001276",
+    "A2": "R_OBS_001276"
+   },
+   "replication_observation_id": "R_OBS_001276"
+  },
+  "E4_OBS_001288": {
+   "consistent": true,
+   "per_representation": {
+    "A0": "R_OBS_001365",
+    "A1": "R_OBS_001365",
+    "A2": "R_OBS_001365"
+   },
+   "replication_observation_id": "R_OBS_001365"
+  },
+  "E4_OBS_001341": {
+   "consistent": true,
+   "per_representation": {
+    "A0": "R_OBS_001419",
+    "A1": "R_OBS_001419",
+    "A2": "R_OBS_001419"
+   },
+   "replication_observation_id": "R_OBS_001419"
+  },
+  "E4_OBS_001367": {
+   "consistent": true,
+   "per_representation": {
+    "A0": "R_OBS_001447",
+    "A1": "R_OBS_001447",
+    "A2": "R_OBS_001447"
+   },
+   "replication_observation_id": "R_OBS_001447"
+  },
+  "E4_OBS_001387": {
+   "consistent": true,
+   "per_representation": {
+    "A0": "R_OBS_001469",
+    "A1": "R_OBS_001469",
+    "A2": "R_OBS_001469"
+   },
+   "replication_observation_id": "R_OBS_001469"
+  },
+  "E4_OBS_001429": {
+   "consistent": true,
+   "per_representation": {
+    "A0": "R_OBS_001514",
+    "A1": "R_OBS_001514",
+    "A2": "R_OBS_001514"
+   },
+   "replication_observation_id": "R_OBS_001514"
+  },
+  "E4_OBS_001441": {
+   "consistent": true,
+   "per_representation": {
+    "A0": "R_OBS_001527",
+    "A1": "R_OBS_001527",
+    "A2": "R_OBS_001527"
+   },
+   "replication_observation_id": "R_OBS_001527"
+  },
+  "E4_OBS_001453": {
+   "consistent": true,
+   "per_representation": {
+    "A0": "R_OBS_001540",
+    "A1": "R_OBS_001540",
+    "A2": "R_OBS_001540"
+   },
+   "replication_observation_id": "R_OBS_001540"
+  },
+  "E4_OBS_001458": {
+   "consistent": true,
+   "per_representation": {
+    "A0": "R_OBS_001545",
+    "A1": "R_OBS_001545",
+    "A2": "R_OBS_001545"
+   },
+   "replication_observation_id": "R_OBS_001545"
+  },
+  "E4_OBS_001500": {
+   "consistent": true,
+   "per_representation": {
+    "A0": "R_OBS_001589",
+    "A1": "R_OBS_001589",
+    "A2": "R_OBS_001589"
+   },
+   "replication_observation_id": "R_OBS_001589"
+  },
+  "E4_OBS_001600": {
+   "consistent": true,
+   "per_representation": {
+    "A0": "R_OBS_001689",
+    "A1": "R_OBS_001689",
+    "A2": "R_OBS_001689"
+   },
+   "replication_observation_id": "R_OBS_001689"
+  },
+  "E4_OBS_001635": {
+   "consistent": true,
+   "per_representation": {
+    "A0": "R_OBS_001728",
+    "A1": "R_OBS_001728",
+    "A2": "R_OBS_001728"
+   },
+   "replication_observation_id": "R_OBS_001728"
+  },
+  "E4_OBS_001713": {
+   "consistent": true,
+   "per_representation": {
+    "A0": "R_OBS_001809",
+    "A1": "R_OBS_001809",
+    "A2": "R_OBS_001809"
+   },
+   "replication_observation_id": "R_OBS_001809"
+  },
+  "E4_OBS_001828": {
+   "consistent": true,
+   "per_representation": {
+    "A0": "R_OBS_001928",
+    "A1": "R_OBS_001928",
+    "A2": "R_OBS_001928"
+   },
+   "replication_observation_id": "R_OBS_001928"
+  },
+  "E4_OBS_001909": {
+   "consistent": false,
+   "per_representation": {
+    "A0": null,
+    "A1": null,
+    "A2": null
+   },
+   "replication_observation_id": null
+  },
+  "E4_OBS_001933": {
+   "consistent": false,
+   "per_representation": {
+    "A0": null,
+    "A1": null,
+    "A2": null
+   },
+   "replication_observation_id": null
+  },
+  "E4_OBS_001980": {
+   "consistent": false,
+   "per_representation": {
+    "A0": null,
+    "A1": null,
+    "A2": null
+   },
+   "replication_observation_id": null
+  }
+ },
+ "scope": "Aggregation-equivalence diagnostic computed on E4's own published Agent outputs (the Codex sub-Agent comparator, 50 cases x A0/A1/A2) joined to the published replication cohort's B0/B6 through reproduced packet hashes."
+}
