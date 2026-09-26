@@ -128,11 +128,12 @@ Status date: 2026-09-23. This remains a research prototype. Predictive superiori
 - CI runs the complete backend suite with PostgreSQL 17 plus an explicit production-overlay Docker smoke test.
 - 28 frontend tests across four semantic test files, the CI-enforced official-registry production npm audit, a locally verified full npm audit, TypeScript checking and the Next.js standalone production build pass.
 - Ruff, E1/E2/E3 read-only hash replay and `git diff --check` pass.
-- Current-HEAD local verification on a dependency-locked environment collected 641 Python
-  tests: 624 passed and 17 skipped, at 90.60% coverage against the 90% gate (the skipped
-  cases are the ones that need PostgreSQL or the optional `research` numeric extra). The
-  recorded GitHub Actions run 35865807564 completed successfully on Python 3.11/3.12 and the
-  Docker smoke job.
+- Current-HEAD local verification on a dependency-locked environment collected 642 Python
+  tests: 625 passed and 17 skipped, at 90.60% coverage against the 90% gate (the skipped
+  cases are the ones that need PostgreSQL or the optional `research` numeric extra). GitHub
+  Actions run 36210065785 — the pipeline for the E4-S/E4-R integration push — completed with
+  all four jobs green: backend on Python 3.11 and 3.12, frontend, and the production-overlay
+  Docker smoke test.
 - v0.3.3 release suite against PostgreSQL 17 on a fresh database, in CI order: 335 passed, 0 failed, 0 skipped at 90.92% coverage (gate 90%); in-memory mode 323 passed, 12 skipped. Readiness against a migrated, an empty and a partially migrated database; a datastore outage answering a controlled `503` with `Retry-After` and self-healing on recovery; the rate limiter exercised against real PostgreSQL with a small row cap; and `pip-audit --strict --no-deps -r requirements.lock` clean at the time of preparation.
 - PostgreSQL 17 migration, authenticated document analysis, HTTP failure contracts, repository selection, API-restart persistence and the explicit timeout/retry contract passed locally through the production Compose overlay. The same smoke passed in CI; production deployment remains unvalidated.
 - Independent v0.3.1 public-pilot and fusion replay artifacts generated under `research/results/v0.3.1`; the `public_v1` directory matches the v0.3.0 tag and the replay runner now refuses to overwrite it.
