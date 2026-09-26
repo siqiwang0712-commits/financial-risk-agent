@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 """Check that the current environment matches a frozen E5 environment manifest.
 
 E4 needed an undocumented environment override: the frozen

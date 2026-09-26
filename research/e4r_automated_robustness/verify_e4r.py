@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 """One-command verification of the E4-R study.
 
     python research/e4r_automated_robustness/verify_e4r.py

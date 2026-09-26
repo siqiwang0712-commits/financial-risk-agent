@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 """One-command verification of the E5 staged freeze chain.
 
     python research/e5/harness/verify_e5.py
