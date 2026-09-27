@@ -1,277 +1,290 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
+import { AgentTrace } from "../components/AgentTrace";
 import { AppHeader } from "../components/AppHeader";
-import { IntakePanel } from "../components/IntakePanel";
-import { PilotTable } from "../components/PilotTable";
+import { DecisionPaths } from "../components/DecisionPaths";
 import { DecisionSummary } from "../components/DecisionSummary";
-import { WhyDecision } from "../components/WhyDecision";
 import { DimensionGrid } from "../components/DimensionGrid";
 import { EvidenceTrail } from "../components/EvidenceTrail";
-import { DecisionPaths } from "../components/DecisionPaths";
-import { AgentTrace } from "../components/AgentTrace";
 import { TelemetryPanel } from "../components/TelemetryPanel";
-import {
-  loadPilot,
-  loadSampleAssessment,
-  analyzeDocument,
-} from "../lib/api";
-import type {
-  AssessmentPayload,
-  Loaded,
-  PilotPayload,
-  DataOrigin,
-} from "../lib/types";
+import { WhyDecision } from "../components/WhyDecision";
+import { DEMO_FIXTURE } from "../lib/demoFixture";
 
-type TabKey =
-  | "overview"
-  | "dimensions"
-  | "evidence"
-  | "paths"
-  | "trace"
-  | "telemetry";
+type TabKey = "overview" | "dimensions" | "evidence" | "paths" | "trace" | "telemetry";
 
 const TAB_LABEL: Record<TabKey, string> = {
-  overview: "Why this decision",
+  overview: "Decision logic",
   dimensions: "Risk dimensions",
   evidence: "Evidence chain",
   paths: "Decision paths",
-  trace: "Agent trace",
+  trace: "Agent execution",
   telemetry: "Telemetry",
 };
 
-/** Shown when a tab has no data in this response, instead of a blank panel. */
-function EmptyPanel({ reason }: { reason: string }) {
-  return (
-    <section className="panel">
-      <p className="muted">{reason}</p>
-    </section>
-  );
-}
+const RESEARCH_METRICS = [
+  { value: "2,000", label: "company-disjoint E4 cohort" },
+  { value: "674", label: "deterministically verified outcomes" },
+  { value: "+0.030", label: "paired AUROC improvement" },
+  { value: "0.0015", label: "Holm-adjusted p-value" },
+] as const;
+
+const PIPELINE = [
+  { index: "01", title: "Ingest", copy: "Annual filings, XBRL facts and page-aware documents." },
+  { index: "02", title: "Compute", copy: "Ratios, trends and traditional models run deterministically." },
+  { index: "03", title: "Interpret", copy: "Constrained language models extract claims, never final scores." },
+  { index: "04", title: "Verify", copy: "Every material conclusion must resolve to source evidence." },
+  { index: "05", title: "Decide", copy: "Failure-aware fusion can flag, review, pass or abstain." },
+] as const;
 
 export default function Page() {
-  const [pilot, setPilot] = useState<Loaded<PilotPayload> | null>(null);
-  const [assessment, setAssessment] = useState<AssessmentPayload | null>(null);
-  // The badge must not claim an origin before a request has happened, and the
-  // pilot and the assessment are separate results that must not overwrite each
-  // other's provenance.
-  const [pilotOrigin, setPilotOrigin] = useState<DataOrigin | null>(null);
-  const [assessmentOrigin, setAssessmentOrigin] = useState<DataOrigin | null>(null);
-  const [loadingPilot, setLoadingPilot] = useState(true);
-  const [loadingAnalysis, setLoadingAnalysis] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [errorIsUpstream, setErrorIsUpstream] = useState(false);
   const [activeTab, setActiveTab] = useState<TabKey>("overview");
-
-  useEffect(() => {
-    let cancelled = false;
-    loadPilot()
-      .then((result) => {
-        if (cancelled) return;
-        if (result.ok) {
-          setPilot(result.loaded);
-          setPilotOrigin(result.loaded.origin);
-        } else {
-          setError(result.failure.message);
-          setErrorIsUpstream(result.failure.upstreamUnavailable);
-        }
-      })
-      .catch((cause: unknown) => {
-        // Without this the rejection is unhandled and the pilot panel stays on
-        // "Loading pilot data…" forever, with nothing telling the user why.
-        if (cancelled) return;
-        setError(cause instanceof Error ? cause.message : String(cause));
-        setErrorIsUpstream(true);
-      })
-      .finally(() => {
-        if (!cancelled) setLoadingPilot(false);
-      });
-    return () => {
-      cancelled = true;
-    };
-  }, []);
-
-  const handleLoadSample = () => {
-    setError(null);
-    setErrorIsUpstream(false);
-    // No artificial delay: the sample is synchronous, and a timer that outlives
-    // unmount would call setState on a dead component.
-    const res = loadSampleAssessment();
-    setAssessment(res.payload);
-    setAssessmentOrigin(res.origin);
-    setActiveTab("overview");
-  };
-
-  const handleAnalyze = async (opts: {
-    file: File;
-    company: string;
-    fiscalYear: number;
-    apiKey: string;
-    entityId: string;
-  }) => {
-    setError(null);
-    setErrorIsUpstream(false);
-    // Results are scoped to a specific filing.  Do not leave a prior decision
-    // visible while a new analysis is in flight or after it fails.
-    setAssessment(null);
-    setAssessmentOrigin(null);
-    setLoadingAnalysis(true);
-    try {
-      const result = await analyzeDocument(opts);
-      if (result.ok) {
-        setAssessment(result.loaded.payload);
-        setAssessmentOrigin(result.loaded.origin);
-        setActiveTab("overview");
-      } else {
-        setError(result.failure.message);
-        setErrorIsUpstream(result.failure.upstreamUnavailable);
-      }
-    } catch (cause: unknown) {
-      // A thrown request left `loadingAnalysis` true and the button stuck on
-      // "Agent is analysing…", with the failure never surfaced.
-      setError(cause instanceof Error ? cause.message : String(cause));
-      setErrorIsUpstream(true);
-    } finally {
-      setLoadingAnalysis(false);
-    }
-  };
-
-  const agent = assessment?.agent;
-  const origin = assessmentOrigin ?? pilotOrigin;
+  const assessment = DEMO_FIXTURE.assessment;
+  const agent = assessment.agent;
+  const trace = agent?.decision_trace;
+  const completedSteps = agent?.trace.filter((step) => step.status === "success").length ?? 0;
 
   return (
     <>
-      <AppHeader
-        origin={origin}
-        runtime={pilot?.payload.runtime ?? "v0.3.4"}
-      />
-      <main>
-        {/* Pilot table */}
-        <section className="portfolio">
-          <p className="eyebrow">Public pilot — FY2024 filings</p>
-          <h2>Evidence-grounded risk assessment</h2>
-          <p className="portfolioNote">
-            A rule-hybrid agent that reads annual reports, computes metrics, evaluates models,
-            checks for contradictions, and renders a decision only when the evidence chain is
-            verifiable. If sources are missing or conflicting, it abstains.
-          </p>
-
-          {loadingPilot ? (
-            <p className="muted">Loading pilot data…</p>
-          ) : pilot ? (
-            <PilotTable pilot={pilot} />
-          ) : (
-            <p className="muted">
-              Pilot data could not be loaded from the API upstream. Use “Load bundled sample”
-              below to inspect the offline sample.
+      <AppHeader origin="offline-sample" runtime="v0.3.4" />
+      <main className="showcaseShell">
+        <section className="showcaseHero" id="overview">
+          <div className="heroCopy">
+            <p className="heroEyebrow"><span /> Structured financial reasoning</p>
+            <h2>
+              Financial risk intelligence
+              <em>that shows its work.</em>
+            </h2>
+            <p className="heroLead">
+              FinRisk turns corporate filings into an auditable risk view. Deterministic finance,
+              constrained language models and evidence verification stay separate—so every decision
+              can be inspected, challenged and replayed.
             </p>
-          )}
-        </section>
-
-        {/* Intake */}
-        <section className="intakeSection">
-          <IntakePanel
-            onLoadSample={handleLoadSample}
-            onAnalyze={handleAnalyze}
-            busy={loadingAnalysis}
-            error={error}
-            errorIsUpstream={errorIsUpstream}
-            onDismissError={() => setError(null)}
-          />
-        </section>
-
-        {/* Analysis result */}
-        {assessment && (
-          <section className="analysisSection">
-            <DecisionSummary payload={assessment} />
-
-            <nav className="tabBar" aria-label="Analysis sections">
-              {(Object.keys(TAB_LABEL) as TabKey[]).map((key) => (
-                <button
-                  key={key}
-                  type="button"
-                  id={`tab-${key}`}
-                  role="tab"
-                  aria-selected={activeTab === key}
-                  aria-controls="tab-panel"
-                  className={activeTab === key ? "active" : ""}
-                  onClick={() => setActiveTab(key)}
-                >
-                  {TAB_LABEL[key]}
-                </button>
-              ))}
-            </nav>
-
-            <div
-              className="tabBody"
-              id="tab-panel"
-              role="tabpanel"
-              aria-labelledby={`tab-${activeTab}`}
-              aria-live="polite"
-              aria-busy={loadingAnalysis}
-            >
-              {activeTab === "overview" ? (
-                <WhyDecision payload={assessment} />
-              ) : null}
-
-              {activeTab === "dimensions" ? (
-                <DimensionGrid dimensions={assessment.dimensions} />
-              ) : null}
-
-              {activeTab === "evidence" ? (
-                agent?.conclusions?.length ? (
-                  <EvidenceTrail conclusions={agent.conclusions} />
-                ) : (
-                  <EmptyPanel reason="No verified conclusions in this response." />
-                )
-              ) : null}
-
-              {activeTab === "paths" ? (
-                agent?.decision_trace ? (
-                  <DecisionPaths trace={agent.decision_trace} />
-                ) : (
-                  <EmptyPanel reason="No decision trace in this response." />
-                )
-              ) : null}
-
-              {activeTab === "trace" ? (
-                agent ? (
-                  <AgentTrace
-                    plan={agent.plan}
-                    trace={agent.trace}
-                    status={agent.status}
-                  />
-                ) : (
-                  <EmptyPanel reason="No agent trace in this response." />
-                )
-              ) : null}
-
-              {activeTab === "telemetry" ? (
-                agent?.component_telemetry ? (
-                  <TelemetryPanel items={agent.component_telemetry} />
-                ) : (
-                  <EmptyPanel reason="No component telemetry in this response." />
-                )
-              ) : null}
+            <div className="heroActions">
+              <a className="primaryAction" href="#case">Explore the assessment</a>
+              <a className="secondaryAction" href="#research">View validation evidence <span>↗</span></a>
             </div>
-          </section>
-        )}
+            <div className="heroTrust">
+              <span>Deterministic arithmetic</span>
+              <span>Evidence-linked decisions</span>
+              <span>Explicit abstention</span>
+            </div>
+          </div>
 
-        {/* Footer */}
-        <footer>
+          <aside className="heroConsole" aria-label="Bundled assessment snapshot">
+            <header>
+              <div>
+                <span className="consolePulse" />
+                ANALYSIS SNAPSHOT
+              </div>
+              <code>FR-2025-0042</code>
+            </header>
+            <div className="consoleEntity">
+              <div>
+                <small>ENTITY</small>
+                <b>{assessment.company}</b>
+                <span>FY{assessment.reporting_period} · synthetic filing</span>
+              </div>
+              <strong>{assessment.final_decision}</strong>
+            </div>
+            <div className="consoleScore">
+              <div className="scoreDial" style={{ "--score": `${assessment.overall_score ?? 0}%` } as React.CSSProperties}>
+                <span>{assessment.overall_score?.toFixed(0) ?? "—"}</span>
+                <small>/100</small>
+              </div>
+              <div className="scoreNarrative">
+                <small>HEURISTIC RISK INDEX</small>
+                <b>{assessment.risk_level}</b>
+                <p>Not a probability · reliability remains UNCALIBRATED</p>
+              </div>
+            </div>
+            <div className="consoleGrid">
+              <Metric label="Evidence coverage" value={`${Math.round(assessment.evidence_coverage * 100)}%`} />
+              <Metric label="Verified paths" value={`${trace?.verified_path_count ?? 0}/${trace?.material_path_count ?? 0}`} />
+              <Metric label="Rules triggered" value={String(assessment.triggered_rules.length)} />
+              <Metric label="Steps completed" value={`${completedSteps}/${agent?.plan.length ?? 0}`} />
+            </div>
+            <div className="consoleFlow" aria-label="Analysis stages">
+              {PIPELINE.map((step) => <i key={step.index} />)}
+            </div>
+            <footer>
+              <span>● FROZEN DEMO DATA</span>
+              <span>REPLAYABLE OUTPUT</span>
+            </footer>
+          </aside>
+        </section>
+
+        <section className="metricRibbon" aria-label="E4 study headline metrics">
+          {RESEARCH_METRICS.map((metric) => (
+            <article key={metric.label}>
+              <b>{metric.value}</b>
+              <span>{metric.label}</span>
+            </article>
+          ))}
+        </section>
+
+        <section className="systemSection" id="system">
+          <SectionIntro
+            eyebrow="How the system works"
+            title="A controlled path from filing to decision."
+            copy="The Agent orchestrates the work. It does not own the numbers, thresholds or final truth. Each layer has one explicit responsibility and one inspectable output."
+          />
+          <div className="pipelineGrid">
+            {PIPELINE.map((step) => (
+              <article key={step.index}>
+                <span>{step.index}</span>
+                <h3>{step.title}</h3>
+                <p>{step.copy}</p>
+              </article>
+            ))}
+          </div>
+          <div className="systemRule">
+            <span>CORE CONTROL</span>
+            <p>No verified evidence path → <b>REVIEW</b> or <b>ABSTAIN</b></p>
+            <code>evidence → fact → metric → rule/model → dimension → decision</code>
+          </div>
+        </section>
+
+        <section className="researchSection" id="research">
+          <SectionIntro
+            eyebrow="External validation · E4"
+            title="Measured on unseen companies, not polished examples."
+            copy="The locked v0.3.4 architecture was evaluated out of time on a company-disjoint SEC cohort. The positive result belongs to temporal structured signal—not to an unqualified claim about AI or default prediction."
+          />
+          <div className="researchLayout">
+            <article className="benchmarkCard">
+              <header>
+                <div>
+                  <small>PRIMARY COMPARISON · VERIFIED SUBSET</small>
+                  <h3>Temporal structure added ranking signal</h3>
+                </div>
+                <span className="evidenceStatus">ESTABLISHED_E4</span>
+              </header>
+              <div className="benchmarkPlot">
+                <BenchmarkBar label="B0 · Ratios only" value={0.678} />
+                <BenchmarkBar label="B6 · Temporal risk" value={0.708} highlight />
+              </div>
+              <div className="deltaCallout">
+                <div><small>PAIRED ΔAUROC</small><b>+0.030</b></div>
+                <div><small>95% CI</small><b>+0.014 — +0.048</b></div>
+                <div><small>ADJUSTED P</small><b>0.0015</b></div>
+              </div>
+            </article>
+
+            <aside className="researchBoundaries">
+              <div className="boundaryTop">
+                <span>33.7%</span>
+                <p>verified outcome coverage<br /><small>674 of 2,000 companies</small></p>
+              </div>
+              <h3>What the evidence says—and what it does not.</h3>
+              <ul>
+                <li className="positive"><b>Established</b><span>B6 improved B0 on the prespecified verified cohort.</span></li>
+                <li><b>Not established</b><span>Local Agent or hybrid incremental value.</span></li>
+                <li><b>Not claimed</b><span>Calibrated default probability, regulatory or production validation.</span></li>
+              </ul>
+            </aside>
+          </div>
+        </section>
+
+        <section className="caseSection" id="case">
+          <SectionIntro
+            eyebrow="Interactive evidence room"
+            title="One assessment. Every layer visible."
+            copy="This complete synthetic case is bundled with the site, so the public demo never depends on a private backend. It is genuine pipeline output, clearly labelled as synthetic and uncalibrated."
+          />
+          <div className="caseNotice">
+            <span>STATIC DEMO</span>
+            <p>{DEMO_FIXTURE.notice}</p>
+          </div>
+
+          <DecisionSummary payload={assessment} />
+
+          <nav className="tabBar showcaseTabs" aria-label="Assessment sections">
+            {(Object.keys(TAB_LABEL) as TabKey[]).map((key) => (
+              <button
+                key={key}
+                type="button"
+                id={`tab-${key}`}
+                role="tab"
+                aria-selected={activeTab === key}
+                aria-controls="tab-panel"
+                className={activeTab === key ? "active" : ""}
+                onClick={() => setActiveTab(key)}
+              >
+                <span>{String((Object.keys(TAB_LABEL) as TabKey[]).indexOf(key) + 1).padStart(2, "0")}</span>
+                {TAB_LABEL[key]}
+              </button>
+            ))}
+          </nav>
+
+          <div className="tabBody" id="tab-panel" role="tabpanel" aria-labelledby={`tab-${activeTab}`} aria-live="polite">
+            {activeTab === "overview" ? <WhyDecision payload={assessment} /> : null}
+            {activeTab === "dimensions" ? <DimensionGrid dimensions={assessment.dimensions} /> : null}
+            {activeTab === "evidence" && agent ? <EvidenceTrail conclusions={agent.conclusions} /> : null}
+            {activeTab === "paths" && trace ? <DecisionPaths trace={trace} /> : null}
+            {activeTab === "trace" && agent ? <AgentTrace plan={agent.plan} trace={agent.trace} status={agent.status} /> : null}
+            {activeTab === "telemetry" && agent ? <TelemetryPanel items={agent.component_telemetry} /> : null}
+          </div>
+        </section>
+
+        <section className="capabilitySection" id="controls">
+          <SectionIntro
+            eyebrow="System controls"
+            title="Designed for challenge, not blind trust."
+            copy="Severity, evidence quality, coverage, disagreement and reliability remain separate quantities throughout the interface."
+          />
+          <div className="capabilityGrid">
+            <Capability number="68" title="Versioned rules" copy="Thresholds live in inspectable policy, not scattered application code." />
+            <Capability number="04" title="Traditional models" copy="Altman, Beneish, Piotroski and Ohlson run with applicability checks." />
+            <Capability number="08" title="Risk dimensions" copy="Coverage and missingness stay visible beside every dimension score." />
+            <Capability number="100%" title="Replayable" copy="Inputs, versions and material evidence paths are retained for audit." />
+          </div>
+        </section>
+
+        <footer className="showcaseFooter">
+          <div>
+            <b>FinRisk</b>
+            <span>Evidence-grounded financial risk intelligence</span>
+          </div>
           <p>
-            FinRisk-Agent v0.3.4 · Un-calibrated research prototype · Not for production use.
-          </p>
-          <p className="muted">
-            {assessment?.disclaimer ||
-              "Risk scores are heuristic assessment scores, not bankruptcy probabilities or investment advice."}
-          </p>
-          <p className="muted">
-            All decisions are provisional. Evidence coverage, model disagreement and reliability
-            status are shown explicitly so that over-confidence is visible.
+            v0.3.4 · Research prototype · All scores are heuristic and UNCALIBRATED.<br />
+            Not a bankruptcy probability, credit rating, investment recommendation or regulatory determination.
           </p>
         </footer>
       </main>
     </>
+  );
+}
+
+function Metric({ label, value }: { label: string; value: string }) {
+  return <div><small>{label}</small><b>{value}</b></div>;
+}
+
+function SectionIntro({ eyebrow, title, copy }: { eyebrow: string; title: string; copy: string }) {
+  return (
+    <header className="sectionIntro">
+      <p className="eyebrow">{eyebrow}</p>
+      <div><h2>{title}</h2><p>{copy}</p></div>
+    </header>
+  );
+}
+
+function BenchmarkBar({ label, value, highlight = false }: { label: string; value: number; highlight?: boolean }) {
+  return (
+    <div className={`benchmarkRow${highlight ? " highlight" : ""}`}>
+      <span>{label}</span>
+      <i><b style={{ width: `${value * 100}%` }} /></i>
+      <strong>{value.toFixed(3)}</strong>
+    </div>
+  );
+}
+
+function Capability({ number, title, copy }: { number: string; title: string; copy: string }) {
+  return (
+    <article>
+      <span>{number}</span>
+      <h3>{title}</h3>
+      <p>{copy}</p>
+    </article>
   );
 }

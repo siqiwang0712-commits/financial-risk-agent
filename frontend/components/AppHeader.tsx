@@ -24,24 +24,23 @@ export function AppHeader({ origin, runtime }: Props) {
   return (
     <header className="appHeader">
       <div className="brand">
-        <span className="eyebrow">Evidence → Intelligence → Decision → Action → Monitoring</span>
         <h1>
-          FinRisk<span>Workbench</span>
+          Fin<span>Risk</span>
         </h1>
+        <small>Financial intelligence system</small>
       </div>
       <nav className="appNav" aria-label="Workbench sections">
-        <span>Portfolio</span>
-        <span>Entity</span>
-        <span>Evidence</span>
-        <span>Decision</span>
-        <span>Governance</span>
+        <a href="#system">System</a>
+        <a href="#research">Research</a>
+        <a href="#case">Assessment</a>
+        <a href="#controls">Controls</a>
       </nav>
       <div className="headerMeta">
         <OriginBadge origin={origin} />
-        <span className="runtime">runtime {runtime}</span>
+        <span className="runtime">{runtime}</span>
         <span className="prototype">
           <i aria-hidden="true" />
-          research prototype
+          research system
         </span>
       </div>
     </header>

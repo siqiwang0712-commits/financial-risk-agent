@@ -16,6 +16,7 @@ import { hstsHeaderFor } from "./lib/headers.mjs";
  * `headers()` config is resolved at build time (standalone output) so it cannot know.
  */
 export function middleware(request: NextRequest) {
+  const staticShowcase = request.nextUrl.pathname === "/";
   const nonce = Buffer.from(crypto.randomUUID()).toString("base64");
   // `next dev` compiles modules with `eval` (react-refresh / webpack HMR); without
   // `'unsafe-eval'` the client bundle is blocked outright and the page never
@@ -23,7 +24,9 @@ export function middleware(request: NextRequest) {
   const isDevelopment = process.env.NODE_ENV !== "production";
   const csp = [
     "default-src 'self'",
-    `script-src 'self' 'nonce-${nonce}' 'strict-dynamic'${isDevelopment ? " 'unsafe-eval'" : ""}`,
+    staticShowcase
+      ? `script-src 'self' 'unsafe-inline'${isDevelopment ? " 'unsafe-eval'" : ""}`
+      : `script-src 'self' 'nonce-${nonce}' 'strict-dynamic'${isDevelopment ? " 'unsafe-eval'" : ""}`,
     "script-src-attr 'none'",
     "style-src 'self' 'unsafe-inline'",
     "img-src 'self' data:",
@@ -37,7 +40,10 @@ export function middleware(request: NextRequest) {
   ].join("; ");
 
   const requestHeaders = new Headers(request.headers);
-  requestHeaders.set("x-nonce", nonce);
+  // The public showcase is pre-rendered and ships no private/runtime data. Its
+  // small client bundle needs Next's inline bootstrap, so it uses a static CSP.
+  // Any future request-rendered page keeps the stricter per-request nonce path.
+  if (!staticShowcase) requestHeaders.set("x-nonce", nonce);
   requestHeaders.set("Content-Security-Policy", csp);
 
   const response = NextResponse.next({ request: { headers: requestHeaders } });
