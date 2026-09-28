@@ -37,6 +37,10 @@ const PIPELINE = [
   { index: "05", title: "Decide", copy: "Failure-aware fusion can flag, review, pass or abstain." },
 ] as const;
 
+const PROJECT_URL = "https://github.com/siqiwang0712-commits/financial-risk-agent";
+const VALIDATION_URL = `${PROJECT_URL}/blob/main/research/e4/public/VALIDATION_REPORT.md`;
+const DOCUMENTATION_URL = `${PROJECT_URL}/blob/main/README.md`;
+
 export default function Page() {
   const [activeTab, setActiveTab] = useState<TabKey>("overview");
   const assessment = DEMO_FIXTURE.assessment;
@@ -52,22 +56,23 @@ export default function Page() {
           <div className="heroCopy">
             <p className="heroEyebrow"><span /> Structured financial reasoning</p>
             <h2>
-              Financial risk intelligence
+              Financial risk intelligence{" "}
               <em>that shows its work.</em>
             </h2>
             <p className="heroLead">
-              FinRisk turns corporate filings into an auditable risk view. Deterministic finance,
-              constrained language models and evidence verification stay separate—so every decision
-              can be inspected, challenged and replayed.
+              Turn an annual report into a traceable financial risk assessment. FinRisk computes
+              financial metrics, applies structured checks and shows the evidence behind every conclusion.
             </p>
+            <div className="heroRoute" aria-label="FinRisk input, process and output">
+              <div><small>INPUT</small><span>Company filing</span></div>
+              <i aria-hidden="true">→</i>
+              <div><small>PROCESS</small><span>Metrics · rules · evidence analysis</span></div>
+              <i aria-hidden="true">→</i>
+              <div><small>OUTPUT</small><span>Auditable risk assessment</span></div>
+            </div>
             <div className="heroActions">
               <a className="primaryAction" href="#case">Explore the assessment</a>
               <a className="secondaryAction" href="#research">View validation evidence <span>↗</span></a>
-            </div>
-            <div className="heroTrust">
-              <span>Deterministic arithmetic</span>
-              <span>Evidence-linked decisions</span>
-              <span>Explicit abstention</span>
             </div>
           </div>
 
@@ -98,6 +103,11 @@ export default function Page() {
                 <p>Not a probability · reliability remains UNCALIBRATED</p>
               </div>
             </div>
+            <div className="consoleDecisionNote">
+              <b>WHY ABSTAIN?</b>
+              <span>High risk signal + insufficient verified evidence → ABSTAIN</span>
+              <p>Evidence requirements govern the decision; a high score cannot override them.</p>
+            </div>
             <div className="consoleGrid">
               <Metric label="Evidence coverage" value={`${Math.round(assessment.evidence_coverage * 100)}%`} />
               <Metric label="Verified paths" value={`${trace?.verified_path_count ?? 0}/${trace?.material_path_count ?? 0}`} />
@@ -121,6 +131,31 @@ export default function Page() {
               <span>{metric.label}</span>
             </article>
           ))}
+        </section>
+
+        <section className="whySection" id="why">
+          <SectionIntro
+            eyebrow="Why FinRisk?"
+            title="More control than a report uploaded to a chatbot."
+            copy="FinRisk separates calculation, interpretation and verification so the reasoning remains inspectable—and can stop when the evidence is not good enough."
+          />
+          <div className="whyFinRiskGrid">
+            <article>
+              <span>01</span>
+              <h3>Traceable</h3>
+              <p>Material conclusions link back through facts, metrics and rules to supporting evidence.</p>
+            </article>
+            <article>
+              <span>02</span>
+              <h3>Failure-aware</h3>
+              <p>Missing, weak or conflicting evidence can trigger review or abstention instead of a guess.</p>
+            </article>
+            <article>
+              <span>03</span>
+              <h3>Hybrid by design</h3>
+              <p>Deterministic components own the numbers and core logic; language models are constrained to interpretation.</p>
+            </article>
+          </div>
         </section>
 
         <section className="systemSection" id="system">
@@ -169,6 +204,10 @@ export default function Page() {
                 <div><small>95% CI</small><b>+0.014 — +0.048</b></div>
                 <div><small>ADJUSTED P</small><b>0.0015</b></div>
               </div>
+              <p className="benchmarkInterpretation">
+                In plain language: adding multi-period financial signals improved how the system
+                ranked future financial-deterioration risk among unseen companies.
+              </p>
             </article>
 
             <aside className="researchBoundaries">
@@ -176,6 +215,10 @@ export default function Page() {
                 <span>33.7%</span>
                 <p>verified outcome coverage<br /><small>674 of 2,000 companies</small></p>
               </div>
+              <p className="coverageNote">
+                This is an evaluation filter: primary metrics include only future outcomes that met
+                the prespecified deterministic verification criteria.
+              </p>
               <h3>What the evidence says—and what it does not.</h3>
               <ul>
                 <li className="positive"><b>Established</b><span>B6 improved B0 on the prespecified verified cohort.</span></li>
@@ -188,9 +231,9 @@ export default function Page() {
 
         <section className="caseSection" id="case">
           <SectionIntro
-            eyebrow="Interactive evidence room"
+            eyebrow="Explore a frozen assessment"
             title="One assessment. Every layer visible."
-            copy="This complete synthetic case is bundled with the site, so the public demo never depends on a private backend. It is genuine pipeline output, clearly labelled as synthetic and uncalibrated."
+            copy="Use the tabs to inspect a bundled synthetic result, its evidence chain and decision paths. Nothing here is generated live; the example is frozen and UNCALIBRATED."
           />
           <div className="caseNotice">
             <span>STATIC DEMO</span>
@@ -239,6 +282,15 @@ export default function Page() {
             <Capability number="08" title="Risk dimensions" copy="Coverage and missingness stay visible beside every dimension score." />
             <Capability number="100%" title="Replayable" copy="Inputs, versions and material evidence paths are retained for audit." />
           </div>
+          <nav className="resourceLinks" aria-label="Project resources">
+            <div>
+              <small>CONTINUE EXPLORING</small>
+              <p>Review the implementation, the complete E4 methods and the project documentation.</p>
+            </div>
+            <a href={PROJECT_URL}>View on GitHub <span aria-hidden="true">↗</span></a>
+            <a href={VALIDATION_URL}>Read validation report <span aria-hidden="true">↗</span></a>
+            <a href={DOCUMENTATION_URL}>Documentation <span aria-hidden="true">↗</span></a>
+          </nav>
         </section>
 
         <footer className="showcaseFooter">

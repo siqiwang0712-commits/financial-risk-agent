@@ -1849,7 +1849,24 @@ main.showcaseShell {
   font-size: clamp(16px, 1.55vw, 20px);
   line-height: 1.7;
 }
-.heroActions { display: flex; align-items: center; gap: 28px; margin-top: 36px; }
+.heroRoute {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  margin-top: 30px;
+  color: #d8e2de;
+}
+.heroRoute > div { min-width: 0; }
+.heroRoute small {
+  display: block;
+  margin-bottom: 5px;
+  color: var(--acid);
+  font: 700 8px/1 monospace;
+  letter-spacing: .12em;
+}
+.heroRoute span { font-size: 11px; line-height: 1.4; }
+.heroRoute i { color: #557068; font-style: normal; }
+.heroActions { display: flex; align-items: center; gap: 28px; margin-top: 34px; }
 .primaryAction,
 .secondaryAction {
   display: inline-flex;
@@ -1867,15 +1884,6 @@ main.showcaseShell {
 }
 .secondaryAction { color: white; }
 .secondaryAction span { margin-left: 9px; color: var(--acid); font-size: 17px; }
-.heroTrust { display: flex; flex-wrap: wrap; gap: 18px; margin-top: 46px; }
-.heroTrust span {
-  color: #81958d;
-  font: 600 10px/1 monospace;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-}
-.heroTrust span::before { content: "✓"; margin-right: 7px; color: var(--acid); }
-
 .heroConsole {
   position: relative;
   align-self: center;
@@ -1949,6 +1957,14 @@ main.showcaseShell {
 .scoreDial small { grid-area: 1/1; align-self: end; margin-bottom: 25px; color: #799087; font: 9px monospace; }
 .scoreNarrative b { display: block; margin: 8px 0; color: #ff9b84; font: 500 23px/1.2 Georgia, serif; text-transform: capitalize; }
 .scoreNarrative p { margin: 0; color: #82968e; font-size: 11px; line-height: 1.5; }
+.consoleDecisionNote {
+  padding: 16px 24px;
+  border-top: 1px solid rgba(255,255,255,.09);
+  background: rgba(232,119,94,.055);
+}
+.consoleDecisionNote b { color: #ff9b84; font: 700 9px/1 monospace; letter-spacing: .1em; }
+.consoleDecisionNote span { display: block; margin-top: 7px; color: white; font-size: 12px; }
+.consoleDecisionNote p { margin: 5px 0 0; color: #82968e; font-size: 10px; line-height: 1.5; }
 .consoleGrid { display: grid; grid-template-columns: 1fr 1fr; border-top: 1px solid rgba(255,255,255,.09); }
 .consoleGrid > div { padding: 19px 24px; border-right: 1px solid rgba(255,255,255,.09); border-bottom: 1px solid rgba(255,255,255,.09); }
 .consoleGrid > div:nth-child(even) { border-right: 0; }
@@ -1969,6 +1985,7 @@ main.showcaseShell {
 .metricRibbon b { display: block; color: var(--acid); font: 500 clamp(27px, 3vw, 40px)/1 Georgia, serif; }
 .metricRibbon span { display: block; margin-top: 8px; color: #92a79f; font: 600 10px/1.4 monospace; text-transform: uppercase; }
 
+.whySection,
 .systemSection,
 .researchSection,
 .caseSection,
@@ -1978,6 +1995,19 @@ main.showcaseShell {
 .sectionIntro > div { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(300px, .7fr); gap: 70px; align-items: end; }
 .sectionIntro h2 { max-width: 780px; margin: 0; font: 500 clamp(38px, 5vw, 68px)/1.02 Georgia, serif; letter-spacing: -.045em; }
 .sectionIntro > div > p { max-width: 590px; margin: 0; color: var(--muted); font-size: 15px; line-height: 1.75; }
+
+.whySection { padding-bottom: 42px; }
+.whyFinRiskGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+}
+.whyFinRiskGrid article { min-height: 190px; padding: 28px; border-right: 1px solid var(--line); }
+.whyFinRiskGrid article:last-child { border-right: 0; }
+.whyFinRiskGrid article > span { color: var(--rust); font: 700 10px/1 monospace; }
+.whyFinRiskGrid h3 { margin: 33px 0 11px; font: 500 25px/1 Georgia, serif; }
+.whyFinRiskGrid p { max-width: 360px; margin: 0; color: var(--muted); font-size: 12px; line-height: 1.65; }
 
 .pipelineGrid { display: grid; grid-template-columns: repeat(5, 1fr); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
 .pipelineGrid article { min-height: 224px; padding: 25px 22px; border-right: 1px solid var(--line); }
@@ -2018,11 +2048,20 @@ main.showcaseShell {
 .deltaCallout { display: grid; grid-template-columns: repeat(3, 1fr); border-top: 1px solid var(--line); }
 .deltaCallout > div { padding: 22px 18px 0 0; }
 .deltaCallout b { display: block; margin-top: 7px; font: 500 20px Georgia, serif; }
+.benchmarkInterpretation {
+  margin: 30px 0 0;
+  padding: 18px 0 0;
+  border-top: 1px solid var(--line);
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.65;
+}
 .researchBoundaries { background: var(--night-soft); color: white; }
 .boundaryTop { display: flex; align-items: center; gap: 18px; padding-bottom: 28px; border-bottom: 1px solid rgba(255,255,255,.12); }
 .boundaryTop > span { color: var(--acid); font: 500 43px/1 Georgia, serif; }
 .boundaryTop p { margin: 0; color: #c2d0cb; font-size: 12px; line-height: 1.45; }
 .boundaryTop small { color: #748981; }
+.coverageNote { margin: 20px 0 0; color: #9cafa7; font-size: 11px; line-height: 1.6; }
 .researchBoundaries h3 { margin: 31px 0 24px; font: 500 27px/1.15 Georgia, serif; }
 .researchBoundaries ul { list-style: none; margin: 0; padding: 0; }
 .researchBoundaries li { padding: 15px 0; border-top: 1px solid rgba(255,255,255,.1); }
@@ -2049,6 +2088,27 @@ main.showcaseShell {
 .capabilityGrid span { color: var(--acid); font: 500 38px/1 Georgia, serif; }
 .capabilityGrid h3 { margin: 42px 0 11px; font: 500 22px Georgia, serif; }
 .capabilityGrid p { margin: 0; color: #8ea198; font-size: 12px; line-height: 1.65; }
+.resourceLinks {
+  display: grid;
+  grid-template-columns: minmax(260px, 1.35fr) repeat(3, auto);
+  gap: 28px;
+  align-items: center;
+  margin-top: 42px;
+  padding: 28px 0 0;
+  border-top: 1px solid rgba(255,255,255,.15);
+}
+.resourceLinks small { color: var(--acid); font: 700 9px/1 monospace; letter-spacing: .12em; }
+.resourceLinks p { max-width: 480px; margin: 8px 0 0; color: #8ea198; font-size: 12px; }
+.resourceLinks a {
+  color: white;
+  font: 700 10px/1.4 monospace;
+  letter-spacing: .05em;
+  text-decoration: none;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.resourceLinks a:hover { color: var(--acid); }
+.resourceLinks a span { margin-left: 5px; color: var(--acid); }
 
 .showcaseFooter {
   display: flex;
@@ -2069,11 +2129,16 @@ main.showcaseShell {
   .appNav { display: none; }
   .showcaseHero { grid-template-columns: 1fr; }
   .heroConsole { max-width: none; justify-self: stretch; }
+  .whyFinRiskGrid { grid-template-columns: 1fr; }
+  .whyFinRiskGrid article { min-height: auto; border-right: 0; border-bottom: 1px solid var(--line); }
+  .whyFinRiskGrid article:last-child { border-bottom: 0; }
   .pipelineGrid { grid-template-columns: repeat(3, 1fr); }
   .pipelineGrid article:nth-child(3) { border-right: 0; }
   .researchLayout { grid-template-columns: 1fr; }
   .capabilityGrid { grid-template-columns: 1fr 1fr; }
   .capabilityGrid article:nth-child(2) { border-right: 0; }
+  .resourceLinks { grid-template-columns: 1fr 1fr; }
+  .resourceLinks > div { grid-column: 1 / -1; }
 }
 
 @media (max-width: 720px) {
@@ -2082,14 +2147,15 @@ main.showcaseShell {
   .showcaseHero { min-height: auto; padding-top: 72px; }
   .heroCopy h2 { font-size: clamp(46px, 14vw, 68px); }
   .heroLead { font-size: 15px; }
+  .heroRoute { display: grid; grid-template-columns: 1fr; gap: 10px; }
+  .heroRoute i { display: none; }
   .heroActions { align-items: flex-start; flex-direction: column; gap: 16px; }
-  .heroTrust { gap: 12px; }
   .heroConsole::before { display: none; }
   .consoleScore { align-items: flex-start; }
   .metricRibbon { grid-template-columns: 1fr 1fr; }
   .metricRibbon article:nth-child(2) { border-right: 0; }
   .sectionIntro > div { grid-template-columns: 1fr; gap: 20px; }
-  .systemSection, .researchSection, .caseSection, .capabilitySection { padding-top: 78px; padding-bottom: 78px; }
+  .whySection, .systemSection, .researchSection, .caseSection, .capabilitySection { padding-top: 78px; padding-bottom: 78px; }
   .pipelineGrid { grid-template-columns: 1fr; }
   .pipelineGrid article { min-height: auto; border-right: 0; border-bottom: 1px solid var(--line); }
   .pipelineGrid h3 { margin-top: 22px; }
@@ -2104,6 +2170,8 @@ main.showcaseShell {
   .capabilityGrid { grid-template-columns: 1fr; }
   .capabilityGrid article { min-height: auto; border-right: 0; border-bottom: 1px solid rgba(255,255,255,.15); }
   .capabilityGrid h3 { margin-top: 22px; }
+  .resourceLinks { grid-template-columns: 1fr; }
+  .resourceLinks > div { grid-column: auto; }
   .showcaseFooter { align-items: flex-start; flex-direction: column; }
   .showcaseFooter p { text-align: left; }
 }

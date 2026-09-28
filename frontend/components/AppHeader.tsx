@@ -30,10 +30,10 @@ export function AppHeader({ origin, runtime }: Props) {
         <small>Financial intelligence system</small>
       </div>
       <nav className="appNav" aria-label="Workbench sections">
+        <a href="#why">Why</a>
         <a href="#system">System</a>
         <a href="#research">Research</a>
         <a href="#case">Assessment</a>
-        <a href="#controls">Controls</a>
       </nav>
       <div className="headerMeta">
         <OriginBadge origin={origin} />
