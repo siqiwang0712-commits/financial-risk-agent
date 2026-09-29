@@ -1,5 +1,57 @@
 # Limitations
 
+## Current E4 evidence boundary
+
+E4 performance applies to the 674 deterministically verified observations in a frozen
+2,000-company cohort, not to the full cohort or a general population. Verified endpoint
+coverage was 33.7%; 571 cases required human review and 755 had insufficient outcome data.
+Verification was associated with prediction-time characteristics, so post-hoc propensity
+weighting is sensitivity analysis and does not remove selection bias.
+
+The endpoint is a prespecified financial-deterioration rule. It is not bankruptcy,
+default, credit loss, insolvency, a credit rating, a fraud finding or an investment
+recommendation. Every score remains an `UNCALIBRATED` heuristic index and must not be
+read as a probability that an event or a decision is correct.
+
+B6 improved B0 on E4's deterministically verified subset, but the Local Agent and Hybrid
+comparisons contained only five paired events. Their incremental value was not
+established. E4 did not externally validate a full narrative/document Agent, MD&A or
+Risk-Factor grounding, planner/reflection behavior, or production and regulatory use.
+
+E4-S found that E4's published label-permutation p-value tests outcome independence from
+both scores, not equality between B6 and B0. Correctly specified paired tests support the
+same direction on E4-S's re-execution cohort, but the exact E4 per-observation rows were
+not published. The 675-observation E4-S cohort overlaps E4 by about 94%, so it is a
+near-reproduction rather than an independent sample.
+
+E4-R is retrospective `POST_HOC_AUTOMATED_ROBUSTNESS` work on that same replication
+packet. Strong learned tabular baselines outperform B6, but a material part of their
+advantage comes from reporting and missingness structure: a model using only presence/
+absence indicators also exceeds B6 on this cohort. Temporal features add little on top
+of the strongest static nonlinear learner. The reported DeLong and bootstrap intervals
+condition on realized out-of-fold predictions and do not integrate all
+training-procedure uncertainty. E4-R is not confirmatory evidence and is not an
+independent external validation.
+
+The post-hoc Codex sub-Agent comparator used a project-internal display name rather than
+an exposed, attestable model identity. It had only five verified events, was commissioned
+after E4 outcomes existed, and is neither independently byte-reproducible nor evidence of
+named-model superiority.
+
+Rules, weights, fusion thresholds and evidence-coverage confidence are not externally
+calibrated. Component telemetry records observed changes in this pipeline, not causal
+component value. PostgreSQL, containers, identity, object storage, distributed workers,
+telemetry and availability behavior have not been validated in an externally operated
+production environment. No certification, production SLA or regulatory approval is
+claimed.
+
+Canonical current results and study-specific caveats are in
+[Experiment Results](EXPERIMENT_RESULTS.md), the
+[E4-S audit](e4_statistical_audit/AUDIT_REPORT.md), and the
+[E4-R final report](e4r_automated_robustness/FINAL_REPORT.md).
+
+## Earlier pilot and E3 limitations
+
 The executed public pilot has only three same-sector companies, one positive risk label and a single annotator. Its point estimates and bootstrap intervals cannot support generalization or a claim that the hybrid approach outperforms alternatives. The LLM-only pilot used the deterministic offline provider. A hosted OpenAI-compatible path has been smoke-tested with an intentionally supplied API key, but no frozen real-provider benchmark has been run.
 
 SEC Company Facts acquisition returned HTTP 403 in the recorded environment. XBRL normalization, provenance, restatement selection and cross-source reconciliation are implemented and unit tested, but public-pilot extraction accuracy is not yet empirically measured. The frozen observations are reviewed statement values, not a substitute for an independently annotated XBRL gold set.

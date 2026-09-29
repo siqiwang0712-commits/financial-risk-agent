@@ -8,6 +8,38 @@ Each Agent result includes a decision trace and immutable analysis snapshot cont
 
 Every decision also carries machine-readable reason codes, so a reviewer can tell why a result landed where it did rather than inferring it from the score. The current set includes `SEVERE_VERIFIED_SIGNAL`, `INSUFFICIENT_EVIDENCE`, `CLAIM_CONTEXT_INCOMPLETE`, `HIGH_MODEL_DISAGREEMENT`, `UNVALIDATED_RELIABILITY` and `CRITICAL_DIMENSION_ESCALATION`.
 
+## Evidence admission and decision trace
+
+<img src="assets/decision-trace-v2.svg" alt="Auditable FinRisk decision trace" width="100%" />
+
+The material path is explicit:
+
+```text
+document → page/section/span → extracted fact or claim → metric/rule/model
+         → fusion contribution → risk dimension → final decision
+```
+
+A trace records the reason code, document hash, accession, source page or XBRL concept,
+rule/model/prompt/fusion versions, confidence, coverage, disagreement and contribution.
+Evidence states are not collapsed into a generic confidence score:
+
+- `UNVERIFIED` — proposed but not confirmed at the cited location.
+- `LOCATED` — extracted from a source location but not reconciled.
+- `VERIFIED` — matched to the cited report evidence and eligible for the relevant proof gate.
+- `REJECTED` — verification failed; the claim cannot influence the result.
+
+Conflicting top-ranked facts are not silently selected, and missing values are never
+replaced with zero. A broken material evidence path triggers review or abstention. The
+Agent records plan steps, tool names, statuses, summaries, admitted evidence, rationale
+and confidence; it does not retain or expose hidden chain-of-thought.
+
+Each analysis can freeze its inputs into an immutable snapshot: input hash, document
+version, policy and rule versions, prompt/model version, fusion strategy, configuration
+and timestamp. Replay produces a separate result and diff rather than overwriting the
+historical decision. A reviewer can therefore distinguish a changed source document from
+a changed threshold, model, prompt or fusion strategy, and can identify which decision
+path changed.
+
 ## Governance
 
 Model lifecycle transitions are Experimental → Validated → Approved → Deprecated. Validation and approval require a validation-record reference. Champion/challenger evaluation reports a recommendation but never auto-promotes. Drift checks cover score distribution and coverage; richer population-stability/calibration monitoring requires a real longitudinal dataset and is **PLANNED**. Human override remains reviewer-authorized, reason-required and append-only audited.

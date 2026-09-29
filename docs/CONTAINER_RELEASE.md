@@ -1,7 +1,8 @@
-# Container release (GHCR)
+# Container Release and Deployment (GHCR)
 
 How FinRisk container images are built, verified and published, and what the published
-artifacts actually guarantee.
+artifacts actually guarantee. This is also the operator guide for the published Compose
+stack, including first-run bootstrap, credentials, health behavior, TLS and image pinning.
 
 Workflow: `.github/workflows/container-release.yml`
 Stack for end users: `docker-compose.release.yml`
@@ -177,6 +178,29 @@ otherwise would be an unverified platform claim.
 
 ## Deploying (first run matters)
 
+For a source checkout, the development stack remains the shortest smoke path:
+
+```bash
+docker compose up --build
+```
+
+It uses an explicitly development-only database password. For the production overlay,
+provide a non-default password; the one-shot migration service must finish before the API
+starts:
+
+```bash
+POSTGRES_PASSWORD='<strong-secret>' docker compose -f docker-compose.yml -f docker-compose.prod.yml up --build
+```
+
+For the published images, start from the release-specific environment template:
+
+```bash
+cp .env.release.example .env
+# Edit .env before continuing.
+docker compose -f docker-compose.release.yml pull
+docker compose -f docker-compose.release.yml up -d
+```
+
 `.env.release.example` is the template for this stack. Do **not** copy `.env.example`:
 that one targets the source build and sets `FINRISK_ENABLE_ORG_BOOTSTRAP=0`, which on a
 fresh database leaves no way to create the first administrator.
@@ -197,6 +221,125 @@ without an API key of its own.
 
 Only `docker-compose.release.yml` and an env file are needed; nothing mounts the source
 tree, and the migration script is baked into the API image.
+
+The API answers on `http://127.0.0.1:8000` and the Workbench on
+`http://127.0.0.1:3000`. The ports bind to loopback intentionally. Put a TLS terminator in
+front before allowing remote access.
+
+After the first start, provision the organization and save the returned API key; it is
+shown once:
+
+```bash
+curl -sS -X POST http://127.0.0.1:8000/api/v1/enterprise/organizations \
+  -H 'Content-Type: application/json' \
+  -H "X-Bootstrap-Token: $FINRISK_BOOTSTRAP_TOKEN" \
+  -d '{"name":"Acme","actor_id":"admin"}'
+```
+
+Then set `FINRISK_ENABLE_ORG_BOOTSTRAP=0`, clear the bootstrap token and run `up -d`
+again. Leaving the route enabled would leave an endpoint that can mint ADMIN keys without
+an existing API key.
+
+If only the released stack is needed, the two required files can be downloaded without a
+source checkout or build toolchain:
+
+```bash
+curl -O https://raw.githubusercontent.com/siqiwang0712-commits/financial-risk-agent/main/docker-compose.release.yml
+curl -o .env https://raw.githubusercontent.com/siqiwang0712-commits/financial-risk-agent/main/.env.release.example
+$EDITOR .env
+docker compose -f docker-compose.release.yml up -d
+```
+
+### Runtime configuration
+
+| Variable | Required | Purpose |
+|---|---|---|
+| `POSTGRES_PASSWORD` | Yes | Applied when the PostgreSQL volume is first initialized; see the credential lifecycle below. |
+| `FINRISK_LLM_PROVIDER` | Yes | Fail-closed when absent. Use `openai` for a real provider; `mock` is a deterministic test provider, not a production default. |
+| `OPENAI_API_KEY` / `OPENAI_API_KEY_FILE` | When required by the provider | The `_FILE` form keeps the value out of `docker inspect` and shell history. |
+| `FINRISK_ENABLE_ORG_BOOTSTRAP` | First provisioning only | Defaults to `0`; enable only long enough to create the first organization and ADMIN key. |
+| `FINRISK_BOOTSTRAP_TOKEN` / `FINRISK_BOOTSTRAP_TOKEN_FILE` | With bootstrap enabled in production | Gates the unauthenticated route that mints the first ADMIN key. |
+
+Rate-limit windows are stored in PostgreSQL whenever `DATABASE_URL` is set, so they
+survive restarts and are shared across replicas. The in-process window is a local fallback
+only. Three optional settings bound datastore latency and fall back to their defaults when
+the configured value is unusable:
+
+- `FINRISK_DATABASE_OPERATION_TIMEOUT_SECONDS` (default `5.0`) limits how long a
+  request waits for a pooled connection before a controlled `503`.
+- `FINRISK_DB_RECONNECT_TIMEOUT_SECONDS` (default `5.0`) replaces the pool's 300-second
+  reconnection window.
+- `FINRISK_DB_CONNECT_TIMEOUT_SECONDS` (default `5`) limits the libpq handshake.
+
+These database settings are separate from the 60-second document-analysis timeout.
+
+### PostgreSQL credential lifecycle
+
+`POSTGRES_PASSWORD` is applied only when PostgreSQL initializes a new persistent volume.
+Changing the environment variable later does not change the password stored in that
+volume, so the database healthcheck and new application connections will fail.
+
+The healthcheck authenticates over TCP against the container's own address on the Compose
+network. It deliberately does not use `127.0.0.1`: the upstream image places a trusted
+loopback rule above its appended `scram-sha-256` rule, so a loopback probe could report a
+healthy database even with the wrong password.
+
+How a mismatch appears depends on connection state:
+
+- A running API that needs a new connection keeps `/health/live` at `200` but returns
+  `503` from `/health/ready` with the credential rejection. PostgreSQL does not terminate
+  existing sessions after `ALTER USER`, so pooled connections may continue to work until
+  a server restart, pool growth or connection-lifetime expiry. An immediate `200` after
+  rotation is therefore not proof that the rotation succeeded.
+- On a cold start, the API creates its pool during module import and waits at most ten
+  seconds. A mismatched password produces `psycopg_pool.PoolTimeout`; the container exits
+  before request handling, so neither health route answers.
+- Compose gates the API on PostgreSQL `service_healthy`. If the database healthcheck fails,
+  `up` stops before creating the API container.
+
+Rotate the database credential before a cold start by changing it inside PostgreSQL first:
+
+```bash
+docker compose exec postgres psql -U finrisk -d finrisk -c "ALTER USER finrisk WITH PASSWORD '<new-secret>'"
+```
+
+Alternatively, `docker compose down -v` recreates the volume on the next start, but it
+**destroys all stored data**. Never use volume recreation as an unreviewed password-rotation
+shortcut.
+
+### Network and TLS behavior
+
+The release stack binds published ports to loopback and does not terminate TLS. The API
+sends `Strict-Transport-Security` only when the request actually arrives over HTTPS, or
+when a trusted terminator reports `x-forwarded-proto: https`. On plain HTTP the header is
+omitted instead of advertising a transport guarantee the deployment does not provide.
+
+### Pinning and verifying a deployed image
+
+Release tags such as `v0.3.4` and `latest` are convenient references; the digest is the
+artifact identity. Set `FINRISK_API_IMAGE` and `FINRISK_WEB_IMAGE` to
+`ghcr.io/...:<tag>@sha256:<digest>` for a reproducible deployment. Use the digests emitted
+by the release workflow for the exact tag being deployed; documentation-only commits can
+change an image digest because the image records the source revision.
+
+```bash
+# Pin both default image names to the source-identity tag.
+FINRISK_VERSION=sha-<full-commit-sha> docker compose -f docker-compose.release.yml up -d
+
+# Stronger: pin each image to the exact promoted artifact digest.
+FINRISK_API_IMAGE=ghcr.io/siqiwang0712-commits/financial-risk-agent-api:v0.3.4@sha256:<api-digest> \
+FINRISK_WEB_IMAGE=ghcr.io/siqiwang0712-commits/financial-risk-agent-web:v0.3.4@sha256:<web-digest> \
+docker compose -f docker-compose.release.yml up -d
+```
+
+Verify GitHub's build-provenance attestation against the pinned reference:
+
+```bash
+gh attestation verify oci://ghcr.io/siqiwang0712-commits/financial-risk-agent-api@sha256:<digest> \
+  -R siqiwang0712-commits/financial-risk-agent
+```
+
+`latest` is never a reproducibility reference.
 
 ## Permissions
 

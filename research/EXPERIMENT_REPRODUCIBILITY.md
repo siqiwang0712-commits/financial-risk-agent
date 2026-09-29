@@ -79,6 +79,41 @@ repository-local directory and remove it after the run:
 python -m pytest -q --basetemp .pytest-tmp-local
 ```
 
+## Synthetic demo and source-data acquisition
+
+The offline demo exercises the pipeline without claiming real-world performance:
+
+```powershell
+$env:PYTHONPATH="backend"
+python scripts/run_demo.py
+```
+
+Its company fixture is explicitly marked `synthetic`. It validates mechanics only.
+
+Rebuilding the older public benchmark from the SEC live service requires an identifying
+User-Agent:
+
+```powershell
+$env:SEC_USER_AGENT="FinRisk-Agent your-email@example.com"
+python scripts/build_public_benchmark.py
+```
+
+The empirical acquisition path has three explicit sources: official
+`companyfacts.zip` or Financial Statement Data Set ZIP archives, a local/offline cache,
+and the rate-limited live API fallback. Importing official bulk data expects the ZIP files
+under `data/sec-bulk`; raw archives are intentionally Git-ignored.
+
+```bash
+python scripts/import_sec_bulk.py
+SEC_USER_AGENT="Researcher Name researcher@example.edu" python scripts/acquire_empirical_corpus.py
+```
+
+A recorded live Company Facts rebuild and later 2025 bulk-download attempts received HTTP
+403. Those failures remain preserved as acquisition failures; they were not replaced with
+synthetic “live” data or treated as negative outcomes. Dataset construction and endpoint
+methodology are documented in the [dataset card](dataset_card.md) and
+[evaluation protocol](evaluation_protocol.md).
+
 ## E4 phase boundary
 
 E4 enforced this sequence:
@@ -98,8 +133,9 @@ runtime described in [the protocol](e4/protocol/STUDY_PROTOCOL.md).
   deterministic.
 - With the local ignored execution artifacts present, E4 frozen Agent
   responses can be reparsed deterministically.
-- E4 public reports and README research content reproduce from the canonical
-  summary.
+- E4 public reports and figures reproduce from the canonical summary. The root README is
+  a curated landing-page snapshot that quotes the headline values and routes readers to
+  this canonical research surface; it is not the full generated result report.
 - The post-hoc comparator's checked-in predictions have a frozen file hash,
   complete IDs, bounded scores and threshold-consistent decisions.
 - Recomputing comparator packet hashes requires the ignored local E4 packet
