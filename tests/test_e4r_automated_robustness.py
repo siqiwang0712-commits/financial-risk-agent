@@ -94,6 +94,12 @@ def test_b6_definition_is_discovered_from_the_frozen_code() -> None:
     assert definition["b6_temporal_inputs_match_expected"], definition["b6_temporal_inputs_from_code"]
     assert definition["b0_inputs_match_expected"]
     assert e4r_ablation.TERM_NAMES == tuple(definition["b6_temporal_inputs_from_code"])
+    assert definition["b6_thresholds_from_code"] == {
+        "revenue_growth": {"comparator": "<=", "threshold": -0.10},
+        "operating_cash_flow_growth": {"comparator": "<=", "threshold": -0.25},
+        "total_debt_growth": {"comparator": ">=", "threshold": 0.20},
+        "cash_growth": {"comparator": "<=", "threshold": -0.20},
+    }
 
 
 # ---------------------------------------------------------------------------

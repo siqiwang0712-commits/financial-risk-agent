@@ -6,14 +6,13 @@
 
 # FinRisk
 
-### 以证据为基础的金融风险智能——研究原型
+### 受保证的选择性金融智能——v0.4.0 评审候选版本
 
 [![CI](https://github.com/siqiwang0712-commits/financial-risk-agent/actions/workflows/ci.yml/badge.svg)](https://github.com/siqiwang0712-commits/financial-risk-agent/actions/workflows/ci.yml)
 [![Python 3.11+](https://img.shields.io/badge/Python-3.11%2B-3776AB?logo=python&logoColor=white)](https://www.python.org/)
 [![License](https://img.shields.io/badge/license-MIT-d45b3e)](LICENSE)
 
-**以确定性金融分析为基础，由受约束的大语言模型负责语义解释、Agent 负责编排，
-并要求每项重要结论都能沿证据链审计。**
+**一个把金融风险预测与决策授权明确分开的研究系统。**
 
 [English](README.md) | 简体中文
 
@@ -23,22 +22,26 @@
 </div>
 
 > [!IMPORTANT]
-> **FinRisk 是研究原型。** 其 0–100 风险指数是专家设计且尚未校准
+> **FinRisk 是研究原型。** v0.4 已实现 Assurance Runtime，但实现本身并不等于外部验证。
+> 其 0–100 风险指数是专家设计且尚未校准
 >（`UNCALIBRATED`）的启发式指标，不是破产概率、信用评级、舞弊认定或投资建议。
 > 本项目不声称已完成生产部署、外部验证、监管批准，也不承诺生产 SLA。
 
 ## 什么是 FinRisk？
 
-FinRisk 是一个开放的金融风险研究平台，用于分析财务恶化信号及其背后的证据。
+FinRisk 是一个开放的金融风险研究系统，用于分析财务恶化信号，并判断一个候选结论是否获得
+了足够支持、可以正式输出。
 它把结构化 SEC/XBRL 数据和年报 PDF，与确定性财务指标、传统筛查模型、版本化专家规则，
 以及用于解读叙述性披露的受约束大语言模型结合起来。
 
-Agent 负责规划与协调分析，但不充当财务事实来源。算术由经过测试的代码完成；抽取出的
-陈述必须通过证据核验。缺失、冲突、陈旧、不适用或无法核验的信息都会被明确保留，并可
-触发 `REVIEW` 或 `ABSTAIN`，而不是生成虚假的确定性。
+模型、规则、融合和 Agent 推理只能生成 `proposed_decision`（候选决策），无权自行发布最终
+决策。独立的 Assurance Runtime 会检查已验证证据、单项证据脆弱性、参考分布有效性、模型
+分歧、校准状态和策略成熟度。只有合法且受哈希保护的 `AssuranceResult` 才能产生
+`final_decision` 和可重放的 Decision Certificate。
 
-FinRisk 面向可审查的决策支持：风险严重度、变化趋势、证据覆盖率、决策置信度、模型分歧、
-校准状态和来源信息彼此分开，不会被压缩成一个看似有说服力的总分。
+这就是 v0.3.x 到 v0.4 的变化：v0.3.x 提供以证据为基础的风险分析；v0.4 把决策授权提升为
+独立且失败关闭的运行时层。风险严重度、证据支持度、脆弱性、分布有效性、模型分歧和校准
+状态保持分离。
 
 ## 为什么需要 FinRisk？
 
@@ -55,42 +58,46 @@ FinRisk 面向可审查的决策支持：风险严重度、变化趋势、证据
 | 比率、趋势、情景和模型公式 | 经过测试的确定性工具 |
 | MD&A、附注和审计措辞的解释 | 受 JSON Schema 约束的大语言模型 |
 | 风险模式与阈值 | 版本化规则与策略 |
-| 重要结论 | 故障感知融合与证据核验 |
+| 风险分数、严重度与候选处置 | 规则、模型、融合和 Agent 推理 |
+| 最终决策授权 | 仅限 Assurance Runtime |
+| 不可变决策记录 | Decision Certificate |
 
-> **金融计算属于确定性系统；语义解释属于受约束的大语言模型；决策属于可审计的证据链。**
+> **预测组件可以提出金融风险决策；只有 Assurance 层可以授权最终决策。**
 
 ## 工作原理
 
-<img src="docs/assets/decision-architecture.svg" alt="FinRisk 三层决策架构" width="100%" />
+<img src="docs/assets/assurance-architecture.svg" alt="FinRisk v0.4 保证控制架构" width="100%" />
 
 ```text
 财务报告
     ↓
-摄取与标准化
+摄取 / 标准化
     ↓
-指标 / 模型 / 规则
+指标 / 规则 / 模型 / 受约束 LLM / Agent
     ↓
-Agent 推理与交叉核验
+风险融合 → 候选决策
     ↓
-证据验证
+Decision Assurance Runtime
+  证据 · 脆弱性 · 分布有效性 · 准入策略
     ↓
 PASS / FLAG / REVIEW / ABSTAIN
+    ↓
+Decision Certificate
 ```
 
-三层结构形成明确的依赖边界：
+运行时形成四个明确的职责边界：
 
 1. **接口层（Interface Layer）**——FastAPI 与 Next.js Workbench 负责展示输入、流程和证据，
    不执行金融风险计算。
-2. **Agent 推理层（Agent Reasoning Layer）**——规划器与编排器选择类型化工具，判断证据是否
-   充分，交叉核验信号，验证结论，进行反思，并综合输出或弃权。
-3. **工具/代码层（Tool / Code Layer）**——以确定性方式执行摄取、标准化、指标、模型、规则、
-   证据、矛盾检测、融合和重放。
+2. **预测层**——确定性工具和受约束 Agent 推理计算金融信号并提出候选处置，但没有最终授权权。
+3. **Assurance 层**——证据保证、确定性消融、分布有效性诊断和版本化策略决定授权、限制或拒绝。
+4. **证书层**——把输入/文档摘要、组件版本、候选决策、保证结果、最终决策和重放信息写入内容哈希证书。
 
-`FinRiskPipeline` 是 API、Agent 与工具注册表共享的运行时所有者。Agent 负责调度它，但不会
-取代确定性的计算和决策路径。重要结论可以从文档位置或 XBRL 概念，追溯到相应工具、规则、
-模型及其融合贡献，直至最终决策。
+`FinRiskPipeline` 仍是 API、Agent 与工具注册表共享的计算所有者；`AssuranceEngine` 是唯一的
+授权所有者。系统强制执行：`没有 AssuranceResult，就没有已授权的最终决策`。
 
-详见[完整架构与平台边界](docs/enterprise_platform.md)、
+详见[v0.4 Assurance 架构](docs/assurance_architecture.md)、
+[完整架构与平台边界](docs/enterprise_platform.md)、
 [三层迁移图](docs/three_layer_migration.md)和
 [决策级控制](docs/decision_grade_controls.md)。
 
@@ -103,9 +110,13 @@ PASS / FLAG / REVIEW / ABSTAIN
 - 计算流动性、杠杆、盈利、现金流、营运资金和多期趋势。
 - 运行 Altman Z、Beneish M、Piotroski-style F 与 Ohlson O，并执行适用性检查。
 - 评估 68 条版本化专家规则，包括可检查的单因素和交叉因素信号。
-- 通过类型化 Agent 完成规划、工具调用、交叉核验、验证和故障感知综合。
+- 通过类型化 Agent 完成规划、工具调用、交叉核验和候选决策，但 Agent 无授权权。
 - 验证引文、跟踪证据状态，并构建从来源到决策的来源图。
-- 保存不可变快照，执行确定性重放和漂移比较，且不覆盖历史决策。
+- 对证据进行确定性消融，报告分数影响、决策翻转及受影响结论。
+- 生成精确或明确标注为近似的 Decision-Sufficient Evidence Set。
+- 以保守的分布有效性状态在参考条件之外失败关闭。
+- 把财务值与报告可观测性分开；缺失模式不得静默抬高金融严重度。
+- 保存不可变 Decision Certificate，执行确定性重放和哈希完整性核验。
 - 在覆盖不足、证据矛盾、模型分歧、组件不可用或输入无效时明确进入
   `REVIEW` / `ABSTAIN`。
 
@@ -118,7 +129,8 @@ PASS / FLAG / REVIEW / ABSTAIN
 风险案例、策略、快照、时序风险、情景、融合和审计事件接口。受保护的接口使用
 `X-API-Key`；组织和角色由服务端保存的哈希凭据解析，不信任调用方自报的角色头。
 
-验证、限流、数据存储和文档处理均采用失败关闭策略，错误会保留关联 ID。全部端点、上传限制、
+评估响应明确区分 `risk_score`、`risk_severity`、`proposed_decision`、`assurance`、
+`final_decision` 与 `decision_certificate`。验证、限流、数据存储和文档处理均采用失败关闭策略，错误会保留关联 ID。全部端点、上传限制、
 错误契约和首次引导规则见[完整 API 参考](docs/API_REFERENCE.md)。后端运行后，可在
 `http://localhost:8000/docs` 查看交互式 OpenAPI 文档。
 
@@ -219,19 +231,23 @@ v0.3.1 产物仍保留为历史审计记录，但不再作为主要结果面。
 
 ## 项目状态与成熟度
 
-当前发布目标是 **v0.3.4 — Hardened Boundaries & Verified Release Runtime**。该版本让 API、
-Agent 和工具注册表共用同一条配置好的 pipeline；把文档分析放入可终止进程边界；收紧外部输入
-失败行为；并在发布前核验精确的容器摘要。它没有改变预测模型、校准状态或冻结的 E4 结论。
+当前本地目标是 **v0.4.0 review — Assured Selective Financial Intelligence**。
+Assurance 权威边界、确定性证据脆弱性、决策充分证据、分布有效性诊断和 Decision Certificate
+已经实现。这是工程版本：它没有修改冻结的 E4 结果，没有声称得到更强预测器，也没有冻结或运行 E5。
 
 - **在有限研究范围内已验证：** 确定性样例、自动质量门槛、冻结 E4 产物完整性，以及 B6 相对
   B0 在 674 个可核验 E4 结果上的改进。
+- **内部开发验证已完成：** Assurance 权威边界、证据保证、确定性脆弱性、充分证据搜索、
+  有效性状态、证书哈希、重放集成、API 契约、Workbench 层级、Python 3.11/3.12、
+  可安装产物，以及 Docker/PostgreSQL 重启持久性。
+- **仅限开发参考：** 一个带哈希的合成 profile 可复现地覆盖 `IN_REFERENCE`、`WARNING`
+  和 `OUTSIDE_REFERENCE`；它不是经验或外部验证参考，未知真实输入仍按失败关闭处理。
 - **已实现但未外部验证：** XBRL/PDF 核对、时序状态、受约束 provider、Agent critic/verifier、
-  重放、风险案例流程、RBAC/API key、PostgreSQL 迁移和 Workbench。
-- **计划中或尚未运行：** 经人工裁定的文档基准、前瞻冻结的强模型比较、校准风险模型，以及在
-  外部环境运行的生产身份、存储、worker 和 telemetry 基础设施。
+  风险案例流程、RBAC/API key 与存储。
+- **待完成：** 前瞻性 E5、经验参考分布、校准准入策略、外部验证及生产/监管评估。
 
 [项目状态](PROJECT_STATUS.md)是成熟度的权威清单。发布范围与历史见
-[v0.3.4 发布说明](RELEASE_NOTES_v0.3.4.md)和[变更日志](CHANGELOG.md)。
+[v0.4.0 发布说明](RELEASE_NOTES_v0.4.0.md)和[变更日志](CHANGELOG.md)。
 
 ## 仓库结构
 
@@ -266,6 +282,7 @@ failure_lab/  注入故障目录及预期的失败关闭行为
 
 ### 理解 FinRisk
 
+- [v0.4 Assurance 架构](docs/assurance_architecture.md)
 - [架构与企业边界](docs/enterprise_platform.md)
 - [项目状态](PROJECT_STATUS.md)
 - [决策级控制、治理与威胁模型](docs/decision_grade_controls.md)
@@ -278,6 +295,7 @@ failure_lab/  注入故障目录及预期的失败关闭行为
 - [容器发布与部署](docs/CONTAINER_RELEASE.md)
 - [可复现性与运行时完整性](docs/reproducibility_runtime_integrity.md)
 - [实验复现](research/EXPERIMENT_REPRODUCIBILITY.md)
+- [v0.4 内部开发验证](research/v040_development/VALIDATION_REPORT.md)
 - [风险案例工作流](docs/risk_case_workflow.md)
 - [时序风险智能](docs/temporal_risk_intelligence.md)
 
@@ -291,12 +309,14 @@ failure_lab/  注入故障目录及预期的失败关闭行为
 - [E4-S 统计审计](research/e4_statistical_audit/AUDIT_REPORT.md)
 - [E4-R 稳健性研究](research/e4r_automated_robustness/FINAL_REPORT.md)
 - [人机协作研究协议](research/human_ai_study_protocol.md)
+- [E5 草案——受保证选择性决策的前瞻验证](research/e5/README.md)
 
 ### 开发
 
 - [API 参考](docs/API_REFERENCE.md)
 - [贡献指南](CONTRIBUTING.md)
 - [变更日志](CHANGELOG.md)
+- [v0.4.0 发布说明](RELEASE_NOTES_v0.4.0.md)
 - [v0.3.4 发布说明](RELEASE_NOTES_v0.3.4.md)
 - [Failure Lab](failure_lab/README.md)
 
@@ -305,6 +325,9 @@ failure_lab/  注入故障目录及预期的失败关闭行为
 FinRisk 是研究原型。它：
 
 - 尚未校准（`UNCALIBRATED`），不是破产、违约或判断正确性的概率；
+- 当前 Assurance 策略仍是启发式策略，不是已校准的选择性风险保证；
+- 不能断言已经获得外部验证的分布有效性；仓库内合成参考明确标记为
+  `DEVELOPMENT_REFERENCE_ONLY`；
 - 不是信用评级、舞弊认定或投资建议；
 - 不能证明可核验研究子集之外的总体人群表现；
 - 不是对重大金融决策进行人工复核的已验证替代品；
@@ -332,7 +355,7 @@ FinRisk 是研究原型。它：
 
 <div align="center">
 
-**证据优先。识别失败。设计可复现。**
+**预测负责提出。Assurance 负责授权。证据始终可检查。**
 
 <sub>FinRisk 研究金融 AI 应当自动化什么、必须验证什么，以及哪些决策必须由人作出。</sub>
 

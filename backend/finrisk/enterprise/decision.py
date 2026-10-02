@@ -13,6 +13,23 @@ def canonical_hash(value: Any) -> str:
     return hashlib.sha256(payload.encode()).hexdigest()
 
 
+NON_MATERIAL_REPLAY_FIELDS = frozenset({"latency_ms", "created_at"})
+
+
+def material_decision_payload(value: Any) -> Any:
+    """Remove operational telemetry that must not change decision identity."""
+
+    if isinstance(value, dict):
+        return {
+            key: material_decision_payload(item)
+            for key, item in value.items()
+            if key not in NON_MATERIAL_REPLAY_FIELDS
+        }
+    if isinstance(value, (list, tuple)):
+        return [material_decision_payload(item) for item in value]
+    return value
+
+
 def build_decision_trace(
     assessment: dict, fusion: dict, component_versions: dict[str, str] | None = None
 ) -> dict:
@@ -49,6 +66,13 @@ def build_decision_trace(
                         "role": "escalator"
                         if domain in fusion.get("drivers", [])
                         else "supporting",
+                    },
+                    "decision_dependency": {
+                        "proposed_decision": fusion.get(
+                            "proposed_decision", fusion.get("decision")
+                        ),
+                        "risk_dimension": domain,
+                        "computational_contribution": dimension.get("score"),
                     },
                     "evidence_path_status": "VERIFIED" if verified else "UNVERIFIED",
                     "path": [
@@ -90,6 +114,19 @@ def build_decision_trace(
                     .get("score"),
                     "role": "cross_modal_review",
                 },
+                "decision_dependency": {
+                    "proposed_decision": fusion.get(
+                        "proposed_decision", fusion.get("decision")
+                    ),
+                    "risk_dimension": contradiction.get(
+                        "category", "disclosure_tension"
+                    ),
+                    "computational_contribution": assessment.get(
+                        "dimensions", {}
+                    )
+                    .get(contradiction.get("category"), {})
+                    .get("score"),
+                },
                 "evidence_path_status": "VERIFIED" if verified else "UNVERIFIED",
                 "path": [
                     "document",
@@ -104,7 +141,12 @@ def build_decision_trace(
         )
     valid = sum(path["evidence_path_status"] == "VERIFIED" for path in paths)
     return {
-        "decision": fusion.get("decision"),
+        "proposed_decision": fusion.get(
+            "proposed_decision", fusion.get("decision")
+        ),
+        # v0.3 compatibility alias. Assurance later writes the authorized
+        # ``final_decision`` without mutating this proposal record.
+        "decision": fusion.get("proposed_decision", fusion.get("decision")),
         "decision_reason_codes": fusion.get("reason_codes", []),
         "paths": paths,
         "verified_path_count": valid,
@@ -129,8 +171,8 @@ def create_snapshot(
         new_id("snapshot"),
         organization_id,
         entity_id,
-        canonical_hash(frozen_input),
-        canonical_hash(frozen_output),
+        canonical_hash(material_decision_payload(frozen_input)),
+        canonical_hash(material_decision_payload(frozen_output)),
         document_versions,
         component_versions,
         frozen_input,
@@ -139,7 +181,7 @@ def create_snapshot(
 
 
 def replay_diff(snapshot: AnalysisSnapshot, replayed_output: dict) -> dict:
-    replay_hash = canonical_hash(replayed_output)
+    replay_hash = canonical_hash(material_decision_payload(replayed_output))
     match = replay_hash == snapshot.output_hash
     return {
         "snapshot_id": snapshot.id,

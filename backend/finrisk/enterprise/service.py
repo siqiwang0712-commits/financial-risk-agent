@@ -3,6 +3,7 @@ from __future__ import annotations
 import hashlib
 import json
 from datetime import UTC, date, datetime
+from typing import TYPE_CHECKING
 
 from .auth import authorize
 from .decision_bundle import DecisionBundle, verify_decision_bundle
@@ -26,6 +27,9 @@ from .workflow import (
     reopen_case,
     transition_case,
 )
+
+if TYPE_CHECKING:
+    from ..assurance.policy import AssurancePolicy
 
 
 def verified_evidence_ids(snapshot, risk_domain: str) -> set[str]:
@@ -61,8 +65,13 @@ def verified_evidence_ids(snapshot, risk_domain: str) -> set[str]:
 
 
 class EnterpriseRiskService:
-    def __init__(self, repository: EnterpriseRepository | None = None):
+    def __init__(
+        self,
+        repository: EnterpriseRepository | None = None,
+        assurance_policy: AssurancePolicy | None = None,
+    ):
         self.repository = repository or InMemoryEnterpriseRepository()
+        self.assurance_policy = assurance_policy
 
     def create_organization(self, name: str, actor_id: str) -> Organization:
         item = Organization(new_id("org"), name)
@@ -224,7 +233,11 @@ class EnterpriseRiskService:
             "risk_snapshot.created",
             "risk_snapshot",
             f"{snapshot.entity_id}:{snapshot.period}",
-            {"filing_id": snapshot.filing_id, "decision": snapshot.decision},
+            {
+                "filing_id": snapshot.filing_id,
+                "proposed_decision": snapshot.proposed_decision,
+                "decision_semantics": "LEGACY_ALIAS_FOR_PROPOSED_DECISION",
+            },
         )
         return self.repository.save_risk_snapshot(principal.organization_id, snapshot, event)
 
@@ -236,7 +249,9 @@ class EnterpriseRiskService:
     def save_decision_bundle(self, principal: Principal, bundle: DecisionBundle) -> DecisionBundle:
         authorize(principal, "write", bundle.organization_id)
         self.repository.get_entity(bundle.organization_id, bundle.entity_id)
-        if not verify_decision_bundle(bundle):
+        if bundle.certificate_hash and self.assurance_policy is None:
+            raise ValueError("v0.4 Decision Certificates require a trusted Assurance policy")
+        if not verify_decision_bundle(bundle, self.assurance_policy):
             raise ValueError("decision bundle hash verification failed")
         saved = self.repository.save_decision_bundle(bundle)
         persisted = self.repository.get_decision_bundle(
@@ -299,7 +314,9 @@ class EnterpriseRiskService:
             original_decision, override_decision = Decision(original), Decision(override)
         except ValueError as exc:
             raise ValueError("override decisions must be valid Decision values") from exc
-        actual = case.decision_trace.get("decision")
+        actual = case.decision_trace.get("final_decision") or case.decision_trace.get(
+            "decision"
+        )
         if not actual:
             raise ValueError("risk case has no recorded decision to override")
         if original_decision.value != actual:

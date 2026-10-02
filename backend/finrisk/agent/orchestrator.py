@@ -4,6 +4,11 @@ import time
 from pathlib import Path
 from typing import Any
 
+from ..assurance import (
+    AssuranceInput,
+    FinancialFeatureVector,
+    ReportingObservabilityVector,
+)
 from ..domain import Evidence
 from ..enterprise.applicability import applicability_report
 from ..enterprise.decision import (
@@ -15,7 +20,7 @@ from ..enterprise.decision import (
 from ..enterprise.decision_bundle import build_decision_bundle
 from ..enterprise.domain import AnalysisSnapshot, Decision
 from ..enterprise.fusion import (
-    failure_aware_decision,
+    failure_aware_proposal,
     hierarchical_escalation,
     sensitivity_analysis,
 )
@@ -66,6 +71,7 @@ class FinancialRiskAgent:
         document: str = "Annual Report",
         entity_type: str = "industrial",
         source_map: dict | None = None,
+        assurance_reference=None,
     ) -> AgentState:
         state = AgentState(company, year)
         pages, source_map = pages or {}, source_map or {}
@@ -172,7 +178,7 @@ class FinancialRiskAgent:
                 state.confidence,
                 decision_policy,
             )
-            state.fusion = fusion.__dict__
+            state.fusion = fusion.to_dict()
             # Exactly one outward-facing score, matching `pipeline.decide`: the score
             # the decision is derived from is `overall_score`, and the weighted
             # aggregate is kept under explicit names so the two can never be
@@ -185,7 +191,7 @@ class FinancialRiskAgent:
             state.assessment["risk_level"] = severity_label(outward)
             state.risk_score = outward
             state.risk_severity = fusion.severity
-            state.decision = fusion.decision.value
+            state.proposed_decision = fusion.proposed_decision.value
             state.model_disagreement = fusion.disagreement
             # This single-process run holds one period, so there is no series to
             # classify. Multi-period trajectories are produced by the persisted
@@ -218,8 +224,8 @@ class FinancialRiskAgent:
                 "stale_data": False,
                 "rule_model_contradiction": False,
             }
-            failure_decision = failure_aware_decision(fusion, failures)
-            state.decision = failure_decision["decision"]
+            failure_decision = failure_aware_proposal(fusion, failures)
+            state.proposed_decision = failure_decision["proposed_decision"]
             state.assessment["failure_state"] = failure_decision
             if failure_decision["review_failures"]:
                 state.assessment["human_review_required"] = True
@@ -301,7 +307,7 @@ class FinancialRiskAgent:
             # which kind of concern drove the move so "evidence missing" and
             # "evidence conflicting" stay distinguishable.
             recommended = state.role_review.get("recommended_decision")
-            decision_before_review = state.decision
+            decision_before_review = state.proposed_decision
             if recommended == "REVIEW":
                 # A critic raises a separate human-review requirement; it never
                 # downgrades the absorbing ABSTAIN disposition to REVIEW.
@@ -311,18 +317,54 @@ class FinancialRiskAgent:
                 state.assessment["human_review_required"] = True
                 state.assessment["human_review_reason"] = state.assessment["review_escalation_reason"]
                 from ..enterprise.fusion import DISPOSITION_RANK
-                if DISPOSITION_RANK[Decision(recommended)] > DISPOSITION_RANK[Decision(state.decision)]:
-                    state.decision = recommended
+                if DISPOSITION_RANK[Decision(recommended)] > DISPOSITION_RANK[Decision(state.proposed_decision)]:
+                    state.proposed_decision = recommended
             state.decision_trace["initial_fusion_decision"] = fusion.decision.value
-            state.decision_trace["failure_aware_decision"] = failure_decision["decision"]
-            state.decision_trace["review_decision"] = state.decision
-            state.decision_trace["decision"] = state.decision
+            state.decision_trace["failure_aware_proposal"] = failure_decision[
+                "proposed_decision"
+            ]
+            # Legacy trace keys retain their v0.3 shape but now explicitly carry
+            # proposals. Only AssuranceEngine writes ``final_decision`` below.
+            state.decision_trace["failure_aware_decision"] = failure_decision[
+                "proposed_decision"
+            ]
+            state.decision_trace["review_proposal"] = state.proposed_decision
+            state.decision_trace["review_decision"] = state.proposed_decision
+            state.decision_trace["proposed_decision"] = state.proposed_decision
+            state.decision_trace["decision"] = state.proposed_decision
+            assurance = self.pipeline.assurance.evaluate(
+                AssuranceInput(
+                    proposed_decision=state.proposed_decision,
+                    risk_score=state.risk_score,
+                    evidence_paths=tuple(state.decision_trace["paths"]),
+                    financial_features=FinancialFeatureVector(
+                        state.assessment.get("financial_features", {})
+                    ),
+                    reporting_observability=ReportingObservabilityVector(
+                        state.assessment.get("reporting_observability", {})
+                    ),
+                    sector=entity_type,
+                    reference_profile=assurance_reference,
+                    disagreement=state.model_disagreement,
+                    calibration_status=CalibrationStatus.UNCALIBRATED,
+                    runtime_failures=tuple(
+                        failure_decision["blocking_failures"]
+                        + failure_decision["review_failures"]
+                    ),
+                    fusion_policy=decision_policy,
+                )
+            )
+            state.assurance = assurance.to_dict()
+            state.decision = self.pipeline.assurance.authorize(assurance)
+            state.decision_trace["final_decision"] = state.decision
+            state.decision_trace["assurance_certificate_hash"] = (
+                assurance.certificate_hash
+            )
             state.assessment["decision_trace"] = state.decision_trace
+            state.assessment["proposed_decision"] = state.proposed_decision
+            state.assessment["assurance"] = state.assurance
             state.assessment["final_decision"] = state.decision
-            # The final review escalation is part of the failure-aware outcome;
-            # snapshots, trace and DecisionBundle must not record competing final
-            # dispositions.
-            failure_decision["decision"] = state.decision
+            failure_decision["final_decision"] = state.decision
             state.assessment["failure_state"] = failure_decision
             state.epistemics = epistemic_summary(
                 evidence_coverage=state.evidence_coverage,
@@ -428,7 +470,7 @@ class FinancialRiskAgent:
                     risk_after=narrative_score,
                     coverage_before=state.evidence_coverage,
                     coverage_after=state.evidence_coverage,
-                    decision_changed=decision_before_review != state.decision,
+                    decision_changed=decision_before_review != state.proposed_decision,
                     new_evidence=len(state.role_review.get("challenges", [])),
                 ),
                 component_delta(
@@ -448,8 +490,22 @@ class FinancialRiskAgent:
                     coverage_after=state.evidence_coverage,
                     disagreement_before=0.0,
                     disagreement_after=state.model_disagreement,
-                    decision_changed=state.decision != decision_before_review,
+                    decision_changed=state.proposed_decision != decision_before_review,
                     new_evidence=len(state.decision_trace.get("paths", [])),
+                ),
+                component_delta(
+                    "assurance",
+                    risk_before=state.risk_score,
+                    risk_after=state.risk_score,
+                    coverage_before=state.evidence_coverage,
+                    coverage_after=assurance.evidence_assurance.coverage,
+                    disagreement_before=state.model_disagreement,
+                    disagreement_after=state.model_disagreement,
+                    decision_changed=state.decision != state.proposed_decision,
+                    new_evidence=len(
+                        assurance.decision_sufficient_evidence.evidence_ids
+                    ),
+                    status=assurance.assurance_status.value.lower(),
                 ),
             ]
             state.component_telemetry = [item.to_dict() for item in telemetry]
@@ -487,8 +543,22 @@ class FinancialRiskAgent:
                 state.decision,
                 epistemics=state.epistemics,
                 component_telemetry=state.component_telemetry,
+                proposed_decision=state.proposed_decision,
+                assurance=state.assurance,
+                decision_sufficient_evidence=assurance.decision_sufficient_evidence.to_dict(),
+                policy_version=assurance.policy_version,
+                policy_hash=assurance.policy_hash,
+                calibration_status=assurance.calibration_status,
+                replay={
+                    "deterministic": True,
+                    "input_hash": snapshot.input_hash,
+                    "output_hash": snapshot.output_hash,
+                    "component_versions": versions,
+                },
+                assurance_policy=self.pipeline.assurance.policy,
             )
             state.decision_bundle = bundle.to_dict()
+            state.decision_certificate = state.decision_bundle
             state.transition(AgentStatus.REFLECTING)
             state.reflection = reflect(state.assessment)
             if assessment.contradictions or state.assessment.get("human_review_required"):
@@ -521,6 +591,8 @@ class FinancialRiskAgent:
             "fusion": f"hierarchical_escalation:{canonical_hash(decision_policy)[:12]}",
             "applicability": "applicability-router:v1",
             "calibration": "UNCALIBRATED:v1",
+            "assurance_policy": self.pipeline.assurance.policy.policy_hash,
+            "assurance_runtime": "assurance-runtime:v0.4",
             "evidence_verifier": VERIFIER_VERSION,
             "agent_review": "analyst-critic-verifier:v1",
             "prompt": getattr(self.provider, "prompt_version", "mock-or-unversioned"),

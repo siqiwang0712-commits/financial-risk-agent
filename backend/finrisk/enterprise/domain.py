@@ -91,6 +91,12 @@ class PolicyVersion:
 
 @dataclass(frozen=True)
 class FusionResult:
+    """A risk-fusion proposal, not an authorization to issue a final decision.
+
+    ``decision`` remains as a v0.3 compatibility alias. New consumers must use
+    ``proposed_decision`` and submit it to ``AssuranceEngine``.
+    """
+
     method: str
     severity: str
     score: float | None
@@ -104,6 +110,17 @@ class FusionResult:
     reliability: float | None = None
     reliability_status: str = "UNCALIBRATED"
     reason_codes: list[str] = field(default_factory=list)
+
+    @property
+    def proposed_decision(self) -> Decision:
+        return self.decision
+
+    def to_dict(self) -> dict[str, Any]:
+        payload = asdict(self)
+        payload["proposed_decision"] = self.decision.value
+        payload["decision"] = self.decision.value
+        payload["decision_semantics"] = "LEGACY_ALIAS_FOR_PROPOSED_DECISION"
+        return payload
 
 
 @dataclass

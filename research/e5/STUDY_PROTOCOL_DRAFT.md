@@ -1,91 +1,100 @@
-# E5 Confirmatory External Validation — Protocol Draft
+# E5 — Prospective Validation of Assured Selective Financial Decisions
 
-Status: **DRAFT — NOT FROZEN — NO RESULTS**
+Status: **DRAFT — WAITING FOR v0.4 ARCHITECTURE STABILIZATION**
+
+This is not a frozen preregistration. No cohort has been enumerated, no predictions have
+been generated, and no future outcomes have been accessed. The design must not receive a
+final hash until v0.4 interfaces, policy semantics and certificate replay are stable.
 
 ## Purpose
 
-E5 will prospectively test structured temporal, stronger-Agent, and fixed
-hybrid comparators against a predefined financial-deterioration endpoint in a
-new, untouched time window. It will not treat E4 post-hoc findings as
-confirmation and will not claim bankruptcy/default probability validation.
+E5 will prospectively evaluate whether Assurance improves the safety and utility of
+selective financial decisions on a new, company-disjoint future cohort. It will not treat
+E4 post-hoc findings as confirmation and will not claim bankruptcy/default probability
+validation.
+
+E5 separates predictive ranking from decision authorization. A stronger AUROC does not by
+itself validate evidence support, automation eligibility, abstention behavior or a final
+decision policy.
 
 ## Required novelty and isolation
 
-- Feature and outcome periods must be later than E4 and unavailable when the
-  protocol, cohort, packets, predictions, and model outputs are frozen.
-- Companies must be disjoint from all E1–E4 and historical validation cohorts.
-- No unused E4 company can be called prospective merely because it was not in
-  E4-A; E4 outcomes and design feedback are already known.
-- Prediction containers receive feature data only. Outcome containers start
-  only after a content-addressed prediction freeze.
+- Feature and outcome periods must be later than E4 and unavailable when the protocol,
+  cohort, packets, predictions and certificates are frozen.
+- Companies must be disjoint from E1–E4, public pilot, historical development data and
+  the unpublished prior 270-CIK cohort.
+- No unused E4 company is prospective merely because it was not selected for E4-B.
+- Prediction containers receive feature data only. Outcome access begins only after a
+  content-addressed prediction and certificate freeze.
+- `research/e4/_cache/previous_270.json` remains a fail-closed cohort blocker.
 
-## Confirmatory systems
+## Future comparison framework
 
-- B0 and B6 remain locked reference systems unless a separately versioned
-  source release is named before data access.
-- One stronger instruct model is selected using availability, structured-output
-  reliability, context, reproducibility, and hardware feasibility—never E5
-  outcome performance.
-- A0/A1/A2 schemas and prompts are frozen after outcome-blind smoke tests.
-- One primary Agent representation and one hybrid formula are nominated before
-  prediction. Any other variants are secondary.
-- Hybrid weights must come from historical development data or a transparent
-  prespecified rule, not E4/E5 test labels.
+Exact implementations are intentionally open until v0.4 stabilization. The freeze must
+nominate one member of each required arm without looking at E5 outcomes:
 
-## Primary hypotheses
+| Arm | Purpose |
+|---|---|
+| Strong tabular predictor | competitive predictive reference consistent with E4-R |
+| Strong tabular + selective policy | isolates the value of selective admission from Agent reasoning |
+| Raw Agent | measures unconstrained proposal behavior; never final authority |
+| Agent + evidence verification | isolates evidence admission from full Assurance |
+| Full FinRisk Assurance | evidence assurance + fragility + distribution validity + admission policy |
 
-The final freeze may include at most three multiplicity-controlled primary
-comparisons. A recommended structure is: B6 vs B0, stronger A2 vs B0, and fixed
-Hybrid vs both B0 and A2 using a hierarchical gate. Exact estimands, direction,
-and multiplicity procedure must be frozen before cohort construction.
+B0 and B6 remain historical reference arms. They may be reported, but the primary design
+must not imply B6 is the strongest available tabular comparator.
 
-## Agent reliability gates
+## Estimands to freeze later
 
-- At least 99% schema-valid output in outcome-blind qualification packets.
-- Exact input/output ID equality, deterministic retry, and bisect recovery.
-- Raw masked response retention with error code and response hash.
-- Pre-outcome batch-size sensitivity at sizes 1, operational-small, and target;
-  freeze an acceptable rank-correlation and score-difference tolerance.
-- No web, identity, future data, tools, repository, or arbitrary filesystem.
+The final protocol must define separate, multiplicity-controlled estimands for:
+
+- predictive discrimination on the common evaluable cohort;
+- calibrated risk, only if three disjoint development/calibration/validation splits exist;
+- risk–coverage and error–coverage behavior;
+- unsafe automation and unsupported-decision rates;
+- review/abstention utility and coverage;
+- evidence-path correctness, fragility and certificate replay integrity.
+
+No current number is a target result. Minimum meaningful effects and sample size remain
+open design choices and must be frozen before cohort construction.
+
+## Assurance qualification gates
+
+Before protocol freeze, synthetic and historical outcome-blind fixtures must establish:
+
+- no runtime path can publish a final decision without `AssuranceResult`;
+- evidence removal cannot improve evidence assurance;
+- fragility replay is deterministic and invokes no LLM/provider;
+- outside-reference status never increases automation eligibility;
+- reporting observability cannot raise financial severity;
+- `UNCALIBRATED` outputs expose neither probability nor reliability claims;
+- certificate mutations fail verification;
+- identical frozen inputs, documents, components and policy replay identically.
+
+These are software qualification gates, not E5 outcomes.
 
 ## Outcome and coverage
 
-- Use a versioned deterministic deterioration endpoint with an adjudication
-  protocol for REVIEW cases that is blind to system scores.
-- Prespecify minimum verified coverage and compare prediction-time covariates
-  across VERIFIED/REVIEW/INSUFFICIENT groups.
-- Verification weighting may be prespecified as sensitivity only; it cannot
-  replace missing labels without defensible identification assumptions.
+The endpoint remains a versioned financial-deterioration endpoint, not bankruptcy,
+default or credit loss. REVIEW cases require blinded adjudication. The protocol must
+report VERIFIED/REVIEW/INSUFFICIENT coverage and prediction-time covariates. Reweighting
+may be a sensitivity analysis only; it cannot replace missing outcomes.
 
-## Sample-size gate
+## Calibration and distribution validity
 
-The Agent paired cohort should target at least 1,200 selected companies. At the
-E4 verified rate (33.7%) and event rate (34.9%), this projects roughly 404
-verified observations and 141 events. The study must not unlock outcomes unless
-the frozen cohort is large enough to plausibly deliver at least 100 paired
-events after schema and endpoint attrition. The final calculation must be
-updated using outcome-blind operational rates and a prespecified effect size,
-not E4 test optimization.
+If calibration is attempted, development, calibration and final validation companies/time
+windows must be distinct. Method, bins and decision thresholds are frozen before final
+validation. Otherwise all scores remain `UNCALIBRATED`.
 
-## Calibration track
+The reference-distribution profile must be built without E5 outcomes and frozen before
+prediction. Shift detection means the assurance claim is withheld outside scope; it does
+not prove the predictor wrong. Online adaptive conformal learning is outside this design.
 
-If probability calibration is attempted, development, calibration, and final
-validation companies/time windows must be distinct. Calibration method and
-bins are frozen on the calibration split; the final validation split reports
-calibration intercept/slope, Brier, ECE, and decision curves without refitting.
-Otherwise all scores remain `UNCALIBRATED`.
+## Governance and claims
 
-## Narrative/document track
+The existing staged harness, outcome isolation, blinded adjudication and hash-chain ideas
+under `protocol/` remain useful. They must be updated to the five-arm Assurance framework
+before use. Negative or mixed findings are valid outcomes.
 
-This is separate from structured E5 unless complete filing text is available.
-It requires frozen MD&A, Risk Factors, footnotes, and auditor text; independent
-dual annotation/adjudication; claim-level grounding, extraction, contradiction,
-and abstention metrics; and company/time-disjoint evaluation.
-
-## Reproducibility and claims
-
-Freeze source commit, dependency lock, containers, model/tokenizer/digest,
-quantization, hardware-relevant parameters, prompts, packets, batching, seeds,
-thresholds, hypotheses, analysis code, and public claim gates. Deterministic
-outputs must replay byte-identically; stochastic model behavior is evaluated
-separately. Negative results are valid outcomes.
+E5 may establish prospective performance only if every freeze and outcome-isolation gate
+passes. It cannot establish production, regulatory or universal validity from one cohort.

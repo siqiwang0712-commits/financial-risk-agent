@@ -13,13 +13,13 @@ export interface DemoFixture {
 }
 
 export const DEMO_FIXTURE: DemoFixture = {
-  "generatedBy": "FinancialRiskAgent v0.3.4 (deterministic offline provider)",
+  "generatedBy": "FinRisk v0.4.0-dev Assurance Runtime (deterministic offline provider)",
   "sourceFixture": "examples/synthetic_company.json",
   "sourceFiling": "research/results/public_v1/summary.json",
-  "notice": "Bundled offline sample. The assessment is a real pipeline output for the repository's synthetic fixture - not a real issuer, and not a live run. Reliability is UNCALIBRATED.",
+  "notice": "Bundled offline sample. The assessment is a real pipeline output for the repository's synthetic fixture - not a real issuer, and not a live run. The Assurance policy is HEURISTIC and UNCALIBRATED; automation is withheld.",
   "pilot": {
     "snapshot": "v0.3.0 frozen public pilot",
-    "runtime": "v0.3.4",
+    "runtime": "v0.4.0",
     "annotation_status": "single-reviewer pilot; not a definitive financial-risk benchmark",
     "benchmark_evidence_coverage": 0.5833,
     "rows": [
@@ -731,6 +731,7 @@ export const DEMO_FIXTURE: DemoFixture = {
       "evidence_coverage": 0.045,
       "risk_severity": "critical",
       "risk_trajectory": "insufficient_history",
+      "proposed_decision": "ABSTAIN",
       "decision": "ABSTAIN",
       "model_disagreement": 0.435,
       "fusion": {
@@ -752,9 +753,12 @@ export const DEMO_FIXTURE: DemoFixture = {
           "INSUFFICIENT_EVIDENCE",
           "CRITICAL_DIMENSION_ESCALATION",
           "UNVALIDATED_RELIABILITY"
-        ]
+        ],
+        "proposed_decision": "ABSTAIN",
+        "decision_semantics": "LEGACY_ALIAS_FOR_PROPOSED_DECISION"
       },
       "decision_trace": {
+        "proposed_decision": "ABSTAIN",
         "decision": "ABSTAIN",
         "decision_reason_codes": [
           "INSUFFICIENT_EVIDENCE",
@@ -782,6 +786,11 @@ export const DEMO_FIXTURE: DemoFixture = {
               "method": "hierarchical_escalation",
               "dimension_score": 85,
               "role": "escalator"
+            },
+            "decision_dependency": {
+              "proposed_decision": "ABSTAIN",
+              "risk_dimension": "liquidity",
+              "computational_contribution": 85
             },
             "evidence_path_status": "UNVERIFIED",
             "path": [
@@ -816,6 +825,11 @@ export const DEMO_FIXTURE: DemoFixture = {
               "dimension_score": 85,
               "role": "escalator"
             },
+            "decision_dependency": {
+              "proposed_decision": "ABSTAIN",
+              "risk_dimension": "liquidity",
+              "computational_contribution": 85
+            },
             "evidence_path_status": "UNVERIFIED",
             "path": [
               "document",
@@ -849,6 +863,11 @@ export const DEMO_FIXTURE: DemoFixture = {
               "dimension_score": 85,
               "role": "escalator"
             },
+            "decision_dependency": {
+              "proposed_decision": "ABSTAIN",
+              "risk_dimension": "liquidity",
+              "computational_contribution": 85
+            },
             "evidence_path_status": "UNVERIFIED",
             "path": [
               "document",
@@ -881,6 +900,11 @@ export const DEMO_FIXTURE: DemoFixture = {
               "method": "hierarchical_escalation",
               "dimension_score": 85,
               "role": "escalator"
+            },
+            "decision_dependency": {
+              "proposed_decision": "ABSTAIN",
+              "risk_dimension": "liquidity",
+              "computational_contribution": 85
             },
             "evidence_path_status": "UNVERIFIED",
             "path": [
@@ -917,6 +941,11 @@ export const DEMO_FIXTURE: DemoFixture = {
               "dimension_score": 85,
               "role": "escalator"
             },
+            "decision_dependency": {
+              "proposed_decision": "ABSTAIN",
+              "risk_dimension": "liquidity",
+              "computational_contribution": 85
+            },
             "evidence_path_status": "UNVERIFIED",
             "path": [
               "document",
@@ -949,6 +978,11 @@ export const DEMO_FIXTURE: DemoFixture = {
               "method": "hierarchical_escalation",
               "dimension_score": 63,
               "role": "supporting"
+            },
+            "decision_dependency": {
+              "proposed_decision": "ABSTAIN",
+              "risk_dimension": "solvency_leverage",
+              "computational_contribution": 63
             },
             "evidence_path_status": "UNVERIFIED",
             "path": [
@@ -983,6 +1017,11 @@ export const DEMO_FIXTURE: DemoFixture = {
               "dimension_score": 63,
               "role": "supporting"
             },
+            "decision_dependency": {
+              "proposed_decision": "ABSTAIN",
+              "risk_dimension": "solvency_leverage",
+              "computational_contribution": 63
+            },
             "evidence_path_status": "UNVERIFIED",
             "path": [
               "document",
@@ -1016,6 +1055,11 @@ export const DEMO_FIXTURE: DemoFixture = {
               "dimension_score": 63,
               "role": "supporting"
             },
+            "decision_dependency": {
+              "proposed_decision": "ABSTAIN",
+              "risk_dimension": "solvency_leverage",
+              "computational_contribution": 63
+            },
             "evidence_path_status": "UNVERIFIED",
             "path": [
               "document",
@@ -1048,6 +1092,11 @@ export const DEMO_FIXTURE: DemoFixture = {
               "method": "hierarchical_escalation",
               "dimension_score": 20,
               "role": "supporting"
+            },
+            "decision_dependency": {
+              "proposed_decision": "ABSTAIN",
+              "risk_dimension": "profitability",
+              "computational_contribution": 20
             },
             "evidence_path_status": "UNVERIFIED",
             "path": [
@@ -1084,6 +1133,11 @@ export const DEMO_FIXTURE: DemoFixture = {
               "dimension_score": 45,
               "role": "supporting"
             },
+            "decision_dependency": {
+              "proposed_decision": "ABSTAIN",
+              "risk_dimension": "cash_flow",
+              "computational_contribution": 45
+            },
             "evidence_path_status": "UNVERIFIED",
             "path": [
               "document",
@@ -1117,6 +1171,11 @@ export const DEMO_FIXTURE: DemoFixture = {
               "dimension_score": 45,
               "role": "supporting"
             },
+            "decision_dependency": {
+              "proposed_decision": "ABSTAIN",
+              "risk_dimension": "cash_flow",
+              "computational_contribution": 45
+            },
             "evidence_path_status": "UNVERIFIED",
             "path": [
               "document",
@@ -1149,6 +1208,11 @@ export const DEMO_FIXTURE: DemoFixture = {
               "method": "hierarchical_escalation",
               "dimension_score": 45,
               "role": "supporting"
+            },
+            "decision_dependency": {
+              "proposed_decision": "ABSTAIN",
+              "risk_dimension": "cash_flow",
+              "computational_contribution": 45
             },
             "evidence_path_status": "UNVERIFIED",
             "path": [
@@ -1187,6 +1251,11 @@ export const DEMO_FIXTURE: DemoFixture = {
               "dimension_score": 56,
               "role": "supporting"
             },
+            "decision_dependency": {
+              "proposed_decision": "ABSTAIN",
+              "risk_dimension": "earnings_quality",
+              "computational_contribution": 56
+            },
             "evidence_path_status": "UNVERIFIED",
             "path": [
               "document",
@@ -1222,6 +1291,11 @@ export const DEMO_FIXTURE: DemoFixture = {
               "dimension_score": 56,
               "role": "supporting"
             },
+            "decision_dependency": {
+              "proposed_decision": "ABSTAIN",
+              "risk_dimension": "earnings_quality",
+              "computational_contribution": 56
+            },
             "evidence_path_status": "UNVERIFIED",
             "path": [
               "document",
@@ -1256,6 +1330,11 @@ export const DEMO_FIXTURE: DemoFixture = {
               "method": "hierarchical_escalation",
               "dimension_score": 56,
               "role": "supporting"
+            },
+            "decision_dependency": {
+              "proposed_decision": "ABSTAIN",
+              "risk_dimension": "earnings_quality",
+              "computational_contribution": 56
             },
             "evidence_path_status": "UNVERIFIED",
             "path": [
@@ -1322,6 +1401,11 @@ export const DEMO_FIXTURE: DemoFixture = {
               "dimension_score": 28,
               "role": "supporting"
             },
+            "decision_dependency": {
+              "proposed_decision": "ABSTAIN",
+              "risk_dimension": "business_going_concern",
+              "computational_contribution": 28
+            },
             "evidence_path_status": "VERIFIED",
             "path": [
               "document",
@@ -1367,6 +1451,11 @@ export const DEMO_FIXTURE: DemoFixture = {
               "dimension_score": 85,
               "role": "cross_modal_review"
             },
+            "decision_dependency": {
+              "proposed_decision": "ABSTAIN",
+              "risk_dimension": "liquidity",
+              "computational_contribution": 85
+            },
             "evidence_path_status": "VERIFIED",
             "path": [
               "document",
@@ -1383,8 +1472,12 @@ export const DEMO_FIXTURE: DemoFixture = {
         "material_path_count": 17,
         "proof_coverage": 0.118,
         "initial_fusion_decision": "ABSTAIN",
+        "failure_aware_proposal": "ABSTAIN",
         "failure_aware_decision": "ABSTAIN",
-        "review_decision": "ABSTAIN"
+        "review_proposal": "ABSTAIN",
+        "review_decision": "ABSTAIN",
+        "final_decision": "ABSTAIN",
+        "assurance_certificate_hash": "a6e753637f40a2c84e46d6b86350264c02bf8bfd0226549ddef8fcf00bdd6ee6"
       },
       "role_review": {
         "analyst": [
@@ -1837,8 +1930,2267 @@ export const DEMO_FIXTURE: DemoFixture = {
           "new_evidence": 17,
           "latency_ms": 0,
           "estimated_cost_usd": 0.0
+        },
+        {
+          "component": "assurance",
+          "status": "restricted",
+          "risk_before": 95.0,
+          "risk_after": 95.0,
+          "delta_risk": 0.0,
+          "coverage_before": 0.045,
+          "coverage_after": 0.118,
+          "delta_coverage": 0.073,
+          "disagreement_before": 0.435,
+          "disagreement_after": 0.435,
+          "delta_disagreement": 0.0,
+          "decision_changed": false,
+          "new_evidence": 1,
+          "latency_ms": 0,
+          "estimated_cost_usd": 0.0
         }
-      ]
+      ],
+      "assurance": {
+        "proposed_decision": "ABSTAIN",
+        "final_decision": "ABSTAIN",
+        "automation_allowed": false,
+        "assurance_status": "RESTRICTED",
+        "evidence_assurance": {
+          "state": "PARTIAL",
+          "material_path_count": 17,
+          "verified_path_count": 2,
+          "coverage": 0.117647,
+          "verified_evidence_ids": [
+            "evidence_58466f281bbf3b983dae",
+            "evidence_ed5efb86f7fc76e73e22"
+          ],
+          "supported_claims": [
+            "BUS_003",
+            "DISCLOSURE_TENSION_001"
+          ],
+          "diagnostics": [
+            "Only part of the material decision path is verified."
+          ]
+        },
+        "evidence_fragility": {
+          "state": "FRAGILE",
+          "largest_single_evidence_impact": 67.0,
+          "decision_flip_count": 0,
+          "decision_flip_rate": 0.0,
+          "severity_change_count": 1,
+          "affected_dimensions": [
+            "business_going_concern",
+            "liquidity"
+          ],
+          "affected_claims": [
+            "BUS_003",
+            "DISCLOSURE_TENSION_001"
+          ],
+          "ablations": [
+            {
+              "evidence_id": "evidence_58466f281bbf3b983dae",
+              "score_delta": -10.0,
+              "severity_change": false,
+              "proposed_decision_change": false,
+              "final_decision_impact": false,
+              "recomputed_proposed_decision": "ABSTAIN",
+              "affected_dimensions": [
+                "business_going_concern"
+              ],
+              "affected_claims": [
+                "BUS_003"
+              ]
+            },
+            {
+              "evidence_id": "evidence_ed5efb86f7fc76e73e22",
+              "score_delta": -67.0,
+              "severity_change": true,
+              "proposed_decision_change": false,
+              "final_decision_impact": false,
+              "recomputed_proposed_decision": "ABSTAIN",
+              "affected_dimensions": [
+                "liquidity"
+              ],
+              "affected_claims": [
+                "DISCLOSURE_TENSION_001"
+              ]
+            }
+          ]
+        },
+        "distribution_validity": {
+          "state": "IN_REFERENCE",
+          "reference_name": "FinRisk synthetic development reference",
+          "reference_version": "v0.4.0-development-reference-1",
+          "reference_scope": "DEVELOPMENT_REFERENCE_ONLY",
+          "evaluated_feature_count": 22,
+          "outside_feature_count": 0,
+          "reporting_availability_rate": 0.3548387096774194,
+          "diagnostics": []
+        },
+        "decision_sufficient_evidence": {
+          "evidence_ids": [
+            "evidence_58466f281bbf3b983dae"
+          ],
+          "method": "EXACT",
+          "exact": true,
+          "preserves_proposed_decision": true,
+          "evaluated_subsets": 1,
+          "baseline_decision": "ABSTAIN"
+        },
+        "policy_status": "HEURISTIC_POLICY",
+        "calibration_status": "UNCALIBRATED",
+        "reason_codes": [
+          "INSUFFICIENT_VERIFIED_EVIDENCE",
+          "EVIDENCE_FRAGILITY_HIGH",
+          "RUNTIME_FAILURE_REQUIRES_REVIEW",
+          "ASSURANCE_POLICY_UNCALIBRATED",
+          "PROPOSED_DECISION_WITHHELD"
+        ],
+        "policy_version": "assurance-policy-v0.4.0-development",
+        "policy_hash": "c0ce6ed4752c53e67f3528de1013a4a6ff4d512b1790cde1c6628b354c8b9053",
+        "certificate_hash": "a6e753637f40a2c84e46d6b86350264c02bf8bfd0226549ddef8fcf00bdd6ee6",
+        "diagnostics": {
+          "authorization_blockers": [
+            "evidence",
+            "fragility",
+            "runtime_failure"
+          ],
+          "runtime_failures": [
+            "conflicting_evidence"
+          ],
+          "reliability": null,
+          "probability": null
+        }
+      },
+      "decision_certificate": {
+        "bundle_id": "bundle_3189520ed17edbffb968",
+        "organization_id": "local",
+        "entity_id": "Northstar Components (Synthetic)",
+        "created_at": "2026-10-02T02:10:49.331876+00:00",
+        "document_hashes": {
+          "Annual Report": "4b04f86ed1c1757d9f6b5a73a5fd6a12aac55b6d275411faeb032fc4fcba5688"
+        },
+        "input_hash": "3511ad46222dcd978c78ba31533b84d1cf676f2036d70b61aad9ed5da3e38003",
+        "output_hash": "5e55f0e7bbf71e9e855867da538985a79d1a5fa3db4fba0b3c6ef59a2345db96",
+        "risk_state": {
+          "score": 95.0,
+          "severity": "critical",
+          "trajectory": "insufficient_history",
+          "coverage": 0.045,
+          "confidence": 0.9
+        },
+        "risk_delta": null,
+        "evidence_paths": [
+          {
+            "reason_code": "LIQ_001",
+            "risk_domain": "liquidity",
+            "source_evidence": [],
+            "required_inputs": [
+              "current_ratio"
+            ],
+            "input_provenance": {
+              "current_ratio": []
+            },
+            "rule_or_model": "liquidity_coverage",
+            "rule_version": "64a92069682b8af5042bf05fb1d04be09c3d39b37dfbd6fd9ececf0c8a58d7bc",
+            "fusion_version": "hierarchical_escalation:9776c631a261",
+            "confidence": 0.9,
+            "coverage": 1.0,
+            "disagreement": 0.435,
+            "fusion_contribution": {
+              "method": "hierarchical_escalation",
+              "dimension_score": 85,
+              "role": "escalator"
+            },
+            "decision_dependency": {
+              "proposed_decision": "ABSTAIN",
+              "risk_dimension": "liquidity",
+              "computational_contribution": 85
+            },
+            "evidence_path_status": "UNVERIFIED",
+            "path": [
+              "document",
+              "evidence_span",
+              "fact",
+              "metric",
+              "rule/model",
+              "dimension",
+              "fusion",
+              "decision"
+            ]
+          },
+          {
+            "reason_code": "LIQ_003",
+            "risk_domain": "liquidity",
+            "source_evidence": [],
+            "required_inputs": [
+              "quick_ratio"
+            ],
+            "input_provenance": {
+              "quick_ratio": []
+            },
+            "rule_or_model": "LIQ_003",
+            "rule_version": "64a92069682b8af5042bf05fb1d04be09c3d39b37dfbd6fd9ececf0c8a58d7bc",
+            "fusion_version": "hierarchical_escalation:9776c631a261",
+            "confidence": 0.9,
+            "coverage": 1.0,
+            "disagreement": 0.435,
+            "fusion_contribution": {
+              "method": "hierarchical_escalation",
+              "dimension_score": 85,
+              "role": "escalator"
+            },
+            "decision_dependency": {
+              "proposed_decision": "ABSTAIN",
+              "risk_dimension": "liquidity",
+              "computational_contribution": 85
+            },
+            "evidence_path_status": "UNVERIFIED",
+            "path": [
+              "document",
+              "evidence_span",
+              "fact",
+              "metric",
+              "rule/model",
+              "dimension",
+              "fusion",
+              "decision"
+            ]
+          },
+          {
+            "reason_code": "LIQ_004",
+            "risk_domain": "liquidity",
+            "source_evidence": [],
+            "required_inputs": [
+              "cash_ratio"
+            ],
+            "input_provenance": {
+              "cash_ratio": []
+            },
+            "rule_or_model": "LIQ_004",
+            "rule_version": "64a92069682b8af5042bf05fb1d04be09c3d39b37dfbd6fd9ececf0c8a58d7bc",
+            "fusion_version": "hierarchical_escalation:9776c631a261",
+            "confidence": 0.9,
+            "coverage": 1.0,
+            "disagreement": 0.435,
+            "fusion_contribution": {
+              "method": "hierarchical_escalation",
+              "dimension_score": 85,
+              "role": "escalator"
+            },
+            "decision_dependency": {
+              "proposed_decision": "ABSTAIN",
+              "risk_dimension": "liquidity",
+              "computational_contribution": 85
+            },
+            "evidence_path_status": "UNVERIFIED",
+            "path": [
+              "document",
+              "evidence_span",
+              "fact",
+              "metric",
+              "rule/model",
+              "dimension",
+              "fusion",
+              "decision"
+            ]
+          },
+          {
+            "reason_code": "LIQ_006",
+            "risk_domain": "liquidity",
+            "source_evidence": [],
+            "required_inputs": [
+              "cash_growth"
+            ],
+            "input_provenance": {
+              "cash_growth": []
+            },
+            "rule_or_model": "LIQ_006",
+            "rule_version": "64a92069682b8af5042bf05fb1d04be09c3d39b37dfbd6fd9ececf0c8a58d7bc",
+            "fusion_version": "hierarchical_escalation:9776c631a261",
+            "confidence": 0.9,
+            "coverage": 1.0,
+            "disagreement": 0.435,
+            "fusion_contribution": {
+              "method": "hierarchical_escalation",
+              "dimension_score": 85,
+              "role": "escalator"
+            },
+            "decision_dependency": {
+              "proposed_decision": "ABSTAIN",
+              "risk_dimension": "liquidity",
+              "computational_contribution": 85
+            },
+            "evidence_path_status": "UNVERIFIED",
+            "path": [
+              "document",
+              "evidence_span",
+              "fact",
+              "metric",
+              "rule/model",
+              "dimension",
+              "fusion",
+              "decision"
+            ]
+          },
+          {
+            "reason_code": "LIQ_008",
+            "risk_domain": "liquidity",
+            "source_evidence": [],
+            "required_inputs": [
+              "cash_growth",
+              "operating_cash_flow_growth"
+            ],
+            "input_provenance": {
+              "cash_growth": [],
+              "operating_cash_flow_growth": []
+            },
+            "rule_or_model": "LIQ_008",
+            "rule_version": "64a92069682b8af5042bf05fb1d04be09c3d39b37dfbd6fd9ececf0c8a58d7bc",
+            "fusion_version": "hierarchical_escalation:9776c631a261",
+            "confidence": 0.9,
+            "coverage": 1.0,
+            "disagreement": 0.435,
+            "fusion_contribution": {
+              "method": "hierarchical_escalation",
+              "dimension_score": 85,
+              "role": "escalator"
+            },
+            "decision_dependency": {
+              "proposed_decision": "ABSTAIN",
+              "risk_dimension": "liquidity",
+              "computational_contribution": 85
+            },
+            "evidence_path_status": "UNVERIFIED",
+            "path": [
+              "document",
+              "evidence_span",
+              "fact",
+              "metric",
+              "rule/model",
+              "dimension",
+              "fusion",
+              "decision"
+            ]
+          },
+          {
+            "reason_code": "SOL_004",
+            "risk_domain": "solvency_leverage",
+            "source_evidence": [],
+            "required_inputs": [
+              "interest_coverage"
+            ],
+            "input_provenance": {
+              "interest_coverage": []
+            },
+            "rule_or_model": "interest_coverage",
+            "rule_version": "64a92069682b8af5042bf05fb1d04be09c3d39b37dfbd6fd9ececf0c8a58d7bc",
+            "fusion_version": "hierarchical_escalation:9776c631a261",
+            "confidence": 0.9,
+            "coverage": 1.0,
+            "disagreement": 0.435,
+            "fusion_contribution": {
+              "method": "hierarchical_escalation",
+              "dimension_score": 63,
+              "role": "supporting"
+            },
+            "decision_dependency": {
+              "proposed_decision": "ABSTAIN",
+              "risk_dimension": "solvency_leverage",
+              "computational_contribution": 63
+            },
+            "evidence_path_status": "UNVERIFIED",
+            "path": [
+              "document",
+              "evidence_span",
+              "fact",
+              "metric",
+              "rule/model",
+              "dimension",
+              "fusion",
+              "decision"
+            ]
+          },
+          {
+            "reason_code": "SOL_001",
+            "risk_domain": "solvency_leverage",
+            "source_evidence": [],
+            "required_inputs": [
+              "debt_to_equity"
+            ],
+            "input_provenance": {
+              "debt_to_equity": []
+            },
+            "rule_or_model": "SOL_001",
+            "rule_version": "64a92069682b8af5042bf05fb1d04be09c3d39b37dfbd6fd9ececf0c8a58d7bc",
+            "fusion_version": "hierarchical_escalation:9776c631a261",
+            "confidence": 0.9,
+            "coverage": 1.0,
+            "disagreement": 0.435,
+            "fusion_contribution": {
+              "method": "hierarchical_escalation",
+              "dimension_score": 63,
+              "role": "supporting"
+            },
+            "decision_dependency": {
+              "proposed_decision": "ABSTAIN",
+              "risk_dimension": "solvency_leverage",
+              "computational_contribution": 63
+            },
+            "evidence_path_status": "UNVERIFIED",
+            "path": [
+              "document",
+              "evidence_span",
+              "fact",
+              "metric",
+              "rule/model",
+              "dimension",
+              "fusion",
+              "decision"
+            ]
+          },
+          {
+            "reason_code": "SOL_006",
+            "risk_domain": "solvency_leverage",
+            "source_evidence": [],
+            "required_inputs": [
+              "debt_to_ebitda"
+            ],
+            "input_provenance": {
+              "debt_to_ebitda": []
+            },
+            "rule_or_model": "SOL_006",
+            "rule_version": "64a92069682b8af5042bf05fb1d04be09c3d39b37dfbd6fd9ececf0c8a58d7bc",
+            "fusion_version": "hierarchical_escalation:9776c631a261",
+            "confidence": 0.9,
+            "coverage": 1.0,
+            "disagreement": 0.435,
+            "fusion_contribution": {
+              "method": "hierarchical_escalation",
+              "dimension_score": 63,
+              "role": "supporting"
+            },
+            "decision_dependency": {
+              "proposed_decision": "ABSTAIN",
+              "risk_dimension": "solvency_leverage",
+              "computational_contribution": 63
+            },
+            "evidence_path_status": "UNVERIFIED",
+            "path": [
+              "document",
+              "evidence_span",
+              "fact",
+              "metric",
+              "rule/model",
+              "dimension",
+              "fusion",
+              "decision"
+            ]
+          },
+          {
+            "reason_code": "PRO_003",
+            "risk_domain": "profitability",
+            "source_evidence": [],
+            "required_inputs": [
+              "gross_margin_change"
+            ],
+            "input_provenance": {
+              "gross_margin_change": []
+            },
+            "rule_or_model": "PRO_003",
+            "rule_version": "64a92069682b8af5042bf05fb1d04be09c3d39b37dfbd6fd9ececf0c8a58d7bc",
+            "fusion_version": "hierarchical_escalation:9776c631a261",
+            "confidence": 0.9,
+            "coverage": 1.0,
+            "disagreement": 0.435,
+            "fusion_contribution": {
+              "method": "hierarchical_escalation",
+              "dimension_score": 20,
+              "role": "supporting"
+            },
+            "decision_dependency": {
+              "proposed_decision": "ABSTAIN",
+              "risk_dimension": "profitability",
+              "computational_contribution": 20
+            },
+            "evidence_path_status": "UNVERIFIED",
+            "path": [
+              "document",
+              "evidence_span",
+              "fact",
+              "metric",
+              "rule/model",
+              "dimension",
+              "fusion",
+              "decision"
+            ]
+          },
+          {
+            "reason_code": "CFL_005",
+            "risk_domain": "cash_flow",
+            "source_evidence": [],
+            "required_inputs": [
+              "net_income",
+              "free_cash_flow"
+            ],
+            "input_provenance": {
+              "net_income": [],
+              "free_cash_flow": []
+            },
+            "rule_or_model": "cash_deficit",
+            "rule_version": "64a92069682b8af5042bf05fb1d04be09c3d39b37dfbd6fd9ececf0c8a58d7bc",
+            "fusion_version": "hierarchical_escalation:9776c631a261",
+            "confidence": 0.9,
+            "coverage": 1.0,
+            "disagreement": 0.435,
+            "fusion_contribution": {
+              "method": "hierarchical_escalation",
+              "dimension_score": 45,
+              "role": "supporting"
+            },
+            "decision_dependency": {
+              "proposed_decision": "ABSTAIN",
+              "risk_dimension": "cash_flow",
+              "computational_contribution": 45
+            },
+            "evidence_path_status": "UNVERIFIED",
+            "path": [
+              "document",
+              "evidence_span",
+              "fact",
+              "metric",
+              "rule/model",
+              "dimension",
+              "fusion",
+              "decision"
+            ]
+          },
+          {
+            "reason_code": "CFL_004",
+            "risk_domain": "cash_flow",
+            "source_evidence": [],
+            "required_inputs": [
+              "operating_cash_flow_growth"
+            ],
+            "input_provenance": {
+              "operating_cash_flow_growth": []
+            },
+            "rule_or_model": "CFL_004",
+            "rule_version": "64a92069682b8af5042bf05fb1d04be09c3d39b37dfbd6fd9ececf0c8a58d7bc",
+            "fusion_version": "hierarchical_escalation:9776c631a261",
+            "confidence": 0.9,
+            "coverage": 1.0,
+            "disagreement": 0.435,
+            "fusion_contribution": {
+              "method": "hierarchical_escalation",
+              "dimension_score": 45,
+              "role": "supporting"
+            },
+            "decision_dependency": {
+              "proposed_decision": "ABSTAIN",
+              "risk_dimension": "cash_flow",
+              "computational_contribution": 45
+            },
+            "evidence_path_status": "UNVERIFIED",
+            "path": [
+              "document",
+              "evidence_span",
+              "fact",
+              "metric",
+              "rule/model",
+              "dimension",
+              "fusion",
+              "decision"
+            ]
+          },
+          {
+            "reason_code": "CFL_007",
+            "risk_domain": "cash_flow",
+            "source_evidence": [],
+            "required_inputs": [
+              "cfo_to_net_income"
+            ],
+            "input_provenance": {
+              "cfo_to_net_income": []
+            },
+            "rule_or_model": "CFL_007",
+            "rule_version": "64a92069682b8af5042bf05fb1d04be09c3d39b37dfbd6fd9ececf0c8a58d7bc",
+            "fusion_version": "hierarchical_escalation:9776c631a261",
+            "confidence": 0.9,
+            "coverage": 1.0,
+            "disagreement": 0.435,
+            "fusion_contribution": {
+              "method": "hierarchical_escalation",
+              "dimension_score": 45,
+              "role": "supporting"
+            },
+            "decision_dependency": {
+              "proposed_decision": "ABSTAIN",
+              "risk_dimension": "cash_flow",
+              "computational_contribution": 45
+            },
+            "evidence_path_status": "UNVERIFIED",
+            "path": [
+              "document",
+              "evidence_span",
+              "fact",
+              "metric",
+              "rule/model",
+              "dimension",
+              "fusion",
+              "decision"
+            ]
+          },
+          {
+            "reason_code": "EQ_001",
+            "risk_domain": "earnings_quality",
+            "source_evidence": [],
+            "required_inputs": [
+              "revenue_growth",
+              "net_income_growth",
+              "operating_cash_flow_growth"
+            ],
+            "input_provenance": {
+              "revenue_growth": [],
+              "net_income_growth": [],
+              "operating_cash_flow_growth": []
+            },
+            "rule_or_model": "EQ_001",
+            "rule_version": "64a92069682b8af5042bf05fb1d04be09c3d39b37dfbd6fd9ececf0c8a58d7bc",
+            "fusion_version": "hierarchical_escalation:9776c631a261",
+            "confidence": 0.9,
+            "coverage": 1.0,
+            "disagreement": 0.435,
+            "fusion_contribution": {
+              "method": "hierarchical_escalation",
+              "dimension_score": 56,
+              "role": "supporting"
+            },
+            "decision_dependency": {
+              "proposed_decision": "ABSTAIN",
+              "risk_dimension": "earnings_quality",
+              "computational_contribution": 56
+            },
+            "evidence_path_status": "UNVERIFIED",
+            "path": [
+              "document",
+              "evidence_span",
+              "fact",
+              "metric",
+              "rule/model",
+              "dimension",
+              "fusion",
+              "decision"
+            ]
+          },
+          {
+            "reason_code": "EQ_002",
+            "risk_domain": "earnings_quality",
+            "source_evidence": [],
+            "required_inputs": [
+              "accounts_receivable_growth",
+              "revenue_growth"
+            ],
+            "input_provenance": {
+              "accounts_receivable_growth": [],
+              "revenue_growth": []
+            },
+            "rule_or_model": "EQ_002",
+            "rule_version": "64a92069682b8af5042bf05fb1d04be09c3d39b37dfbd6fd9ececf0c8a58d7bc",
+            "fusion_version": "hierarchical_escalation:9776c631a261",
+            "confidence": 0.9,
+            "coverage": 1.0,
+            "disagreement": 0.435,
+            "fusion_contribution": {
+              "method": "hierarchical_escalation",
+              "dimension_score": 56,
+              "role": "supporting"
+            },
+            "decision_dependency": {
+              "proposed_decision": "ABSTAIN",
+              "risk_dimension": "earnings_quality",
+              "computational_contribution": 56
+            },
+            "evidence_path_status": "UNVERIFIED",
+            "path": [
+              "document",
+              "evidence_span",
+              "fact",
+              "metric",
+              "rule/model",
+              "dimension",
+              "fusion",
+              "decision"
+            ]
+          },
+          {
+            "reason_code": "EQ_003",
+            "risk_domain": "earnings_quality",
+            "source_evidence": [],
+            "required_inputs": [
+              "inventory_growth",
+              "revenue_growth"
+            ],
+            "input_provenance": {
+              "inventory_growth": [],
+              "revenue_growth": []
+            },
+            "rule_or_model": "EQ_003",
+            "rule_version": "64a92069682b8af5042bf05fb1d04be09c3d39b37dfbd6fd9ececf0c8a58d7bc",
+            "fusion_version": "hierarchical_escalation:9776c631a261",
+            "confidence": 0.9,
+            "coverage": 1.0,
+            "disagreement": 0.435,
+            "fusion_contribution": {
+              "method": "hierarchical_escalation",
+              "dimension_score": 56,
+              "role": "supporting"
+            },
+            "decision_dependency": {
+              "proposed_decision": "ABSTAIN",
+              "risk_dimension": "earnings_quality",
+              "computational_contribution": 56
+            },
+            "evidence_path_status": "UNVERIFIED",
+            "path": [
+              "document",
+              "evidence_span",
+              "fact",
+              "metric",
+              "rule/model",
+              "dimension",
+              "fusion",
+              "decision"
+            ]
+          },
+          {
+            "reason_code": "BUS_003",
+            "risk_domain": "business_going_concern",
+            "source_evidence": [
+              {
+                "document": "Annual Report",
+                "page": 54,
+                "source_text": "The company may pursue refinancing during the coming year",
+                "fiscal_year": 2025,
+                "confidence": 0.9,
+                "verified": true,
+                "verification_status": "verified",
+                "source": "Annual Report",
+                "company": null,
+                "period": "2025",
+                "quote": "The company may pursue refinancing during the coming year",
+                "value": null,
+                "unit": null
+              }
+            ],
+            "required_inputs": [
+              "refinancing_dependency"
+            ],
+            "input_provenance": {
+              "refinancing_dependency": [
+                {
+                  "document": "Annual Report",
+                  "page": 54,
+                  "source_text": "The company may pursue refinancing during the coming year",
+                  "fiscal_year": 2025,
+                  "confidence": 0.9,
+                  "verified": true,
+                  "verification_status": "verified",
+                  "source": "Annual Report",
+                  "company": null,
+                  "period": "2025",
+                  "quote": "The company may pursue refinancing during the coming year",
+                  "value": null,
+                  "unit": null
+                }
+              ]
+            },
+            "rule_or_model": "BUS_003",
+            "rule_version": "64a92069682b8af5042bf05fb1d04be09c3d39b37dfbd6fd9ececf0c8a58d7bc",
+            "fusion_version": "hierarchical_escalation:9776c631a261",
+            "confidence": 0.9,
+            "coverage": 1.0,
+            "disagreement": 0.435,
+            "fusion_contribution": {
+              "method": "hierarchical_escalation",
+              "dimension_score": 28,
+              "role": "supporting"
+            },
+            "decision_dependency": {
+              "proposed_decision": "ABSTAIN",
+              "risk_dimension": "business_going_concern",
+              "computational_contribution": 28
+            },
+            "evidence_path_status": "VERIFIED",
+            "path": [
+              "document",
+              "evidence_span",
+              "fact",
+              "metric",
+              "rule/model",
+              "dimension",
+              "fusion",
+              "decision"
+            ]
+          },
+          {
+            "reason_code": "DISCLOSURE_TENSION_001",
+            "risk_domain": "liquidity",
+            "source_evidence": [
+              {
+                "document": "Annual Report",
+                "page": 54,
+                "source_text": "Management believes liquidity remains strong",
+                "fiscal_year": 2025,
+                "confidence": 0.9,
+                "verified": true,
+                "verification_status": "verified",
+                "source": "Annual Report",
+                "company": null,
+                "period": "2025",
+                "quote": "Management believes liquidity remains strong",
+                "value": null,
+                "unit": null
+              }
+            ],
+            "required_inputs": [],
+            "input_provenance": {},
+            "rule_or_model": "narrative_numeric_consistency",
+            "rule_version": "64a92069682b8af5042bf05fb1d04be09c3d39b37dfbd6fd9ececf0c8a58d7bc",
+            "fusion_version": "hierarchical_escalation:9776c631a261",
+            "confidence": 0.9,
+            "coverage": 1.0,
+            "disagreement": 0.435,
+            "fusion_contribution": {
+              "method": "hierarchical_escalation",
+              "dimension_score": 85,
+              "role": "cross_modal_review"
+            },
+            "decision_dependency": {
+              "proposed_decision": "ABSTAIN",
+              "risk_dimension": "liquidity",
+              "computational_contribution": 85
+            },
+            "evidence_path_status": "VERIFIED",
+            "path": [
+              "document",
+              "evidence_span",
+              "claim",
+              "consistency_check",
+              "dimension",
+              "fusion",
+              "decision"
+            ]
+          }
+        ],
+        "calculations": {
+          "metrics": {
+            "current_ratio": {
+              "name": "current_ratio",
+              "value": 0.8282828282828283,
+              "formula": "current_assets / current_liabilities",
+              "inputs": {
+                "current_assets": 410,
+                "current_liabilities": 495
+              },
+              "fiscal_year": 2025,
+              "missing_reason": null,
+              "source_refs": []
+            },
+            "quick_ratio": {
+              "name": "quick_ratio",
+              "value": 0.5454545454545454,
+              "formula": "(current_assets - inventory) / current_liabilities",
+              "inputs": {
+                "current_assets": 410,
+                "inventory": 140,
+                "current_liabilities": 495
+              },
+              "fiscal_year": 2025,
+              "missing_reason": null,
+              "source_refs": []
+            },
+            "cash_ratio": {
+              "name": "cash_ratio",
+              "value": 0.08484848484848485,
+              "formula": "cash / current_liabilities",
+              "inputs": {
+                "cash": 42,
+                "current_liabilities": 495
+              },
+              "fiscal_year": 2025,
+              "missing_reason": null,
+              "source_refs": []
+            },
+            "working_capital": {
+              "name": "working_capital",
+              "value": -85,
+              "formula": "current_assets - current_liabilities",
+              "inputs": {
+                "current_assets": 410,
+                "current_liabilities": 495
+              },
+              "fiscal_year": 2025,
+              "missing_reason": null,
+              "source_refs": []
+            },
+            "debt_to_equity": {
+              "name": "debt_to_equity",
+              "value": 2.0689655172413794,
+              "formula": "total_debt / shareholder_equity",
+              "inputs": {
+                "total_debt": 600,
+                "shareholder_equity": 290
+              },
+              "fiscal_year": 2025,
+              "missing_reason": null,
+              "source_refs": []
+            },
+            "debt_to_assets": {
+              "name": "debt_to_assets",
+              "value": 0.5,
+              "formula": "total_debt / total_assets",
+              "inputs": {
+                "total_debt": 600,
+                "total_assets": 1200
+              },
+              "fiscal_year": 2025,
+              "missing_reason": null,
+              "source_refs": []
+            },
+            "liabilities_to_assets": {
+              "name": "liabilities_to_assets",
+              "value": 0.7583333333333333,
+              "formula": "total_liabilities / total_assets",
+              "inputs": {
+                "total_liabilities": 910,
+                "total_assets": 1200
+              },
+              "fiscal_year": 2025,
+              "missing_reason": null,
+              "source_refs": []
+            },
+            "net_debt": {
+              "name": "net_debt",
+              "value": 558,
+              "formula": "total_debt - cash",
+              "inputs": {
+                "total_debt": 600,
+                "cash": 42
+              },
+              "fiscal_year": 2025,
+              "missing_reason": null,
+              "source_refs": []
+            },
+            "interest_coverage": {
+              "name": "interest_coverage",
+              "value": 1.2363636363636363,
+              "formula": "EBIT / interest_expense",
+              "inputs": {
+                "EBIT": 68,
+                "interest_expense": 55
+              },
+              "fiscal_year": 2025,
+              "missing_reason": null,
+              "source_refs": []
+            },
+            "debt_to_ebitda": {
+              "name": "debt_to_ebitda",
+              "value": 5.217391304347826,
+              "formula": "total_debt / EBITDA",
+              "inputs": {
+                "total_debt": 600,
+                "EBITDA": 115
+              },
+              "fiscal_year": 2025,
+              "missing_reason": null,
+              "source_refs": []
+            },
+            "gross_margin": {
+              "name": "gross_margin",
+              "value": 0.22962962962962963,
+              "formula": "gross_profit / revenue",
+              "inputs": {
+                "gross_profit": 310,
+                "revenue": 1350
+              },
+              "fiscal_year": 2025,
+              "missing_reason": null,
+              "source_refs": []
+            },
+            "operating_margin": {
+              "name": "operating_margin",
+              "value": 0.05037037037037037,
+              "formula": "operating_income / revenue",
+              "inputs": {
+                "operating_income": 68,
+                "revenue": 1350
+              },
+              "fiscal_year": 2025,
+              "missing_reason": null,
+              "source_refs": []
+            },
+            "net_margin": {
+              "name": "net_margin",
+              "value": 0.023703703703703703,
+              "formula": "net_income / revenue",
+              "inputs": {
+                "net_income": 32,
+                "revenue": 1350
+              },
+              "fiscal_year": 2025,
+              "missing_reason": null,
+              "source_refs": []
+            },
+            "roa": {
+              "name": "roa",
+              "value": 0.027467811158798282,
+              "formula": "net_income / average_total_assets",
+              "inputs": {
+                "net_income": 32,
+                "assets_basis": 1165.0
+              },
+              "fiscal_year": 2025,
+              "missing_reason": null,
+              "source_refs": []
+            },
+            "roe": {
+              "name": "roe",
+              "value": 0.10666666666666667,
+              "formula": "net_income / average_shareholder_equity",
+              "inputs": {
+                "net_income": 32,
+                "equity_basis": 300.0
+              },
+              "fiscal_year": 2025,
+              "missing_reason": null,
+              "source_refs": []
+            },
+            "cfo_to_net_income": {
+              "name": "cfo_to_net_income",
+              "value": 0.5625,
+              "formula": "operating_cash_flow / net_income",
+              "inputs": {
+                "operating_cash_flow": 18,
+                "net_income": 32
+              },
+              "fiscal_year": 2025,
+              "missing_reason": null,
+              "source_refs": []
+            },
+            "free_cash_flow": {
+              "name": "free_cash_flow",
+              "value": -57,
+              "formula": "operating_cash_flow - abs(capital_expenditure)",
+              "inputs": {
+                "operating_cash_flow": 18,
+                "capital_expenditure": 75
+              },
+              "fiscal_year": 2025,
+              "missing_reason": null,
+              "source_refs": []
+            },
+            "fcf_margin": {
+              "name": "fcf_margin",
+              "value": -0.042222222222222223,
+              "formula": "free_cash_flow / revenue",
+              "inputs": {
+                "free_cash_flow": -57,
+                "revenue": 1350
+              },
+              "fiscal_year": 2025,
+              "missing_reason": null,
+              "source_refs": []
+            },
+            "receivable_days": {
+              "name": "receivable_days",
+              "value": 41.23148148148148,
+              "formula": "average_accounts_receivable / revenue * 365",
+              "inputs": {
+                "receivables_basis": 152.5,
+                "revenue": 1350
+              },
+              "fiscal_year": 2025,
+              "missing_reason": null,
+              "source_refs": []
+            },
+            "inventory_days": {
+              "name": "inventory_days",
+              "value": 42.99278846153846,
+              "formula": "average_inventory / COGS * 365",
+              "inputs": {
+                "inventory_basis": 122.5,
+                "COGS": 1040
+              },
+              "fiscal_year": 2025,
+              "missing_reason": null,
+              "source_refs": []
+            },
+            "payable_days": {
+              "name": "payable_days",
+              "value": 50.01201923076923,
+              "formula": "average_accounts_payable / COGS * 365",
+              "inputs": {
+                "payables_basis": 142.5,
+                "COGS": 1040
+              },
+              "fiscal_year": 2025,
+              "missing_reason": null,
+              "source_refs": []
+            },
+            "cash_conversion_cycle": {
+              "name": "cash_conversion_cycle",
+              "value": 34.212250712250714,
+              "formula": "receivable_days + inventory_days - payable_days",
+              "inputs": {
+                "receivable_days": 41.23148148148148,
+                "inventory_days": 42.99278846153846,
+                "payable_days": 50.01201923076923
+              },
+              "fiscal_year": 2025,
+              "missing_reason": null,
+              "source_refs": []
+            },
+            "revenue_growth": {
+              "name": "revenue_growth",
+              "value": 0.08,
+              "formula": "(revenue_current - revenue_prior) / abs(revenue_prior)",
+              "inputs": {
+                "current": 1350,
+                "prior": 1250
+              },
+              "fiscal_year": 2025,
+              "missing_reason": null,
+              "source_refs": []
+            },
+            "net_income_growth": {
+              "name": "net_income_growth",
+              "value": 0.14285714285714285,
+              "formula": "(net_income_current - net_income_prior) / abs(net_income_prior)",
+              "inputs": {
+                "current": 32,
+                "prior": 28
+              },
+              "fiscal_year": 2025,
+              "missing_reason": null,
+              "source_refs": []
+            },
+            "operating_cash_flow_growth": {
+              "name": "operating_cash_flow_growth",
+              "value": -0.6538461538461539,
+              "formula": "(operating_cash_flow_current - operating_cash_flow_prior) / abs(operating_cash_flow_prior)",
+              "inputs": {
+                "current": 18,
+                "prior": 52
+              },
+              "fiscal_year": 2025,
+              "missing_reason": null,
+              "source_refs": []
+            },
+            "free_cash_flow_growth": {
+              "name": "free_cash_flow_growth",
+              "value": null,
+              "formula": "(free_cash_flow_current - free_cash_flow_prior) / abs(free_cash_flow_prior)",
+              "inputs": {
+                "current": -57,
+                "prior": -8
+              },
+              "fiscal_year": 2025,
+              "missing_reason": "Denominator is zero.",
+              "source_refs": []
+            },
+            "total_debt_growth": {
+              "name": "total_debt_growth",
+              "value": 0.2,
+              "formula": "(total_debt_current - total_debt_prior) / abs(total_debt_prior)",
+              "inputs": {
+                "current": 600,
+                "prior": 500
+              },
+              "fiscal_year": 2025,
+              "missing_reason": null,
+              "source_refs": []
+            },
+            "cash_growth": {
+              "name": "cash_growth",
+              "value": -0.373134328358209,
+              "formula": "(cash_current - cash_prior) / abs(cash_prior)",
+              "inputs": {
+                "current": 42,
+                "prior": 67
+              },
+              "fiscal_year": 2025,
+              "missing_reason": null,
+              "source_refs": []
+            },
+            "accounts_receivable_growth": {
+              "name": "accounts_receivable_growth",
+              "value": 0.44,
+              "formula": "(accounts_receivable_current - accounts_receivable_prior) / abs(accounts_receivable_prior)",
+              "inputs": {
+                "current": 180,
+                "prior": 125
+              },
+              "fiscal_year": 2025,
+              "missing_reason": null,
+              "source_refs": []
+            },
+            "inventory_growth": {
+              "name": "inventory_growth",
+              "value": 0.3333333333333333,
+              "formula": "(inventory_current - inventory_prior) / abs(inventory_prior)",
+              "inputs": {
+                "current": 140,
+                "prior": 105
+              },
+              "fiscal_year": 2025,
+              "missing_reason": null,
+              "source_refs": []
+            }
+          },
+          "models": [
+            {
+              "name": "Altman Z-Score",
+              "output": null,
+              "interpretation": "Insufficient data",
+              "applicability": "LIMITED: missing 1 required component(s)",
+              "inputs": {
+                "cash": 42,
+                "accounts_receivable": 180,
+                "inventory": 140,
+                "current_assets": 410,
+                "total_assets": 1200,
+                "accounts_payable": 155,
+                "current_liabilities": 495,
+                "short_term_debt": 190,
+                "long_term_debt": 410,
+                "total_debt": 600,
+                "total_liabilities": 910,
+                "shareholder_equity": 290,
+                "retained_earnings": 80,
+                "revenue": 1350,
+                "gross_profit": 310,
+                "operating_income": 68,
+                "ebit": 68,
+                "ebitda": 115,
+                "interest_expense": 55,
+                "net_income": 32,
+                "operating_cash_flow": 18,
+                "capital_expenditure": 75,
+                "working_capital": -85
+              },
+              "formula": "1.2X1+1.4X2+3.3X3+0.6X4+1.0X5",
+              "missing_components": [
+                "market_value_equity"
+              ],
+              "derived_outputs": {}
+            },
+            {
+              "name": "Beneish M-Score",
+              "output": null,
+              "interpretation": "Insufficient data",
+              "applicability": "LIMITED: missing 3 required component(s)",
+              "inputs": {},
+              "formula": "-4.84+0.920DSRI+0.528GMI+0.404AQI+0.892SGI+0.115DEPI-0.172SGAI+4.679TATA-0.327LVGI",
+              "missing_components": [
+                "depreciation",
+                "ppe",
+                "sga"
+              ],
+              "derived_outputs": {}
+            },
+            {
+              "name": "Piotroski F-Score",
+              "output": null,
+              "interpretation": "Insufficient data",
+              "applicability": "LIMITED: Piotroski-style proxy uses end-of-period asset denominators; missing 1 required component(s)",
+              "inputs": {},
+              "formula": "Nine proxy binary signals (0-9)",
+              "missing_components": [
+                "shares_outstanding"
+              ],
+              "derived_outputs": {}
+            },
+            {
+              "name": "Ohlson O-Score",
+              "output": null,
+              "interpretation": "Insufficient data",
+              "applicability": "LIMITED: missing 3 required component(s)",
+              "inputs": {
+                "cash": 42,
+                "accounts_receivable": 180,
+                "inventory": 140,
+                "current_assets": 410,
+                "total_assets": 1200,
+                "accounts_payable": 155,
+                "current_liabilities": 495,
+                "short_term_debt": 190,
+                "long_term_debt": 410,
+                "total_debt": 600,
+                "total_liabilities": 910,
+                "shareholder_equity": 290,
+                "retained_earnings": 80,
+                "revenue": 1350,
+                "gross_profit": 310,
+                "operating_income": 68,
+                "ebit": 68,
+                "ebitda": 115,
+                "interest_expense": 55,
+                "net_income": 32,
+                "operating_cash_flow": 18,
+                "capital_expenditure": 75,
+                "working_capital": -85
+              },
+              "formula": "Ohlson (1980) nine-factor logit",
+              "missing_components": [
+                "funds_from_operations",
+                "gnp_price_index",
+                "prior_net_income"
+              ],
+              "derived_outputs": {}
+            }
+          ],
+          "rules": [
+            {
+              "rule_id": "LIQ_001",
+              "category": "liquidity",
+              "severity": "high",
+              "score_delta": 18,
+              "rationale": "Current assets do not cover current liabilities.",
+              "evidence": [
+                "current_ratio=0.8282828282828283 < 1.0"
+              ],
+              "source_refs": [],
+              "family": "liquidity_coverage",
+              "required_inputs": [
+                "current_ratio"
+              ],
+              "input_provenance": {
+                "current_ratio": []
+              }
+            },
+            {
+              "rule_id": "LIQ_002",
+              "category": "liquidity",
+              "severity": "medium",
+              "score_delta": 9,
+              "rationale": "Liquidity cushion is thin.",
+              "evidence": [
+                "current_ratio=0.8282828282828283 < 1.25"
+              ],
+              "source_refs": [],
+              "family": "liquidity_coverage",
+              "required_inputs": [
+                "current_ratio"
+              ],
+              "input_provenance": {
+                "current_ratio": []
+              }
+            },
+            {
+              "rule_id": "LIQ_003",
+              "category": "liquidity",
+              "severity": "high",
+              "score_delta": 14,
+              "rationale": "Liquid assets provide weak short-term coverage.",
+              "evidence": [
+                "quick_ratio=0.5454545454545454 < 0.75"
+              ],
+              "source_refs": [],
+              "family": null,
+              "required_inputs": [
+                "quick_ratio"
+              ],
+              "input_provenance": {
+                "quick_ratio": []
+              }
+            },
+            {
+              "rule_id": "LIQ_004",
+              "category": "liquidity",
+              "severity": "medium",
+              "score_delta": 8,
+              "rationale": "Immediate cash coverage is limited.",
+              "evidence": [
+                "cash_ratio=0.08484848484848485 < 0.15"
+              ],
+              "source_refs": [],
+              "family": null,
+              "required_inputs": [
+                "cash_ratio"
+              ],
+              "input_provenance": {
+                "cash_ratio": []
+              }
+            },
+            {
+              "rule_id": "LIQ_005",
+              "category": "liquidity",
+              "severity": "high",
+              "score_delta": 16,
+              "rationale": "Negative working capital increases short-term funding pressure.",
+              "evidence": [
+                "working_capital=-85 < 0"
+              ],
+              "source_refs": [],
+              "family": "liquidity_coverage",
+              "required_inputs": [
+                "working_capital"
+              ],
+              "input_provenance": {
+                "working_capital": []
+              }
+            },
+            {
+              "rule_id": "LIQ_006",
+              "category": "liquidity",
+              "severity": "medium",
+              "score_delta": 10,
+              "rationale": "Cash declined materially year over year.",
+              "evidence": [
+                "cash_growth=-0.373134328358209 < -0.2"
+              ],
+              "source_refs": [],
+              "family": null,
+              "required_inputs": [
+                "cash_growth"
+              ],
+              "input_provenance": {
+                "cash_growth": []
+              }
+            },
+            {
+              "rule_id": "LIQ_007",
+              "category": "liquidity",
+              "severity": "high",
+              "score_delta": 18,
+              "rationale": "Deteriorating liquidity combines with rising refinancing pressure.",
+              "evidence": [
+                "current_ratio=0.8282828282828283 < 1.0",
+                "short_term_debt_growth=0.7272727272727273 > 0.2",
+                "cash_growth=-0.373134328358209 < 0"
+              ],
+              "source_refs": [],
+              "family": "liquidity_coverage",
+              "required_inputs": [
+                "current_ratio",
+                "short_term_debt_growth",
+                "cash_growth"
+              ],
+              "input_provenance": {
+                "current_ratio": [],
+                "short_term_debt_growth": [],
+                "cash_growth": []
+              }
+            },
+            {
+              "rule_id": "LIQ_008",
+              "category": "liquidity",
+              "severity": "high",
+              "score_delta": 15,
+              "rationale": "Both cash reserves and operating cash generation weakened.",
+              "evidence": [
+                "cash_growth=-0.373134328358209 < -0.25",
+                "operating_cash_flow_growth=-0.6538461538461539 < -0.2"
+              ],
+              "source_refs": [],
+              "family": null,
+              "required_inputs": [
+                "cash_growth",
+                "operating_cash_flow_growth"
+              ],
+              "input_provenance": {
+                "cash_growth": [],
+                "operating_cash_flow_growth": []
+              }
+            },
+            {
+              "rule_id": "SOL_001",
+              "category": "solvency_leverage",
+              "severity": "high",
+              "score_delta": 17,
+              "rationale": "Debt is high relative to book equity.",
+              "evidence": [
+                "debt_to_equity=2.0689655172413794 > 2.0"
+              ],
+              "source_refs": [],
+              "family": null,
+              "required_inputs": [
+                "debt_to_equity"
+              ],
+              "input_provenance": {
+                "debt_to_equity": []
+              }
+            },
+            {
+              "rule_id": "SOL_004",
+              "category": "solvency_leverage",
+              "severity": "high",
+              "score_delta": 18,
+              "rationale": "Operating earnings weakly cover interest expense.",
+              "evidence": [
+                "interest_coverage=1.2363636363636363 < 1.5"
+              ],
+              "source_refs": [],
+              "family": "interest_coverage",
+              "required_inputs": [
+                "interest_coverage"
+              ],
+              "input_provenance": {
+                "interest_coverage": []
+              }
+            },
+            {
+              "rule_id": "SOL_005",
+              "category": "solvency_leverage",
+              "severity": "medium",
+              "score_delta": 9,
+              "rationale": "Interest coverage has limited headroom.",
+              "evidence": [
+                "interest_coverage=1.2363636363636363 < 3.0"
+              ],
+              "source_refs": [],
+              "family": "interest_coverage",
+              "required_inputs": [
+                "interest_coverage"
+              ],
+              "input_provenance": {
+                "interest_coverage": []
+              }
+            },
+            {
+              "rule_id": "SOL_006",
+              "category": "solvency_leverage",
+              "severity": "high",
+              "score_delta": 18,
+              "rationale": "Debt burden is high relative to EBITDA.",
+              "evidence": [
+                "debt_to_ebitda=5.217391304347826 > 5.0"
+              ],
+              "source_refs": [],
+              "family": null,
+              "required_inputs": [
+                "debt_to_ebitda"
+              ],
+              "input_provenance": {
+                "debt_to_ebitda": []
+              }
+            },
+            {
+              "rule_id": "PRO_003",
+              "category": "profitability",
+              "severity": "medium",
+              "score_delta": 10,
+              "rationale": "Gross margin contracted materially.",
+              "evidence": [
+                "gross_margin_change=-0.03037037037037038 < -0.03"
+              ],
+              "source_refs": [],
+              "family": null,
+              "required_inputs": [
+                "gross_margin_change"
+              ],
+              "input_provenance": {
+                "gross_margin_change": []
+              }
+            },
+            {
+              "rule_id": "CFL_002",
+              "category": "cash_flow",
+              "severity": "high",
+              "score_delta": 14,
+              "rationale": "Free cash flow is negative.",
+              "evidence": [
+                "free_cash_flow=-57 < 0"
+              ],
+              "source_refs": [],
+              "family": "cash_deficit",
+              "required_inputs": [
+                "free_cash_flow"
+              ],
+              "input_provenance": {
+                "free_cash_flow": []
+              }
+            },
+            {
+              "rule_id": "CFL_004",
+              "category": "cash_flow",
+              "severity": "medium",
+              "score_delta": 10,
+              "rationale": "Operating cash flow declined rapidly.",
+              "evidence": [
+                "operating_cash_flow_growth=-0.6538461538461539 < -0.25"
+              ],
+              "source_refs": [],
+              "family": null,
+              "required_inputs": [
+                "operating_cash_flow_growth"
+              ],
+              "input_provenance": {
+                "operating_cash_flow_growth": []
+              }
+            },
+            {
+              "rule_id": "CFL_005",
+              "category": "cash_flow",
+              "severity": "high",
+              "score_delta": 15,
+              "rationale": "Positive earnings have not converted into free cash flow.",
+              "evidence": [
+                "net_income=32 > 0",
+                "free_cash_flow=-57 < 0"
+              ],
+              "source_refs": [],
+              "family": "cash_deficit",
+              "required_inputs": [
+                "net_income",
+                "free_cash_flow"
+              ],
+              "input_provenance": {
+                "net_income": [],
+                "free_cash_flow": []
+              }
+            },
+            {
+              "rule_id": "CFL_007",
+              "category": "cash_flow",
+              "severity": "medium",
+              "score_delta": 10,
+              "rationale": "Cash conversion from reported earnings is weak.",
+              "evidence": [
+                "cfo_to_net_income=0.5625 < 0.8"
+              ],
+              "source_refs": [],
+              "family": null,
+              "required_inputs": [
+                "cfo_to_net_income"
+              ],
+              "input_provenance": {
+                "cfo_to_net_income": []
+              }
+            },
+            {
+              "rule_id": "EQ_001",
+              "category": "earnings_quality",
+              "severity": "high",
+              "score_delta": 17,
+              "rationale": "Revenue and earnings rose while operating cash flow fell.",
+              "evidence": [
+                "revenue_growth=0.08 > 0",
+                "net_income_growth=0.14285714285714285 > 0",
+                "operating_cash_flow_growth=-0.6538461538461539 < 0"
+              ],
+              "source_refs": [],
+              "family": null,
+              "required_inputs": [
+                "revenue_growth",
+                "net_income_growth",
+                "operating_cash_flow_growth"
+              ],
+              "input_provenance": {
+                "revenue_growth": [],
+                "net_income_growth": [],
+                "operating_cash_flow_growth": []
+              }
+            },
+            {
+              "rule_id": "EQ_002",
+              "category": "earnings_quality",
+              "severity": "high",
+              "score_delta": 16,
+              "rationale": "Receivables growth substantially outpaces revenue growth.",
+              "evidence": [
+                "accounts_receivable_growth=0.44 > 0.25",
+                "revenue_growth=0.08 < 0.1"
+              ],
+              "source_refs": [],
+              "family": null,
+              "required_inputs": [
+                "accounts_receivable_growth",
+                "revenue_growth"
+              ],
+              "input_provenance": {
+                "accounts_receivable_growth": [],
+                "revenue_growth": []
+              }
+            },
+            {
+              "rule_id": "EQ_003",
+              "category": "earnings_quality",
+              "severity": "medium",
+              "score_delta": 13,
+              "rationale": "Inventory growth outpaces sales and may indicate slowing demand.",
+              "evidence": [
+                "inventory_growth=0.3333333333333333 > 0.25",
+                "revenue_growth=0.08 < 0.1"
+              ],
+              "source_refs": [],
+              "family": null,
+              "required_inputs": [
+                "inventory_growth",
+                "revenue_growth"
+              ],
+              "input_provenance": {
+                "inventory_growth": [],
+                "revenue_growth": []
+              }
+            },
+            {
+              "rule_id": "BUS_003",
+              "category": "business_going_concern",
+              "severity": "high",
+              "score_delta": 18,
+              "rationale": "Operations depend materially on successful refinancing.",
+              "evidence": [
+                "refinancing_dependency=True == True"
+              ],
+              "source_refs": [
+                {
+                  "document": "Annual Report",
+                  "page": 54,
+                  "source_text": "The company may pursue refinancing during the coming year",
+                  "fiscal_year": 2025,
+                  "confidence": 0.9,
+                  "verified": true,
+                  "verification_status": "verified",
+                  "source": "Annual Report",
+                  "company": null,
+                  "period": "2025",
+                  "quote": "The company may pursue refinancing during the coming year",
+                  "value": null,
+                  "unit": null
+                }
+              ],
+              "family": null,
+              "required_inputs": [
+                "refinancing_dependency"
+              ],
+              "input_provenance": {
+                "refinancing_dependency": [
+                  {
+                    "document": "Annual Report",
+                    "page": 54,
+                    "source_text": "The company may pursue refinancing during the coming year",
+                    "fiscal_year": 2025,
+                    "confidence": 0.9,
+                    "verified": true,
+                    "verification_status": "verified",
+                    "source": "Annual Report",
+                    "company": null,
+                    "period": "2025",
+                    "quote": "The company may pursue refinancing during the coming year",
+                    "value": null,
+                    "unit": null
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "agent_trace": [
+          {
+            "step_id": "metrics",
+            "phase": "analyze",
+            "tool": "financial_metrics",
+            "status": "success",
+            "summary": "Produced 30 structured result(s)",
+            "evidence_ids": [],
+            "error": null,
+            "latency_ms": 0
+          },
+          {
+            "step_id": "models",
+            "phase": "analyze",
+            "tool": "traditional_models",
+            "status": "success",
+            "summary": "Produced 4 structured result(s)",
+            "evidence_ids": [],
+            "error": null,
+            "latency_ms": 0
+          },
+          {
+            "step_id": "claims",
+            "phase": "collect",
+            "tool": "narrative_evidence",
+            "status": "success",
+            "summary": "Produced 2 structured result(s)",
+            "evidence_ids": [],
+            "error": null,
+            "latency_ms": 0
+          },
+          {
+            "step_id": "rules",
+            "phase": "analyze",
+            "tool": "risk_rules",
+            "status": "success",
+            "summary": "Produced 21 structured result(s)",
+            "evidence_ids": [],
+            "error": null,
+            "latency_ms": 0
+          },
+          {
+            "step_id": "consistency",
+            "phase": "cross_check",
+            "tool": "contradiction_detection",
+            "status": "success",
+            "summary": "Produced 1 structured result(s)",
+            "evidence_ids": [],
+            "error": null,
+            "latency_ms": 0
+          },
+          {
+            "step_id": "periods",
+            "phase": "cross_check",
+            "tool": "period_comparison",
+            "status": "success",
+            "summary": "Produced 2 structured result(s)",
+            "evidence_ids": [],
+            "error": null,
+            "latency_ms": 0
+          },
+          {
+            "step_id": "assessment",
+            "phase": "synthesize",
+            "tool": "risk_assessment",
+            "status": "success",
+            "summary": "Produced 1 structured result(s)",
+            "evidence_ids": [],
+            "error": null,
+            "latency_ms": 0
+          },
+          {
+            "step_id": "verification",
+            "phase": "verify",
+            "tool": "claim_verification",
+            "status": "success",
+            "summary": "Produced 2 structured result(s)",
+            "evidence_ids": [],
+            "error": null,
+            "latency_ms": 0
+          }
+        ],
+        "component_versions": {
+          "rules": "64a92069682b8af5042bf05fb1d04be09c3d39b37dfbd6fd9ececf0c8a58d7bc",
+          "scoring": "1f9e90b86bd627f47b39e0ed0aec6cb488993ad2b8be8dae9c200e533ffa6040",
+          "decision_policy": "9776c631a261839c500d528f8257cdb9ef72e4a98e5f672e11df1de94ccabc09",
+          "fusion": "hierarchical_escalation:9776c631a261",
+          "applicability": "applicability-router:v1",
+          "calibration": "UNCALIBRATED:v1",
+          "assurance_policy": "c0ce6ed4752c53e67f3528de1013a4a6ff4d512b1790cde1c6628b354c8b9053",
+          "assurance_runtime": "assurance-runtime:v0.4",
+          "evidence_verifier": "exact-page-quote:v1",
+          "agent_review": "analyst-critic-verifier:v1",
+          "prompt": "mock-narrative-v1",
+          "model": "mock"
+        },
+        "human_review": null,
+        "final_decision": "ABSTAIN",
+        "epistemics": {
+          "evidence_coverage": 0.045,
+          "evidence_quality": 0.9,
+          "model_disagreement": 0.435,
+          "reliability": null,
+          "calibration_status": "UNCALIBRATED",
+          "probability": null
+        },
+        "component_telemetry": [
+          {
+            "component": "XBRL",
+            "status": "not_executed",
+            "risk_before": 0.0,
+            "risk_after": 0.0,
+            "delta_risk": 0.0,
+            "coverage_before": 0.0,
+            "coverage_after": 1.0,
+            "delta_coverage": 1.0,
+            "disagreement_before": 0.0,
+            "disagreement_after": 0.0,
+            "delta_disagreement": 0.0,
+            "decision_changed": false,
+            "new_evidence": 0,
+            "latency_ms": 0,
+            "estimated_cost_usd": 0.0
+          },
+          {
+            "component": "rules",
+            "status": "executed",
+            "risk_before": 0.0,
+            "risk_after": 53.8,
+            "delta_risk": 53.8,
+            "coverage_before": 1.0,
+            "coverage_after": 1.0,
+            "delta_coverage": 0.0,
+            "disagreement_before": 0.0,
+            "disagreement_after": 0.0,
+            "delta_disagreement": 0.0,
+            "decision_changed": false,
+            "new_evidence": 20,
+            "latency_ms": 0,
+            "estimated_cost_usd": 0.0
+          },
+          {
+            "component": "traditional_models",
+            "status": "executed",
+            "risk_before": 53.8,
+            "risk_after": 53.8,
+            "delta_risk": 0.0,
+            "coverage_before": 1.0,
+            "coverage_after": 1.0,
+            "delta_coverage": 0.0,
+            "disagreement_before": 0.0,
+            "disagreement_after": 0.0,
+            "delta_disagreement": 0.0,
+            "decision_changed": false,
+            "new_evidence": 0,
+            "latency_ms": 0,
+            "estimated_cost_usd": 0.0
+          },
+          {
+            "component": "LLM_narrative",
+            "status": "executed",
+            "risk_before": 53.8,
+            "risk_after": 53.0,
+            "delta_risk": -0.8,
+            "coverage_before": 1.0,
+            "coverage_after": 0.045,
+            "delta_coverage": -0.955,
+            "disagreement_before": 0.0,
+            "disagreement_after": 0.0,
+            "delta_disagreement": 0.0,
+            "decision_changed": false,
+            "new_evidence": 2,
+            "latency_ms": 0,
+            "estimated_cost_usd": 0.0
+          },
+          {
+            "component": "Critic",
+            "status": "executed",
+            "risk_before": 53.0,
+            "risk_after": 53.0,
+            "delta_risk": 0.0,
+            "coverage_before": 0.045,
+            "coverage_after": 0.045,
+            "delta_coverage": 0.0,
+            "disagreement_before": 0.0,
+            "disagreement_after": 0.0,
+            "delta_disagreement": 0.0,
+            "decision_changed": false,
+            "new_evidence": 0,
+            "latency_ms": 0,
+            "estimated_cost_usd": 0.0
+          },
+          {
+            "component": "Verifier",
+            "status": "executed",
+            "risk_before": 53.0,
+            "risk_after": 53.0,
+            "delta_risk": 0.0,
+            "coverage_before": 0.045,
+            "coverage_after": 0.045,
+            "delta_coverage": 0.0,
+            "disagreement_before": 0.0,
+            "disagreement_after": 0.0,
+            "delta_disagreement": 0.0,
+            "decision_changed": false,
+            "new_evidence": 29,
+            "latency_ms": 0,
+            "estimated_cost_usd": 0.0
+          },
+          {
+            "component": "fusion",
+            "status": "executed",
+            "risk_before": 53.0,
+            "risk_after": 95.0,
+            "delta_risk": 42.0,
+            "coverage_before": 0.045,
+            "coverage_after": 0.045,
+            "delta_coverage": 0.0,
+            "disagreement_before": 0.0,
+            "disagreement_after": 0.435,
+            "delta_disagreement": 0.435,
+            "decision_changed": false,
+            "new_evidence": 17,
+            "latency_ms": 0,
+            "estimated_cost_usd": 0.0
+          },
+          {
+            "component": "assurance",
+            "status": "restricted",
+            "risk_before": 95.0,
+            "risk_after": 95.0,
+            "delta_risk": 0.0,
+            "coverage_before": 0.045,
+            "coverage_after": 0.118,
+            "delta_coverage": 0.073,
+            "disagreement_before": 0.435,
+            "disagreement_after": 0.435,
+            "delta_disagreement": 0.0,
+            "decision_changed": false,
+            "new_evidence": 1,
+            "latency_ms": 0,
+            "estimated_cost_usd": 0.0
+          }
+        ],
+        "bundle_hash": "3189520ed17edbffb9686a4dcfd9fbf94f56d7fa54e91f66284ee260e20bfddd",
+        "proposed_decision": "ABSTAIN",
+        "assurance": {
+          "proposed_decision": "ABSTAIN",
+          "final_decision": "ABSTAIN",
+          "automation_allowed": false,
+          "assurance_status": "RESTRICTED",
+          "evidence_assurance": {
+            "state": "PARTIAL",
+            "material_path_count": 17,
+            "verified_path_count": 2,
+            "coverage": 0.117647,
+            "verified_evidence_ids": [
+              "evidence_58466f281bbf3b983dae",
+              "evidence_ed5efb86f7fc76e73e22"
+            ],
+            "supported_claims": [
+              "BUS_003",
+              "DISCLOSURE_TENSION_001"
+            ],
+            "diagnostics": [
+              "Only part of the material decision path is verified."
+            ]
+          },
+          "evidence_fragility": {
+            "state": "FRAGILE",
+            "largest_single_evidence_impact": 67.0,
+            "decision_flip_count": 0,
+            "decision_flip_rate": 0.0,
+            "severity_change_count": 1,
+            "affected_dimensions": [
+              "business_going_concern",
+              "liquidity"
+            ],
+            "affected_claims": [
+              "BUS_003",
+              "DISCLOSURE_TENSION_001"
+            ],
+            "ablations": [
+              {
+                "evidence_id": "evidence_58466f281bbf3b983dae",
+                "score_delta": -10.0,
+                "severity_change": false,
+                "proposed_decision_change": false,
+                "final_decision_impact": false,
+                "recomputed_proposed_decision": "ABSTAIN",
+                "affected_dimensions": [
+                  "business_going_concern"
+                ],
+                "affected_claims": [
+                  "BUS_003"
+                ]
+              },
+              {
+                "evidence_id": "evidence_ed5efb86f7fc76e73e22",
+                "score_delta": -67.0,
+                "severity_change": true,
+                "proposed_decision_change": false,
+                "final_decision_impact": false,
+                "recomputed_proposed_decision": "ABSTAIN",
+                "affected_dimensions": [
+                  "liquidity"
+                ],
+                "affected_claims": [
+                  "DISCLOSURE_TENSION_001"
+                ]
+              }
+            ]
+          },
+          "distribution_validity": {
+            "state": "IN_REFERENCE",
+            "reference_name": "FinRisk synthetic development reference",
+            "reference_version": "v0.4.0-development-reference-1",
+            "reference_scope": "DEVELOPMENT_REFERENCE_ONLY",
+            "evaluated_feature_count": 22,
+            "outside_feature_count": 0,
+            "reporting_availability_rate": 0.3548387096774194,
+            "diagnostics": []
+          },
+          "decision_sufficient_evidence": {
+            "evidence_ids": [
+              "evidence_58466f281bbf3b983dae"
+            ],
+            "method": "EXACT",
+            "exact": true,
+            "preserves_proposed_decision": true,
+            "evaluated_subsets": 1,
+            "baseline_decision": "ABSTAIN"
+          },
+          "policy_status": "HEURISTIC_POLICY",
+          "calibration_status": "UNCALIBRATED",
+          "reason_codes": [
+            "INSUFFICIENT_VERIFIED_EVIDENCE",
+            "EVIDENCE_FRAGILITY_HIGH",
+            "RUNTIME_FAILURE_REQUIRES_REVIEW",
+            "ASSURANCE_POLICY_UNCALIBRATED",
+            "PROPOSED_DECISION_WITHHELD"
+          ],
+          "policy_version": "assurance-policy-v0.4.0-development",
+          "policy_hash": "c0ce6ed4752c53e67f3528de1013a4a6ff4d512b1790cde1c6628b354c8b9053",
+          "certificate_hash": "a6e753637f40a2c84e46d6b86350264c02bf8bfd0226549ddef8fcf00bdd6ee6",
+          "diagnostics": {
+            "authorization_blockers": [
+              "evidence",
+              "fragility",
+              "runtime_failure"
+            ],
+            "runtime_failures": [
+              "conflicting_evidence"
+            ],
+            "reliability": null,
+            "probability": null
+          }
+        },
+        "decision_sufficient_evidence": {
+          "evidence_ids": [
+            "evidence_58466f281bbf3b983dae"
+          ],
+          "method": "EXACT",
+          "exact": true,
+          "preserves_proposed_decision": true,
+          "evaluated_subsets": 1,
+          "baseline_decision": "ABSTAIN"
+        },
+        "policy_version": "assurance-policy-v0.4.0-development",
+        "policy_hash": "c0ce6ed4752c53e67f3528de1013a4a6ff4d512b1790cde1c6628b354c8b9053",
+        "calibration_status": "UNCALIBRATED",
+        "replay": {
+          "deterministic": true,
+          "input_hash": "3511ad46222dcd978c78ba31533b84d1cf676f2036d70b61aad9ed5da3e38003",
+          "output_hash": "5e55f0e7bbf71e9e855867da538985a79d1a5fa3db4fba0b3c6ef59a2345db96",
+          "component_versions": {
+            "rules": "64a92069682b8af5042bf05fb1d04be09c3d39b37dfbd6fd9ececf0c8a58d7bc",
+            "scoring": "1f9e90b86bd627f47b39e0ed0aec6cb488993ad2b8be8dae9c200e533ffa6040",
+            "decision_policy": "9776c631a261839c500d528f8257cdb9ef72e4a98e5f672e11df1de94ccabc09",
+            "fusion": "hierarchical_escalation:9776c631a261",
+            "applicability": "applicability-router:v1",
+            "calibration": "UNCALIBRATED:v1",
+            "assurance_policy": "c0ce6ed4752c53e67f3528de1013a4a6ff4d512b1790cde1c6628b354c8b9053",
+            "assurance_runtime": "assurance-runtime:v0.4",
+            "evidence_verifier": "exact-page-quote:v1",
+            "agent_review": "analyst-critic-verifier:v1",
+            "prompt": "mock-narrative-v1",
+            "model": "mock"
+          }
+        },
+        "certificate_version": "decision-certificate-v0.4",
+        "certificate_hash": "3189520ed17edbffb9686a4dcfd9fbf94f56d7fa54e91f66284ee260e20bfddd"
+      }
+    },
+    "assurance": {
+      "proposed_decision": "ABSTAIN",
+      "final_decision": "ABSTAIN",
+      "automation_allowed": false,
+      "assurance_status": "RESTRICTED",
+      "evidence_assurance": {
+        "state": "PARTIAL",
+        "material_path_count": 17,
+        "verified_path_count": 2,
+        "coverage": 0.117647,
+        "verified_evidence_ids": [
+          "evidence_58466f281bbf3b983dae",
+          "evidence_ed5efb86f7fc76e73e22"
+        ],
+        "supported_claims": [
+          "BUS_003",
+          "DISCLOSURE_TENSION_001"
+        ],
+        "diagnostics": [
+          "Only part of the material decision path is verified."
+        ]
+      },
+      "evidence_fragility": {
+        "state": "FRAGILE",
+        "largest_single_evidence_impact": 67.0,
+        "decision_flip_count": 0,
+        "decision_flip_rate": 0.0,
+        "severity_change_count": 1,
+        "affected_dimensions": [
+          "business_going_concern",
+          "liquidity"
+        ],
+        "affected_claims": [
+          "BUS_003",
+          "DISCLOSURE_TENSION_001"
+        ],
+        "ablations": [
+          {
+            "evidence_id": "evidence_58466f281bbf3b983dae",
+            "score_delta": -10.0,
+            "severity_change": false,
+            "proposed_decision_change": false,
+            "final_decision_impact": false,
+            "recomputed_proposed_decision": "ABSTAIN",
+            "affected_dimensions": [
+              "business_going_concern"
+            ],
+            "affected_claims": [
+              "BUS_003"
+            ]
+          },
+          {
+            "evidence_id": "evidence_ed5efb86f7fc76e73e22",
+            "score_delta": -67.0,
+            "severity_change": true,
+            "proposed_decision_change": false,
+            "final_decision_impact": false,
+            "recomputed_proposed_decision": "ABSTAIN",
+            "affected_dimensions": [
+              "liquidity"
+            ],
+            "affected_claims": [
+              "DISCLOSURE_TENSION_001"
+            ]
+          }
+        ]
+      },
+      "distribution_validity": {
+        "state": "IN_REFERENCE",
+        "reference_name": "FinRisk synthetic development reference",
+        "reference_version": "v0.4.0-development-reference-1",
+        "reference_scope": "DEVELOPMENT_REFERENCE_ONLY",
+        "evaluated_feature_count": 22,
+        "outside_feature_count": 0,
+        "reporting_availability_rate": 0.3548387096774194,
+        "diagnostics": []
+      },
+      "decision_sufficient_evidence": {
+        "evidence_ids": [
+          "evidence_58466f281bbf3b983dae"
+        ],
+        "method": "EXACT",
+        "exact": true,
+        "preserves_proposed_decision": true,
+        "evaluated_subsets": 1,
+        "baseline_decision": "ABSTAIN"
+      },
+      "policy_status": "HEURISTIC_POLICY",
+      "calibration_status": "UNCALIBRATED",
+      "reason_codes": [
+        "INSUFFICIENT_VERIFIED_EVIDENCE",
+        "EVIDENCE_FRAGILITY_HIGH",
+        "RUNTIME_FAILURE_REQUIRES_REVIEW",
+        "ASSURANCE_POLICY_UNCALIBRATED",
+        "PROPOSED_DECISION_WITHHELD"
+      ],
+      "policy_version": "assurance-policy-v0.4.0-development",
+      "policy_hash": "c0ce6ed4752c53e67f3528de1013a4a6ff4d512b1790cde1c6628b354c8b9053",
+      "certificate_hash": "a6e753637f40a2c84e46d6b86350264c02bf8bfd0226549ddef8fcf00bdd6ee6",
+      "diagnostics": {
+        "authorization_blockers": [
+          "evidence",
+          "fragility",
+          "runtime_failure"
+        ],
+        "runtime_failures": [
+          "conflicting_evidence"
+        ],
+        "reliability": null,
+        "probability": null
+      }
     },
     "claim_consistency_evaluations": [
       {
@@ -1933,6 +4285,2024 @@ export const DEMO_FIXTURE: DemoFixture = {
         }
       }
     ],
+    "decision_certificate": {
+      "bundle_id": "bundle_3189520ed17edbffb968",
+      "organization_id": "local",
+      "entity_id": "Northstar Components (Synthetic)",
+      "created_at": "2026-10-02T02:10:49.331876+00:00",
+      "document_hashes": {
+        "Annual Report": "4b04f86ed1c1757d9f6b5a73a5fd6a12aac55b6d275411faeb032fc4fcba5688"
+      },
+      "input_hash": "3511ad46222dcd978c78ba31533b84d1cf676f2036d70b61aad9ed5da3e38003",
+      "output_hash": "5e55f0e7bbf71e9e855867da538985a79d1a5fa3db4fba0b3c6ef59a2345db96",
+      "risk_state": {
+        "score": 95.0,
+        "severity": "critical",
+        "trajectory": "insufficient_history",
+        "coverage": 0.045,
+        "confidence": 0.9
+      },
+      "risk_delta": null,
+      "evidence_paths": [
+        {
+          "reason_code": "LIQ_001",
+          "risk_domain": "liquidity",
+          "source_evidence": [],
+          "required_inputs": [
+            "current_ratio"
+          ],
+          "input_provenance": {
+            "current_ratio": []
+          },
+          "rule_or_model": "liquidity_coverage",
+          "rule_version": "64a92069682b8af5042bf05fb1d04be09c3d39b37dfbd6fd9ececf0c8a58d7bc",
+          "fusion_version": "hierarchical_escalation:9776c631a261",
+          "confidence": 0.9,
+          "coverage": 1.0,
+          "disagreement": 0.435,
+          "fusion_contribution": {
+            "method": "hierarchical_escalation",
+            "dimension_score": 85,
+            "role": "escalator"
+          },
+          "decision_dependency": {
+            "proposed_decision": "ABSTAIN",
+            "risk_dimension": "liquidity",
+            "computational_contribution": 85
+          },
+          "evidence_path_status": "UNVERIFIED",
+          "path": [
+            "document",
+            "evidence_span",
+            "fact",
+            "metric",
+            "rule/model",
+            "dimension",
+            "fusion",
+            "decision"
+          ]
+        },
+        {
+          "reason_code": "LIQ_003",
+          "risk_domain": "liquidity",
+          "source_evidence": [],
+          "required_inputs": [
+            "quick_ratio"
+          ],
+          "input_provenance": {
+            "quick_ratio": []
+          },
+          "rule_or_model": "LIQ_003",
+          "rule_version": "64a92069682b8af5042bf05fb1d04be09c3d39b37dfbd6fd9ececf0c8a58d7bc",
+          "fusion_version": "hierarchical_escalation:9776c631a261",
+          "confidence": 0.9,
+          "coverage": 1.0,
+          "disagreement": 0.435,
+          "fusion_contribution": {
+            "method": "hierarchical_escalation",
+            "dimension_score": 85,
+            "role": "escalator"
+          },
+          "decision_dependency": {
+            "proposed_decision": "ABSTAIN",
+            "risk_dimension": "liquidity",
+            "computational_contribution": 85
+          },
+          "evidence_path_status": "UNVERIFIED",
+          "path": [
+            "document",
+            "evidence_span",
+            "fact",
+            "metric",
+            "rule/model",
+            "dimension",
+            "fusion",
+            "decision"
+          ]
+        },
+        {
+          "reason_code": "LIQ_004",
+          "risk_domain": "liquidity",
+          "source_evidence": [],
+          "required_inputs": [
+            "cash_ratio"
+          ],
+          "input_provenance": {
+            "cash_ratio": []
+          },
+          "rule_or_model": "LIQ_004",
+          "rule_version": "64a92069682b8af5042bf05fb1d04be09c3d39b37dfbd6fd9ececf0c8a58d7bc",
+          "fusion_version": "hierarchical_escalation:9776c631a261",
+          "confidence": 0.9,
+          "coverage": 1.0,
+          "disagreement": 0.435,
+          "fusion_contribution": {
+            "method": "hierarchical_escalation",
+            "dimension_score": 85,
+            "role": "escalator"
+          },
+          "decision_dependency": {
+            "proposed_decision": "ABSTAIN",
+            "risk_dimension": "liquidity",
+            "computational_contribution": 85
+          },
+          "evidence_path_status": "UNVERIFIED",
+          "path": [
+            "document",
+            "evidence_span",
+            "fact",
+            "metric",
+            "rule/model",
+            "dimension",
+            "fusion",
+            "decision"
+          ]
+        },
+        {
+          "reason_code": "LIQ_006",
+          "risk_domain": "liquidity",
+          "source_evidence": [],
+          "required_inputs": [
+            "cash_growth"
+          ],
+          "input_provenance": {
+            "cash_growth": []
+          },
+          "rule_or_model": "LIQ_006",
+          "rule_version": "64a92069682b8af5042bf05fb1d04be09c3d39b37dfbd6fd9ececf0c8a58d7bc",
+          "fusion_version": "hierarchical_escalation:9776c631a261",
+          "confidence": 0.9,
+          "coverage": 1.0,
+          "disagreement": 0.435,
+          "fusion_contribution": {
+            "method": "hierarchical_escalation",
+            "dimension_score": 85,
+            "role": "escalator"
+          },
+          "decision_dependency": {
+            "proposed_decision": "ABSTAIN",
+            "risk_dimension": "liquidity",
+            "computational_contribution": 85
+          },
+          "evidence_path_status": "UNVERIFIED",
+          "path": [
+            "document",
+            "evidence_span",
+            "fact",
+            "metric",
+            "rule/model",
+            "dimension",
+            "fusion",
+            "decision"
+          ]
+        },
+        {
+          "reason_code": "LIQ_008",
+          "risk_domain": "liquidity",
+          "source_evidence": [],
+          "required_inputs": [
+            "cash_growth",
+            "operating_cash_flow_growth"
+          ],
+          "input_provenance": {
+            "cash_growth": [],
+            "operating_cash_flow_growth": []
+          },
+          "rule_or_model": "LIQ_008",
+          "rule_version": "64a92069682b8af5042bf05fb1d04be09c3d39b37dfbd6fd9ececf0c8a58d7bc",
+          "fusion_version": "hierarchical_escalation:9776c631a261",
+          "confidence": 0.9,
+          "coverage": 1.0,
+          "disagreement": 0.435,
+          "fusion_contribution": {
+            "method": "hierarchical_escalation",
+            "dimension_score": 85,
+            "role": "escalator"
+          },
+          "decision_dependency": {
+            "proposed_decision": "ABSTAIN",
+            "risk_dimension": "liquidity",
+            "computational_contribution": 85
+          },
+          "evidence_path_status": "UNVERIFIED",
+          "path": [
+            "document",
+            "evidence_span",
+            "fact",
+            "metric",
+            "rule/model",
+            "dimension",
+            "fusion",
+            "decision"
+          ]
+        },
+        {
+          "reason_code": "SOL_004",
+          "risk_domain": "solvency_leverage",
+          "source_evidence": [],
+          "required_inputs": [
+            "interest_coverage"
+          ],
+          "input_provenance": {
+            "interest_coverage": []
+          },
+          "rule_or_model": "interest_coverage",
+          "rule_version": "64a92069682b8af5042bf05fb1d04be09c3d39b37dfbd6fd9ececf0c8a58d7bc",
+          "fusion_version": "hierarchical_escalation:9776c631a261",
+          "confidence": 0.9,
+          "coverage": 1.0,
+          "disagreement": 0.435,
+          "fusion_contribution": {
+            "method": "hierarchical_escalation",
+            "dimension_score": 63,
+            "role": "supporting"
+          },
+          "decision_dependency": {
+            "proposed_decision": "ABSTAIN",
+            "risk_dimension": "solvency_leverage",
+            "computational_contribution": 63
+          },
+          "evidence_path_status": "UNVERIFIED",
+          "path": [
+            "document",
+            "evidence_span",
+            "fact",
+            "metric",
+            "rule/model",
+            "dimension",
+            "fusion",
+            "decision"
+          ]
+        },
+        {
+          "reason_code": "SOL_001",
+          "risk_domain": "solvency_leverage",
+          "source_evidence": [],
+          "required_inputs": [
+            "debt_to_equity"
+          ],
+          "input_provenance": {
+            "debt_to_equity": []
+          },
+          "rule_or_model": "SOL_001",
+          "rule_version": "64a92069682b8af5042bf05fb1d04be09c3d39b37dfbd6fd9ececf0c8a58d7bc",
+          "fusion_version": "hierarchical_escalation:9776c631a261",
+          "confidence": 0.9,
+          "coverage": 1.0,
+          "disagreement": 0.435,
+          "fusion_contribution": {
+            "method": "hierarchical_escalation",
+            "dimension_score": 63,
+            "role": "supporting"
+          },
+          "decision_dependency": {
+            "proposed_decision": "ABSTAIN",
+            "risk_dimension": "solvency_leverage",
+            "computational_contribution": 63
+          },
+          "evidence_path_status": "UNVERIFIED",
+          "path": [
+            "document",
+            "evidence_span",
+            "fact",
+            "metric",
+            "rule/model",
+            "dimension",
+            "fusion",
+            "decision"
+          ]
+        },
+        {
+          "reason_code": "SOL_006",
+          "risk_domain": "solvency_leverage",
+          "source_evidence": [],
+          "required_inputs": [
+            "debt_to_ebitda"
+          ],
+          "input_provenance": {
+            "debt_to_ebitda": []
+          },
+          "rule_or_model": "SOL_006",
+          "rule_version": "64a92069682b8af5042bf05fb1d04be09c3d39b37dfbd6fd9ececf0c8a58d7bc",
+          "fusion_version": "hierarchical_escalation:9776c631a261",
+          "confidence": 0.9,
+          "coverage": 1.0,
+          "disagreement": 0.435,
+          "fusion_contribution": {
+            "method": "hierarchical_escalation",
+            "dimension_score": 63,
+            "role": "supporting"
+          },
+          "decision_dependency": {
+            "proposed_decision": "ABSTAIN",
+            "risk_dimension": "solvency_leverage",
+            "computational_contribution": 63
+          },
+          "evidence_path_status": "UNVERIFIED",
+          "path": [
+            "document",
+            "evidence_span",
+            "fact",
+            "metric",
+            "rule/model",
+            "dimension",
+            "fusion",
+            "decision"
+          ]
+        },
+        {
+          "reason_code": "PRO_003",
+          "risk_domain": "profitability",
+          "source_evidence": [],
+          "required_inputs": [
+            "gross_margin_change"
+          ],
+          "input_provenance": {
+            "gross_margin_change": []
+          },
+          "rule_or_model": "PRO_003",
+          "rule_version": "64a92069682b8af5042bf05fb1d04be09c3d39b37dfbd6fd9ececf0c8a58d7bc",
+          "fusion_version": "hierarchical_escalation:9776c631a261",
+          "confidence": 0.9,
+          "coverage": 1.0,
+          "disagreement": 0.435,
+          "fusion_contribution": {
+            "method": "hierarchical_escalation",
+            "dimension_score": 20,
+            "role": "supporting"
+          },
+          "decision_dependency": {
+            "proposed_decision": "ABSTAIN",
+            "risk_dimension": "profitability",
+            "computational_contribution": 20
+          },
+          "evidence_path_status": "UNVERIFIED",
+          "path": [
+            "document",
+            "evidence_span",
+            "fact",
+            "metric",
+            "rule/model",
+            "dimension",
+            "fusion",
+            "decision"
+          ]
+        },
+        {
+          "reason_code": "CFL_005",
+          "risk_domain": "cash_flow",
+          "source_evidence": [],
+          "required_inputs": [
+            "net_income",
+            "free_cash_flow"
+          ],
+          "input_provenance": {
+            "net_income": [],
+            "free_cash_flow": []
+          },
+          "rule_or_model": "cash_deficit",
+          "rule_version": "64a92069682b8af5042bf05fb1d04be09c3d39b37dfbd6fd9ececf0c8a58d7bc",
+          "fusion_version": "hierarchical_escalation:9776c631a261",
+          "confidence": 0.9,
+          "coverage": 1.0,
+          "disagreement": 0.435,
+          "fusion_contribution": {
+            "method": "hierarchical_escalation",
+            "dimension_score": 45,
+            "role": "supporting"
+          },
+          "decision_dependency": {
+            "proposed_decision": "ABSTAIN",
+            "risk_dimension": "cash_flow",
+            "computational_contribution": 45
+          },
+          "evidence_path_status": "UNVERIFIED",
+          "path": [
+            "document",
+            "evidence_span",
+            "fact",
+            "metric",
+            "rule/model",
+            "dimension",
+            "fusion",
+            "decision"
+          ]
+        },
+        {
+          "reason_code": "CFL_004",
+          "risk_domain": "cash_flow",
+          "source_evidence": [],
+          "required_inputs": [
+            "operating_cash_flow_growth"
+          ],
+          "input_provenance": {
+            "operating_cash_flow_growth": []
+          },
+          "rule_or_model": "CFL_004",
+          "rule_version": "64a92069682b8af5042bf05fb1d04be09c3d39b37dfbd6fd9ececf0c8a58d7bc",
+          "fusion_version": "hierarchical_escalation:9776c631a261",
+          "confidence": 0.9,
+          "coverage": 1.0,
+          "disagreement": 0.435,
+          "fusion_contribution": {
+            "method": "hierarchical_escalation",
+            "dimension_score": 45,
+            "role": "supporting"
+          },
+          "decision_dependency": {
+            "proposed_decision": "ABSTAIN",
+            "risk_dimension": "cash_flow",
+            "computational_contribution": 45
+          },
+          "evidence_path_status": "UNVERIFIED",
+          "path": [
+            "document",
+            "evidence_span",
+            "fact",
+            "metric",
+            "rule/model",
+            "dimension",
+            "fusion",
+            "decision"
+          ]
+        },
+        {
+          "reason_code": "CFL_007",
+          "risk_domain": "cash_flow",
+          "source_evidence": [],
+          "required_inputs": [
+            "cfo_to_net_income"
+          ],
+          "input_provenance": {
+            "cfo_to_net_income": []
+          },
+          "rule_or_model": "CFL_007",
+          "rule_version": "64a92069682b8af5042bf05fb1d04be09c3d39b37dfbd6fd9ececf0c8a58d7bc",
+          "fusion_version": "hierarchical_escalation:9776c631a261",
+          "confidence": 0.9,
+          "coverage": 1.0,
+          "disagreement": 0.435,
+          "fusion_contribution": {
+            "method": "hierarchical_escalation",
+            "dimension_score": 45,
+            "role": "supporting"
+          },
+          "decision_dependency": {
+            "proposed_decision": "ABSTAIN",
+            "risk_dimension": "cash_flow",
+            "computational_contribution": 45
+          },
+          "evidence_path_status": "UNVERIFIED",
+          "path": [
+            "document",
+            "evidence_span",
+            "fact",
+            "metric",
+            "rule/model",
+            "dimension",
+            "fusion",
+            "decision"
+          ]
+        },
+        {
+          "reason_code": "EQ_001",
+          "risk_domain": "earnings_quality",
+          "source_evidence": [],
+          "required_inputs": [
+            "revenue_growth",
+            "net_income_growth",
+            "operating_cash_flow_growth"
+          ],
+          "input_provenance": {
+            "revenue_growth": [],
+            "net_income_growth": [],
+            "operating_cash_flow_growth": []
+          },
+          "rule_or_model": "EQ_001",
+          "rule_version": "64a92069682b8af5042bf05fb1d04be09c3d39b37dfbd6fd9ececf0c8a58d7bc",
+          "fusion_version": "hierarchical_escalation:9776c631a261",
+          "confidence": 0.9,
+          "coverage": 1.0,
+          "disagreement": 0.435,
+          "fusion_contribution": {
+            "method": "hierarchical_escalation",
+            "dimension_score": 56,
+            "role": "supporting"
+          },
+          "decision_dependency": {
+            "proposed_decision": "ABSTAIN",
+            "risk_dimension": "earnings_quality",
+            "computational_contribution": 56
+          },
+          "evidence_path_status": "UNVERIFIED",
+          "path": [
+            "document",
+            "evidence_span",
+            "fact",
+            "metric",
+            "rule/model",
+            "dimension",
+            "fusion",
+            "decision"
+          ]
+        },
+        {
+          "reason_code": "EQ_002",
+          "risk_domain": "earnings_quality",
+          "source_evidence": [],
+          "required_inputs": [
+            "accounts_receivable_growth",
+            "revenue_growth"
+          ],
+          "input_provenance": {
+            "accounts_receivable_growth": [],
+            "revenue_growth": []
+          },
+          "rule_or_model": "EQ_002",
+          "rule_version": "64a92069682b8af5042bf05fb1d04be09c3d39b37dfbd6fd9ececf0c8a58d7bc",
+          "fusion_version": "hierarchical_escalation:9776c631a261",
+          "confidence": 0.9,
+          "coverage": 1.0,
+          "disagreement": 0.435,
+          "fusion_contribution": {
+            "method": "hierarchical_escalation",
+            "dimension_score": 56,
+            "role": "supporting"
+          },
+          "decision_dependency": {
+            "proposed_decision": "ABSTAIN",
+            "risk_dimension": "earnings_quality",
+            "computational_contribution": 56
+          },
+          "evidence_path_status": "UNVERIFIED",
+          "path": [
+            "document",
+            "evidence_span",
+            "fact",
+            "metric",
+            "rule/model",
+            "dimension",
+            "fusion",
+            "decision"
+          ]
+        },
+        {
+          "reason_code": "EQ_003",
+          "risk_domain": "earnings_quality",
+          "source_evidence": [],
+          "required_inputs": [
+            "inventory_growth",
+            "revenue_growth"
+          ],
+          "input_provenance": {
+            "inventory_growth": [],
+            "revenue_growth": []
+          },
+          "rule_or_model": "EQ_003",
+          "rule_version": "64a92069682b8af5042bf05fb1d04be09c3d39b37dfbd6fd9ececf0c8a58d7bc",
+          "fusion_version": "hierarchical_escalation:9776c631a261",
+          "confidence": 0.9,
+          "coverage": 1.0,
+          "disagreement": 0.435,
+          "fusion_contribution": {
+            "method": "hierarchical_escalation",
+            "dimension_score": 56,
+            "role": "supporting"
+          },
+          "decision_dependency": {
+            "proposed_decision": "ABSTAIN",
+            "risk_dimension": "earnings_quality",
+            "computational_contribution": 56
+          },
+          "evidence_path_status": "UNVERIFIED",
+          "path": [
+            "document",
+            "evidence_span",
+            "fact",
+            "metric",
+            "rule/model",
+            "dimension",
+            "fusion",
+            "decision"
+          ]
+        },
+        {
+          "reason_code": "BUS_003",
+          "risk_domain": "business_going_concern",
+          "source_evidence": [
+            {
+              "document": "Annual Report",
+              "page": 54,
+              "source_text": "The company may pursue refinancing during the coming year",
+              "fiscal_year": 2025,
+              "confidence": 0.9,
+              "verified": true,
+              "verification_status": "verified",
+              "source": "Annual Report",
+              "company": null,
+              "period": "2025",
+              "quote": "The company may pursue refinancing during the coming year",
+              "value": null,
+              "unit": null
+            }
+          ],
+          "required_inputs": [
+            "refinancing_dependency"
+          ],
+          "input_provenance": {
+            "refinancing_dependency": [
+              {
+                "document": "Annual Report",
+                "page": 54,
+                "source_text": "The company may pursue refinancing during the coming year",
+                "fiscal_year": 2025,
+                "confidence": 0.9,
+                "verified": true,
+                "verification_status": "verified",
+                "source": "Annual Report",
+                "company": null,
+                "period": "2025",
+                "quote": "The company may pursue refinancing during the coming year",
+                "value": null,
+                "unit": null
+              }
+            ]
+          },
+          "rule_or_model": "BUS_003",
+          "rule_version": "64a92069682b8af5042bf05fb1d04be09c3d39b37dfbd6fd9ececf0c8a58d7bc",
+          "fusion_version": "hierarchical_escalation:9776c631a261",
+          "confidence": 0.9,
+          "coverage": 1.0,
+          "disagreement": 0.435,
+          "fusion_contribution": {
+            "method": "hierarchical_escalation",
+            "dimension_score": 28,
+            "role": "supporting"
+          },
+          "decision_dependency": {
+            "proposed_decision": "ABSTAIN",
+            "risk_dimension": "business_going_concern",
+            "computational_contribution": 28
+          },
+          "evidence_path_status": "VERIFIED",
+          "path": [
+            "document",
+            "evidence_span",
+            "fact",
+            "metric",
+            "rule/model",
+            "dimension",
+            "fusion",
+            "decision"
+          ]
+        },
+        {
+          "reason_code": "DISCLOSURE_TENSION_001",
+          "risk_domain": "liquidity",
+          "source_evidence": [
+            {
+              "document": "Annual Report",
+              "page": 54,
+              "source_text": "Management believes liquidity remains strong",
+              "fiscal_year": 2025,
+              "confidence": 0.9,
+              "verified": true,
+              "verification_status": "verified",
+              "source": "Annual Report",
+              "company": null,
+              "period": "2025",
+              "quote": "Management believes liquidity remains strong",
+              "value": null,
+              "unit": null
+            }
+          ],
+          "required_inputs": [],
+          "input_provenance": {},
+          "rule_or_model": "narrative_numeric_consistency",
+          "rule_version": "64a92069682b8af5042bf05fb1d04be09c3d39b37dfbd6fd9ececf0c8a58d7bc",
+          "fusion_version": "hierarchical_escalation:9776c631a261",
+          "confidence": 0.9,
+          "coverage": 1.0,
+          "disagreement": 0.435,
+          "fusion_contribution": {
+            "method": "hierarchical_escalation",
+            "dimension_score": 85,
+            "role": "cross_modal_review"
+          },
+          "decision_dependency": {
+            "proposed_decision": "ABSTAIN",
+            "risk_dimension": "liquidity",
+            "computational_contribution": 85
+          },
+          "evidence_path_status": "VERIFIED",
+          "path": [
+            "document",
+            "evidence_span",
+            "claim",
+            "consistency_check",
+            "dimension",
+            "fusion",
+            "decision"
+          ]
+        }
+      ],
+      "calculations": {
+        "metrics": {
+          "current_ratio": {
+            "name": "current_ratio",
+            "value": 0.8282828282828283,
+            "formula": "current_assets / current_liabilities",
+            "inputs": {
+              "current_assets": 410,
+              "current_liabilities": 495
+            },
+            "fiscal_year": 2025,
+            "missing_reason": null,
+            "source_refs": []
+          },
+          "quick_ratio": {
+            "name": "quick_ratio",
+            "value": 0.5454545454545454,
+            "formula": "(current_assets - inventory) / current_liabilities",
+            "inputs": {
+              "current_assets": 410,
+              "inventory": 140,
+              "current_liabilities": 495
+            },
+            "fiscal_year": 2025,
+            "missing_reason": null,
+            "source_refs": []
+          },
+          "cash_ratio": {
+            "name": "cash_ratio",
+            "value": 0.08484848484848485,
+            "formula": "cash / current_liabilities",
+            "inputs": {
+              "cash": 42,
+              "current_liabilities": 495
+            },
+            "fiscal_year": 2025,
+            "missing_reason": null,
+            "source_refs": []
+          },
+          "working_capital": {
+            "name": "working_capital",
+            "value": -85,
+            "formula": "current_assets - current_liabilities",
+            "inputs": {
+              "current_assets": 410,
+              "current_liabilities": 495
+            },
+            "fiscal_year": 2025,
+            "missing_reason": null,
+            "source_refs": []
+          },
+          "debt_to_equity": {
+            "name": "debt_to_equity",
+            "value": 2.0689655172413794,
+            "formula": "total_debt / shareholder_equity",
+            "inputs": {
+              "total_debt": 600,
+              "shareholder_equity": 290
+            },
+            "fiscal_year": 2025,
+            "missing_reason": null,
+            "source_refs": []
+          },
+          "debt_to_assets": {
+            "name": "debt_to_assets",
+            "value": 0.5,
+            "formula": "total_debt / total_assets",
+            "inputs": {
+              "total_debt": 600,
+              "total_assets": 1200
+            },
+            "fiscal_year": 2025,
+            "missing_reason": null,
+            "source_refs": []
+          },
+          "liabilities_to_assets": {
+            "name": "liabilities_to_assets",
+            "value": 0.7583333333333333,
+            "formula": "total_liabilities / total_assets",
+            "inputs": {
+              "total_liabilities": 910,
+              "total_assets": 1200
+            },
+            "fiscal_year": 2025,
+            "missing_reason": null,
+            "source_refs": []
+          },
+          "net_debt": {
+            "name": "net_debt",
+            "value": 558,
+            "formula": "total_debt - cash",
+            "inputs": {
+              "total_debt": 600,
+              "cash": 42
+            },
+            "fiscal_year": 2025,
+            "missing_reason": null,
+            "source_refs": []
+          },
+          "interest_coverage": {
+            "name": "interest_coverage",
+            "value": 1.2363636363636363,
+            "formula": "EBIT / interest_expense",
+            "inputs": {
+              "EBIT": 68,
+              "interest_expense": 55
+            },
+            "fiscal_year": 2025,
+            "missing_reason": null,
+            "source_refs": []
+          },
+          "debt_to_ebitda": {
+            "name": "debt_to_ebitda",
+            "value": 5.217391304347826,
+            "formula": "total_debt / EBITDA",
+            "inputs": {
+              "total_debt": 600,
+              "EBITDA": 115
+            },
+            "fiscal_year": 2025,
+            "missing_reason": null,
+            "source_refs": []
+          },
+          "gross_margin": {
+            "name": "gross_margin",
+            "value": 0.22962962962962963,
+            "formula": "gross_profit / revenue",
+            "inputs": {
+              "gross_profit": 310,
+              "revenue": 1350
+            },
+            "fiscal_year": 2025,
+            "missing_reason": null,
+            "source_refs": []
+          },
+          "operating_margin": {
+            "name": "operating_margin",
+            "value": 0.05037037037037037,
+            "formula": "operating_income / revenue",
+            "inputs": {
+              "operating_income": 68,
+              "revenue": 1350
+            },
+            "fiscal_year": 2025,
+            "missing_reason": null,
+            "source_refs": []
+          },
+          "net_margin": {
+            "name": "net_margin",
+            "value": 0.023703703703703703,
+            "formula": "net_income / revenue",
+            "inputs": {
+              "net_income": 32,
+              "revenue": 1350
+            },
+            "fiscal_year": 2025,
+            "missing_reason": null,
+            "source_refs": []
+          },
+          "roa": {
+            "name": "roa",
+            "value": 0.027467811158798282,
+            "formula": "net_income / average_total_assets",
+            "inputs": {
+              "net_income": 32,
+              "assets_basis": 1165.0
+            },
+            "fiscal_year": 2025,
+            "missing_reason": null,
+            "source_refs": []
+          },
+          "roe": {
+            "name": "roe",
+            "value": 0.10666666666666667,
+            "formula": "net_income / average_shareholder_equity",
+            "inputs": {
+              "net_income": 32,
+              "equity_basis": 300.0
+            },
+            "fiscal_year": 2025,
+            "missing_reason": null,
+            "source_refs": []
+          },
+          "cfo_to_net_income": {
+            "name": "cfo_to_net_income",
+            "value": 0.5625,
+            "formula": "operating_cash_flow / net_income",
+            "inputs": {
+              "operating_cash_flow": 18,
+              "net_income": 32
+            },
+            "fiscal_year": 2025,
+            "missing_reason": null,
+            "source_refs": []
+          },
+          "free_cash_flow": {
+            "name": "free_cash_flow",
+            "value": -57,
+            "formula": "operating_cash_flow - abs(capital_expenditure)",
+            "inputs": {
+              "operating_cash_flow": 18,
+              "capital_expenditure": 75
+            },
+            "fiscal_year": 2025,
+            "missing_reason": null,
+            "source_refs": []
+          },
+          "fcf_margin": {
+            "name": "fcf_margin",
+            "value": -0.042222222222222223,
+            "formula": "free_cash_flow / revenue",
+            "inputs": {
+              "free_cash_flow": -57,
+              "revenue": 1350
+            },
+            "fiscal_year": 2025,
+            "missing_reason": null,
+            "source_refs": []
+          },
+          "receivable_days": {
+            "name": "receivable_days",
+            "value": 41.23148148148148,
+            "formula": "average_accounts_receivable / revenue * 365",
+            "inputs": {
+              "receivables_basis": 152.5,
+              "revenue": 1350
+            },
+            "fiscal_year": 2025,
+            "missing_reason": null,
+            "source_refs": []
+          },
+          "inventory_days": {
+            "name": "inventory_days",
+            "value": 42.99278846153846,
+            "formula": "average_inventory / COGS * 365",
+            "inputs": {
+              "inventory_basis": 122.5,
+              "COGS": 1040
+            },
+            "fiscal_year": 2025,
+            "missing_reason": null,
+            "source_refs": []
+          },
+          "payable_days": {
+            "name": "payable_days",
+            "value": 50.01201923076923,
+            "formula": "average_accounts_payable / COGS * 365",
+            "inputs": {
+              "payables_basis": 142.5,
+              "COGS": 1040
+            },
+            "fiscal_year": 2025,
+            "missing_reason": null,
+            "source_refs": []
+          },
+          "cash_conversion_cycle": {
+            "name": "cash_conversion_cycle",
+            "value": 34.212250712250714,
+            "formula": "receivable_days + inventory_days - payable_days",
+            "inputs": {
+              "receivable_days": 41.23148148148148,
+              "inventory_days": 42.99278846153846,
+              "payable_days": 50.01201923076923
+            },
+            "fiscal_year": 2025,
+            "missing_reason": null,
+            "source_refs": []
+          },
+          "revenue_growth": {
+            "name": "revenue_growth",
+            "value": 0.08,
+            "formula": "(revenue_current - revenue_prior) / abs(revenue_prior)",
+            "inputs": {
+              "current": 1350,
+              "prior": 1250
+            },
+            "fiscal_year": 2025,
+            "missing_reason": null,
+            "source_refs": []
+          },
+          "net_income_growth": {
+            "name": "net_income_growth",
+            "value": 0.14285714285714285,
+            "formula": "(net_income_current - net_income_prior) / abs(net_income_prior)",
+            "inputs": {
+              "current": 32,
+              "prior": 28
+            },
+            "fiscal_year": 2025,
+            "missing_reason": null,
+            "source_refs": []
+          },
+          "operating_cash_flow_growth": {
+            "name": "operating_cash_flow_growth",
+            "value": -0.6538461538461539,
+            "formula": "(operating_cash_flow_current - operating_cash_flow_prior) / abs(operating_cash_flow_prior)",
+            "inputs": {
+              "current": 18,
+              "prior": 52
+            },
+            "fiscal_year": 2025,
+            "missing_reason": null,
+            "source_refs": []
+          },
+          "free_cash_flow_growth": {
+            "name": "free_cash_flow_growth",
+            "value": null,
+            "formula": "(free_cash_flow_current - free_cash_flow_prior) / abs(free_cash_flow_prior)",
+            "inputs": {
+              "current": -57,
+              "prior": -8
+            },
+            "fiscal_year": 2025,
+            "missing_reason": "Denominator is zero.",
+            "source_refs": []
+          },
+          "total_debt_growth": {
+            "name": "total_debt_growth",
+            "value": 0.2,
+            "formula": "(total_debt_current - total_debt_prior) / abs(total_debt_prior)",
+            "inputs": {
+              "current": 600,
+              "prior": 500
+            },
+            "fiscal_year": 2025,
+            "missing_reason": null,
+            "source_refs": []
+          },
+          "cash_growth": {
+            "name": "cash_growth",
+            "value": -0.373134328358209,
+            "formula": "(cash_current - cash_prior) / abs(cash_prior)",
+            "inputs": {
+              "current": 42,
+              "prior": 67
+            },
+            "fiscal_year": 2025,
+            "missing_reason": null,
+            "source_refs": []
+          },
+          "accounts_receivable_growth": {
+            "name": "accounts_receivable_growth",
+            "value": 0.44,
+            "formula": "(accounts_receivable_current - accounts_receivable_prior) / abs(accounts_receivable_prior)",
+            "inputs": {
+              "current": 180,
+              "prior": 125
+            },
+            "fiscal_year": 2025,
+            "missing_reason": null,
+            "source_refs": []
+          },
+          "inventory_growth": {
+            "name": "inventory_growth",
+            "value": 0.3333333333333333,
+            "formula": "(inventory_current - inventory_prior) / abs(inventory_prior)",
+            "inputs": {
+              "current": 140,
+              "prior": 105
+            },
+            "fiscal_year": 2025,
+            "missing_reason": null,
+            "source_refs": []
+          }
+        },
+        "models": [
+          {
+            "name": "Altman Z-Score",
+            "output": null,
+            "interpretation": "Insufficient data",
+            "applicability": "LIMITED: missing 1 required component(s)",
+            "inputs": {
+              "cash": 42,
+              "accounts_receivable": 180,
+              "inventory": 140,
+              "current_assets": 410,
+              "total_assets": 1200,
+              "accounts_payable": 155,
+              "current_liabilities": 495,
+              "short_term_debt": 190,
+              "long_term_debt": 410,
+              "total_debt": 600,
+              "total_liabilities": 910,
+              "shareholder_equity": 290,
+              "retained_earnings": 80,
+              "revenue": 1350,
+              "gross_profit": 310,
+              "operating_income": 68,
+              "ebit": 68,
+              "ebitda": 115,
+              "interest_expense": 55,
+              "net_income": 32,
+              "operating_cash_flow": 18,
+              "capital_expenditure": 75,
+              "working_capital": -85
+            },
+            "formula": "1.2X1+1.4X2+3.3X3+0.6X4+1.0X5",
+            "missing_components": [
+              "market_value_equity"
+            ],
+            "derived_outputs": {}
+          },
+          {
+            "name": "Beneish M-Score",
+            "output": null,
+            "interpretation": "Insufficient data",
+            "applicability": "LIMITED: missing 3 required component(s)",
+            "inputs": {},
+            "formula": "-4.84+0.920DSRI+0.528GMI+0.404AQI+0.892SGI+0.115DEPI-0.172SGAI+4.679TATA-0.327LVGI",
+            "missing_components": [
+              "depreciation",
+              "ppe",
+              "sga"
+            ],
+            "derived_outputs": {}
+          },
+          {
+            "name": "Piotroski F-Score",
+            "output": null,
+            "interpretation": "Insufficient data",
+            "applicability": "LIMITED: Piotroski-style proxy uses end-of-period asset denominators; missing 1 required component(s)",
+            "inputs": {},
+            "formula": "Nine proxy binary signals (0-9)",
+            "missing_components": [
+              "shares_outstanding"
+            ],
+            "derived_outputs": {}
+          },
+          {
+            "name": "Ohlson O-Score",
+            "output": null,
+            "interpretation": "Insufficient data",
+            "applicability": "LIMITED: missing 3 required component(s)",
+            "inputs": {
+              "cash": 42,
+              "accounts_receivable": 180,
+              "inventory": 140,
+              "current_assets": 410,
+              "total_assets": 1200,
+              "accounts_payable": 155,
+              "current_liabilities": 495,
+              "short_term_debt": 190,
+              "long_term_debt": 410,
+              "total_debt": 600,
+              "total_liabilities": 910,
+              "shareholder_equity": 290,
+              "retained_earnings": 80,
+              "revenue": 1350,
+              "gross_profit": 310,
+              "operating_income": 68,
+              "ebit": 68,
+              "ebitda": 115,
+              "interest_expense": 55,
+              "net_income": 32,
+              "operating_cash_flow": 18,
+              "capital_expenditure": 75,
+              "working_capital": -85
+            },
+            "formula": "Ohlson (1980) nine-factor logit",
+            "missing_components": [
+              "funds_from_operations",
+              "gnp_price_index",
+              "prior_net_income"
+            ],
+            "derived_outputs": {}
+          }
+        ],
+        "rules": [
+          {
+            "rule_id": "LIQ_001",
+            "category": "liquidity",
+            "severity": "high",
+            "score_delta": 18,
+            "rationale": "Current assets do not cover current liabilities.",
+            "evidence": [
+              "current_ratio=0.8282828282828283 < 1.0"
+            ],
+            "source_refs": [],
+            "family": "liquidity_coverage",
+            "required_inputs": [
+              "current_ratio"
+            ],
+            "input_provenance": {
+              "current_ratio": []
+            }
+          },
+          {
+            "rule_id": "LIQ_002",
+            "category": "liquidity",
+            "severity": "medium",
+            "score_delta": 9,
+            "rationale": "Liquidity cushion is thin.",
+            "evidence": [
+              "current_ratio=0.8282828282828283 < 1.25"
+            ],
+            "source_refs": [],
+            "family": "liquidity_coverage",
+            "required_inputs": [
+              "current_ratio"
+            ],
+            "input_provenance": {
+              "current_ratio": []
+            }
+          },
+          {
+            "rule_id": "LIQ_003",
+            "category": "liquidity",
+            "severity": "high",
+            "score_delta": 14,
+            "rationale": "Liquid assets provide weak short-term coverage.",
+            "evidence": [
+              "quick_ratio=0.5454545454545454 < 0.75"
+            ],
+            "source_refs": [],
+            "family": null,
+            "required_inputs": [
+              "quick_ratio"
+            ],
+            "input_provenance": {
+              "quick_ratio": []
+            }
+          },
+          {
+            "rule_id": "LIQ_004",
+            "category": "liquidity",
+            "severity": "medium",
+            "score_delta": 8,
+            "rationale": "Immediate cash coverage is limited.",
+            "evidence": [
+              "cash_ratio=0.08484848484848485 < 0.15"
+            ],
+            "source_refs": [],
+            "family": null,
+            "required_inputs": [
+              "cash_ratio"
+            ],
+            "input_provenance": {
+              "cash_ratio": []
+            }
+          },
+          {
+            "rule_id": "LIQ_005",
+            "category": "liquidity",
+            "severity": "high",
+            "score_delta": 16,
+            "rationale": "Negative working capital increases short-term funding pressure.",
+            "evidence": [
+              "working_capital=-85 < 0"
+            ],
+            "source_refs": [],
+            "family": "liquidity_coverage",
+            "required_inputs": [
+              "working_capital"
+            ],
+            "input_provenance": {
+              "working_capital": []
+            }
+          },
+          {
+            "rule_id": "LIQ_006",
+            "category": "liquidity",
+            "severity": "medium",
+            "score_delta": 10,
+            "rationale": "Cash declined materially year over year.",
+            "evidence": [
+              "cash_growth=-0.373134328358209 < -0.2"
+            ],
+            "source_refs": [],
+            "family": null,
+            "required_inputs": [
+              "cash_growth"
+            ],
+            "input_provenance": {
+              "cash_growth": []
+            }
+          },
+          {
+            "rule_id": "LIQ_007",
+            "category": "liquidity",
+            "severity": "high",
+            "score_delta": 18,
+            "rationale": "Deteriorating liquidity combines with rising refinancing pressure.",
+            "evidence": [
+              "current_ratio=0.8282828282828283 < 1.0",
+              "short_term_debt_growth=0.7272727272727273 > 0.2",
+              "cash_growth=-0.373134328358209 < 0"
+            ],
+            "source_refs": [],
+            "family": "liquidity_coverage",
+            "required_inputs": [
+              "current_ratio",
+              "short_term_debt_growth",
+              "cash_growth"
+            ],
+            "input_provenance": {
+              "current_ratio": [],
+              "short_term_debt_growth": [],
+              "cash_growth": []
+            }
+          },
+          {
+            "rule_id": "LIQ_008",
+            "category": "liquidity",
+            "severity": "high",
+            "score_delta": 15,
+            "rationale": "Both cash reserves and operating cash generation weakened.",
+            "evidence": [
+              "cash_growth=-0.373134328358209 < -0.25",
+              "operating_cash_flow_growth=-0.6538461538461539 < -0.2"
+            ],
+            "source_refs": [],
+            "family": null,
+            "required_inputs": [
+              "cash_growth",
+              "operating_cash_flow_growth"
+            ],
+            "input_provenance": {
+              "cash_growth": [],
+              "operating_cash_flow_growth": []
+            }
+          },
+          {
+            "rule_id": "SOL_001",
+            "category": "solvency_leverage",
+            "severity": "high",
+            "score_delta": 17,
+            "rationale": "Debt is high relative to book equity.",
+            "evidence": [
+              "debt_to_equity=2.0689655172413794 > 2.0"
+            ],
+            "source_refs": [],
+            "family": null,
+            "required_inputs": [
+              "debt_to_equity"
+            ],
+            "input_provenance": {
+              "debt_to_equity": []
+            }
+          },
+          {
+            "rule_id": "SOL_004",
+            "category": "solvency_leverage",
+            "severity": "high",
+            "score_delta": 18,
+            "rationale": "Operating earnings weakly cover interest expense.",
+            "evidence": [
+              "interest_coverage=1.2363636363636363 < 1.5"
+            ],
+            "source_refs": [],
+            "family": "interest_coverage",
+            "required_inputs": [
+              "interest_coverage"
+            ],
+            "input_provenance": {
+              "interest_coverage": []
+            }
+          },
+          {
+            "rule_id": "SOL_005",
+            "category": "solvency_leverage",
+            "severity": "medium",
+            "score_delta": 9,
+            "rationale": "Interest coverage has limited headroom.",
+            "evidence": [
+              "interest_coverage=1.2363636363636363 < 3.0"
+            ],
+            "source_refs": [],
+            "family": "interest_coverage",
+            "required_inputs": [
+              "interest_coverage"
+            ],
+            "input_provenance": {
+              "interest_coverage": []
+            }
+          },
+          {
+            "rule_id": "SOL_006",
+            "category": "solvency_leverage",
+            "severity": "high",
+            "score_delta": 18,
+            "rationale": "Debt burden is high relative to EBITDA.",
+            "evidence": [
+              "debt_to_ebitda=5.217391304347826 > 5.0"
+            ],
+            "source_refs": [],
+            "family": null,
+            "required_inputs": [
+              "debt_to_ebitda"
+            ],
+            "input_provenance": {
+              "debt_to_ebitda": []
+            }
+          },
+          {
+            "rule_id": "PRO_003",
+            "category": "profitability",
+            "severity": "medium",
+            "score_delta": 10,
+            "rationale": "Gross margin contracted materially.",
+            "evidence": [
+              "gross_margin_change=-0.03037037037037038 < -0.03"
+            ],
+            "source_refs": [],
+            "family": null,
+            "required_inputs": [
+              "gross_margin_change"
+            ],
+            "input_provenance": {
+              "gross_margin_change": []
+            }
+          },
+          {
+            "rule_id": "CFL_002",
+            "category": "cash_flow",
+            "severity": "high",
+            "score_delta": 14,
+            "rationale": "Free cash flow is negative.",
+            "evidence": [
+              "free_cash_flow=-57 < 0"
+            ],
+            "source_refs": [],
+            "family": "cash_deficit",
+            "required_inputs": [
+              "free_cash_flow"
+            ],
+            "input_provenance": {
+              "free_cash_flow": []
+            }
+          },
+          {
+            "rule_id": "CFL_004",
+            "category": "cash_flow",
+            "severity": "medium",
+            "score_delta": 10,
+            "rationale": "Operating cash flow declined rapidly.",
+            "evidence": [
+              "operating_cash_flow_growth=-0.6538461538461539 < -0.25"
+            ],
+            "source_refs": [],
+            "family": null,
+            "required_inputs": [
+              "operating_cash_flow_growth"
+            ],
+            "input_provenance": {
+              "operating_cash_flow_growth": []
+            }
+          },
+          {
+            "rule_id": "CFL_005",
+            "category": "cash_flow",
+            "severity": "high",
+            "score_delta": 15,
+            "rationale": "Positive earnings have not converted into free cash flow.",
+            "evidence": [
+              "net_income=32 > 0",
+              "free_cash_flow=-57 < 0"
+            ],
+            "source_refs": [],
+            "family": "cash_deficit",
+            "required_inputs": [
+              "net_income",
+              "free_cash_flow"
+            ],
+            "input_provenance": {
+              "net_income": [],
+              "free_cash_flow": []
+            }
+          },
+          {
+            "rule_id": "CFL_007",
+            "category": "cash_flow",
+            "severity": "medium",
+            "score_delta": 10,
+            "rationale": "Cash conversion from reported earnings is weak.",
+            "evidence": [
+              "cfo_to_net_income=0.5625 < 0.8"
+            ],
+            "source_refs": [],
+            "family": null,
+            "required_inputs": [
+              "cfo_to_net_income"
+            ],
+            "input_provenance": {
+              "cfo_to_net_income": []
+            }
+          },
+          {
+            "rule_id": "EQ_001",
+            "category": "earnings_quality",
+            "severity": "high",
+            "score_delta": 17,
+            "rationale": "Revenue and earnings rose while operating cash flow fell.",
+            "evidence": [
+              "revenue_growth=0.08 > 0",
+              "net_income_growth=0.14285714285714285 > 0",
+              "operating_cash_flow_growth=-0.6538461538461539 < 0"
+            ],
+            "source_refs": [],
+            "family": null,
+            "required_inputs": [
+              "revenue_growth",
+              "net_income_growth",
+              "operating_cash_flow_growth"
+            ],
+            "input_provenance": {
+              "revenue_growth": [],
+              "net_income_growth": [],
+              "operating_cash_flow_growth": []
+            }
+          },
+          {
+            "rule_id": "EQ_002",
+            "category": "earnings_quality",
+            "severity": "high",
+            "score_delta": 16,
+            "rationale": "Receivables growth substantially outpaces revenue growth.",
+            "evidence": [
+              "accounts_receivable_growth=0.44 > 0.25",
+              "revenue_growth=0.08 < 0.1"
+            ],
+            "source_refs": [],
+            "family": null,
+            "required_inputs": [
+              "accounts_receivable_growth",
+              "revenue_growth"
+            ],
+            "input_provenance": {
+              "accounts_receivable_growth": [],
+              "revenue_growth": []
+            }
+          },
+          {
+            "rule_id": "EQ_003",
+            "category": "earnings_quality",
+            "severity": "medium",
+            "score_delta": 13,
+            "rationale": "Inventory growth outpaces sales and may indicate slowing demand.",
+            "evidence": [
+              "inventory_growth=0.3333333333333333 > 0.25",
+              "revenue_growth=0.08 < 0.1"
+            ],
+            "source_refs": [],
+            "family": null,
+            "required_inputs": [
+              "inventory_growth",
+              "revenue_growth"
+            ],
+            "input_provenance": {
+              "inventory_growth": [],
+              "revenue_growth": []
+            }
+          },
+          {
+            "rule_id": "BUS_003",
+            "category": "business_going_concern",
+            "severity": "high",
+            "score_delta": 18,
+            "rationale": "Operations depend materially on successful refinancing.",
+            "evidence": [
+              "refinancing_dependency=True == True"
+            ],
+            "source_refs": [
+              {
+                "document": "Annual Report",
+                "page": 54,
+                "source_text": "The company may pursue refinancing during the coming year",
+                "fiscal_year": 2025,
+                "confidence": 0.9,
+                "verified": true,
+                "verification_status": "verified",
+                "source": "Annual Report",
+                "company": null,
+                "period": "2025",
+                "quote": "The company may pursue refinancing during the coming year",
+                "value": null,
+                "unit": null
+              }
+            ],
+            "family": null,
+            "required_inputs": [
+              "refinancing_dependency"
+            ],
+            "input_provenance": {
+              "refinancing_dependency": [
+                {
+                  "document": "Annual Report",
+                  "page": 54,
+                  "source_text": "The company may pursue refinancing during the coming year",
+                  "fiscal_year": 2025,
+                  "confidence": 0.9,
+                  "verified": true,
+                  "verification_status": "verified",
+                  "source": "Annual Report",
+                  "company": null,
+                  "period": "2025",
+                  "quote": "The company may pursue refinancing during the coming year",
+                  "value": null,
+                  "unit": null
+                }
+              ]
+            }
+          }
+        ]
+      },
+      "agent_trace": [
+        {
+          "step_id": "metrics",
+          "phase": "analyze",
+          "tool": "financial_metrics",
+          "status": "success",
+          "summary": "Produced 30 structured result(s)",
+          "evidence_ids": [],
+          "error": null,
+          "latency_ms": 0
+        },
+        {
+          "step_id": "models",
+          "phase": "analyze",
+          "tool": "traditional_models",
+          "status": "success",
+          "summary": "Produced 4 structured result(s)",
+          "evidence_ids": [],
+          "error": null,
+          "latency_ms": 0
+        },
+        {
+          "step_id": "claims",
+          "phase": "collect",
+          "tool": "narrative_evidence",
+          "status": "success",
+          "summary": "Produced 2 structured result(s)",
+          "evidence_ids": [],
+          "error": null,
+          "latency_ms": 0
+        },
+        {
+          "step_id": "rules",
+          "phase": "analyze",
+          "tool": "risk_rules",
+          "status": "success",
+          "summary": "Produced 21 structured result(s)",
+          "evidence_ids": [],
+          "error": null,
+          "latency_ms": 0
+        },
+        {
+          "step_id": "consistency",
+          "phase": "cross_check",
+          "tool": "contradiction_detection",
+          "status": "success",
+          "summary": "Produced 1 structured result(s)",
+          "evidence_ids": [],
+          "error": null,
+          "latency_ms": 0
+        },
+        {
+          "step_id": "periods",
+          "phase": "cross_check",
+          "tool": "period_comparison",
+          "status": "success",
+          "summary": "Produced 2 structured result(s)",
+          "evidence_ids": [],
+          "error": null,
+          "latency_ms": 0
+        },
+        {
+          "step_id": "assessment",
+          "phase": "synthesize",
+          "tool": "risk_assessment",
+          "status": "success",
+          "summary": "Produced 1 structured result(s)",
+          "evidence_ids": [],
+          "error": null,
+          "latency_ms": 0
+        },
+        {
+          "step_id": "verification",
+          "phase": "verify",
+          "tool": "claim_verification",
+          "status": "success",
+          "summary": "Produced 2 structured result(s)",
+          "evidence_ids": [],
+          "error": null,
+          "latency_ms": 0
+        }
+      ],
+      "component_versions": {
+        "rules": "64a92069682b8af5042bf05fb1d04be09c3d39b37dfbd6fd9ececf0c8a58d7bc",
+        "scoring": "1f9e90b86bd627f47b39e0ed0aec6cb488993ad2b8be8dae9c200e533ffa6040",
+        "decision_policy": "9776c631a261839c500d528f8257cdb9ef72e4a98e5f672e11df1de94ccabc09",
+        "fusion": "hierarchical_escalation:9776c631a261",
+        "applicability": "applicability-router:v1",
+        "calibration": "UNCALIBRATED:v1",
+        "assurance_policy": "c0ce6ed4752c53e67f3528de1013a4a6ff4d512b1790cde1c6628b354c8b9053",
+        "assurance_runtime": "assurance-runtime:v0.4",
+        "evidence_verifier": "exact-page-quote:v1",
+        "agent_review": "analyst-critic-verifier:v1",
+        "prompt": "mock-narrative-v1",
+        "model": "mock"
+      },
+      "human_review": null,
+      "final_decision": "ABSTAIN",
+      "epistemics": {
+        "evidence_coverage": 0.045,
+        "evidence_quality": 0.9,
+        "model_disagreement": 0.435,
+        "reliability": null,
+        "calibration_status": "UNCALIBRATED",
+        "probability": null
+      },
+      "component_telemetry": [
+        {
+          "component": "XBRL",
+          "status": "not_executed",
+          "risk_before": 0.0,
+          "risk_after": 0.0,
+          "delta_risk": 0.0,
+          "coverage_before": 0.0,
+          "coverage_after": 1.0,
+          "delta_coverage": 1.0,
+          "disagreement_before": 0.0,
+          "disagreement_after": 0.0,
+          "delta_disagreement": 0.0,
+          "decision_changed": false,
+          "new_evidence": 0,
+          "latency_ms": 0,
+          "estimated_cost_usd": 0.0
+        },
+        {
+          "component": "rules",
+          "status": "executed",
+          "risk_before": 0.0,
+          "risk_after": 53.8,
+          "delta_risk": 53.8,
+          "coverage_before": 1.0,
+          "coverage_after": 1.0,
+          "delta_coverage": 0.0,
+          "disagreement_before": 0.0,
+          "disagreement_after": 0.0,
+          "delta_disagreement": 0.0,
+          "decision_changed": false,
+          "new_evidence": 20,
+          "latency_ms": 0,
+          "estimated_cost_usd": 0.0
+        },
+        {
+          "component": "traditional_models",
+          "status": "executed",
+          "risk_before": 53.8,
+          "risk_after": 53.8,
+          "delta_risk": 0.0,
+          "coverage_before": 1.0,
+          "coverage_after": 1.0,
+          "delta_coverage": 0.0,
+          "disagreement_before": 0.0,
+          "disagreement_after": 0.0,
+          "delta_disagreement": 0.0,
+          "decision_changed": false,
+          "new_evidence": 0,
+          "latency_ms": 0,
+          "estimated_cost_usd": 0.0
+        },
+        {
+          "component": "LLM_narrative",
+          "status": "executed",
+          "risk_before": 53.8,
+          "risk_after": 53.0,
+          "delta_risk": -0.8,
+          "coverage_before": 1.0,
+          "coverage_after": 0.045,
+          "delta_coverage": -0.955,
+          "disagreement_before": 0.0,
+          "disagreement_after": 0.0,
+          "delta_disagreement": 0.0,
+          "decision_changed": false,
+          "new_evidence": 2,
+          "latency_ms": 0,
+          "estimated_cost_usd": 0.0
+        },
+        {
+          "component": "Critic",
+          "status": "executed",
+          "risk_before": 53.0,
+          "risk_after": 53.0,
+          "delta_risk": 0.0,
+          "coverage_before": 0.045,
+          "coverage_after": 0.045,
+          "delta_coverage": 0.0,
+          "disagreement_before": 0.0,
+          "disagreement_after": 0.0,
+          "delta_disagreement": 0.0,
+          "decision_changed": false,
+          "new_evidence": 0,
+          "latency_ms": 0,
+          "estimated_cost_usd": 0.0
+        },
+        {
+          "component": "Verifier",
+          "status": "executed",
+          "risk_before": 53.0,
+          "risk_after": 53.0,
+          "delta_risk": 0.0,
+          "coverage_before": 0.045,
+          "coverage_after": 0.045,
+          "delta_coverage": 0.0,
+          "disagreement_before": 0.0,
+          "disagreement_after": 0.0,
+          "delta_disagreement": 0.0,
+          "decision_changed": false,
+          "new_evidence": 29,
+          "latency_ms": 0,
+          "estimated_cost_usd": 0.0
+        },
+        {
+          "component": "fusion",
+          "status": "executed",
+          "risk_before": 53.0,
+          "risk_after": 95.0,
+          "delta_risk": 42.0,
+          "coverage_before": 0.045,
+          "coverage_after": 0.045,
+          "delta_coverage": 0.0,
+          "disagreement_before": 0.0,
+          "disagreement_after": 0.435,
+          "delta_disagreement": 0.435,
+          "decision_changed": false,
+          "new_evidence": 17,
+          "latency_ms": 0,
+          "estimated_cost_usd": 0.0
+        },
+        {
+          "component": "assurance",
+          "status": "restricted",
+          "risk_before": 95.0,
+          "risk_after": 95.0,
+          "delta_risk": 0.0,
+          "coverage_before": 0.045,
+          "coverage_after": 0.118,
+          "delta_coverage": 0.073,
+          "disagreement_before": 0.435,
+          "disagreement_after": 0.435,
+          "delta_disagreement": 0.0,
+          "decision_changed": false,
+          "new_evidence": 1,
+          "latency_ms": 0,
+          "estimated_cost_usd": 0.0
+        }
+      ],
+      "bundle_hash": "3189520ed17edbffb9686a4dcfd9fbf94f56d7fa54e91f66284ee260e20bfddd",
+      "proposed_decision": "ABSTAIN",
+      "assurance": {
+        "proposed_decision": "ABSTAIN",
+        "final_decision": "ABSTAIN",
+        "automation_allowed": false,
+        "assurance_status": "RESTRICTED",
+        "evidence_assurance": {
+          "state": "PARTIAL",
+          "material_path_count": 17,
+          "verified_path_count": 2,
+          "coverage": 0.117647,
+          "verified_evidence_ids": [
+            "evidence_58466f281bbf3b983dae",
+            "evidence_ed5efb86f7fc76e73e22"
+          ],
+          "supported_claims": [
+            "BUS_003",
+            "DISCLOSURE_TENSION_001"
+          ],
+          "diagnostics": [
+            "Only part of the material decision path is verified."
+          ]
+        },
+        "evidence_fragility": {
+          "state": "FRAGILE",
+          "largest_single_evidence_impact": 67.0,
+          "decision_flip_count": 0,
+          "decision_flip_rate": 0.0,
+          "severity_change_count": 1,
+          "affected_dimensions": [
+            "business_going_concern",
+            "liquidity"
+          ],
+          "affected_claims": [
+            "BUS_003",
+            "DISCLOSURE_TENSION_001"
+          ],
+          "ablations": [
+            {
+              "evidence_id": "evidence_58466f281bbf3b983dae",
+              "score_delta": -10.0,
+              "severity_change": false,
+              "proposed_decision_change": false,
+              "final_decision_impact": false,
+              "recomputed_proposed_decision": "ABSTAIN",
+              "affected_dimensions": [
+                "business_going_concern"
+              ],
+              "affected_claims": [
+                "BUS_003"
+              ]
+            },
+            {
+              "evidence_id": "evidence_ed5efb86f7fc76e73e22",
+              "score_delta": -67.0,
+              "severity_change": true,
+              "proposed_decision_change": false,
+              "final_decision_impact": false,
+              "recomputed_proposed_decision": "ABSTAIN",
+              "affected_dimensions": [
+                "liquidity"
+              ],
+              "affected_claims": [
+                "DISCLOSURE_TENSION_001"
+              ]
+            }
+          ]
+        },
+        "distribution_validity": {
+          "state": "IN_REFERENCE",
+          "reference_name": "FinRisk synthetic development reference",
+          "reference_version": "v0.4.0-development-reference-1",
+          "reference_scope": "DEVELOPMENT_REFERENCE_ONLY",
+          "evaluated_feature_count": 22,
+          "outside_feature_count": 0,
+          "reporting_availability_rate": 0.3548387096774194,
+          "diagnostics": []
+        },
+        "decision_sufficient_evidence": {
+          "evidence_ids": [
+            "evidence_58466f281bbf3b983dae"
+          ],
+          "method": "EXACT",
+          "exact": true,
+          "preserves_proposed_decision": true,
+          "evaluated_subsets": 1,
+          "baseline_decision": "ABSTAIN"
+        },
+        "policy_status": "HEURISTIC_POLICY",
+        "calibration_status": "UNCALIBRATED",
+        "reason_codes": [
+          "INSUFFICIENT_VERIFIED_EVIDENCE",
+          "EVIDENCE_FRAGILITY_HIGH",
+          "RUNTIME_FAILURE_REQUIRES_REVIEW",
+          "ASSURANCE_POLICY_UNCALIBRATED",
+          "PROPOSED_DECISION_WITHHELD"
+        ],
+        "policy_version": "assurance-policy-v0.4.0-development",
+        "policy_hash": "c0ce6ed4752c53e67f3528de1013a4a6ff4d512b1790cde1c6628b354c8b9053",
+        "certificate_hash": "a6e753637f40a2c84e46d6b86350264c02bf8bfd0226549ddef8fcf00bdd6ee6",
+        "diagnostics": {
+          "authorization_blockers": [
+            "evidence",
+            "fragility",
+            "runtime_failure"
+          ],
+          "runtime_failures": [
+            "conflicting_evidence"
+          ],
+          "reliability": null,
+          "probability": null
+        }
+      },
+      "decision_sufficient_evidence": {
+        "evidence_ids": [
+          "evidence_58466f281bbf3b983dae"
+        ],
+        "method": "EXACT",
+        "exact": true,
+        "preserves_proposed_decision": true,
+        "evaluated_subsets": 1,
+        "baseline_decision": "ABSTAIN"
+      },
+      "policy_version": "assurance-policy-v0.4.0-development",
+      "policy_hash": "c0ce6ed4752c53e67f3528de1013a4a6ff4d512b1790cde1c6628b354c8b9053",
+      "calibration_status": "UNCALIBRATED",
+      "replay": {
+        "deterministic": true,
+        "input_hash": "3511ad46222dcd978c78ba31533b84d1cf676f2036d70b61aad9ed5da3e38003",
+        "output_hash": "5e55f0e7bbf71e9e855867da538985a79d1a5fa3db4fba0b3c6ef59a2345db96",
+        "component_versions": {
+          "rules": "64a92069682b8af5042bf05fb1d04be09c3d39b37dfbd6fd9ececf0c8a58d7bc",
+          "scoring": "1f9e90b86bd627f47b39e0ed0aec6cb488993ad2b8be8dae9c200e533ffa6040",
+          "decision_policy": "9776c631a261839c500d528f8257cdb9ef72e4a98e5f672e11df1de94ccabc09",
+          "fusion": "hierarchical_escalation:9776c631a261",
+          "applicability": "applicability-router:v1",
+          "calibration": "UNCALIBRATED:v1",
+          "assurance_policy": "c0ce6ed4752c53e67f3528de1013a4a6ff4d512b1790cde1c6628b354c8b9053",
+          "assurance_runtime": "assurance-runtime:v0.4",
+          "evidence_verifier": "exact-page-quote:v1",
+          "agent_review": "analyst-critic-verifier:v1",
+          "prompt": "mock-narrative-v1",
+          "model": "mock"
+        }
+      },
+      "certificate_version": "decision-certificate-v0.4",
+      "certificate_hash": "3189520ed17edbffb9686a4dcfd9fbf94f56d7fa54e91f66284ee260e20bfddd"
+    },
     "dimensions": {
       "liquidity": {
         "score": 85,
@@ -2095,19 +6465,48 @@ export const DEMO_FIXTURE: DemoFixture = {
         "INSUFFICIENT_EVIDENCE",
         "CRITICAL_DIMENSION_ESCALATION",
         "UNVALIDATED_RELIABILITY"
-      ]
+      ],
+      "proposed_decision": "ABSTAIN",
+      "decision_semantics": "LEGACY_ALIAS_FOR_PROPOSED_DECISION"
     },
     "evidence_coverage": 0.045,
     "evidence_quality": 0.9,
     "failure_state": {
       "decision": "ABSTAIN",
+      "proposed_decision": "ABSTAIN",
+      "decision_semantics": "LEGACY_ALIAS_FOR_PROPOSED_DECISION",
       "degraded": true,
       "blocking_failures": [],
       "review_failures": [
         "conflicting_evidence"
-      ]
+      ],
+      "final_decision": "ABSTAIN"
     },
     "final_decision": "ABSTAIN",
+    "financial_features": {
+      "cash": 42.0,
+      "accounts_receivable": 180.0,
+      "inventory": 140.0,
+      "current_assets": 410.0,
+      "total_assets": 1200.0,
+      "accounts_payable": 155.0,
+      "current_liabilities": 495.0,
+      "short_term_debt": 190.0,
+      "long_term_debt": 410.0,
+      "total_debt": 600.0,
+      "total_liabilities": 910.0,
+      "shareholder_equity": 290.0,
+      "retained_earnings": 80.0,
+      "revenue": 1350.0,
+      "gross_profit": 310.0,
+      "operating_income": 68.0,
+      "ebit": 68.0,
+      "ebitda": 115.0,
+      "interest_expense": 55.0,
+      "net_income": 32.0,
+      "operating_cash_flow": 18.0,
+      "capital_expenditure": 75.0
+    },
     "legacy_weighted_score": 53.0,
     "missing_information": [
       "free_cash_flow_growth: N/A — Denominator is zero. Impact: assessment confidence reduced."
@@ -2215,7 +6614,72 @@ export const DEMO_FIXTURE: DemoFixture = {
       }
     ],
     "overall_score": 95.0,
+    "proposed_decision": "ABSTAIN",
     "reliability_status": "UNCALIBRATED",
+    "reporting_observability": {
+      "accounts_payable": true,
+      "accounts_receivable": true,
+      "accounts_receivable_growth": false,
+      "capital_expenditure": true,
+      "cash": true,
+      "cash_conversion_cycle_change": false,
+      "cash_growth": false,
+      "cash_ratio": false,
+      "cfo_to_net_income": false,
+      "current_assets": true,
+      "current_liabilities": true,
+      "current_ratio": false,
+      "debt_to_assets": false,
+      "debt_to_ebitda": false,
+      "debt_to_equity": false,
+      "depreciation": false,
+      "ebit": true,
+      "ebitda": true,
+      "fcf_margin": false,
+      "free_cash_flow": false,
+      "funds_from_operations": false,
+      "gnp_price_index": false,
+      "going_concern_doubt": false,
+      "gross_margin_change": false,
+      "gross_profit": true,
+      "interest_coverage": false,
+      "interest_expense": true,
+      "inventory": true,
+      "inventory_days_change": false,
+      "inventory_growth": false,
+      "liabilities_to_assets": false,
+      "long_term_debt": true,
+      "market_value_equity": false,
+      "material_weakness": false,
+      "negative_ebitda_leverage": false,
+      "net_income": true,
+      "net_income_growth": false,
+      "net_margin": false,
+      "operating_cash_flow": true,
+      "operating_cash_flow_growth": false,
+      "operating_income": true,
+      "operating_margin": false,
+      "operating_margin_change": false,
+      "ppe": false,
+      "prior_net_income": false,
+      "quick_ratio": false,
+      "receivable_days_change": false,
+      "refinancing_dependency": false,
+      "retained_earnings": true,
+      "revenue": true,
+      "revenue_growth": false,
+      "roa": false,
+      "sga": false,
+      "shareholder_equity": true,
+      "shares_outstanding": false,
+      "short_term_debt": true,
+      "short_term_debt_growth": false,
+      "total_assets": true,
+      "total_debt": true,
+      "total_debt_growth": false,
+      "total_liabilities": true,
+      "working_capital": false
+    },
     "reporting_period": "2025",
     "risk_level": "Critical",
     "triggered_rules": [

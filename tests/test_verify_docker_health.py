@@ -98,7 +98,7 @@ def test_verification_endpoints_are_loopback_origins(monkeypatch, base):
 def test_default_runtime_comes_from_project_metadata(monkeypatch):
     monkeypatch.delenv("FINRISK_EXPECTED_RUNTIME", raising=False)
     verifier = load_script()
-    assert verifier.EXPECTED_RUNTIME == "v0.3.4"
+    assert verifier.EXPECTED_RUNTIME == "v0.4.0"
 
 
 @pytest.mark.parametrize(

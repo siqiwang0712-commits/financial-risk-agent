@@ -4,9 +4,17 @@ Status: **IMPLEMENTED BUT NOT EXTERNALLY VALIDATED**, except where explicitly ma
 
 ## Reproducibility and audit
 
-Each Agent result includes a decision trace and immutable analysis snapshot containing canonical input/output hashes, document hashes, rule/scoring hashes, provider/prompt identity, fusion version and frozen input/output. Replay comparison preserves the historical output and separately reports `IDENTICAL` or `DRIFT_DETECTED`; it never overwrites history. PostgreSQL stores snapshots and validation records. Risk cases cannot enter Accepted or Resolved without at least one verified decision path.
+Each Agent result includes a decision trace, AssuranceResult, Decision Certificate and
+immutable analysis snapshot containing canonical input/output hashes, document hashes,
+rule/scoring/assurance-policy hashes, provider/prompt identity, fusion version and frozen
+input/output. Replay comparison preserves the historical output and separately reports
+`IDENTICAL` or `DRIFT_DETECTED`; it never overwrites history. PostgreSQL stores snapshots
+and certificates. Risk cases cannot enter Accepted or Resolved without a verified path.
 
-Every decision also carries machine-readable reason codes, so a reviewer can tell why a result landed where it did rather than inferring it from the score. The current set includes `SEVERE_VERIFIED_SIGNAL`, `INSUFFICIENT_EVIDENCE`, `CLAIM_CONTEXT_INCOMPLETE`, `HIGH_MODEL_DISAGREEMENT`, `UNVALIDATED_RELIABILITY` and `CRITICAL_DIMENSION_ESCALATION`.
+Every decision also carries machine-readable reason codes. v0.4 Assurance codes include
+`INSUFFICIENT_VERIFIED_EVIDENCE`, `EVIDENCE_FRAGILITY_HIGH`,
+`OUTSIDE_VALIDATED_DISTRIBUTION`, `ASSURANCE_POLICY_UNCALIBRATED`,
+`REPORTING_OBSERVABILITY_ANOMALY` and `HIGH_MODEL_DISAGREEMENT`.
 
 ## Evidence admission and decision trace
 
@@ -16,7 +24,7 @@ The material path is explicit:
 
 ```text
 document → page/section/span → extracted fact or claim → metric/rule/model
-         → fusion contribution → risk dimension → final decision
+         → fusion contribution → proposed decision → Assurance → final decision
 ```
 
 A trace records the reason code, document hash, accession, source page or XBRL concept,
@@ -39,6 +47,23 @@ and timestamp. Replay produces a separate result and diff rather than overwritin
 historical decision. A reviewer can therefore distinguish a changed source document from
 a changed threshold, model, prompt or fusion strategy, and can identify which decision
 path changed.
+
+## Assurance controls
+
+Evidence fragility removes frozen evidence nodes and recomputes only deterministic
+downstream fusion. LLM/provider calls and new evidence acquisition are forbidden. The
+runtime records score delta, severity and decision changes, affected dimensions and
+claims, largest impact and flip rate.
+
+Decision-Sufficient Evidence uses exact subset search below the policy ceiling and a
+labelled greedy approximation above it. Approximate output is never called minimal.
+
+Distribution validity describes reference scope, not model correctness. The bundled
+synthetic profile is explicitly `DEVELOPMENT_REFERENCE_ONLY`; it exercises mechanics but
+does not validate a population. `OUTSIDE_REFERENCE` and the default `UNKNOWN` state when
+no supported profile is supplied withhold automation. Financial
+values and reporting observability are represented separately so availability does not
+masquerade as financial deterioration.
 
 ## Governance
 

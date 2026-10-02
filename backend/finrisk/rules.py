@@ -5,13 +5,14 @@ import math
 from pathlib import Path
 
 from .domain import RuleSignal
+from .resources import runtime_data_file
 
 OPS={"<":lambda a,b:a<b,"<=":lambda a,b:a<=b,">":lambda a,b:a>b,">=":lambda a,b:a>=b,"==":lambda a,b:a==b,"!=":lambda a,b:a!=b}
 
 
 def _disabled_rules() -> dict[str, str]:
-    path = Path(__file__).resolve().parents[2] / "rules" / "disabled_rules.json"
-    return json.loads(path.read_text(encoding="utf-8")).get("rules", {}) if path.exists() else {}
+    path = runtime_data_file("rules", "disabled_rules.json")
+    return json.loads(path.read_text(encoding="utf-8")).get("rules", {})
 
 
 DISABLED_RULES = _disabled_rules()

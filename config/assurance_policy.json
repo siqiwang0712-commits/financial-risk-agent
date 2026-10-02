@@ -1,0 +1,13 @@
+{
+  "version": "assurance-policy-v0.4.0-development",
+  "maturity": "HEURISTIC_POLICY",
+  "minimum_verified_coverage": 0.4,
+  "maximum_disagreement": 0.45,
+  "sensitive_score_delta": 10.0,
+  "fragile_score_delta": 20.0,
+  "maximum_fragility_nodes_exact": 12,
+  "require_distribution_reference": true,
+  "require_calibration_for_automation": true,
+  "review_on_unknown_distribution": true,
+  "review_on_fragility_not_estimable": true
+}

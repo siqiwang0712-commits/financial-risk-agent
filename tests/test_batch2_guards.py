@@ -39,7 +39,8 @@ def test_decide_exposes_a_single_decision_score():
     )
     assert payload["overall_score"] == payload["enterprise_fusion"]["score"]
     assert payload["weighted_dimension_score"] == payload["legacy_weighted_score"]
-    assert payload["final_decision"] == payload["enterprise_fusion"]["decision"]
+    assert payload["proposed_decision"] == payload["enterprise_fusion"]["decision"]
+    assert payload["final_decision"] == payload["assurance"]["final_decision"]
     assert "final_decision" in payload and "enterprise_fusion" in payload
     # DAT-03: the `/assess` response contract declares these three fields.
     assert set(payload["failure_state"]) >= {"decision", "degraded", "blocking_failures", "review_failures"}

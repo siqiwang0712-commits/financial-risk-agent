@@ -1,5 +1,30 @@
 # Limitations
 
+## v0.4 Assurance limitations
+
+The Assurance Runtime has completed its v0.4 internal development validation, but this does not establish
+that authorized decisions are correct or safe for production use.
+
+- The checked-in admission policy is `HEURISTIC_POLICY` and `UNCALIBRATED`; it provides
+  no finite-sample, conformal or probability guarantee.
+- The checked-in synthetic profile is `DEVELOPMENT_REFERENCE_ONLY`, derived from one
+  synthetic fixture and usable only for deterministic demo/test coverage. No frozen
+  empirical or external v0.4 reference profile exists. Unsupported runtime inputs remain
+  `UNKNOWN`, and automation is withheld.
+- Evidence fragility recomputes deterministic downstream fusion from the recorded graph.
+  It cannot measure dependence on evidence or reasoning omitted from that graph.
+- Decision-Sufficient Evidence preserves the recorded proposal under the implemented
+  deterministic recomputation. Above the exact-search ceiling it is a greedy
+  approximation and is not mathematically minimal.
+- Reporting observability is separated from financial values, but the scientific meaning
+  of missingness remains unresolved. E4-R showed that missingness alone can be highly
+  predictive; it did not establish whether that signal is stable, appropriate or causal.
+- No prospective E5, external validation, production operation, regulatory evaluation or
+  human-subject study has been completed.
+
+Distribution shift means existing assurance claims are not asserted outside the validated
+reference distribution; it does not prove that a model is wrong.
+
 ## Current E4 evidence boundary
 
 E4 performance applies to the 674 deterministically verified observations in a frozen

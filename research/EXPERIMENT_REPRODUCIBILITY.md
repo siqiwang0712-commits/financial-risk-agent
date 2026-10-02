@@ -1,4 +1,27 @@
-# FinRisk v0.3.4 / E4 Reproducibility Guide
+# FinRisk Reproducibility Guide
+
+## v0.4 development verification
+
+v0.4 runtime validation is separate from historical experiment replay. The authoritative
+release-review entry point is:
+
+```bash
+python scripts/verify_v040_release.py \
+  --python311 /path/to/python3.11 \
+  --python312 /path/to/python3.12 \
+  --docker-bin /path/to/docker
+```
+
+It runs the individual backend/coverage, lint, frontend, package, research-integrity,
+documentation, Docker, migration, restart, replay and release-Compose checks. See
+[`v040_development/VALIDATION_REPORT.md`](v040_development/VALIDATION_REPORT.md) for the
+release-scoped result.
+
+These checks establish deterministic software behavior, not predictive validity. No E5
+cohort, prediction or future outcome is accessed. E1–E4-R verification commands below
+remain historical-integrity checks and do not rerun E4 with v0.4 code.
+
+## v0.3.4 / E4 artifact reproducibility
 
 This guide defines the current release verification surface. It distinguishes
 checked-in public artifacts from large local execution artifacts and prevents

@@ -4,6 +4,14 @@ import json
 from dataclasses import replace
 from pathlib import Path
 
+from .assurance import (
+    AssuranceEngine,
+    AssuranceInput,
+    AssurancePolicy,
+    FinancialFeatureVector,
+    ReportingObservabilityVector,
+    separate_financial_and_reporting_features,
+)
 from .contradictions import detect_contradictions, evaluate_claim_consistency
 from .domain import Assessment, RuleSignal
 from .enterprise.applicability import (
@@ -12,7 +20,10 @@ from .enterprise.applicability import (
     MODEL_REQUIREMENTS,
     enforce_applicability,
 )
-from .enterprise.fusion import failure_aware_decision, hierarchical_escalation
+from .enterprise.decision import build_decision_trace, canonical_hash
+from .enterprise.decision_bundle import build_decision_bundle
+from .enterprise.fusion import failure_aware_proposal, hierarchical_escalation
+from .enterprise.integrity import CalibrationStatus
 from .enterprise.tension import classify_tension
 from .evidence import (
     PROOF_COVERED_STATUSES,
@@ -24,6 +35,7 @@ from .facts import build_facts, narrative_signals
 from .llm import NarrativeProvider, provider_from_env
 from .metrics import calculate_metrics, resolve_total_debt
 from .models import altman_z, beneish_m, ohlson_o, piotroski_f
+from .resources import runtime_data_root
 from .rules import RuleEngine
 from .scoring import aggregate, confidence, confidence_components, effective_signals
 from .severity import severity_label
@@ -35,7 +47,7 @@ class FinRiskPipeline:
         root: Path | None = None,
         provider: NarrativeProvider | None = None,
     ):
-        self.root = root or Path(__file__).resolve().parents[2]
+        self.root = runtime_data_root(root)
         self.rules_source = (self.root / "rules" / "rules.json").read_text(
             encoding="utf-8"
         )
@@ -51,6 +63,12 @@ class FinRiskPipeline:
         self.decision_policy = json.loads(
             (self.root / "config" / "decision_policy.json").read_text(encoding="utf-8")
         )
+        assurance_policy = json.loads(
+            (self.root / "config" / "assurance_policy.json").read_text(
+                encoding="utf-8"
+            )
+        )
+        self.assurance = AssuranceEngine(AssurancePolicy.from_mapping(assurance_policy))
         self.provider = provider or provider_from_env()
         self.verifier = EvidenceVerifier()
         self._assert_signals_are_not_double_counted()
@@ -101,7 +119,7 @@ class FinRiskPipeline:
                 )
             owners[key] = mapping["id"]
 
-    def decide(self, assessment: Assessment) -> dict:
+    def decide(self, assessment: Assessment, reference_profile=None) -> dict:
         """Attach the single decision-bearing score to an assessment payload.
 
         Both the deterministic endpoint and the agent path route through here, so
@@ -134,14 +152,85 @@ class FinRiskPipeline:
             if getattr(assessment, "narrative_suppressed", False)
             else {}
         )
-        failure = failure_aware_decision(fusion, failures)
-        # Kept in step with the agent path: `final_decision` must be the
-        # failure-aware disposition, not the raw fusion outcome, so the two published
-        # decisions cannot disagree.
-        payload["final_decision"] = failure["decision"]
+        failure = failure_aware_proposal(fusion, failures)
+        fusion_payload = fusion.to_dict()
+        proposed_decision = failure["proposed_decision"]
+        versions = {
+            "rules": canonical_hash(self.rules_source),
+            "scoring": canonical_hash(self.scoring_source),
+            "decision_policy": canonical_hash(self.decision_policy),
+            "fusion": f"hierarchical_escalation:{canonical_hash(self.decision_policy)[:12]}",
+            "assurance": self.assurance.policy.policy_hash,
+        }
+        trace = build_decision_trace(payload, fusion_payload, versions)
+        assurance = self.assurance.evaluate(
+            AssuranceInput(
+                proposed_decision=proposed_decision,
+                risk_score=score,
+                evidence_paths=tuple(trace["paths"]),
+                financial_features=FinancialFeatureVector(
+                    payload.get("financial_features", {})
+                ),
+                reporting_observability=ReportingObservabilityVector(
+                    payload.get("reporting_observability", {})
+                ),
+                reference_profile=reference_profile,
+                disagreement=fusion.disagreement,
+                calibration_status=CalibrationStatus.UNCALIBRATED,
+                runtime_failures=tuple(
+                    failure["blocking_failures"] + failure["review_failures"]
+                ),
+                fusion_policy=self.decision_policy,
+            )
+        )
+        payload["proposed_decision"] = proposed_decision
+        payload["assurance"] = assurance.to_dict()
+        final_decision = self.assurance.authorize(assurance)
+        payload["final_decision"] = final_decision
+        trace["final_decision"] = final_decision
+        trace["assurance_certificate_hash"] = assurance.certificate_hash
+        payload["decision_trace"] = trace
         payload["failure_state"] = failure
+        payload["failure_state"]["final_decision"] = final_decision
         payload["model_disagreement"] = fusion.disagreement
-        payload["enterprise_fusion"] = fusion.__dict__
+        payload["enterprise_fusion"] = fusion_payload
+        certificate = build_decision_bundle(
+            "local",
+            assessment.company,
+            {},
+            {
+                "company": assessment.company,
+                "reporting_period": assessment.reporting_period,
+                "financial_features": payload.get("financial_features", {}),
+                "reporting_observability": payload.get(
+                    "reporting_observability", {}
+                ),
+            },
+            payload,
+            {
+                "score": score,
+                "severity": payload["risk_level"],
+                "coverage": assessment.evidence_coverage,
+            },
+            trace["paths"],
+            {
+                "metrics": payload.get("metrics", {}),
+                "models": payload.get("models", []),
+                "rules": payload.get("triggered_rules", []),
+            },
+            [],
+            versions,
+            final_decision,
+            proposed_decision=proposed_decision,
+            assurance=assurance.to_dict(),
+            decision_sufficient_evidence=assurance.decision_sufficient_evidence.to_dict(),
+            policy_version=assurance.policy_version,
+            policy_hash=assurance.policy_hash,
+            calibration_status=assurance.calibration_status,
+            replay={"deterministic": True, "component_versions": versions},
+            assurance_policy=self.assurance.policy,
+        )
+        payload["decision_certificate"] = certificate.to_dict()
         return payload
 
     def assess(self,company:str,year:int,current:dict,previous:dict|None=None,pages:dict[int,str]|None=None,document="Annual Report",entity_type="industrial",source_map:dict|None=None,narrative_claims:list|None=None,claim_verifications:list|None=None) -> Assessment:
@@ -375,7 +464,21 @@ class FinRiskPipeline:
         for category in dimensions:nodes.append({"id":f"dimension:{category}","type":"dimension","label":category});edges.append({"from":f"dimension:{category}","to":"overall","relation":"weighted_into"})
         nodes.append({"id":"overall","type":"assessment","label":"overall risk"})
         graph={"nodes":nodes,"edges":edges}
-        result=Assessment(company,str(year),score,level,conf,dimensions,metrics,models,signals,contradictions,missing,confidence_components=components,evidence_graph=graph,evidence_quality=conf,evidence_coverage=evidence_coverage,reliability_status="UNCALIBRATED",claim_consistency_evaluations=claim_evaluations,disclosure_tensions=tensions)
+        expected_features = sorted(
+            set(current)
+            | {
+                condition["metric"]
+                for rule in self.rules.rules
+                for condition in rule["conditions"]
+            }
+            | set().union(*MODEL_REQUIREMENTS.values())
+        )
+        financial_vector, observability_vector = (
+            separate_financial_and_reporting_features(current, set(expected_features))
+        )
+        financial_features = financial_vector.values
+        reporting_observability = observability_vector.availability
+        result=Assessment(company,str(year),score,level,conf,dimensions,metrics,models,signals,contradictions,missing,confidence_components=components,evidence_graph=graph,evidence_quality=conf,evidence_coverage=evidence_coverage,reliability_status="UNCALIBRATED",claim_consistency_evaluations=claim_evaluations,disclosure_tensions=tensions,financial_features=financial_features,reporting_observability=reporting_observability)
         # Not a dataclass field, so `to_dict()` - and therefore the published payload -
         # is unchanged; it only lets `decide` escalate a suppressed extraction.
         result.narrative_suppressed = narrative_suppressed

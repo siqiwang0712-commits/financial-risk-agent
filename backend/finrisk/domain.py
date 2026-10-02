@@ -150,6 +150,8 @@ class Assessment:
     # claim-level classification and the contradiction list cannot disagree.
     claim_consistency_evaluations: list[dict[str, Any]] = field(default_factory=list)
     disclosure_tensions: list[dict[str, Any]] = field(default_factory=list)
+    financial_features: dict[str, float | None] = field(default_factory=dict)
+    reporting_observability: dict[str, bool] = field(default_factory=dict)
     disclaimer: str = "Risk scores are heuristic assessment scores, not bankruptcy probabilities or investment advice."
 
     def to_dict(self) -> dict[str, Any]:

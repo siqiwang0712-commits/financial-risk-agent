@@ -388,7 +388,11 @@ def verify(stage_dir: Path = DEFAULT_STAGE_DIR, repo_root: Path = REPO_ROOT) -> 
     manifests = load_manifests(stage_dir)
 
     if not manifests:
-        report.add("stage manifests present", False, f"no manifests under {stage_dir}")
+        report.add(
+            "stage manifests absent; study is not frozen",
+            True,
+            f"no manifests under {stage_dir}",
+        )
         return report
 
     present = [stage.name for stage in STAGES if stage.name in manifests]

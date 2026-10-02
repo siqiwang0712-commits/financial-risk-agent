@@ -1,5 +1,9 @@
 # FinRisk v0.3.4 / E4 Results
 
+> v0.4 introduces Assurance architecture but no new confirmatory empirical result. The
+> results below are immutable historical E4, E4-S and E4-R records. No prospective E5
+> outcome exists.
+
 This document is the compact result surface for the current release. Canonical
 values remain in the linked E4 reports and JSON files. Historical pilot and
 v0.3.1 outputs are retained for audit but are not used as current evidence.

@@ -105,21 +105,34 @@ def _read_rules(function) -> list[dict]:
         following = constants[index + 1]
         if not hasattr(following, "co_consts") or not hasattr(following, "co_code"):
             continue
-        numbers = [
-            value
-            for value in following.co_consts
-            if isinstance(value, (int, float)) and not isinstance(value, bool)
-        ]
-        operators = [
-            instruction.argrepr
-            for instruction in dis.get_instructions(following)
+        instructions = list(dis.get_instructions(following))
+        comparisons = [
+            (position, instruction.argrepr)
+            for position, instruction in enumerate(instructions)
             if "COMPARE" in instruction.opname
         ]
+        threshold = None
+        if comparisons:
+            compare_position, _ = comparisons[0]
+            # Read the operand actually loaded for the comparison. Inspecting
+            # ``co_consts`` by position is incorrect on CPython 3.13/3.14:
+            # negative literals may retain both their positive parser constant
+            # and their folded negative constant, so the first numeric constant
+            # is not necessarily the executed threshold.
+            for instruction in reversed(instructions[:compare_position]):
+                value = instruction.argval
+                if (
+                    instruction.opname == "LOAD_CONST"
+                    and isinstance(value, (int, float))
+                    and not isinstance(value, bool)
+                ):
+                    threshold = value
+                    break
         rules.append(
             {
                 "metric": item,
-                "comparator": operators[0] if operators else None,
-                "threshold": numbers[0] if numbers else None,
+                "comparator": comparisons[0][1] if comparisons else None,
+                "threshold": threshold,
             }
         )
     return rules

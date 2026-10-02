@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="760" viewBox="0 0 1440 760" role="img" aria-labelledby="title desc">
+  <title id="title">FinRisk v0.4 assurance-controlled decision architecture</title>
+  <desc id="desc">Financial analysis proposes a risk decision. An independent assurance runtime checks evidence, fragility, distribution validity and policy before issuing a final decision certificate.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#071525"/><stop offset="1" stop-color="#102c3a"/></linearGradient>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0 0l10 5-10 5z" fill="#688497"/></marker>
+  </defs>
+  <rect width="1440" height="760" rx="24" fill="url(#bg)"/>
+  <g font-family="Inter,Segoe UI,sans-serif">
+    <text x="64" y="58" fill="#f5fbff" font-size="30" font-weight="700">Prediction proposes. Assurance authorizes.</text>
+    <text x="64" y="89" fill="#91a9b8" font-size="16">No AssuranceResult → no authorized final decision</text>
+
+    <g transform="translate(64 120)">
+      <rect width="1312" height="92" rx="15" fill="#102f37" stroke="#319b8d"/>
+      <text x="25" y="31" fill="#79ead9" font-size="13" font-weight="700" letter-spacing="1.7">01  INGESTION &amp; NORMALIZATION</text>
+      <text x="25" y="63" fill="#f5fbff" font-size="19" font-weight="650">Filing · XBRL concepts · periods · units · raw and normalized values · source digests</text>
+    </g>
+    <path d="M720 216v28" stroke="#688497" stroke-width="2" marker-end="url(#arrow)"/>
+
+    <g transform="translate(64 250)">
+      <rect width="1312" height="120" rx="15" fill="#142a40" stroke="#5275a7"/>
+      <text x="25" y="31" fill="#a8c7ff" font-size="13" font-weight="700" letter-spacing="1.7">02  PREDICTION &amp; REASONING — NO FINAL AUTHORITY</text>
+      <text x="25" y="65" fill="#f5fbff" font-size="19" font-weight="650">Metrics · rules · models · constrained LLM · Agent · risk fusion</text>
+      <rect x="954" y="24" width="330" height="70" rx="11" fill="#1a3553"/>
+      <text x="978" y="51" fill="#a8c7ff" font-size="12" font-weight="700">OUTPUT</text>
+      <text x="978" y="76" fill="#f5fbff" font-size="18" font-weight="700">PROPOSED DECISION</text>
+    </g>
+    <path d="M720 374v28" stroke="#688497" stroke-width="2" marker-end="url(#arrow)"/>
+
+    <g transform="translate(64 408)">
+      <rect width="1312" height="150" rx="15" fill="#34271f" stroke="#d88b58" stroke-width="2"/>
+      <text x="25" y="31" fill="#ffc49a" font-size="13" font-weight="700" letter-spacing="1.7">03  DECISION ASSURANCE RUNTIME — SOLE AUTHORIZATION BOUNDARY</text>
+      <g transform="translate(24 52)">
+        <rect width="292" height="72" rx="10" fill="#49352a"/><text x="18" y="30" fill="#fff" font-size="16" font-weight="650">Evidence assurance</text><text x="18" y="52" fill="#bea798" font-size="13">verified paths · provenance</text>
+        <rect x="316" width="292" height="72" rx="10" fill="#49352a"/><text x="334" y="30" fill="#fff" font-size="16" font-weight="650">Evidence fragility</text><text x="334" y="52" fill="#bea798" font-size="13">deterministic ablation · flips</text>
+        <rect x="632" width="292" height="72" rx="10" fill="#49352a"/><text x="650" y="30" fill="#fff" font-size="16" font-weight="650">Distribution validity</text><text x="650" y="52" fill="#bea798" font-size="13">reference envelope · availability</text>
+        <rect x="948" width="316" height="72" rx="10" fill="#49352a"/><text x="966" y="30" fill="#fff" font-size="16" font-weight="650">Admission policy</text><text x="966" y="52" fill="#bea798" font-size="13">maturity · calibration · reasons</text>
+      </g>
+    </g>
+    <path d="M720 562v28" stroke="#688497" stroke-width="2" marker-end="url(#arrow)"/>
+
+    <g transform="translate(64 596)">
+      <rect width="620" height="104" rx="15" fill="#102b3b" stroke="#2e5064"/>
+      <text x="25" y="31" fill="#79ead9" font-size="13" font-weight="700" letter-spacing="1.7">04  AUTHORIZED OUTCOME</text>
+      <text x="25" y="66" fill="#f5fbff" font-size="22" font-weight="700">PASS · FLAG · REVIEW · ABSTAIN</text>
+      <text x="25" y="89" fill="#91a9b8" font-size="13">Automation eligibility remains explicit and may be withheld.</text>
+    </g>
+    <path d="M690 648h64" stroke="#688497" stroke-width="2" marker-end="url(#arrow)"/>
+    <g transform="translate(770 596)">
+      <rect width="606" height="104" rx="15" fill="#102f37" stroke="#319b8d"/>
+      <text x="25" y="31" fill="#79ead9" font-size="13" font-weight="700" letter-spacing="1.7">05  DECISION CERTIFICATE</text>
+      <text x="25" y="63" fill="#f5fbff" font-size="18" font-weight="650">Digests · proposal · assurance · final decision · replay metadata</text>
+      <text x="25" y="88" fill="#91a9b8" font-size="13">Any mutation to hashed content invalidates verification.</text>
+    </g>
+  </g>
+</svg>

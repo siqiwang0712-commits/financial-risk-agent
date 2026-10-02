@@ -1,8 +1,24 @@
-# E5 — Confirmatory Study Preparation
+# E5 — Prospective Validation of Assured Selective Financial Decisions
 
-E5 is protocol-only. No cohort, prediction, label, result, or research claim
+Status: **DRAFT — WAITING FOR v0.4 ARCHITECTURE STABILIZATION**
+
+E5 is protocol-only. No cohort, prediction, label, result, final preregistration hash or research claim
 exists yet. E4 outcomes are already known, so neither unused E4 companies nor
 post-hoc E4 model/prompt/fusion choices may receive confirmatory status.
+
+The current E5 purpose is no longer “Agent/Hybrid versus B6.” Future E5 must evaluate
+whether assurance changes the safety and utility of selective financial decisions while
+retaining a strong predictive reference. Its comparison framework is:
+
+1. strong tabular predictor;
+2. strong tabular predictor plus a frozen selective policy;
+3. raw Agent proposal;
+4. Agent proposal plus evidence verification;
+5. full FinRisk Assurance: evidence, fragility, distribution validity and admission policy.
+
+B0 and B6 remain historical anchors, not the default primary reference after E4-R showed
+that strong tabular models outperform B6. Ranking, calibration, risk–coverage behavior,
+unsafe-automation rate and abstention/review utility require distinct estimands.
 
 E5 must use a newly available future period, freeze all decisions before
 outcome access, and remain company-disjoint from E1–E4 and prior validation
@@ -10,8 +26,10 @@ cohorts.
 
 ## Protocol package
 
-`STUDY_PROTOCOL_DRAFT.md` is the original E4-era draft, retained as history.
-The freeze candidate lives in `protocol/`:
+`STUDY_PROTOCOL_DRAFT.md` is the current v0.4-aligned design note. The more detailed
+package under `protocol/` preserves useful governance, isolation and adjudication
+infrastructure, but its old B6/A2/Hybrid hypothesis framing is **legacy design material,
+not a freeze candidate**, until it is rewritten after the v0.4 contracts stabilize:
 
 | File | Purpose |
 |---|---|
@@ -27,7 +45,7 @@ The freeze candidate lives in `protocol/`:
 | `protocol/power_analysis.json` | its output: power curves, recommended cohort, attrition sensitivity |
 | `protocol/verify_freeze_chain.py` | mechanical verifier for the staged freeze chain |
 
-`protocol/` is written but **not frozen**. Nothing here has a cohort, a
+`protocol/` is written but **not frozen** and has no final preregistration hash. Nothing here has a cohort, a
 prediction, a label or a result.
 
 ## Narrative / evidence study
@@ -68,6 +86,11 @@ Ready:
   reported as "the Agent adds value".
 
 Blocking:
+
+- The v0.4 API, policy, certificate schema and reference-distribution design must
+  stabilize before any comparator or estimand is frozen.
+- A strong tabular predictor and its separate calibration split must be selected without
+  E5 outcome access; B6 alone is not an adequate competitive baseline after E4-R.
 
 - **`research/e4/_cache/previous_270.json` is unpublished** (only its SHA-256 is pinned),
   so company-disjointness against the prior 270-CIK cohort cannot be proven. This must be

@@ -107,8 +107,9 @@ def test_component_telemetry_is_frozen_into_decision_bundle():
         "LLM_narrative",
         "Critic",
         "Verifier",
-        "fusion",
-    }
+            "fusion",
+            "assurance",
+        }
     assert state.epistemics["calibration_status"] == "UNCALIBRATED"
     assert list(state.decision_bundle["component_telemetry"]) == state.component_telemetry
     assert state.decision_bundle["epistemics"]["probability"] is None

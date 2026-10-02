@@ -33,10 +33,58 @@ const decisionPath = {
   coverage: 1,
   disagreement: 0,
   fusion_contribution: { method: "hierarchical_escalation", role: "escalator" },
+  decision_dependency: {
+    proposed_decision: "FLAG",
+    risk_dimension: "liquidity",
+    computational_contribution: 35,
+  },
+};
+
+const assurance = {
+  proposed_decision: "FLAG",
+  final_decision: "REVIEW",
+  automation_allowed: false,
+  assurance_status: "FAILED",
+  evidence_assurance: { state: "VERIFIED", coverage: 1 },
+  evidence_fragility: { state: "STABLE" },
+  distribution_validity: { state: "UNKNOWN", reference_scope: null },
+  decision_sufficient_evidence: { method: "EXACT" },
+  policy_status: "HEURISTIC_POLICY",
+  calibration_status: "UNCALIBRATED",
+  reason_codes: ["DISTRIBUTION_VALIDITY_UNKNOWN"],
+  policy_version: "test-v1",
+  policy_hash: "policy-hash",
+  certificate_hash: "assurance-hash",
+  diagnostics: {
+    authorization_blockers: ["distribution_unknown"],
+    runtime_failures: [],
+    reliability: null,
+    probability: null,
+  },
+};
+
+const certificate = {
+  bundle_id: "bundle-1",
+  input_hash: "input-hash",
+  output_hash: "output-hash",
+  proposed_decision: "FLAG",
+  final_decision: "REVIEW",
+  certificate_version: "decision-certificate-v0.4",
+  certificate_hash: "certificate-hash",
+  policy_version: "test-v1",
+  policy_hash: "policy-hash",
+  calibration_status: "UNCALIBRATED",
+  assurance,
 };
 
 const agent = {
   status: "COMPLETED",
+  proposed_decision: "FLAG",
+  decision: "REVIEW",
+  assurance,
+  decision_certificate: certificate,
+  financial_features: { cash: 10 },
+  reporting_observability: { cash: true },
   plan: [{ id: "1", phase: "ANALYSE", tool: "financial_metrics", purpose: "ratios" }],
   trace: [{ step_id: "s1", phase: "ANALYSE", tool: "financial_metrics", status: "ran", summary: "ok", latency_ms: 12 }],
   conclusions: [{ claim: "c", reason: "r", tool: "risk_rules", rationale: "why", confidence: 0.5, evidence: [evidence] }],
@@ -60,6 +108,12 @@ const assessment = {
   reporting_period: "2025",
   overall_score: 58,
   risk_level: "Moderate",
+  proposed_decision: "FLAG",
+  final_decision: "REVIEW",
+  assurance,
+  decision_certificate: certificate,
+  financial_features: { cash: 10 },
+  reporting_observability: { cash: true },
   confidence: 0.7,
   evidence_coverage: 1,
   dimensions: { liquidity: { score: 35, coverage: 1, key_drivers: ["LIQ_006"] } },
@@ -89,11 +143,92 @@ test("a payload missing any required top-level field is rejected", () => {
     "company", "reporting_period", "overall_score", "risk_level", "confidence",
     "evidence_coverage", "dimensions", "models", "triggered_rules",
     "missing_information", "confidence_components", "failure_state",
+    "proposed_decision", "final_decision", "assurance", "decision_certificate",
+    "financial_features", "reporting_observability",
   ]) {
     const candidate = { ...assessment };
     delete candidate[field];
     assert.equal(isAssessmentPayload(candidate), false, field);
   }
+});
+
+test("proposal, assurance, and final authorization are independently required", () => {
+  for (const field of [
+    "proposed_decision", "decision", "assurance", "decision_certificate",
+  ]) {
+    const candidate = { ...agent };
+    delete candidate[field];
+    assert.equal(isAgentPayload(candidate), false, field);
+  }
+  const passedAssurance = {
+    ...assurance,
+    final_decision: "FLAG",
+    automation_allowed: true,
+    assurance_status: "PASSED",
+  };
+  assert.equal(isAssessmentPayload({
+    ...assessment,
+    final_decision: "FLAG",
+    assurance: passedAssurance,
+    decision_certificate: {
+      ...certificate,
+      final_decision: "FLAG",
+      assurance: passedAssurance,
+    },
+    agent: null,
+  }), true, "matching labels are valid only when an AssuranceResult authorizes them");
+});
+
+test("certificate linkage and policy identity cannot be silently changed", () => {
+  assert.equal(isAssessmentPayload({
+    ...assessment,
+    decision_certificate: { ...certificate, policy_hash: "forged" },
+  }), false);
+  assert.equal(isAssessmentPayload({
+    ...assessment,
+    decision_certificate: { ...certificate, final_decision: "FLAG" },
+  }), false);
+  assert.equal(isAssessmentPayload({
+    ...assessment,
+    agent: {
+      ...agent,
+      decision_certificate: { ...certificate, certificate_hash: "different" },
+    },
+  }), false);
+});
+
+test("fail-closed assurance states remain valid, explicit API payloads", () => {
+  const cases = [
+    ["missing evidence", { evidence_assurance: { state: "INSUFFICIENT", coverage: 0 } }],
+    ["fragile evidence", { evidence_fragility: { state: "FRAGILE" } }],
+    ["outside reference", {
+      distribution_validity: { state: "OUTSIDE_REFERENCE", reference_scope: "DEVELOPMENT_REFERENCE_ONLY" },
+    }],
+    ["uncalibrated policy", { calibration_status: "UNCALIBRATED" }],
+  ];
+  for (const [label, override] of cases) {
+    const failed = { ...assurance, ...override, automation_allowed: false, assurance_status: "FAILED" };
+    const failedCertificate = {
+      ...certificate,
+      assurance: failed,
+      final_decision: failed.final_decision,
+      calibration_status: failed.calibration_status,
+    };
+    assert.equal(isAssessmentPayload({
+      ...assessment,
+      assurance: failed,
+      decision_certificate: failedCertificate,
+      agent: null,
+    }), true, label);
+  }
+});
+
+test("missing or malformed certificates fail closed at the payload boundary", () => {
+  assert.equal(isAssessmentPayload({ ...assessment, decision_certificate: null }), false);
+  assert.equal(isAssessmentPayload({
+    ...assessment,
+    decision_certificate: { ...certificate, assurance: { ...assurance, diagnostics: undefined } },
+  }), false);
 });
 
 test("wrong scalar types and non-finite numbers are rejected", () => {

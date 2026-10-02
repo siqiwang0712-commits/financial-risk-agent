@@ -227,7 +227,7 @@ def test_version_metadata_is_consistent():
     frontend_lock = json.loads(
         (ROOT / "frontend/package-lock.json").read_text(encoding="utf-8")
     )
-    expected = "0.3.4"
+    expected = "0.4.0"
     changelog_version = next(
         line.removeprefix("## [").split("]", 1)[0]
         for line in (ROOT / "CHANGELOG.md").read_text(encoding="utf-8").splitlines()

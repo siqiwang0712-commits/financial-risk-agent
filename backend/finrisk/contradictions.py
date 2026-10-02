@@ -7,8 +7,9 @@ from dataclasses import asdict, dataclass
 from pathlib import Path
 
 from .domain import Contradiction, NarrativeClaim
+from .resources import runtime_data_file
 
-_POLICY_PATH = Path(__file__).resolve().parents[2] / "config" / "consistency_policy.json"
+_POLICY_PATH = runtime_data_file("config", "consistency_policy.json")
 
 
 def _normalized_text_hash(path: Path) -> str:

@@ -167,11 +167,18 @@ export interface DecisionPath {
     dimension_score: number | null;
     role: string;
   };
+  decision_dependency: {
+    proposed_decision: string;
+    risk_dimension: string;
+    computational_contribution: number | null;
+  };
   path: string[];
 }
 
 export interface DecisionTrace {
   decision: string;
+  proposed_decision: string;
+  final_decision: string;
   decision_reason_codes: string[];
   initial_fusion_decision: string;
   failure_aware_decision: string;
@@ -187,6 +194,8 @@ export interface FusionResult {
   severity: string;
   score: number | null;
   decision: string;
+  proposed_decision: string;
+  decision_semantics: string;
   evidence_coverage: number;
   decision_confidence: number;
   disagreement: number;
@@ -196,6 +205,85 @@ export interface FusionResult {
   reliability: number | null;
   reliability_status: string;
   reason_codes: string[];
+}
+
+export interface EvidenceAssurance {
+  state: "VERIFIED" | "PARTIAL" | "INSUFFICIENT" | "UNKNOWN";
+  material_path_count: number;
+  verified_path_count: number;
+  coverage: number;
+  verified_evidence_ids: string[];
+  supported_claims: string[];
+  diagnostics: string[];
+}
+
+export interface EvidenceFragility {
+  state: "STABLE" | "SENSITIVE" | "FRAGILE" | "NOT_ESTIMABLE";
+  largest_single_evidence_impact: number | null;
+  decision_flip_count: number;
+  decision_flip_rate: number | null;
+  severity_change_count: number;
+  affected_dimensions: string[];
+  affected_claims: string[];
+  ablations: Array<Record<string, unknown>>;
+}
+
+export interface DistributionValidity {
+  state: "IN_REFERENCE" | "WARNING" | "OUTSIDE_REFERENCE" | "UNKNOWN";
+  reference_name: string | null;
+  reference_version: string | null;
+  reference_scope: "DEVELOPMENT_REFERENCE_ONLY" | "VALIDATED_EXTERNAL" | null;
+  evaluated_feature_count: number;
+  outside_feature_count: number;
+  reporting_availability_rate: number | null;
+  diagnostics: string[];
+}
+
+export interface DecisionSufficientEvidence {
+  evidence_ids: string[];
+  method: "EXACT" | "GREEDY_APPROXIMATION" | "NOT_ESTIMABLE";
+  exact: boolean;
+  preserves_proposed_decision: boolean;
+  evaluated_subsets: number;
+  baseline_decision: string;
+}
+
+export interface AssuranceResult {
+  proposed_decision: string;
+  final_decision: string;
+  automation_allowed: boolean;
+  assurance_status: "PASSED" | "RESTRICTED" | "FAILED";
+  evidence_assurance: EvidenceAssurance;
+  evidence_fragility: EvidenceFragility;
+  distribution_validity: DistributionValidity;
+  decision_sufficient_evidence: DecisionSufficientEvidence;
+  policy_status: string;
+  calibration_status: string;
+  reason_codes: string[];
+  policy_version: string;
+  policy_hash: string;
+  certificate_hash: string;
+  diagnostics: {
+    authorization_blockers: string[];
+    runtime_failures: string[];
+    reliability: number | null;
+    probability: null;
+  };
+}
+
+export interface DecisionCertificate {
+  bundle_id: string;
+  input_hash: string;
+  output_hash: string;
+  proposed_decision: string;
+  final_decision: string;
+  policy_version: string;
+  policy_hash: string;
+  calibration_status: string;
+  component_versions: Record<string, string>;
+  certificate_version: string;
+  certificate_hash: string;
+  assurance: AssuranceResult;
 }
 
 export interface Epistemics {
@@ -241,6 +329,7 @@ export interface AnalysisSnapshotSummary {
 
 export interface AgentPayload {
   status: string;
+  proposed_decision: Decision | string;
   decision: Decision | string;
   risk_severity: string;
   risk_trajectory: string;
@@ -254,6 +343,8 @@ export interface AgentPayload {
   trace: TraceStep[];
   conclusions: Conclusion[];
   component_telemetry: ComponentTelemetry[];
+  assurance: AssuranceResult;
+  decision_certificate: DecisionCertificate;
   decision_trace: DecisionTrace;
   role_review: RoleReview;
   fusion: FusionResult;
@@ -272,7 +363,10 @@ export interface AssessmentPayload {
   evidence_quality: number;
   evidence_coverage: number;
   reliability_status: string;
+  proposed_decision: string;
+  assurance: AssuranceResult;
   final_decision: string;
+  decision_certificate: DecisionCertificate;
   failure_state: FailureState;
   disclaimer: string;
   dimensions: Record<string, Dimension>;
@@ -284,6 +378,8 @@ export interface AssessmentPayload {
   missing_information: string[];
   confidence_components: Record<string, number>;
   enterprise_fusion: FusionResult;
+  financial_features: Record<string, number | null>;
+  reporting_observability: Record<string, boolean>;
   agent?: AgentPayload;
 }
 

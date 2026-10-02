@@ -490,6 +490,11 @@ button.ghost {
   border-top: 2px solid var(--ink);
 }
 
+.decisionHero.assuranceHierarchy {
+  grid-template-columns: minmax(0, 1.2fr) minmax(180px, .8fr) minmax(220px, 1fr);
+  align-items: center;
+}
+
 .heroScore small {
   display: block;
   font: 700 10px monospace;
@@ -513,13 +518,33 @@ button.ghost {
   margin: 4px 0 0;
 }
 
-.heroDecision small {
+.heroDecision small,
+.heroAssurance small {
   display: block;
   font: 700 10px monospace;
   color: var(--rust);
   letter-spacing: 0.1em;
   text-transform: uppercase;
 }
+
+.proposedDisposition,
+.heroAssurance p {
+  color: var(--muted);
+  font-size: 13px;
+  margin: 8px 0 0;
+}
+
+.assuranceTag {
+  display: inline-block;
+  margin-top: 10px;
+  padding: 7px 11px;
+  border-radius: 4px;
+  font: 700 18px monospace;
+}
+
+.assuranceTag.passed { background: var(--ok-bg); color: var(--ok); }
+.assuranceTag.restricted { background: #fff8e1; color: var(--warn); }
+.assuranceTag.failed { background: var(--bad-bg); color: var(--bad); }
 
 .decisionTag {
   display: inline-block;
@@ -563,10 +588,79 @@ button.ghost {
 
 .decisionStrip {
   display: grid;
-  grid-template-columns: repeat(6, 1fr);
+  grid-template-columns: repeat(4, 1fr);
   border: 1px solid var(--line);
   margin-bottom: 8px;
 }
+
+.authorityNote {
+  border-left: 3px solid var(--rust);
+  color: var(--ink);
+  font: 15px/1.5 Georgia, serif;
+  margin: 14px 0;
+  padding: 8px 12px;
+}
+
+.assurancePanel {
+  max-width: 960px;
+}
+
+.assurancePanel > header {
+  align-items: flex-start;
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  border-bottom: 1px solid var(--line);
+  padding-bottom: 18px;
+}
+
+.assurancePanel header small {
+  color: var(--rust);
+  font: 700 10px monospace;
+  letter-spacing: .1em;
+}
+
+.assurancePanel h3 { margin: 7px 0 0; font: 24px Georgia, serif; }
+
+.assuranceStates {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  margin: 20px 0;
+}
+
+.assuranceState {
+  background: var(--paper);
+  padding: 15px;
+}
+
+.assuranceState > span { display: block; font-size: 12px; margin-bottom: 9px; }
+
+.assuranceReasons {
+  border: 1px solid var(--line);
+  padding: 16px;
+  margin-bottom: 14px;
+}
+
+.assuranceReasons ul { display: flex; flex-wrap: wrap; gap: 7px; list-style: none; margin: 10px 0 0; padding: 0; }
+.assuranceReasons li { background: #fff8e1; color: var(--warn); padding: 5px 8px; }
+
+.assurancePanel details {
+  border-top: 1px solid var(--line);
+  padding: 14px 0;
+}
+
+.assurancePanel summary { cursor: pointer; font: 700 16px Georgia, serif; }
+.assurancePanel details p, .assurancePanel details li { color: var(--muted); font-size: 13px; }
+
+.certificateGrid {
+  display: grid;
+  grid-template-columns: 140px minmax(0, 1fr);
+  gap: 8px 12px;
+}
+
+.certificateGrid dt { color: var(--muted); }
+.certificateGrid dd { margin: 0; overflow-wrap: anywhere; }
 
 .decisionStrip .stripCell {
   padding: 16px;
@@ -1604,9 +1698,13 @@ a:focus-visible,
     grid-template-columns: 1fr;
   }
 
+  .assuranceStates { grid-template-columns: repeat(2, 1fr); }
+
   .decisionStrip {
     grid-template-columns: repeat(3, 1fr);
   }
+
+  .assuranceStates { grid-template-columns: 1fr; }
 
   .pathsHeader {
     flex-direction: column;
@@ -1701,7 +1799,7 @@ a:focus-visible,
 }
 
 /* ================================================================
-   Public showcase · v0.3.4
+   Public showcase · v0.4 development
    The sections below deliberately override the older workbench shell while
    preserving the detailed assessment components used inside the evidence room.
    ================================================================ */

@@ -7,6 +7,12 @@ from typing import Any
 
 @dataclass(frozen=True)
 class RiskSnapshot:
+    """Historical risk proposal snapshot.
+
+    ``decision`` is retained for the v0.3 storage contract and is not an
+    Assurance-authorized final decision. Runtime final decisions live in a
+    Decision Certificate.
+    """
     entity_id: str
     period: str
     filing_id: str
@@ -18,6 +24,10 @@ class RiskSnapshot:
     coverage: float
     reliability: float | None = None
     calibration_status: str = "UNCALIBRATED"
+
+    @property
+    def proposed_decision(self) -> str:
+        return self.decision
 
 
 @dataclass(frozen=True)

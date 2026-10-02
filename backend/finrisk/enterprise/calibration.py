@@ -58,7 +58,21 @@ def selective_decision(proposed: str, coverage: float, reliability: float | None
     if disagreement >= policy.get("maximum_disagreement", 0.45):
         failures.append(DecisionReasonCode.HIGH_MODEL_DISAGREEMENT.value)
     decision = "ABSTAIN" if {"LOW_COVERAGE", DecisionReasonCode.UNVALIDATED_RELIABILITY.value, "MISSING_CALIBRATED_RELIABILITY"} & set(failures) else "REVIEW" if failures else proposed
-    return {"decision": decision, "proposed_decision": proposed, "failure_reasons": failures, "automation_allowed": not failures, "reliability": reliability, "calibration_status": calibration_status.value}
+    return {
+        # v0.3 compatibility alias: this is a policy recommendation, never an
+        # authorized final decision. AssuranceEngine is the sole authority.
+        "decision": decision,
+        "decision_semantics": "LEGACY_ALIAS_FOR_POLICY_PROPOSAL",
+        "proposed_decision": proposed,
+        "recommended_disposition": decision,
+        "final_decision": None,
+        "authorized": False,
+        "failure_reasons": failures,
+        "automation_allowed": False,
+        "policy_eligible_for_assurance": not failures,
+        "reliability": reliability,
+        "calibration_status": calibration_status.value,
+    }
 
 
 def _validate(labels: list[int], probabilities: list[float]) -> None:

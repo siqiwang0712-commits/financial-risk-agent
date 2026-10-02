@@ -67,6 +67,7 @@ class AgentState:
     evidence_coverage: float = 0.0
     risk_severity: str = "unknown"
     risk_trajectory: str = "insufficient_history"
+    proposed_decision: str = "ABSTAIN"
     decision: str = "ABSTAIN"
     model_disagreement: float = 0.0
     fusion: dict[str, Any] = field(default_factory=dict)
@@ -76,6 +77,8 @@ class AgentState:
     role_review: dict[str, Any] = field(default_factory=dict)
     epistemics: dict[str, Any] = field(default_factory=dict)
     component_telemetry: list[dict[str, Any]] = field(default_factory=list)
+    assurance: dict[str, Any] = field(default_factory=dict)
+    decision_certificate: dict[str, Any] = field(default_factory=dict)
 
     def transition(self, target: AgentStatus) -> None:
         terminal = {

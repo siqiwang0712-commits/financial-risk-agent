@@ -16,7 +16,7 @@ function EvidenceCard({ item }: { item: Evidence }) {
       </header>
       <p>{item.quote || item.source_text || "(no quoted span)"}</p>
       <footer>
-        <span>confidence {item.confidence.toFixed(2)}</span>
+        <span>evidence confidence (uncalibrated) {item.confidence.toFixed(2)}</span>
         {item.value !== null && item.value !== undefined ? <span>value {item.value}</span> : null}
         {item.unit ? <span>{item.unit}</span> : null}
       </footer>
@@ -59,7 +59,7 @@ export function EvidenceTrail({ conclusions }: Props) {
             <small>Tool / rationale</small>
             <b>{conclusion.tool}</b>
             <p>{conclusion.rationale}</p>
-            <span className="confidenceChip">confidence {conclusion.confidence}</span>
+            <span className="confidenceChip">claim confidence (uncalibrated) {conclusion.confidence}</span>
           </div>
 
           <div className="trailEvidence">

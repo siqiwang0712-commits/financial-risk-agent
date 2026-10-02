@@ -30,7 +30,8 @@ export function isEvidence(value) {
 }
 
 export function isDecisionPath(value) {
-  if (!record(value) || !record(value.fusion_contribution) || !record(value.input_provenance)) {
+  if (!record(value) || !record(value.fusion_contribution)
+    || !record(value.input_provenance) || !record(value.decision_dependency)) {
     return false;
   }
   return typeof value.reason_code === "string"
@@ -42,13 +43,72 @@ export function isDecisionPath(value) {
       (refs) => Array.isArray(refs) && refs.every(isEvidence),
     )
     && typeof value.fusion_contribution.method === "string"
-    && typeof value.fusion_contribution.role === "string";
+    && typeof value.fusion_contribution.role === "string"
+    && typeof value.decision_dependency.proposed_decision === "string"
+    && typeof value.decision_dependency.risk_dimension === "string"
+    && (finite(value.decision_dependency.computational_contribution)
+      || value.decision_dependency.computational_contribution === null);
+}
+
+export function isAssuranceResult(value) {
+  if (!record(value) || !record(value.evidence_assurance)
+    || !record(value.evidence_fragility) || !record(value.distribution_validity)
+    || !record(value.decision_sufficient_evidence)
+    || !record(value.diagnostics)) return false;
+  return typeof value.proposed_decision === "string"
+    && typeof value.final_decision === "string"
+    && typeof value.automation_allowed === "boolean"
+    && typeof value.assurance_status === "string"
+    && typeof value.evidence_assurance.state === "string"
+    && finite(value.evidence_assurance.coverage)
+    && typeof value.evidence_fragility.state === "string"
+    && typeof value.distribution_validity.state === "string"
+    && (typeof value.distribution_validity.reference_scope === "string"
+      || value.distribution_validity.reference_scope === null)
+    && typeof value.policy_status === "string"
+    && typeof value.calibration_status === "string"
+    && strings(value.reason_codes)
+    && typeof value.policy_version === "string"
+    && typeof value.policy_hash === "string"
+    && typeof value.certificate_hash === "string"
+    && strings(value.diagnostics.authorization_blockers)
+    && strings(value.diagnostics.runtime_failures)
+    && (finite(value.diagnostics.reliability) || value.diagnostics.reliability === null)
+    && value.diagnostics.probability === null;
+}
+
+export function isDecisionCertificate(value) {
+  if (!record(value) || !record(value.assurance)
+    || !isAssuranceResult(value.assurance)) return false;
+  return (
+    typeof value.bundle_id === "string"
+    && typeof value.input_hash === "string"
+    && typeof value.output_hash === "string"
+    && typeof value.proposed_decision === "string"
+    && typeof value.final_decision === "string"
+    && typeof value.certificate_version === "string"
+    && typeof value.certificate_hash === "string"
+    && typeof value.policy_version === "string"
+    && typeof value.policy_hash === "string"
+    && typeof value.calibration_status === "string"
+    && value.proposed_decision === value.assurance.proposed_decision
+    && value.final_decision === value.assurance.final_decision
+    && value.policy_version === value.assurance.policy_version
+    && value.policy_hash === value.assurance.policy_hash
+    && value.calibration_status === value.assurance.calibration_status
+  );
 }
 
 export function isAgentPayload(value) {
   if (!record(value) || !record(value.decision_trace) || !record(value.fusion)) return false;
   const trace = value.decision_trace;
   return typeof value.status === "string"
+    && typeof value.proposed_decision === "string"
+    && typeof value.decision === "string"
+    && isAssuranceResult(value.assurance)
+    && isDecisionCertificate(value.decision_certificate)
+    && value.proposed_decision === value.assurance.proposed_decision
+    && value.decision === value.assurance.final_decision
     && Array.isArray(value.plan) && value.plan.every((item) => record(item)
       && typeof item.id === "string" && typeof item.phase === "string"
       && typeof item.tool === "string" && typeof item.purpose === "string")
@@ -88,6 +148,18 @@ export function isAssessmentPayload(body) {
     && typeof body.reporting_period === "string"
     && (finite(body.overall_score) || body.overall_score === null)
     && typeof body.risk_level === "string"
+    && typeof body.proposed_decision === "string"
+    && typeof body.final_decision === "string"
+    && isAssuranceResult(body.assurance)
+    && isDecisionCertificate(body.decision_certificate)
+    && body.proposed_decision === body.assurance.proposed_decision
+    && body.final_decision === body.assurance.final_decision
+    && (body.agent == null || body.decision_certificate.certificate_hash
+      === body.agent.decision_certificate.certificate_hash)
+    && record(body.financial_features)
+    && Object.values(body.financial_features).every((value) => finite(value) || value === null)
+    && record(body.reporting_observability)
+    && Object.values(body.reporting_observability).every((value) => typeof value === "boolean")
     && finite(body.confidence)
     && finite(body.evidence_coverage)
     && body.evidence_coverage >= 0 && body.evidence_coverage <= 1

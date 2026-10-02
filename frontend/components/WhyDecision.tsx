@@ -1,4 +1,5 @@
 import type { AssessmentPayload } from "../lib/types";
+import { authorizedDecision } from "../lib/presentation.mjs";
 
 interface Props {
   payload: AssessmentPayload;
@@ -44,7 +45,7 @@ const FAILURE_COPY: Record<string, string> = {
 
 function verdictSentence(payload: AssessmentPayload): string {
   const agent = payload.agent;
-  const decision = payload.final_decision || agent?.decision || "REVIEW";
+  const decision = authorizedDecision(payload);
   const trace = agent?.decision_trace;
   const verified = trace?.verified_path_count ?? 0;
   const material = trace?.material_path_count ?? 0;
@@ -53,6 +54,10 @@ function verdictSentence(payload: AssessmentPayload): string {
     ...(agent?.fusion?.reason_codes ?? []),
   ]);
   const blocking = payload.failure_state?.blocking_failures ?? [];
+
+  if (decision === "UNAUTHORIZED") {
+    return "The final decision is not authorized because its Assurance Result or Decision Certificate is missing or inconsistent.";
+  }
 
   if (decision === "ABSTAIN") {
     if (reasonCodes.has("INSUFFICIENT_EVIDENCE")) {

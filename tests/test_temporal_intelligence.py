@@ -127,7 +127,12 @@ def test_calibration_and_selective_automation():
     assert curve[-1]["coverage"] == 0.5
     assert selective_decision("PASS", 0.2, 0.9, 0.1, {})["decision"] == "ABSTAIN"
     assert selective_decision("PASS", 0.9, 0.5, 0.1, {}, CalibrationStatus.CALIBRATED_INTERNAL)["decision"] == "REVIEW"
-    assert selective_decision("PASS", 0.9, 0.9, 0.1, {}, CalibrationStatus.CALIBRATED_INTERNAL)["automation_allowed"]
+    eligible = selective_decision(
+        "PASS", 0.9, 0.9, 0.1, {}, CalibrationStatus.CALIBRATED_INTERNAL
+    )
+    assert eligible["policy_eligible_for_assurance"]
+    assert not eligible["automation_allowed"]
+    assert eligible["final_decision"] is None
     with pytest.raises(ValueError):
         brier_score([], [])
 
@@ -142,16 +147,25 @@ def test_three_role_review_rejects_unsupported_and_population_mismatch():
 
 
 def test_immutable_decision_bundle_and_agent_integration():
+    agent = FinancialRiskAgent(ROOT)
+    state = agent.run("Temporal Co", 2025, {"current_assets": 80, "current_liabilities": 100, "cash": 5})
     source = {"metrics": {"cash": 1}}
-    bundle = build_decision_bundle("org", "entity", {"10-K": "abc"}, {"cash": 1}, {"decision": "REVIEW"}, {"score": 50}, [], source, [], {"rules": "v1", "calibration": "none"}, "REVIEW")
+    bundle = build_decision_bundle(
+        "org", "entity", {"10-K": "abc"}, {"cash": 1},
+        {"final_decision": state.decision}, {"score": 50}, [], source, [],
+        {"rules": "v1", "calibration": "none"}, state.decision,
+        proposed_decision=state.proposed_decision,
+        assurance=state.assurance,
+        assurance_policy=agent.pipeline.assurance.policy,
+    )
     source["metrics"]["cash"] = 999
     assert bundle.calculations["metrics"]["cash"] == 1
-    assert verify_decision_bundle(bundle)
+    assert verify_decision_bundle(bundle, agent.pipeline.assurance.policy)
     altered = bundle.__class__(**{**bundle.to_dict(), "final_decision": "PASS"})
-    assert not verify_decision_bundle(altered)
-    state = FinancialRiskAgent(ROOT).run("Temporal Co", 2025, {"current_assets": 80, "current_liabilities": 100, "cash": 5})
+    assert not verify_decision_bundle(altered, agent.pipeline.assurance.policy)
     assert state.decision_bundle["bundle_hash"]
-    assert state.decision == state.decision_trace["decision"]
+    assert state.proposed_decision == state.decision_trace["decision"]
+    assert state.decision == state.decision_trace["final_decision"]
     assert state.decision == state.assessment["final_decision"]
     assert state.decision == state.analysis_snapshot["frozen_output"]["final_decision"]
     assert state.decision == state.decision_bundle["final_decision"]

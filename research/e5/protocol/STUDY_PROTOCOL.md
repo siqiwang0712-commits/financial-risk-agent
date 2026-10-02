@@ -1,10 +1,18 @@
-# E5 — Confirmatory External Validation of Structured Agent Reasoning
+# E5 — Confirmatory External Validation of Structured Agent Reasoning (Legacy Draft)
 
-Status: **PROSPECTIVE PROTOCOL — READY TO FREEZE — NO COHORT, NO PREDICTIONS, NO OUTCOMES**
+> **LEGACY DESIGN MATERIAL — NOT A FREEZE CANDIDATE.** E5 is now waiting for v0.4
+> Assurance architecture stabilization. The current design is
+> [`../STUDY_PROTOCOL_DRAFT.md`](../STUDY_PROTOCOL_DRAFT.md). This document's
+> B6/A2/Hybrid hypothesis framing must not be frozen or executed without a prospective,
+> outcome-blind amendment that adopts the v0.4 comparison framework.
 
-Supersedes `research/e5/STUDY_PROTOCOL_DRAFT.md` (retained as history). This document is
-the freeze candidate. Nothing here may be edited after the freeze commit; amendments must
-be recorded as a new, separately committed amendment with its own hash.
+Status: **LEGACY DRAFT — NOT_FROZEN — WAITING FOR v0.4 ARCHITECTURE STABILIZATION**
+
+This document predates the v0.4-aligned
+[`../STUDY_PROTOCOL_DRAFT.md`](../STUDY_PROTOCOL_DRAFT.md) and is retained as design
+history. It is not a freeze candidate and must not be executed in its current form. No
+cohort has been enumerated, no predictions generated, no outcomes accessed, and no
+preregistration or freeze hash created.
 
 ---
 

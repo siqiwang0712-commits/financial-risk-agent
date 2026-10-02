@@ -11,6 +11,22 @@ export function normalizeDecision(value) {
   return ['ABSTAIN', 'REVIEW', 'PASS', 'FLAG'].includes(value) ? value : 'REVIEW';
 }
 
+export function authorizedDecision(payload) {
+  const assurance = payload?.assurance;
+  const certificate = payload?.decision_certificate;
+  if (!assurance || !certificate
+    || payload.final_decision !== assurance.final_decision
+    || payload.proposed_decision !== assurance.proposed_decision
+    || certificate.final_decision !== assurance.final_decision
+    || certificate.proposed_decision !== assurance.proposed_decision
+    || certificate.policy_hash !== assurance.policy_hash
+    || (payload.agent != null
+      && certificate.certificate_hash !== payload.agent?.decision_certificate?.certificate_hash)) {
+    return 'UNAUTHORIZED';
+  }
+  return payload.final_decision;
+}
+
 export function evidenceLocator(evidence) {
   return [evidence.source, evidence.document, evidence.page ? `page ${evidence.page}` : null]
     .filter(Boolean)

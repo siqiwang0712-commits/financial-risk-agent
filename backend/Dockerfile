@@ -16,8 +16,8 @@ ARG PYTHON_BASE=python:3.12-slim@sha256:2f17fc044b579bab302c2e8054d3a686e2cb9a83
 
 # ---------------------------------------------------------------------------
 # Stage 1 — dependency resolution. Only the packaging metadata and the package
-# source are copied here, so that editing rules/, config/, migrations/ or the
-# frozen research data does not invalidate the (expensive) install layer.
+# source and packaged runtime policy data are copied here. Editing migrations or
+# frozen research data still does not invalidate the dependency-install layer.
 # ---------------------------------------------------------------------------
 FROM ${PYTHON_BASE} AS builder
 WORKDIR /app
@@ -25,6 +25,8 @@ ENV PIP_NO_CACHE_DIR=1 \
     PIP_DISABLE_PIP_VERSION_CHECK=1
 COPY pyproject.toml requirements.lock ./
 COPY backend ./backend
+COPY rules ./rules
+COPY config ./config
 RUN python -m venv /opt/venv \
     && /opt/venv/bin/python -m pip install --no-cache-dir pip==26.2.0 \
     && /opt/venv/bin/python -m pip install --no-cache-dir -c requirements.lock ".[postgres]"
@@ -35,7 +37,7 @@ RUN python -m venv /opt/venv \
 # *constraint* file here, so the dev extra is never installed).
 # ---------------------------------------------------------------------------
 FROM ${PYTHON_BASE} AS runtime
-ARG OCI_VERSION=0.3.4
+ARG OCI_VERSION=0.4.0
 ARG OCI_REVISION=unknown
 ARG OCI_CREATED=1970-01-01T00:00:00Z
 LABEL org.opencontainers.image.title="FinRisk API" \

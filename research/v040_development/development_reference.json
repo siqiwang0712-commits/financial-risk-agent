@@ -1,0 +1,325 @@
+{
+ "allowed_sectors": [
+  "industrial"
+ ],
+ "artifact_hash": "9b8c8e62520178206ce92df7abb2baaa21808a00d57f8f53f5950e6e2d1d12da",
+ "feature_bounds": {
+  "accounts_payable": [
+   77.5,
+   232.5
+  ],
+  "accounts_receivable": [
+   90.0,
+   270.0
+  ],
+  "capital_expenditure": [
+   37.5,
+   112.5
+  ],
+  "cash": [
+   21.0,
+   63.0
+  ],
+  "current_assets": [
+   205.0,
+   615.0
+  ],
+  "current_liabilities": [
+   247.5,
+   742.5
+  ],
+  "ebit": [
+   34.0,
+   102.0
+  ],
+  "ebitda": [
+   57.5,
+   172.5
+  ],
+  "gross_profit": [
+   155.0,
+   465.0
+  ],
+  "interest_expense": [
+   27.5,
+   82.5
+  ],
+  "inventory": [
+   70.0,
+   210.0
+  ],
+  "long_term_debt": [
+   205.0,
+   615.0
+  ],
+  "net_income": [
+   16.0,
+   48.0
+  ],
+  "operating_cash_flow": [
+   9.0,
+   27.0
+  ],
+  "operating_income": [
+   34.0,
+   102.0
+  ],
+  "retained_earnings": [
+   40.0,
+   120.0
+  ],
+  "revenue": [
+   675.0,
+   2025.0
+  ],
+  "shareholder_equity": [
+   145.0,
+   435.0
+  ],
+  "short_term_debt": [
+   95.0,
+   285.0
+  ],
+  "total_assets": [
+   600.0,
+   1800.0
+  ],
+  "total_debt": [
+   300.0,
+   900.0
+  ],
+  "total_liabilities": [
+   455.0,
+   1365.0
+  ]
+ },
+ "feature_schema": {
+  "features": [
+   "accounts_payable",
+   "accounts_receivable",
+   "capital_expenditure",
+   "cash",
+   "current_assets",
+   "current_liabilities",
+   "ebit",
+   "ebitda",
+   "gross_profit",
+   "interest_expense",
+   "inventory",
+   "long_term_debt",
+   "net_income",
+   "operating_cash_flow",
+   "operating_income",
+   "retained_earnings",
+   "revenue",
+   "shareholder_equity",
+   "short_term_debt",
+   "total_assets",
+   "total_debt",
+   "total_liabilities"
+  ],
+  "kind": "normalized raw financial values",
+  "reporting_observability_separate": true
+ },
+ "generation_method": "Single synthetic fixture; each observed non-negative financial value receives a deterministic \u00b150% envelope with a minimum width of 1. Reporting availability uses the pipeline's expected-feature schema and a 0.01 tolerance.",
+ "limitations": [
+  "Not representative of any issuer population.",
+  "Not suitable for calibration, probability claims, or automated real-world admission.",
+  "Only synthetic/demo and deterministic development tests may load this artifact.",
+  "Unknown or unsupported real-world inputs must continue to fail closed."
+ ],
+ "maximum_outside_fraction": 0.1,
+ "minimum_reporting_availability": 0.344839,
+ "name": "FinRisk synthetic development reference",
+ "reference_statistics": {
+  "accounts_payable": {
+   "development_lower": 77.5,
+   "development_upper": 232.5,
+   "n": 1,
+   "observed_max": 155.0,
+   "observed_min": 155.0
+  },
+  "accounts_receivable": {
+   "development_lower": 90.0,
+   "development_upper": 270.0,
+   "n": 1,
+   "observed_max": 180.0,
+   "observed_min": 180.0
+  },
+  "capital_expenditure": {
+   "development_lower": 37.5,
+   "development_upper": 112.5,
+   "n": 1,
+   "observed_max": 75.0,
+   "observed_min": 75.0
+  },
+  "cash": {
+   "development_lower": 21.0,
+   "development_upper": 63.0,
+   "n": 1,
+   "observed_max": 42.0,
+   "observed_min": 42.0
+  },
+  "current_assets": {
+   "development_lower": 205.0,
+   "development_upper": 615.0,
+   "n": 1,
+   "observed_max": 410.0,
+   "observed_min": 410.0
+  },
+  "current_liabilities": {
+   "development_lower": 247.5,
+   "development_upper": 742.5,
+   "n": 1,
+   "observed_max": 495.0,
+   "observed_min": 495.0
+  },
+  "ebit": {
+   "development_lower": 34.0,
+   "development_upper": 102.0,
+   "n": 1,
+   "observed_max": 68.0,
+   "observed_min": 68.0
+  },
+  "ebitda": {
+   "development_lower": 57.5,
+   "development_upper": 172.5,
+   "n": 1,
+   "observed_max": 115.0,
+   "observed_min": 115.0
+  },
+  "gross_profit": {
+   "development_lower": 155.0,
+   "development_upper": 465.0,
+   "n": 1,
+   "observed_max": 310.0,
+   "observed_min": 310.0
+  },
+  "interest_expense": {
+   "development_lower": 27.5,
+   "development_upper": 82.5,
+   "n": 1,
+   "observed_max": 55.0,
+   "observed_min": 55.0
+  },
+  "inventory": {
+   "development_lower": 70.0,
+   "development_upper": 210.0,
+   "n": 1,
+   "observed_max": 140.0,
+   "observed_min": 140.0
+  },
+  "long_term_debt": {
+   "development_lower": 205.0,
+   "development_upper": 615.0,
+   "n": 1,
+   "observed_max": 410.0,
+   "observed_min": 410.0
+  },
+  "net_income": {
+   "development_lower": 16.0,
+   "development_upper": 48.0,
+   "n": 1,
+   "observed_max": 32.0,
+   "observed_min": 32.0
+  },
+  "operating_cash_flow": {
+   "development_lower": 9.0,
+   "development_upper": 27.0,
+   "n": 1,
+   "observed_max": 18.0,
+   "observed_min": 18.0
+  },
+  "operating_income": {
+   "development_lower": 34.0,
+   "development_upper": 102.0,
+   "n": 1,
+   "observed_max": 68.0,
+   "observed_min": 68.0
+  },
+  "retained_earnings": {
+   "development_lower": 40.0,
+   "development_upper": 120.0,
+   "n": 1,
+   "observed_max": 80.0,
+   "observed_min": 80.0
+  },
+  "revenue": {
+   "development_lower": 675.0,
+   "development_upper": 2025.0,
+   "n": 1,
+   "observed_max": 1350.0,
+   "observed_min": 1350.0
+  },
+  "shareholder_equity": {
+   "development_lower": 145.0,
+   "development_upper": 435.0,
+   "n": 1,
+   "observed_max": 290.0,
+   "observed_min": 290.0
+  },
+  "short_term_debt": {
+   "development_lower": 95.0,
+   "development_upper": 285.0,
+   "n": 1,
+   "observed_max": 190.0,
+   "observed_min": 190.0
+  },
+  "total_assets": {
+   "development_lower": 600.0,
+   "development_upper": 1800.0,
+   "n": 1,
+   "observed_max": 1200.0,
+   "observed_min": 1200.0
+  },
+  "total_debt": {
+   "development_lower": 300.0,
+   "development_upper": 900.0,
+   "n": 1,
+   "observed_max": 600.0,
+   "observed_min": 600.0
+  },
+  "total_liabilities": {
+   "development_lower": 455.0,
+   "development_upper": 1365.0,
+   "n": 1,
+   "observed_max": 910.0,
+   "observed_min": 910.0
+  }
+ },
+ "required_features": [
+  "accounts_payable",
+  "accounts_receivable",
+  "capital_expenditure",
+  "cash",
+  "current_assets",
+  "current_liabilities",
+  "ebit",
+  "ebitda",
+  "gross_profit",
+  "interest_expense",
+  "inventory",
+  "long_term_debt",
+  "net_income",
+  "operating_cash_flow",
+  "operating_income",
+  "retained_earnings",
+  "revenue",
+  "shareholder_equity",
+  "short_term_debt",
+  "total_assets",
+  "total_debt",
+  "total_liabilities"
+ ],
+ "scope": "DEVELOPMENT_REFERENCE_ONLY",
+ "source_cohort_identity": "examples/synthetic_company.json:Northstar Components (Synthetic)",
+ "source_commit": "69cafe6a8afbb35aceec27a8e27660419d401b57",
+ "source_fixture_sha256": "dd8360c9781bada28660ac4704a15b5b43fa7222575d528199e166ffda24e443",
+ "status_labels": [
+  "RETROSPECTIVE",
+  "POST_HOC",
+  "DEVELOPMENT",
+  "NOT_CONFIRMATORY"
+ ],
+ "version": "v0.4.0-development-reference-1"
+}

@@ -1,5 +1,47 @@
 # Changelog
 
+## [0.4.0] - Unreleased
+
+### Assurance architecture
+
+- Added a first-class `backend/finrisk/assurance/` runtime. Prediction components now
+  produce proposals; a hash-verified `AssuranceResult` is required to publish a final
+  decision.
+- Added evidence assurance, deterministic evidence fragility, exact/greedy
+  Decision-Sufficient Evidence, distribution-validity states and versioned reason codes.
+- Separated `FinancialFeatureVector` from `ReportingObservabilityVector`; availability
+  can affect review and validity but not financial severity.
+- Extended DecisionBundle into a Decision Certificate with proposal, assurance, policy,
+  calibration, sufficient evidence, replay metadata and certificate hash.
+
+### API and Workbench
+
+- Assessment contracts now separate risk score/severity, proposed decision, assurance,
+  final decision and Decision Certificate.
+- Legacy fusion/selective-policy `decision` fields are explicitly proposal aliases and do
+  not authorize a final decision.
+- Redesigned the Workbench headline and added progressive Assurance detail views.
+
+### Research and documentation
+
+- Repositioned FinRisk as assured selective financial intelligence and documented the
+  v0.3.x → v0.4 authority change.
+- Preserved E1–E4-R as historical artifacts. No new confirmatory outcome was generated.
+- Revised E5 to an unfrozen draft for prospective validation of assured selective
+  financial decisions. No cohort, prediction or future outcome was accessed.
+
+### Release hardening
+
+- Completed the Python 3.11/3.12, coverage, frontend production-build, package-install,
+  Docker/PostgreSQL restart and release-Compose gates.
+- Added a hash-bound `DEVELOPMENT_REFERENCE_ONLY` synthetic profile for deterministic
+  validity-state coverage without implying empirical or external validation.
+- Bound certificate publication and persistence to the configured Assurance policy,
+  excluded operational timing fields from material replay identity, and added corruption
+  tests across proposal, final decision, policy, evidence, validity and automation state.
+- Corrected the E4-R threshold verifier to read the bytecode comparison operand rather
+  than the first numeric constant; frozen E4-R artifacts were not changed.
+
 ## [0.3.4] - 2026-09-23
 
 ### Hardened boundaries and runtime ownership

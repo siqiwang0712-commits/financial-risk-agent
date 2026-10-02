@@ -6,14 +6,13 @@
 
 # FinRisk
 
-### Evidence-grounded financial risk intelligence — research prototype
+### Assured selective financial intelligence — v0.4.0 review candidate
 
 [![CI](https://github.com/siqiwang0712-commits/financial-risk-agent/actions/workflows/ci.yml/badge.svg)](https://github.com/siqiwang0712-commits/financial-risk-agent/actions/workflows/ci.yml)
 [![Python 3.11+](https://img.shields.io/badge/Python-3.11%2B-3776AB?logo=python&logoColor=white)](https://www.python.org/)
 [![License](https://img.shields.io/badge/license-MIT-d45b3e)](LICENSE)
 
-**Deterministic financial analysis, constrained LLM interpretation, Agent orchestration,
-and an auditable evidence path for every material conclusion.**
+**A research system that separates financial-risk prediction from decision authorization.**
 
 English | [简体中文](README.zh-CN.md)
 
@@ -23,26 +22,30 @@ English | [简体中文](README.zh-CN.md)
 </div>
 
 > [!IMPORTANT]
-> **FinRisk is a research prototype.** Its 0–100 risk index is an expert-designed,
+> **FinRisk is a research prototype.** v0.4 implements an Assurance Runtime, but that
+> implementation is not external validation. Its 0–100 risk index is an expert-designed,
 > `UNCALIBRATED` heuristic—not a bankruptcy probability, credit rating, fraud finding,
 > or investment recommendation. No production deployment, external validation,
 > regulatory approval, or production SLA is claimed.
 
 ## What is FinRisk?
 
-FinRisk is an open research platform for analyzing financial deterioration and the
-evidence behind it. It combines structured SEC/XBRL facts and annual-report PDFs with
-deterministic financial metrics, traditional screening models, versioned expert rules,
-and a constrained LLM that interprets narrative disclosures.
+FinRisk is an open research system for analyzing financial deterioration and deciding
+whether a proposed conclusion is sufficiently supported to be issued. It combines
+structured SEC/XBRL facts and annual-report PDFs with deterministic financial metrics,
+traditional screening models, versioned expert rules, and a constrained LLM that
+interprets narrative disclosures.
 
-An Agent plans and coordinates the analysis, but does not become the source of financial
-truth. Arithmetic stays in tested code. Extracted claims must survive evidence checks.
-Missing, conflicting, stale, inapplicable, or unverifiable inputs remain explicit and can
-lead to `REVIEW` or `ABSTAIN` instead of fabricated certainty.
+Models, rules, fusion and Agent reasoning may produce a `proposed_decision`. They cannot
+authorize a final decision. The independent Assurance Runtime evaluates verified evidence,
+single-evidence fragility, reference-distribution validity, disagreement, calibration
+status and policy maturity. Only a valid, hash-bound `AssuranceResult` can produce
+`final_decision` and a replayable Decision Certificate.
 
-FinRisk is designed for inspectable decision support: severity, trajectory, evidence
-coverage, confidence, model disagreement, calibration status, and provenance stay
-separate rather than being collapsed into one persuasive score.
+This is the v0.3.x → v0.4 shift: v0.3.x provided evidence-grounded financial-risk
+analysis; v0.4 makes decision authorization a separate, fail-closed runtime layer.
+Severity, evidence support, fragility, distribution validity, model disagreement and
+calibration remain separate quantities rather than one persuasive confidence score.
 
 ## Why FinRisk?
 
@@ -62,44 +65,58 @@ suited to it:
 | Ratios, trends, scenarios and model formulas | Tested deterministic tools |
 | MD&A, notes and audit-language interpretation | Schema-constrained LLM |
 | Risk patterns and thresholds | Versioned rules and policy |
-| Material conclusions | Failure-aware fusion and evidence verification |
+| Risk score, severity and proposed disposition | Rules, models, fusion and Agent reasoning |
+| Final decision authorization | Assurance Runtime only |
+| Immutable decision record | Decision Certificate |
 
-> **Financial arithmetic belongs to deterministic systems. Semantic interpretation
-> belongs to a constrained LLM. Decisions belong to an auditable evidence path.**
+> **Prediction components may propose a financial-risk decision. Only the Assurance
+> layer may authorize the final decision.**
 
 ## How it works
 
-<img src="docs/assets/decision-architecture.svg" alt="FinRisk three-layer decision architecture" width="100%" />
+<img src="docs/assets/assurance-architecture.svg" alt="FinRisk v0.4 assurance-controlled decision architecture" width="100%" />
 
 ```text
 Financial filing
-    ↓
-Ingestion & normalization
-    ↓
-Metrics / models / rules
-    ↓
-Agent reasoning & cross-checking
-    ↓
-Evidence verification
-    ↓
+        ↓
+Ingestion / normalization
+        ↓
+Metrics / rules / models / constrained LLM / Agent
+        ↓
+Risk fusion → PROPOSED DECISION
+        ↓
+Decision Assurance Runtime
+  evidence · fragility · distribution validity · admission policy
+        ↓
 PASS / FLAG / REVIEW / ABSTAIN
+        ↓
+Decision Certificate
 ```
 
-The three layers enforce a dependency boundary:
+The runtime enforces four responsibility boundaries:
 
 1. **Interface Layer** — FastAPI and the Next.js Workbench present inputs, workflow and
    proof; they do not calculate financial risk.
-2. **Agent Reasoning Layer** — the planner and orchestrator select typed tools, assess
-   sufficiency, cross-check signals, verify claims, reflect, and synthesize or abstain.
-3. **Tool / Code Layer** — ingestion, normalization, metrics, models, rules, evidence,
-   contradiction detection, fusion and replay execute deterministically.
+2. **Prediction Layer** — deterministic tools and constrained Agent reasoning calculate
+   financial signals and propose a disposition; they have no final-decision authority.
+3. **Assurance Layer** — evidence assurance, deterministic ablation, distribution-validity
+   diagnostics and versioned admission policy authorize, restrict or refuse the proposal.
+4. **Certificate Layer** — input/document digests, component versions, proposal, assurance,
+   final decision and replay metadata are content-hashed into an immutable certificate.
 
-`FinRiskPipeline` is the shared runtime owner for the API, Agent and tool registry. The
-Agent orchestrates the pipeline; it does not replace the deterministic decision path.
-Material claims trace from document location or XBRL concept through the responsible
-tool/rule/model and fusion contribution to the final decision.
+`FinRiskPipeline` remains the shared calculation owner for API, Agent and tool registry.
+`AssuranceEngine` is the sole authorization owner. The enforced invariant is:
 
-Read the [full architecture and platform boundary](docs/enterprise_platform.md),
+```text
+No AssuranceResult → no authorized final decision
+```
+
+Material claims trace from source document, location, period, XBRL concept, unit and raw
+value through normalization, metric, rule/model and fusion contribution into the proposal
+and its assurance decision. These are computational dependencies, not causal claims.
+
+Read the [v0.4 Assurance architecture](docs/assurance_architecture.md),
+[full platform boundary](docs/enterprise_platform.md),
 [three-layer migration map](docs/three_layer_migration.md), and
 [decision-grade controls](docs/decision_grade_controls.md).
 
@@ -112,11 +129,14 @@ Read the [full architecture and platform boundary](docs/enterprise_platform.md),
 - Liquidity, leverage, profitability, cash-flow, working-capital and multi-period trends.
 - Altman Z, Beneish M, Piotroski-style F and Ohlson O screening with applicability checks.
 - 68 versioned expert rules, including inspectable single-factor and cross-factor signals.
-- Typed Agent orchestration for planning, tool use, cross-checking, verification and
-  failure-aware synthesis.
+- Typed Agent orchestration that proposes—but cannot authorize—risk dispositions.
 - Quote verification, evidence-state tracking and source-to-decision provenance graphs.
-- Immutable snapshots, deterministic replay and drift comparison without overwriting the
-  historical decision.
+- Deterministic evidence ablation with score impact, decision flips and affected claims.
+- Exact or explicitly approximate Decision-Sufficient Evidence sets.
+- Conservative distribution-validity states that fail closed outside known conditions.
+- Separate financial-value and reporting-observability vectors; missingness cannot silently
+  raise financial severity.
+- Immutable Decision Certificates, deterministic replay and mutation-detecting hashes.
 - Explicit `REVIEW` / `ABSTAIN` behavior for insufficient coverage, contradictions,
   model disagreement, unavailable components or invalid inputs.
 
@@ -132,7 +152,10 @@ policies, snapshots, temporal risk, scenarios, fusion and audit events. Authenti
 routes use `X-API-Key`; organization and role are resolved from the server-side hashed
 credential rather than caller headers.
 
-Failures retain correlation IDs and fail closed around validation, rate limiting,
+Assessment responses distinguish `risk_score`, `risk_severity`, `proposed_decision`,
+`assurance`, `final_decision` and `decision_certificate`. Legacy `decision` fields are
+documented proposal/final aliases rather than overloaded confidence measures. Failures
+retain correlation IDs and fail closed around validation, rate limiting,
 datastore access and document processing. See the [complete API reference](docs/API_REFERENCE.md)
 for every endpoint, upload limit, error contract and bootstrap rule. With the backend
 running, interactive OpenAPI documentation is available at `http://localhost:8000/docs`.
@@ -313,23 +336,28 @@ The canonical integrity, selection-bias and source-concordance results remain in
 
 ## Project maturity
 
-The current release target is **v0.3.4 — Hardened Boundaries & Verified Release Runtime**.
-It consolidates one configured pipeline across the API, Agent and tool registry, places
-document analysis behind a killable process boundary, tightens external-input failure
-behavior, and verifies exact container digests before promotion. It does not change the
-predictive model, calibration status or frozen E4 claims.
+The current local target is **v0.4.0 review — Assured Selective Financial
+Intelligence**. The Assurance Runtime, proposal/authorization boundary, deterministic
+fragility analysis, Decision-Sufficient Evidence, distribution-validity diagnostics and
+Decision Certificate are implemented. This is an engineering release: it does not change
+the frozen E4 results, claim a stronger predictor, or freeze/run E5.
 
 - **Validated in a limited research scope:** deterministic fixtures, automated quality
   gates, frozen E4 artifact integrity, and B6 over B0 on 674 verified E4 outcomes.
+- **Internal development validation complete:** the Assurance authority boundary, evidence assurance,
+  deterministic fragility, sufficient-evidence search, validity states, certificate hashing,
+  replay integration, API contract, Workbench hierarchy, Python 3.11/3.12, installable
+  artifacts, and Docker/PostgreSQL restart persistence.
+- **Development reference only:** a hash-bound synthetic profile reproducibly exercises
+  `IN_REFERENCE`, `WARNING` and `OUTSIDE_REFERENCE`; it is not an empirical or external
+  validation reference and unknown real-world inputs still fail closed.
 - **Implemented, not externally validated:** XBRL/PDF reconciliation, temporal state,
-  constrained provider, Agent critic/verifier, replay, risk-case workflow, RBAC/API keys,
-  PostgreSQL migrations and the Workbench.
-- **Planned or not run:** human-adjudicated document benchmarks, a prospectively frozen
-  stronger-model comparison, calibrated risk, and externally operated production
-  identity/storage/worker/telemetry infrastructure.
+  constrained provider, Agent critic/verifier, risk-case workflow, RBAC/API keys and storage.
+- **Pending:** prospective E5, an empirical reference distribution, calibrated admission
+  policy, external validation and production/regulatory evaluation.
 
 [Project Status](PROJECT_STATUS.md) is the authoritative maturity inventory. See the
-[v0.3.4 release notes](RELEASE_NOTES_v0.3.4.md) and [Changelog](CHANGELOG.md) for release
+[v0.4.0 release notes](RELEASE_NOTES_v0.4.0.md) and [Changelog](CHANGELOG.md) for release
 scope and history.
 
 ## Repository map
@@ -368,6 +396,7 @@ before any deployment.
 
 ### Understand FinRisk
 
+- [v0.4 Assurance architecture](docs/assurance_architecture.md)
 - [Architecture and enterprise boundary](docs/enterprise_platform.md)
 - [Project Status](PROJECT_STATUS.md)
 - [Decision-grade controls, governance and threat model](docs/decision_grade_controls.md)
@@ -380,6 +409,7 @@ before any deployment.
 - [Container release and deployment](docs/CONTAINER_RELEASE.md)
 - [Reproducibility and runtime integrity](docs/reproducibility_runtime_integrity.md)
 - [Experiment reproducibility](research/EXPERIMENT_REPRODUCIBILITY.md)
+- [v0.4 internal development validation](research/v040_development/VALIDATION_REPORT.md)
 - [Risk Case workflow](docs/risk_case_workflow.md)
 - [Temporal risk intelligence](docs/temporal_risk_intelligence.md)
 
@@ -393,12 +423,14 @@ before any deployment.
 - [E4-S statistical audit](research/e4_statistical_audit/AUDIT_REPORT.md)
 - [E4-R robustness study](research/e4r_automated_robustness/FINAL_REPORT.md)
 - [Human–AI study protocol](research/human_ai_study_protocol.md)
+- [E5 draft — prospective validation of assured selective decisions](research/e5/README.md)
 
 ### Development
 
 - [API Reference](docs/API_REFERENCE.md)
 - [Contributing](CONTRIBUTING.md)
 - [Changelog](CHANGELOG.md)
+- [v0.4.0 release notes](RELEASE_NOTES_v0.4.0.md)
 - [v0.3.4 release notes](RELEASE_NOTES_v0.3.4.md)
 - [Failure Lab](failure_lab/README.md)
 
@@ -407,6 +439,9 @@ before any deployment.
 FinRisk is a research prototype. In particular, it is:
 
 - `UNCALIBRATED` and not a probability of bankruptcy, default or correctness;
+- governed by a heuristic Assurance policy, not a calibrated selective-risk guarantee;
+- unable to assert externally validated distribution validity; the bundled synthetic
+  development reference is explicitly `DEVELOPMENT_REFERENCE_ONLY`;
 - not a credit rating, fraud finding or investment recommendation;
 - not evidence of general population performance beyond the verified study subsets;
 - not a validated replacement for human review of material financial decisions;
@@ -438,7 +473,7 @@ Released under the [MIT License](LICENSE).
 
 <div align="center">
 
-**Evidence first. Failure aware. Reproducible by design.**
+**Prediction proposes. Assurance authorizes. Evidence remains inspectable.**
 
 <sub>FinRisk studies what financial AI should automate, what it must verify, and what must remain a human decision.</sub>
 

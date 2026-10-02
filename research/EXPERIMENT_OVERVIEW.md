@@ -1,4 +1,18 @@
-# FinRisk v0.3.4 Experiment Overview
+# FinRisk Experiment Overview
+
+## v0.4 development boundary
+
+v0.4 is an engineering and architecture iteration: **ASSURANCE RUNTIME IMPLEMENTED;
+INTERNAL DEVELOPMENT VALIDATION COMPLETE; PROSPECTIVE VALIDATION PENDING**. It adds decision authorization, evidence fragility,
+distribution-validity diagnostics and Decision Certificates. It does not add a
+confirmatory result, freeze E5, or revise E1–E4-R.
+
+Any v0.4 work using historical data must be labelled `RETROSPECTIVE`, `POST_HOC`,
+`DEVELOPMENT` and `NOT_CONFIRMATORY`. See
+[`v040_development/`](v040_development/README.md) and the unfrozen
+[E5 design](e5/README.md).
+
+## v0.3.4 / E4 evidence base
 
 This is the entry point for the current FinRisk research evidence. The active
 test and publication surface is E4 on locked FinRisk v0.3.4. Earlier pilot and
@@ -31,7 +45,7 @@ E4-R sit between E4 and E5 because they exist to make E5 designable.
 
 | Study | Purpose | Data and scale | Result status | Main conclusion | Report |
 |---|---|---|---|---|---|
-| E4-A external validation | Out-of-time, company-disjoint deterministic comparison | 2,000 FY2024 filers; 674 verified outcomes; 235 events | P1 `ESTABLISHED_E4` | B6 improved B0 in paired AUROC by +0.030 (95% CI +0.014 to +0.048; Holm-adjusted p=0.0015). | [Validation report](e4/public/VALIDATION_REPORT.md) |
+| E4-A out-of-time evaluation | Company-disjoint deterministic comparison | 2,000 FY2024 filers; 674 verified outcomes; 235 events | P1 `ESTABLISHED_E4` | B6 improved B0 in paired AUROC by +0.030 (95% CI +0.014 to +0.048; Holm-adjusted p=0.0015). This is not external population validation. | [Validation report](e4/public/VALIDATION_REPORT.md) |
 | E4-B structured comparison | Compare deterministic, traditional, Agent and fixed Hybrid systems on identical verified observations | 50 frozen cases; 18 verified; 5 events | Agent/Hybrid results `EXPLORATORY_E4` | Local Agent and Hybrid incremental value was not established. | [Experiment results](EXPERIMENT_RESULTS.md) |
 | E4 robustness and integrity | Test missingness, sector, thresholds, attrition, Agent stability, batching and source concordance | Frozen E4 artifacts and prespecified checks | Mixed confirmatory/supporting evidence | Reproduction passed, while verification selection and Agent power remain material limitations. | [Post-completion audit](e4_posthoc/AUDIT_REPORT.md) |
 | E4 post-hoc audit | Quantify verification bias, schema, calibration, batching and concordance weaknesses | Frozen E4 artifacts; no redefinition of E4 | `POST_HOC` | E4 remains valid within its narrow P1 claim. | [Post-completion audit](e4_posthoc/AUDIT_REPORT.md) |

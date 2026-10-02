@@ -56,6 +56,40 @@ def assert_postgres(readiness: dict) -> None:
     print("datastore: postgres, schema: complete (confirmed via /health/ready)")
 
 
+def assessment_request(entity_id: str) -> dict:
+    return {
+        "company": "Synthetic persistence issuer",
+        "fiscal_year": 2025,
+        "entity_id": entity_id,
+        "current": {
+            "current_assets": 80.0,
+            "current_liabilities": 100.0,
+            "cash": 5.0,
+            "total_assets": 200.0,
+            "total_liabilities": 160.0,
+            "revenue": 120.0,
+            "net_income": -8.0,
+        },
+    }
+
+
+def assert_v040_decision(payload: dict) -> None:
+    assurance = payload.get("assurance")
+    certificate = payload.get("decision_certificate")
+    if not isinstance(assurance, dict) or not isinstance(certificate, dict):
+        raise SystemExit("v0.4 response omitted AssuranceResult or Decision Certificate")
+    if payload.get("proposed_decision") != assurance.get("proposed_decision"):
+        raise SystemExit("proposal does not match AssuranceResult")
+    if payload.get("decision") != assurance.get("final_decision"):
+        raise SystemExit("final decision does not match AssuranceResult")
+    if certificate.get("certificate_hash") != certificate.get("bundle_hash"):
+        raise SystemExit("Decision Certificate hash aliases disagree")
+    if certificate.get("final_decision") != assurance.get("final_decision"):
+        raise SystemExit("Decision Certificate does not bind the final decision")
+    if certificate.get("policy_hash") != assurance.get("policy_hash"):
+        raise SystemExit("Decision Certificate does not bind the Assurance policy")
+
+
 def phase_before(state_file: Path) -> None:
     assert_postgres(wait_for_ready())
     token = os.environ.get("FINRISK_BOOTSTRAP_TOKEN")
@@ -78,13 +112,34 @@ def phase_before(state_file: Path) -> None:
     if not isinstance(proxied.get("case_count"), int):
         raise SystemExit(f"frontend proxy did not relay a valid overview: {proxied!r}")
     state_file.parent.mkdir(parents=True, exist_ok=True)
+    decision = request_json(
+        f"{API}/api/v1/agent/assess",
+        assessment_request(entity["id"]),
+        headers,
+        timeout=60,
+    )
+    assert_v040_decision(decision)
+    snapshot = decision.get("analysis_snapshot")
+    if not isinstance(snapshot, dict) or not snapshot.get("id"):
+        raise SystemExit("persisted Agent response omitted its analysis snapshot")
     state_file.write_text(
-        json.dumps({"api_key": organization["api_key"], "entity_id": entity["id"],
-                    "organization_id": entity["organization_id"]}),
+        json.dumps({
+            "api_key": organization["api_key"],
+            "entity_id": entity["id"],
+            "organization_id": entity["organization_id"],
+            "snapshot_id": snapshot["id"],
+            "frozen_output": snapshot["frozen_output"],
+            "certificate_hash": decision["decision_certificate"]["certificate_hash"],
+            "bundle_id": decision["decision_certificate"]["bundle_id"],
+        }),
         encoding="utf-8",
     )
     state_file.chmod(0o600)
-    print(f"provisioned entity {entity['id']} (proxy case_count={proxied['case_count']})")
+    print(
+        f"provisioned entity {entity['id']} and persisted v0.4 certificate "
+        f"{decision['decision_certificate']['bundle_id']} "
+        f"(proxy case_count={proxied['case_count']})"
+    )
 
 
 def phase_after(state_file: Path) -> None:
@@ -104,7 +159,25 @@ def phase_after(state_file: Path) -> None:
     )
     if not isinstance(timeline, list):
         raise SystemExit(f"entity did not survive the restart: {timeline!r}")
-    print("credential and entity survived the restart")
+    replay = request_json(
+        f"{API}/api/v1/enterprise/snapshots/{state['snapshot_id']}/replay-diff",
+        {"replayed_output": state["frozen_output"]},
+        headers,
+    )
+    if replay.get("match") is not True or replay.get("classification") != "IDENTICAL":
+        raise SystemExit(f"persisted snapshot did not replay identically: {replay!r}")
+    rerun = request_json(
+        f"{API}/api/v1/agent/assess",
+        assessment_request(state["entity_id"]),
+        headers,
+        timeout=60,
+    )
+    assert_v040_decision(rerun)
+    if rerun["decision_certificate"]["certificate_hash"] != state["certificate_hash"]:
+        raise SystemExit("post-restart analysis changed the material certificate hash")
+    if rerun["decision_certificate"]["bundle_id"] != state["bundle_id"]:
+        raise SystemExit("post-restart analysis did not retrieve the content-addressed bundle")
+    print("credential, entity, Assurance certificate and replay survived the restart")
 
 
 def main() -> int:

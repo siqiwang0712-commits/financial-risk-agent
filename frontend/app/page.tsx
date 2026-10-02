@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { AgentTrace } from "../components/AgentTrace";
+import { AssurancePanel } from "../components/AssurancePanel";
 import { AppHeader } from "../components/AppHeader";
 import { DecisionPaths } from "../components/DecisionPaths";
 import { DecisionSummary } from "../components/DecisionSummary";
@@ -11,10 +12,11 @@ import { TelemetryPanel } from "../components/TelemetryPanel";
 import { WhyDecision } from "../components/WhyDecision";
 import { DEMO_FIXTURE } from "../lib/demoFixture";
 
-type TabKey = "overview" | "dimensions" | "evidence" | "paths" | "trace" | "telemetry";
+type TabKey = "overview" | "assurance" | "dimensions" | "evidence" | "paths" | "trace" | "telemetry";
 
 const TAB_LABEL: Record<TabKey, string> = {
   overview: "Decision logic",
+  assurance: "Assurance",
   dimensions: "Risk dimensions",
   evidence: "Evidence chain",
   paths: "Decision paths",
@@ -34,7 +36,8 @@ const PIPELINE = [
   { index: "02", title: "Compute", copy: "Ratios, trends and traditional models run deterministically." },
   { index: "03", title: "Interpret", copy: "Constrained language models extract claims, never final scores." },
   { index: "04", title: "Verify", copy: "Every material conclusion must resolve to source evidence." },
-  { index: "05", title: "Decide", copy: "Failure-aware fusion can flag, review, pass or abstain." },
+  { index: "05", title: "Propose", copy: "Rules, models and Agent reasoning propose a risk disposition." },
+  { index: "06", title: "Authorize", copy: "Assurance checks evidence, fragility and distribution validity before a final decision." },
 ] as const;
 
 const PROJECT_URL = "https://github.com/siqiwang0712-commits/financial-risk-agent";
@@ -50,25 +53,25 @@ export default function Page() {
 
   return (
     <>
-      <AppHeader origin="offline-sample" runtime="v0.3.4" />
+      <AppHeader origin="offline-sample" runtime="v0.4.0-dev" />
       <main className="showcaseShell">
         <section className="showcaseHero" id="overview">
           <div className="heroCopy">
-            <p className="heroEyebrow"><span /> Structured financial reasoning</p>
+            <p className="heroEyebrow"><span /> Assured selective financial intelligence</p>
             <h2>
-              Financial risk intelligence{" "}
-              <em>that shows its work.</em>
+              Prediction proposes.{" "}
+              <em>Assurance authorizes.</em>
             </h2>
             <p className="heroLead">
-              Turn an annual report into a traceable financial risk assessment. FinRisk computes
-              financial metrics, applies structured checks and shows the evidence behind every conclusion.
+              FinRisk separates financial-risk prediction from decision authorization. A final decision
+              is issued only after deterministic evidence, fragility and distribution-validity checks.
             </p>
             <div className="heroRoute" aria-label="FinRisk input, process and output">
               <div><small>INPUT</small><span>Company filing</span></div>
               <i aria-hidden="true">→</i>
               <div><small>PROCESS</small><span>Metrics · rules · evidence analysis</span></div>
               <i aria-hidden="true">→</i>
-              <div><small>OUTPUT</small><span>Auditable risk assessment</span></div>
+              <div><small>OUTPUT</small><span>Final decision + certificate</span></div>
             </div>
             <div className="heroActions">
               <a className="primaryAction" href="#case">Explore the assessment</a>
@@ -262,6 +265,7 @@ export default function Page() {
 
           <div className="tabBody" id="tab-panel" role="tabpanel" aria-labelledby={`tab-${activeTab}`} aria-live="polite">
             {activeTab === "overview" ? <WhyDecision payload={assessment} /> : null}
+            {activeTab === "assurance" ? <AssurancePanel assurance={assessment.assurance} certificate={assessment.decision_certificate} /> : null}
             {activeTab === "dimensions" ? <DimensionGrid dimensions={assessment.dimensions} /> : null}
             {activeTab === "evidence" && agent ? <EvidenceTrail conclusions={agent.conclusions} /> : null}
             {activeTab === "paths" && trace ? <DecisionPaths trace={trace} /> : null}
@@ -280,7 +284,7 @@ export default function Page() {
             <Capability number="68" title="Versioned rules" copy="Thresholds live in inspectable policy, not scattered application code." />
             <Capability number="04" title="Traditional models" copy="Altman, Beneish, Piotroski and Ohlson run with applicability checks." />
             <Capability number="08" title="Risk dimensions" copy="Coverage and missingness stay visible beside every dimension score." />
-            <Capability number="100%" title="Replayable" copy="Inputs, versions and material evidence paths are retained for audit." />
+            <Capability number="Hash-bound" title="Replay artifacts" copy="Inputs, versions and material evidence paths are retained for deterministic verification." />
           </div>
           <nav className="resourceLinks" aria-label="Project resources">
             <div>
@@ -299,7 +303,7 @@ export default function Page() {
             <span>Evidence-grounded financial risk intelligence</span>
           </div>
           <p>
-            v0.3.4 · Research prototype · All scores are heuristic and UNCALIBRATED.<br />
+            v0.4.0 development · Research prototype · Assurance policy is heuristic and UNCALIBRATED.<br />
             Not a bankruptcy probability, credit rating, investment recommendation or regulatory determination.
           </p>
         </footer>

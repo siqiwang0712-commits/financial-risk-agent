@@ -23,7 +23,7 @@ def test_release_origins_are_loopback_only(monkeypatch):
     endpoints = http.VerificationEndpoints.from_env()
     assert endpoints.api == "http://localhost:8123"
     assert endpoints.web == "https://[::1]:3443"
-    assert http.declared_runtime() == "v0.3.4"
+    assert http.declared_runtime() == "v0.4.0"
 
     invalid = [
         "https://example.com:443",

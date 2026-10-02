@@ -1,8 +1,17 @@
 {
- "study": "E5",
+ "study": "E5 — Prospective Validation of Assured Selective Financial Decisions",
  "status": "PROSPECTIVE_NOT_FROZEN",
- "freeze_rule": "This file is frozen by the protocol commit. Any later change must be a new, separately committed amendment that records both the old and the new hash.",
- "supersedes": "research/e5/STUDY_PROTOCOL_DRAFT.md",
+ "readiness": "DRAFT_WAITING_FOR_V040_ARCHITECTURE_STABILIZATION",
+ "legacy_design_not_freeze_eligible": true,
+ "v040_comparison_framework": [
+  "strong_tabular_predictor",
+  "strong_tabular_plus_selective_policy",
+  "raw_agent",
+  "agent_plus_evidence_verification",
+  "full_finrisk_assurance"
+ ],
+ "future_freeze_rule": "Only a future v0.4-aligned protocol commit may freeze a revised file; later changes would require a separately recorded amendment.",
+ "superseded_by_draft": "research/e5/STUDY_PROTOCOL_DRAFT.md",
  "source_commit_at_freeze": null,
  "protocol_document": "research/e5/protocol/STUDY_PROTOCOL.md",
 

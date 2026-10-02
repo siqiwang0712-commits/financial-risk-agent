@@ -221,9 +221,12 @@ if FastAPI:
             return self
 
     app = FastAPI(
-        title="FinRisk-Agent API",
+        title="FinRisk Assurance API",
         version=__version__,
-        description="Three-layer evidence-grounded financial risk agent",
+        description=(
+            "Assured selective financial intelligence: prediction proposes; "
+            "the Assurance Runtime authorizes final decisions"
+        ),
     )
     cors_origins = [
         origin.strip()
@@ -240,6 +243,7 @@ if FastAPI:
     agent = FinancialRiskAgent(ROOT, pipeline.provider, pipeline)
     runtime = build_runtime_components(ROOT)
     enterprise_service = runtime.service
+    enterprise_service.assurance_policy = pipeline.assurance.policy
     credential_store = runtime.credentials
     # Rate limits must hold across restarts and replicas, so they live in the same
     # store as the data whenever PostgreSQL is in use; the in-process window is only
@@ -388,6 +392,9 @@ if FastAPI:
             "evidence_coverage": state.evidence_coverage,
             "epistemics": state.epistemics,
             "decision_trace": state.decision_trace,
+            "proposed_decision": state.proposed_decision,
+            "assurance": state.assurance,
+            "final_decision": state.decision,
             "decision": state.decision,
         }
         snapshot = create_snapshot(
@@ -434,6 +441,23 @@ if FastAPI:
             human_review=prior_bundle.get("human_review"),
             epistemics=state.epistemics,
             component_telemetry=state.component_telemetry,
+            proposed_decision=state.proposed_decision,
+            assurance=state.assurance,
+            decision_sufficient_evidence=state.assurance.get(
+                "decision_sufficient_evidence", {}
+            ),
+            policy_version=state.assurance.get("policy_version", "UNSPECIFIED"),
+            policy_hash=state.assurance.get("policy_hash", "UNSPECIFIED"),
+            calibration_status=state.assurance.get(
+                "calibration_status", "UNCALIBRATED"
+            ),
+            replay={
+                "deterministic": True,
+                "input_hash": generated["input_hash"],
+                "output_hash": generated["output_hash"],
+                "component_versions": generated["component_versions"],
+            },
+            assurance_policy=pipeline.assurance.policy,
         )
         reused_bundle = False
         try:
@@ -459,6 +483,7 @@ if FastAPI:
             bundle = stored
             reused_bundle = True
         state.decision_bundle = bundle.to_dict()
+        state.decision_certificate = state.decision_bundle
         # Deduplication must not erase execution history. The snapshot and the bundle
         # may be reused, but this run still happened, and provenance has to be able to
         # say who ran it, when, against which entity/document, and with which engine /
@@ -497,13 +522,15 @@ if FastAPI:
     def document_response(state) -> dict:
         """Expose the result contract, not replay/snapshot internals or raw pages."""
         payload = dict(state.assessment or {})
+        payload["decision_certificate"] = state.decision_certificate
         payload["agent"] = {
             key: value
             for key, value in state.to_dict().items()
             if key in {
                 "status", "plan", "trace", "conclusions", "warnings", "reflection",
                 "risk_score", "confidence", "confidence_semantics", "evidence_coverage",
-                "risk_severity", "risk_trajectory", "decision", "model_disagreement",
+                "risk_severity", "risk_trajectory", "proposed_decision", "decision",
+                "model_disagreement", "assurance", "decision_certificate",
                 "fusion", "decision_trace", "role_review", "epistemics", "component_telemetry",
             }
         }

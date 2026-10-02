@@ -112,7 +112,7 @@ function PathRow({ path }: { path: DecisionPath }) {
               <code>{path.rule_version ? `${path.rule_version.slice(0, 16)}…` : "—"}</code>
             </p>
             <p>
-              <span>Confidence · coverage · disagreement</span>
+              <span>Legacy confidence index · coverage · disagreement</span>
               <code>
                 {path.confidence ?? "N/A"} · {path.coverage} · {path.disagreement}
               </code>

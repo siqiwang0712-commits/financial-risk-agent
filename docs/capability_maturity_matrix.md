@@ -1,6 +1,6 @@
 # Capability Maturity Matrix
 
-Updated: 2026-09-19. `Production` means externally operated and validated; no row currently meets that standard.
+Updated: 2026-10-02. `Production` means externally operated and validated; no row currently meets that standard.
 
 `Wired` asks a different question from the other columns: is this capability reachable
 from a live entry point (`/api/v1/documents/analyze`, `/api/v1/agent/assess`, or the
@@ -17,13 +17,18 @@ caller actually reaches, not that it is broken.
 | Traditional models | Yes | Yes | Yes | Pilot inputs incomplete | Formula tests | No |
 | 68-rule engine | Yes | Yes | Yes | Pilot | Not expert-validated | No |
 | Evidence verification/decision trace | Yes | Yes | Yes | Pilot | Partial | No |
+| Assurance authority boundary | Yes | Yes | Yes | Synthetic/internal only | Internal development | No |
+| Evidence fragility | Yes | Yes | Yes | Synthetic dependency graphs | Deterministic property tests | No |
+| Decision-Sufficient Evidence | Yes | Yes | Yes | Synthetic dependency graphs | Exact/approximation contract tests | No |
+| Distribution validity | Yes | Yes | Yes | Synthetic development profile only | Internal mechanics complete; empirical validity NOT ESTABLISHED | No |
+| Financial/reporting feature separation | Yes | Yes | Yes | Runtime payloads | Internal development | No |
 | Correlated-evidence de-duplication | Yes | Yes | No | Fixture only | Monotonicity property test | No |
 | Temporal risk state/attribution | Yes | Yes | Yes | 30-company numeric trajectories | Executed; usefulness not validated | No |
 | Temporal evidence graph | Yes | Yes | No | No | No | No |
 | Applicability Router | Yes | Yes | Yes | No sector validation | No | No |
-| Calibration/selective automation | Yes | Yes | Yes | n=3 diagnostic only | No | No |
+| Calibration/selective policy eligibility | Yes | Yes | Yes | n=3 diagnostic only | No | No |
 | Analyst–Critic–Verifier review | Yes | Yes | Yes | Offline semantics | No | No |
-| DecisionBundle/replay | Yes | Yes | Yes | Controlled fixture | Local only | No |
+| Decision Certificate/replay | Yes | Yes | Yes | Synthetic + PostgreSQL restart smoke | Internal development | No |
 | Risk Case mitigation lifecycle | Yes | Yes | Yes | Controlled fixture | Local only | No |
 | Champion–Challenger gate | Yes | Yes | No | No qualified candidate run | No | No |
 | Human–AI study | Protocol + analysis | Yes, synthetic | No | No participants | NOT RUN | No |

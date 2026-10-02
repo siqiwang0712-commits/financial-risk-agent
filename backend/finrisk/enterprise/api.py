@@ -353,7 +353,13 @@ def enterprise_router(
             if req.calibration_status is CalibrationStatus.UNCALIBRATED:
                 payload["reliability"] = None
             item = RiskSnapshot(entity_id=entity_id, **payload)
-            return asdict(service.save_risk_snapshot(actor, item))
+            row = asdict(service.save_risk_snapshot(actor, item))
+            row.update({
+                "proposed_decision": row["decision"],
+                "decision_semantics": "LEGACY_ALIAS_FOR_PROPOSED_DECISION",
+                "final_decision": None,
+            })
+            return row
         except (KeyError, PermissionError, ValueError) as exc:
             raise HTTPException(422, "risk snapshot rejected") from exc
 
@@ -366,6 +372,11 @@ def enterprise_router(
         output = []
         for index, item in enumerate(timeline):
             row = asdict(item)
+            row.update({
+                "proposed_decision": row["decision"],
+                "decision_semantics": "LEGACY_ALIAS_FOR_PROPOSED_DECISION",
+                "final_decision": None,
+            })
             try:
                 row["delta"] = (
                     compare_risk_snapshots(timeline[index - 1], item).to_dict()
@@ -408,7 +419,7 @@ def enterprise_router(
             if req.method == "weighted_average"
             else (req.scores, req.coverage, req.confidence, req.decision_policy)
         )
-        return asdict(method(*kwargs))
+        return method(*kwargs).to_dict()
 
     @router.post("/scenarios")
     def scenario(req: ScenarioRequest, actor: Principal = principal_dependency):

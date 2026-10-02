@@ -46,7 +46,7 @@ jobs:
       - run: pytest --cov=finrisk --cov-report=term-missing --cov-fail-under=90
       - name: Verify prospective empirical provenance fails closed
         run: python scripts/run_empirical_validation.py --provenance-v2 --report .runtime/integrity-report.json
-      - name: Verify v0.3.4 E4 public research artifacts
+      - name: Verify frozen E4 public research artifacts
         run: python scripts/verify_e4_public_artifacts.py
   frontend:
     runs-on: ubuntu-latest

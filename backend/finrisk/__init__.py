@@ -1,4 +1,4 @@
-"""FinRisk-Agent: deterministic-first, evidence-grounded risk assessment."""
+"""FinRisk: assured selective financial intelligence."""
 
-__version__ = "0.3.4"
+__version__ = "0.4.0"
 

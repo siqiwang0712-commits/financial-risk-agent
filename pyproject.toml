@@ -4,8 +4,8 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "finrisk-agent"
-version = "0.3.4"
-description = "Evidence-grounded hybrid corporate financial risk assessment"
+version = "0.4.0"
+description = "Assurance-controlled selective corporate financial risk intelligence"
 requires-python = ">=3.11"
 dependencies = [
   "fastapi>=0.115", "uvicorn[standard]>=0.30", "pydantic>=2.8",
@@ -23,6 +23,19 @@ research = ["numpy>=1.26", "scipy>=1.11", "scikit-learn>=1.4", "matplotlib>=3.8"
 
 [tool.setuptools.packages.find]
 where = ["backend"]
+
+# A wheel must be runnable outside a source checkout.  These are runtime policy
+# inputs, not test fixtures; FinRiskPipeline falls back to this installed data
+# directory when the repository-level files are absent.
+[tool.setuptools.data-files]
+"finrisk_data/rules" = ["rules/rules.json", "rules/disabled_rules.json"]
+"finrisk_data/config" = [
+  "config/scoring.json",
+  "config/model_scoring.json",
+  "config/decision_policy.json",
+  "config/assurance_policy.json",
+  "config/consistency_policy.json",
+]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

@@ -1,6 +1,9 @@
 # Enterprise Platform Boundary
 
-FinRisk is an **enterprise financial-risk research prototype**, not a certified production or regulatory system. The upgrade preserves the audited finance pipeline and adds a modular-monolith enterprise boundary around it.
+FinRisk is an **assurance-controlled financial-risk research prototype**, not a certified
+production or regulatory system. v0.4 preserves the audited finance pipeline and adds an
+independent decision-authorization boundary. The authoritative design is
+[FinRisk v0.4 Assurance Architecture](assurance_architecture.md).
 
 ## Preserve / refactor / add / defer
 
@@ -19,7 +22,10 @@ Enterprise Platform Layer
   organization · entity · RBAC · persistence · audit · REST · workbench
                          ↓
 Risk Intelligence Layer
-  deterministic finance · constrained LLM · verification · tension · fusion
+  deterministic finance · constrained LLM · verification · tension · fusion → proposal
+                         ↓
+Decision Assurance Layer
+  evidence assurance · fragility · distribution validity · admission policy
                          ↓
 Enterprise Risk Management Layer
   identify → assess → prioritize → escalate → assign → mitigate → review
@@ -27,20 +33,21 @@ Enterprise Risk Management Layer
 
 The implementation remains a modular monolith. That is intentional: transactions, tenant isolation and reproducibility are easier to inspect than in prematurely distributed services.
 
-### Three-layer execution boundary
+### v0.4 execution and authority boundary
 
-The runtime is also organized as a strict three-layer decision path:
+The runtime is organized as a strict four-part decision path:
 
 1. **Interface Layer** — FastAPI and the Next.js Workbench present inputs, workflow and
    proof. They do not calculate financial risk.
-2. **Agent Reasoning Layer** — the planner and orchestrator select typed tools, assess
-   sufficiency, cross-check signals, verify claims, reflect, and synthesize or abstain.
-3. **Tool / Code Layer** — ingestion, normalization, metrics, models, rules, evidence,
-   contradiction detection, fusion and replay execute deterministically.
+2. **Prediction Layer** — tools and Agent reasoning compute signals and a
+   `proposed_decision`; neither owns final authorization.
+3. **Assurance Layer** — `AssuranceEngine` evaluates evidence, deterministic fragility,
+   distribution validity, calibration and policy.
+4. **Certificate Layer** — the authorized result and replay metadata are content-hashed.
 
 `FinRiskPipeline` owns the configured rules, scoring policy, narrative provider and
 evidence verifier shared by the API, Agent and tool registry. The Agent orchestrates that
-pipeline; it does not replace the deterministic calculation or decision path. The detailed
+pipeline; it does not replace deterministic calculation and cannot authorize itself. The detailed
 module migration is recorded in [Three-layer migration map](three_layer_migration.md).
 
 Only structured execution metadata is retained: plan step, tool name, status, result
@@ -92,9 +99,13 @@ they are never converted into fabricated certainty. The incident-style
 [Failure Lab](../failure_lab/README.md) maps injected failures to expected fail-closed
 responses and regression tests.
 
-## Failure-aware decision contract
+## Proposal and Assurance contract
 
-The API and Agent return separate fields for `severity`, `trajectory`, `evidence_coverage`, `decision_confidence`, `model_disagreement` and `decision`. Coverage below the configured minimum produces `ABSTAIN`; material disagreement or verified contradictions produce `REVIEW`. A heuristic severity is never described as probability of default.
+The API and Agent return separate fields for risk, proposal, assurance and final decision.
+Coverage below the configured minimum can produce `ABSTAIN`; material disagreement,
+fragility or invalid/unknown distribution scope can produce `REVIEW`. A heuristic severity
+is never described as probability of default. No valid `AssuranceResult` means no
+authorized final decision.
 
 Four fusion strategies share one interface: weighted-average baseline, max severity, hierarchical escalation and transparent pairwise interaction. They are research candidates, not validated optimal models. Organization policies never modify the frozen research benchmark configuration.
 
@@ -130,8 +141,9 @@ Portfolio → Entity → Risk Case → Risk Drivers → Evidence
           → Scenario → Governance → Audit
 ```
 
-Severity, trajectory, evidence coverage, decision confidence and model disagreement stay
-visually separate. Findings can become owned cases with reviewer status, due dates,
+Proposed risk, Assurance status and final decision form the primary hierarchy. Evidence
+support, fragility, distribution validity, policy maturity and model disagreement remain
+separate. Findings can become owned cases with reviewer status, due dates,
 actions, comments and an audited human override.
 
 When the API is unreachable, the Workbench falls back to a bundled sample and labels its
@@ -144,4 +156,5 @@ prototype and is not evidence of a hosted production deployment.
 
 Material assessment claims still pass through the existing evidence verifier. Disclosure tension uses six labels: Supported, Weakly Supported, Context-dependent, Tension, Material Contradiction and Insufficient Evidence. These labels describe evidence relationships, never dishonesty or fraud.
 
-AI detects and structures signals. A human reviewer retains authority over material acceptance, mitigation and closure.
+Prediction components detect and structure signals. Assurance controls system issuance;
+a human reviewer retains authority over material acceptance, mitigation and closure.

@@ -42,7 +42,11 @@ The pilot contains management language stating that funding sources were believe
 
 ## Fusion → decision and failure analysis
 
-The Full Hybrid pilot probability was `0.427`, producing a negative risk prediction against the single-reviewer positive label. This is a false negative and a central adverse result: the system's dimension aggregation diluted severe profitability and cash-flow deterioration. The released pilot reports Full Hybrid risk F1 `0.000`; no threshold was retuned to make the case pass.
+The Full Hybrid pilot score was `0.427`; it was an uncalibrated heuristic, not a
+probability. It produced a negative risk prediction against the single-reviewer positive
+label. This is a false negative and a central adverse result: the system's dimension
+aggregation diluted severe profitability and cash-flow deterioration. The released pilot
+reports Full Hybrid risk F1 `0.000`; no threshold was retuned to make the case pass.
 
 The current decision-grade layer would preserve the evidence paths, surface disagreement and allow policy to return `REVIEW` or `ABSTAIN`. That behavior is implemented and fixture-tested, but it has not been retrospectively rerun as a new published benchmark result.
 
@@ -52,7 +56,12 @@ The code can now represent FY2023 as `R(t-1)` and FY2024 as `R(t)`, emitting met
 
 ## Human workflow and replay
 
-A supported finding may become a Risk Case with owner, due date and mitigation action. Resolution requires verified decision paths and resolution evidence; a later filing can reopen the case with a mandatory reason. The immutable DecisionBundle stores document/input/output hashes, calculations, trace, component versions, review and final decision for replay.
+A supported finding may become a Risk Case with owner, due date and mitigation action.
+Resolution requires verified decision paths and resolution evidence; a later filing can
+reopen the case with a mandatory reason. In v0.4, the Decision Certificate binds document
+and input identity, calculations, trace, component and policy versions, proposed decision,
+verified Assurance result and authorized final decision for replay. A legacy v0.3
+DecisionBundle does not silently gain v0.4 authorization semantics.
 
 ## What this case demonstrates
 

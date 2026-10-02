@@ -6,6 +6,26 @@ interactive OpenAPI UI is available at `http://localhost:8000/docs`.
 This page describes the stable route surface and its operational contracts. Request and
 response schemas in the generated OpenAPI document remain the field-level source of truth.
 
+## v0.4 decision contract
+
+Every assessment keeps calculation and authorization separate:
+
+| Field | Meaning |
+|---|---|
+| `overall_score` / `risk_score` | heuristic risk index; not a probability |
+| `risk_level` / `risk_severity` | severity derived by prediction components |
+| `proposed_decision` | proposal from fusion and Agent/failure review |
+| `assurance` | typed `AssuranceResult`; evidence, fragility, validity and policy |
+| `final_decision` | disposition authorized by the Assurance Runtime |
+| `decision_certificate` | content-hashed proposal, assurance, final decision and replay record |
+
+`confidence` is a legacy evidence-quality index. `reliability` is `null` while
+`UNCALIBRATED`, and no field is a probability of bankruptcy, default or correctness.
+Stable Assurance reason codes include `INSUFFICIENT_VERIFIED_EVIDENCE`,
+`EVIDENCE_FRAGILITY_HIGH`, `OUTSIDE_VALIDATED_DISTRIBUTION`,
+`ASSURANCE_POLICY_UNCALIBRATED`, `REPORTING_OBSERVABILITY_ANOMALY` and
+`HIGH_MODEL_DISAGREEMENT`.
+
 ## Authentication and tenancy
 
 The liveness, readiness and frozen public-pilot routes are unauthenticated. Analysis and
@@ -115,16 +135,25 @@ Replay creates a comparison; it does not overwrite the historical decision.
 
 | Method and path | Purpose |
 |---|---|
-| `POST /entities/{entity_id}/risk-snapshots` | Store a tenant-scoped risk snapshot. |
-| `GET /entities/{entity_id}/risk-timeline` | Return ordered risk states and comparable deltas. |
+| `POST /entities/{entity_id}/risk-snapshots` | Store a tenant-scoped historical risk proposal snapshot. |
+| `GET /entities/{entity_id}/risk-timeline` | Return ordered risk proposal states and comparable deltas. |
 | `POST /applicability` | Evaluate traditional-model applicability for an industry and fact set. |
-| `POST /selective-decision` | Apply evidence coverage, reliability, disagreement and calibration gates. |
-| `POST /fusion` | Run a supported transparent fusion strategy. |
+| `POST /selective-decision` | Evaluate legacy selective-policy eligibility. It returns a proposal/recommendation, `final_decision: null` and `authorized: false`. |
+| `POST /fusion` | Run a supported transparent fusion strategy and return `proposed_decision`; it has no final authority. |
 | `POST /scenarios` | Compare deterministic stress shocks with a supplied baseline. |
 
 These endpoints expose explicit tools; they do not silently alter the one-shot assessment
-contract. Unknown fusion methods, unknown scenario shocks and non-computable scenarios
+contract and cannot bypass `AssuranceEngine`. Unknown fusion methods, unknown scenario shocks and non-computable scenarios
 are rejected rather than guessed.
+
+The temporal snapshot contract retains `decision` as a v0.3 storage-compatible alias for
+`proposed_decision`; it returns `decision_semantics: LEGACY_ALIAS_FOR_PROPOSED_DECISION`
+and `final_decision: null`. An authorized final decision is available only in an
+assessment's verified `AssuranceResult` and Decision Certificate.
+
+`assurance.distribution_validity.reference_scope` is either
+`DEVELOPMENT_REFERENCE_ONLY`, `VALIDATED_EXTERNAL`, or `null`. The checked-in synthetic
+profile uses the first value and must not be interpreted as external validation.
 
 ## Errors and correlation
 

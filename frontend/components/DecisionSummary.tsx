@@ -1,4 +1,4 @@
-import { displayReliability, displayScore } from "../lib/presentation.mjs";
+import { authorizedDecision, displayReliability, displayScore } from "../lib/presentation.mjs";
 import type { AssessmentPayload } from "../lib/types";
 
 interface Props {
@@ -28,22 +28,33 @@ export function DecisionSummary({ payload }: Props) {
   const agent = payload.agent;
   const epistemics = agent?.epistemics;
   const severity = agent?.risk_severity ?? "unknown";
-  const decision = payload.final_decision || agent?.decision || "REVIEW";
+  const proposed = payload.proposed_decision || agent?.proposed_decision || "ABSTAIN";
+  const decision = authorizedDecision(payload);
+  const assurance = payload.assurance || agent?.assurance;
 
   return (
     <section className={`decisionSummary severity-${severity}`}>
-      <div className="decisionHero">
+      <div className="decisionHero assuranceHierarchy">
         <div className="heroScore">
-          <small>Risk index · heuristic, not a probability</small>
+          <small>Proposed risk · heuristic, not a probability</small>
           <div className="scoreValue">
             {displayScore(payload.overall_score)}
             {payload.overall_score === null ? null : <span>/100</span>}
           </div>
           <p className="heroLevel">{payload.risk_level}</p>
+          <p className="proposedDisposition">Proposal: <b>{proposed}</b></p>
+        </div>
+
+        <div className="heroAssurance">
+          <small>Assurance status</small>
+          <b className={`assuranceTag ${String(assurance?.assurance_status ?? "FAILED").toLowerCase()}`}>
+            {assurance?.assurance_status ?? "FAILED"}
+          </b>
+          <p>{assurance?.automation_allowed ? "Automation allowed" : "Automation withheld"}</p>
         </div>
 
         <div className="heroDecision">
-          <small>Decision</small>
+          <small>Final decision</small>
           <b className={`decisionTag ${String(decision).toLowerCase()}`}>{decision}</b>
           <p className="heroCompany">
             {payload.company} · FY{payload.reporting_period}
@@ -60,13 +71,13 @@ export function DecisionSummary({ payload }: Props) {
       </div>
 
       <div className="decisionStrip">
-        <Cell label="Severity" value={severity} />
-        <Cell label="Trajectory" value={agent?.risk_trajectory ?? "unknown"} />
-        <Cell label="Evidence coverage" value={ratio(payload.evidence_coverage)} />
-        <Cell label="Evidence quality" value={ratio(payload.evidence_quality)} />
-        <Cell label="Model disagreement" value={ratio(agent?.model_disagreement)} />
-        <Cell label="Verified paths" value={`${agent?.decision_trace?.verified_path_count ?? 0}/${agent?.decision_trace?.material_path_count ?? 0}`} />
+        <Cell label="Evidence support" value={assurance?.evidence_assurance.state ?? "UNKNOWN"} />
+        <Cell label="Evidence robustness" value={assurance?.evidence_fragility.state ?? "NOT ESTIMABLE"} />
+        <Cell label="Distribution validity" value={assurance?.distribution_validity.state ?? "UNKNOWN"} />
+        <Cell label="Policy status" value={assurance?.policy_status ?? "HEURISTIC POLICY"} />
       </div>
+
+      <p className="authorityNote">A high risk score does not automatically authorize a high-risk decision.</p>
 
       {payload.legacy_weighted_score !== undefined && payload.legacy_weighted_score !== null ? (
         <p className="legacyNote">

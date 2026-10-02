@@ -325,11 +325,12 @@ DISPOSITION_RANK = {
 }
 
 
-def failure_aware_decision(
+def failure_aware_proposal(
     result: FusionResult,
     failures: dict[str, bool],
     policy: dict[str, float] | None = None,
 ) -> dict:
+    """Produce a cautious proposal; this function has no final-decision authority."""
     blocking = [
         name
         for name in ("parser_failure", "stale_data", "missing_evidence")
@@ -354,10 +355,22 @@ def failure_aware_decision(
     )
     return {
         "decision": decision.value,
+        "proposed_decision": decision.value,
+        "decision_semantics": "LEGACY_ALIAS_FOR_PROPOSED_DECISION",
         "degraded": bool(blocking or review),
         "blocking_failures": blocking,
         "review_failures": review,
     }
+
+
+def failure_aware_decision(
+    result: FusionResult,
+    failures: dict[str, bool],
+    policy: dict[str, float] | None = None,
+) -> dict:
+    """Deprecated v0.3 name for :func:`failure_aware_proposal`."""
+
+    return failure_aware_proposal(result, failures, policy)
 
 
 def sensitivity_analysis(

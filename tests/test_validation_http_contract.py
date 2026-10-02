@@ -215,7 +215,9 @@ def test_frontend_guard_fields_are_present_in_a_real_response(live_server):
     for field in ("company", "reporting_period", "overall_score", "risk_level",
                   "confidence", "evidence_coverage", "dimensions", "models",
                   "triggered_rules", "missing_information", "confidence_components",
-                  "failure_state"):
+                  "failure_state", "proposed_decision", "final_decision", "assurance",
+                  "decision_certificate", "financial_features",
+                  "reporting_observability"):
         assert field in body, f"guard requires {field!r}"
     assert isinstance(body["dimensions"], dict)
     assert isinstance(body["failure_state"], dict)
@@ -226,8 +228,11 @@ def test_frontend_guard_fields_are_present_in_a_real_response(live_server):
     agent = body.get("agent")
     assert isinstance(agent, dict), "the upload endpoint must expose the agent payload"
     for field in ("status", "plan", "trace", "conclusions", "component_telemetry",
-                  "decision_trace", "fusion"):
+                  "decision_trace", "fusion", "proposed_decision", "decision",
+                  "assurance", "decision_certificate"):
         assert field in agent, f"guard requires agent.{field!r}"
+    assert body["final_decision"] == body["assurance"]["final_decision"]
+    assert agent["decision"] == agent["assurance"]["final_decision"]
     trace = agent["decision_trace"]
     for field in ("decision_reason_codes", "material_path_count",
                   "verified_path_count", "proof_coverage", "paths"):

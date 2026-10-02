@@ -103,10 +103,16 @@ def test_a_well_formed_two_stage_chain_verifies(tmp_path: Path) -> None:
     assert report.checks
 
 
-def test_empty_stage_directory_fails_without_crashing(tmp_path: Path) -> None:
+def test_empty_stage_directory_reports_not_frozen_without_failing(tmp_path: Path) -> None:
     report = e5_harness.verify(tmp_path)
-    assert not report.ok
-    assert any("stage manifests present" in check["check"] for check in report.failures)
+    assert report.ok
+    assert report.checks == [
+        {
+            "check": "stage manifests absent; study is not frozen",
+            "status": "PASS",
+            "detail": "",
+        }
+    ]
 
 
 def test_broken_chain_fails(tmp_path: Path) -> None:
