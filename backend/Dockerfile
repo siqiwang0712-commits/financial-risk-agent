@@ -12,7 +12,7 @@
 # Base images are pinned "tag + digest". The tag keeps the image identifiable and
 # Dependabot-updatable, the digest makes the build byte-reproducible and immune to a
 # tag being re-pointed. Drop the `@sha256:` suffix to float on the tag.
-ARG PYTHON_BASE=python:3.12-slim@sha256:2f17fc044b579bab302c2e8054d3a686e2cb9a83de48e70534b94cd8ebbe06a9
+ARG PYTHON_BASE=python:3.12-slim@sha256:dddfd7e07f9d15aeeca61529320492139d21cac7f0070c00609243e51e4e0016
 
 # ---------------------------------------------------------------------------
 # Stage 1 — dependency resolution. Only the packaging metadata and the package
@@ -48,7 +48,7 @@ LABEL org.opencontainers.image.title="FinRisk API" \
       org.opencontainers.image.licenses="MIT" \
       org.opencontainers.image.vendor="siqiwang0712-commits" \
       org.opencontainers.image.base.name="docker.io/library/python:3.12-slim" \
-      org.opencontainers.image.base.digest="sha256:2f17fc044b579bab302c2e8054d3a686e2cb9a83de48e70534b94cd8ebbe06a9" \
+      org.opencontainers.image.base.digest="sha256:dddfd7e07f9d15aeeca61529320492139d21cac7f0070c00609243e51e4e0016" \
       org.opencontainers.image.version="${OCI_VERSION}" \
       org.opencontainers.image.revision="${OCI_REVISION}" \
       org.opencontainers.image.created="${OCI_CREATED}"
@@ -59,6 +59,26 @@ ENV PYTHONPATH=/app/backend \
     PATH="/opt/venv/bin:$PATH" \
     PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1
+# Debian's security archive publishes fixes *ahead* of the `python:3.12-slim`
+# digest refresh, so a digest-pinned base can legitimately lag the security pocket
+# for a few days. At the time of writing the pinned digest above still ships
+# `libpcre2-8-0 10.46-1~deb13u2` while `trixie-security` already carries
+# `10.46-1~deb13u3`, which is the fix for CVE-2026-103111 (HIGH). Refreshing the
+# base digest is still the primary remediation — it is what clears the OpenSSL
+# advisories — and this step exists only to close that remaining gap.
+#
+# It is deliberately minimal: a single package, upgraded rather than reinstalled,
+# so it is a no-op once the base digest catches up and never downgrades. A blanket
+# `apt-get upgrade` would drag unrelated packages into the release image, and
+# pinning an exact version here would turn the next base-image bump into a failed
+# build. The apt lists are removed so the layer ships no package index.
+#
+# Only the runtime stage needs this: it is the stage that is published and
+# scanned, and the builder's OS packages never reach it (`COPY --from=builder`
+# takes `/opt/venv` and nothing else).
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends --only-upgrade libpcre2-8-0 \
+    && rm -rf /var/lib/apt/lists/*
 COPY --from=builder /opt/venv /opt/venv
 # Harden the runtime: `pip` is build tooling, and the copy it ships also carries its
 # own vendored `msgpack` (GHSA-6v7p-g79w-8964) and `setuptools` (CVE-2025-47273) —

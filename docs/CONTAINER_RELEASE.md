@@ -128,7 +128,11 @@ require it, so a broken deployment file can no longer be promoted.
   and blocks on any hit.
 * A third check asserts neither image ships a non-empty `OPENAI_API_KEY`,
   `DATABASE_URL` or `FINRISK_BOOTSTRAP_TOKEN` in its own environment.
-* JSON results are uploaded as a build artifact for audit.
+* JSON results are produced for both images by the same pinned Trivy action the gates
+  above use — the job installs one Trivy, not two — and are uploaded as a build artifact
+  for audit. A report that is missing, unparseable, or that does not name the candidate
+  digest fails the job, so a scanner that never ran cannot be mistaken for a scan that
+  ran and found nothing.
 
 ## Supply-chain artifacts (job `publish`)
 

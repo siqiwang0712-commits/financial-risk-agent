@@ -479,23 +479,70 @@ jobs:
               exit 1
             fi
           done
-      - name: Machine-readable scan results
+      # The report steps write into `.runtime`, and every job starts from a fresh
+      # checkout, so the directory has to exist before Trivy is asked to open its
+      # `--output` path.
+      - name: Prepare the report directory
+        if: always()
+        run: mkdir -p .runtime
+      # The JSON reports are an audit deliverable, and they used to come from a
+      # separate `docker run aquasecurity/trivy:0.68.2@sha256:...` invocation. That
+      # reference does not exist on Docker Hub — Trivy's image lives under the
+      # `aquasec` organisation, not `aquasecurity` — so Docker refused to start the
+      # scanner, the trailing `|| true` turned the failure into a success, and the
+      # artifact upload then reported "no files found" without failing anything.
+      #
+      # Two things are fixed here. The reports now come from the *same* pinned action
+      # as the gates, so the job installs one Trivy (the version the action pins)
+      # instead of also pinning an unrelated second one, and the report is guaranteed
+      # to be produced by the scanner that made the policy decision. And the report
+      # steps are allowed to record findings without failing — `exit-code: "0"` —
+      # while a Trivy *execution* error still exits non-zero and fails the step, so
+      # "the scanner could not run" is no longer indistinguishable from "the scan ran
+      # and recorded its findings". The assertion below then proves the files exist
+      # and describe the candidate digests.
+      - name: Machine-readable scan results (API)
+        if: always()
+        uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0
+        with:
+          image-ref: ghcr.io/siqiwang0712-commits/financial-risk-agent-api@${{ needs.build-api.outputs.digest }}
+          format: json
+          output: .runtime/trivy-api.json
+          severity: CRITICAL,HIGH
+          ignore-unfixed: true
+          vuln-type: os,library
+          scanners: vuln
+          trivyignores: .trivyignore
+          exit-code: "0"
+      - name: Machine-readable scan results (Web)
+        if: always()
+        uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0
+        with:
+          image-ref: ghcr.io/siqiwang0712-commits/financial-risk-agent-web@${{ needs.build-web.outputs.digest }}
+          format: json
+          output: .runtime/trivy-web.json
+          severity: CRITICAL,HIGH
+          ignore-unfixed: true
+          vuln-type: os,library
+          scanners: vuln
+          trivyignores: .trivyignore
+          exit-code: "0"
+      - name: Assert both reports describe the candidate digests
         if: always()
         run: |
-          mkdir -p .runtime
+          set -euo pipefail
           for pair in "api:${{ needs.build-api.outputs.digest }}" "web:${{ needs.build-web.outputs.digest }}"; do
             name="${pair%%:*}"; digest="${pair#*:}"
-            ref="ghcr.io/siqiwang0712-commits/financial-risk-agent-${name}@${digest}"
-            docker run --rm -v /var/run/docker.sock:/var/run/docker.sock \
-              -v "$PWD/.runtime:/out" aquasecurity/trivy:0.68.2@sha256:05d0126976bdedcd0782a0336f77832dbea1c81b9cc5e4b3a5ea5d2ec863aca7 image \
-              --format json --severity CRITICAL,HIGH --ignore-unfixed \
-              --output "/out/trivy-${name}.json" "$ref" || true
+            python3 scripts/verify_trivy_report.py --report ".runtime/trivy-${name}.json" --digest "$digest"
           done
       - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
         if: always()
         with:
           name: trivy-results
           path: .runtime/trivy-*.json
+          # Kept as `ignore` so the artifact upload still runs, and still succeeds, when
+          # the job has already failed for another reason. The assertion above is what
+          # decides whether a missing report is tolerated, and it does not tolerate it.
           if-no-files-found: ignore
 
   # ---------------------------------------------------------------------------
