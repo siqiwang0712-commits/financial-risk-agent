@@ -38,3 +38,12 @@ research/e4_statistical_audit/replication/*.gz binary
 # binary for the same reason: matplotlib would otherwise emit CRLF for the SVGs.
 research/e4r_automated_robustness/** text eol=lf
 research/e4r_automated_robustness/oof_predictions.csv text eol=lf
+
+# v0.4.1 StrongTabularReference manifests hash exact artifact bytes. Keep the
+# research contract, fitted metadata, and generated JSON replay artifacts
+# byte-stable across Windows and Linux checkouts.
+research/strong_tabular_reference/** text eol=lf
+# Serialized model artifacts are binary and must never receive newline filters.
+research/strong_tabular_reference/artifacts/*.pkl binary
+research/e5_readiness/** text eol=lf
+research/v041_development/** text eol=lf

@@ -16,13 +16,13 @@
   "e5_freeze_identity": "TO_BE_FROZEN",
   "hash_behavior": "any_material_mutation_invalidates_bundle_and_certificate_hash",
   "implementation": "backend/finrisk/enterprise/decision_bundle.py",
-  "implementation_sha256": "2d146db29ba896720722676e6db91bd7ad9c28ffd081b2f9f9680043717546ea",
+  "implementation_sha256": "b3887796fc4458f89839897e871e9165a046ab557746c402595fbdc0a7ef8500",
   "replay_requirement": "verified AssuranceResult, policy identity, material inputs and component versions",
   "schema_version": "decision-certificate-v0.4",
   "serialization_contract": "dataclass_to_dict_then_material_decision_payload_canonical_hash",
   "status": "READY_FOR_V0.4.1"
  },
- "identity_sha256": "c63aafbbcca451327dfe0c6c72b3a75c90ddf1e0f411564d0fc64ee8acebb11d",
+ "identity_sha256": "0b6e8f627ca3ccfbb12a60e610603b28b5d324e05cf5ef0c29b2ecc7c8c2ed30",
  "release_identity": "v0.4.1",
  "schema_version": "1",
  "scope": "RELEASE_IDENTITY_NOT_E5_FREEZE"

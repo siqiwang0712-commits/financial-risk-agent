@@ -14,7 +14,11 @@ OUTPUT = ROOT / "research" / "v041_development" / "runtime_identities.json"
 
 
 def _sha(path: Path) -> str:
-    return hashlib.sha256(path.read_bytes()).hexdigest()
+    # Runtime identities describe source content, not a checkout platform's
+    # newline conversion. Git stores these text files with LF, while Windows
+    # may materialize CRLF (or legacy mixed endings) in the working tree.
+    canonical = path.read_bytes().replace(b"\r\n", b"\n")
+    return hashlib.sha256(canonical).hexdigest()
 
 
 def _canonical(value: object) -> bytes:
