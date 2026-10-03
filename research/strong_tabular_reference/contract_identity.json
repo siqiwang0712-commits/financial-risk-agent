@@ -1,0 +1,21 @@
+{
+ "artifact": "StrongTabularReference-v1",
+ "canonicalization": "UTF-8 JSON, object keys sorted, indent=1, ensure_ascii=false, one trailing newline",
+ "components": {
+  "artifact_manifest_template_sha256": "31eb324d5962dbc5b8fdaca27bbc9601429b9e4f625687adab0ddbb24613f4b6",
+  "development_data_manifest_template_sha256": "b6667605987fc22e91ae73a78d80181c076b253e834705f803d069e0ff1028f3",
+  "experiment_config_sha256": "a9b11364638dccdfc0a85ffe7e64d1efe350e036e95424c864538c3376e5cde0",
+  "feature_schema_sha256": "90219904d55805c2bd55457bfe2bbe1a92a34765768857e77004322fe7f3a836"
+ },
+ "contract_sha256": "0241687d0787f2f88a5b9a7186cf8d236595677da309e9ae4c75666b3176d333",
+ "fitted_artifact_hash": "TO_BE_FITTED",
+ "hash_algorithm": "SHA-256",
+ "identity_semantics": {
+  "contract_sha256": "Prospective design identity only; it does not identify a fitted model.",
+  "e5_freeze_identity": "A later E5 governance-chain identity that must bind the selected fitted reference; it does not exist yet.",
+  "fitted_artifact_hash": "A later identity over fitted preprocessing, fitted model, approved development-data manifest, selection record and fitted manifest; it does not exist yet."
+ },
+ "schema_version": "1",
+ "status": "DRAFT_NOT_FROZEN",
+ "e5_freeze_identity": "TO_BE_FROZEN"
+}

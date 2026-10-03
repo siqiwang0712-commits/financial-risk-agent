@@ -1,5 +1,21 @@
 # Changelog
 
+## [0.4.1] - Unreleased
+
+### Research readiness and strong reference
+
+- Approved the hash-bound E4-S historical development manifest (675 verified rows) and
+  registered all 2,000 source-cohort companies for future E5 exclusion.
+- Added the prespecified, company-grouped StrongTabularReference-v1 development runner,
+  mechanically selected/fitted historical artifact, trusted hash-before-load path and
+  deterministic replay verifier.
+- Added artifact-backed V/O/VO/CC observability diagnostics, a label-independent empirical
+  development reference, and reusable selective-evaluation metrics plus S0/S1 dry run.
+- Bound v0.4.1 Assurance-policy and Decision Certificate identities and added stage-aware
+  E5 preflight. E5 remains blocked, unexecuted and unfrozen.
+- Promoted current package/frontend/container identity to 0.4.1 without changing production
+  financial-risk or Assurance behavior.
+
 ## [0.4.0] - Unreleased
 
 ### Assurance architecture

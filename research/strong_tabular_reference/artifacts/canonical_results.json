@@ -1,0 +1,93 @@
+{
+ "calibration_status": "UNCALIBRATED",
+ "development_oof": {
+  "auroc": 0.8817891682785299,
+  "brier_descriptive_uncalibrated": 0.12812086027177813,
+  "events": 235,
+  "n": 675,
+  "pr_auc": 0.8289679250748645
+ },
+ "empirical_reference_sha256": "ff8693a91b1c9f4e15e12a5426531cce5e5ca5cc6742a5f4379b3413d08da86e",
+ "fitted_artifact_hash": "3e1ebd825f1699bcc88e52a531bf9199aad3e93a671cfe28640f15dd33759a26",
+ "observability_blocks": {
+  "CC": {
+   "auroc": 0.6767361111111111,
+   "brier_descriptive_uncalibrated": 0.062268660953343644,
+   "coverage": 0.22814814814814816,
+   "events": 10,
+   "model_family": "histogram_gradient_boosting",
+   "n": 154,
+   "non_events": 144,
+   "pr_auc": 0.20729150184608552
+  },
+  "O": {
+   "auroc": 0.8359332688588008,
+   "brier_descriptive_uncalibrated": 0.14501121478901083,
+   "coverage": 1.0,
+   "events": 235,
+   "model_family": "histogram_gradient_boosting",
+   "n": 675,
+   "non_events": 440,
+   "pr_auc": 0.7717517661455398
+  },
+  "V": {
+   "auroc": 0.8720599613152804,
+   "brier_descriptive_uncalibrated": 0.133378708853772,
+   "coverage": 1.0,
+   "events": 235,
+   "model_family": "histogram_gradient_boosting",
+   "n": 675,
+   "non_events": 440,
+   "pr_auc": 0.7985083818890261
+  },
+  "VO": {
+   "auroc": 0.8817891682785299,
+   "brier_descriptive_uncalibrated": 0.12812086027177813,
+   "coverage": 1.0,
+   "events": 235,
+   "model_family": "histogram_gradient_boosting",
+   "n": 675,
+   "non_events": 440,
+   "pr_auc": 0.8289679250748645
+  }
+ },
+ "result_sha256": "4d93b408f482aacc537ad11b23fdef65134867b00fb3ddfb31cb6de37e529408",
+ "schema_version": "1",
+ "selected_feature_block": "VO",
+ "selected_hyperparameters": {
+  "early_stopping": false,
+  "l2_regularization": 1.0,
+  "learning_rate": 0.05,
+  "loss": "log_loss",
+  "max_leaf_nodes": 7,
+  "min_samples_leaf": 20
+ },
+ "selected_model_family": "histogram_gradient_boosting",
+ "selective_evaluation": {
+  "s0": {
+   "abstention_rate": 0.0,
+   "authorized": 675,
+   "authorized_decision_rate": 1.0,
+   "coverage": 1.0,
+   "erroneous_authorized_decision_rate": 0.18962962962962962,
+   "n": 675,
+   "out_of_reference_authorization_rate": 0.0637037037037037,
+   "review_rate": 0.0,
+   "selective_error": 0.18962962962962962,
+   "unsupported_authorized_decision_rate": "NOT_ESTIMABLE"
+  },
+  "s1": {
+   "abstention_rate": 0.0,
+   "authorized": 562,
+   "authorized_decision_rate": 0.8325925925925926,
+   "coverage": 0.8325925925925926,
+   "erroneous_authorized_decision_rate": 0.10962962962962963,
+   "n": 675,
+   "out_of_reference_authorization_rate": 0.054814814814814816,
+   "review_rate": 0.1674074074074074,
+   "selective_error": 0.13167259786476868,
+   "unsupported_authorized_decision_rate": "NOT_ESTIMABLE"
+  }
+ },
+ "status": "RETROSPECTIVE_DEVELOPMENT"
+}

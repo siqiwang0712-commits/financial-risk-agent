@@ -14,7 +14,7 @@ def main() -> int:
     from finrisk.assurance import verify_decision_certificate
     from finrisk.pipeline import FinRiskPipeline
 
-    if finrisk.__version__ != "0.4.0":
+    if finrisk.__version__ != "0.4.1":
         raise SystemExit(f"unexpected installed version: {finrisk.__version__}")
     pipeline = FinRiskPipeline()
     assessment = pipeline.assess(
@@ -37,7 +37,7 @@ def main() -> int:
         payload["decision_certificate"], pipeline.assurance.policy
     ):
         raise SystemExit("installed package produced an invalid Decision Certificate")
-    if app.version != "0.4.0":
+    if app.version != "0.4.1":
         raise SystemExit(f"unexpected API version: {app.version}")
     print(
         json.dumps(

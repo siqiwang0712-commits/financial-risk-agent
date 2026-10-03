@@ -10,7 +10,7 @@ is allowed to depend on, and the verifier recomputes those hashes from the curre
 
 Design
 ------
-Ten stages, each with a machine-verifiable manifest:
+Nine stages, each with a machine-verifiable manifest:
 
     0 protocol
     1 model-qualification
@@ -65,9 +65,12 @@ E5_DIR = HARNESS_DIR.parent
 PROTOCOL_DIR = E5_DIR / "protocol"
 REPO_ROOT = E5_DIR.parents[1]
 
-PROTOCOL_DOCUMENT = PROTOCOL_DIR / "STUDY_PROTOCOL.md"
-CONFIG_DOCUMENT = PROTOCOL_DIR / "experiment_config.json"
-REPRESENTATIONS_DOCUMENT = PROTOCOL_DIR / "representations.json"
+PROTOCOL_DOCUMENT = E5_DIR / "STUDY_PROTOCOL_DRAFT.md"
+CONFIG_DOCUMENT = E5_DIR / "experiment_config.json"
+# The old A0-A3 registry is preserved under protocol/ as legacy design evidence. It is not
+# silently bound into a future S2/S3 freeze; the authoritative config must first nominate
+# the actual representation and include it in the model-qualification artifacts.
+REPRESENTATIONS_DOCUMENT: Path | None = None
 PACKAGES_LOCK = REPO_ROOT / "requirements.lock"
 DEFAULT_STAGE_DIR = E5_DIR / "freeze"
 
@@ -88,11 +91,11 @@ class StageDef:
 
 
 STAGES: tuple[StageDef, ...] = (
-    StageDef("protocol", 0, "Freeze protocol, hypotheses, inference policy, representations."),
-    StageDef("model-qualification", 1, "Freeze the single primary Agent configuration."),
+    StageDef("protocol", 0, "Freeze the authoritative S0-S4 protocol and machine config."),
+    StageDef("model-qualification", 1, "Freeze all five arm identities and qualification evidence."),
     StageDef("cohort-freeze", 2, "Freeze the cohort and prove historical disjointness."),
-    StageDef("feature-packet-freeze", 3, "Freeze features and per-company Agent packets."),
-    StageDef("prediction-freeze", 4, "Freeze all predictions with outcomes inaccessible."),
+    StageDef("feature-packet-freeze", 3, "Freeze features and per-company packets for every arm."),
+    StageDef("prediction-freeze", 4, "Freeze every arm's outputs with outcomes inaccessible."),
     StageDef("outcome-unlock", 5, "Mount future outcomes and freeze the raw labels.", outcome_allowed=True),
     StageDef("adjudication-freeze", 6, "Freeze blinded human adjudication and agreement.", outcome_allowed=True),
     StageDef("statistical-analysis", 7, "Run the prespecified primary and secondary analyses.", outcome_allowed=True),
@@ -127,7 +130,9 @@ def sha256_file(path: Path) -> str:
     return digest.hexdigest()
 
 
-def sha256_document(path: Path) -> str | None:
+def sha256_document(path: Path | None) -> str | None:
+    if path is None:
+        return None
     return sha256_file(path) if path.is_file() else None
 
 
@@ -532,11 +537,19 @@ def _verify_outcome_inaccessible(report: Report, stage: str, manifest: dict) -> 
 
 
 def model_identity_sha256() -> str | None:
-    """Hash of the frozen Agent identity block, or None when no model is selected yet."""
+    """Hash selected S0/S2 identities, or ``None`` while either remains unresolved."""
     if not CONFIG_DOCUMENT.is_file():
         return None
     config = json.loads(CONFIG_DOCUMENT.read_text(encoding="utf-8"))
-    identity = config.get("agent_qualification") or {}
+    strong = config.get("strong_tabular_reference") or {}
+    arms = {arm.get("id"): arm for arm in config.get("conceptual_arms") or []}
+    if (
+        not strong.get("model_selected")
+        or not strong.get("fitted_artifact_exists")
+        or (arms.get("S2") or {}).get("implementation_status") != "FROZEN"
+    ):
+        return None
+    identity = {"strong_tabular_reference": strong, "raw_agent": arms["S2"]}
     return sha256_bytes(canonical_bytes(identity))
 
 

@@ -6,7 +6,7 @@
 
 # FinRisk
 
-### Assured selective financial intelligence — v0.4.0 review candidate
+### Assured selective financial intelligence — v0.4.1 release-review candidate
 
 [![CI](https://github.com/siqiwang0712-commits/financial-risk-agent/actions/workflows/ci.yml/badge.svg)](https://github.com/siqiwang0712-commits/financial-risk-agent/actions/workflows/ci.yml)
 [![Python 3.11+](https://img.shields.io/badge/Python-3.11%2B-3776AB?logo=python&logoColor=white)](https://www.python.org/)
@@ -224,6 +224,27 @@ the [reproducibility guide](research/EXPERIMENT_REPRODUCIBILITY.md).
 
 ## Research results
 
+### v0.4.1 retrospective development reference
+
+v0.4.1 adds a reproducible research-only `StrongTabularReference-v1`. On the
+**design-exposed**, selectively verified E4-S development subset (675 companies; 235
+events), the prespecified procedure mechanically selected `VO` + Histogram Gradient
+Boosting. Its out-of-fold **retrospective-development** AUROC is **0.881789** and PR-AUC
+is **0.828968**. These are not independent validation estimates. The score is
+`UNCALIBRATED`, does not authorize decisions, and is not used by the production pipeline.
+
+The corresponding observability diagnostic finds AUROC `0.872060` for values (`V`),
+`0.835933` for observability only (`O`), `0.881789` for their explicit combination
+(`VO`), and `0.676736` on the 154-row complete-case sensitivity subset (`CC`). Reporting
+availability therefore carries retrospective predictive information here; it is not a
+causal finding or financial severity. See the
+[canonical results](research/strong_tabular_reference/artifacts/canonical_results.json),
+[diagnostic report](research/strong_tabular_reference/OBSERVABILITY_DIAGNOSTIC.md), and
+[v0.4.1 release notes](RELEASE_NOTES_v0.4.1.md).
+
+E5 remains `BLOCKED / DRAFT_NOT_FROZEN`: no future cohort, prediction, outcome, or freeze
+identity exists.
+
 The current evidence surface is the locked v0.3.4/E4 study and its explicitly post-hoc
 audits. Earlier pilot and v0.3.1 artifacts remain available as historical audit records,
 but are not the primary result surface.
@@ -336,8 +357,8 @@ The canonical integrity, selection-bias and source-concordance results remain in
 
 ## Project maturity
 
-The current local target is **v0.4.0 review — Assured Selective Financial
-Intelligence**. The Assurance Runtime, proposal/authorization boundary, deterministic
+The current local target is **v0.4.1 release review — Research Readiness & Strong
+Reference**. The Assurance Runtime, proposal/authorization boundary, deterministic
 fragility analysis, Decision-Sufficient Evidence, distribution-validity diagnostics and
 Decision Certificate are implemented. This is an engineering release: it does not change
 the frozen E4 results, claim a stronger predictor, or freeze/run E5.
@@ -349,15 +370,16 @@ the frozen E4 results, claim a stronger predictor, or freeze/run E5.
   replay integration, API contract, Workbench hierarchy, Python 3.11/3.12, installable
   artifacts, and Docker/PostgreSQL restart persistence.
 - **Development reference only:** a hash-bound synthetic profile reproducibly exercises
-  `IN_REFERENCE`, `WARNING` and `OUTSIDE_REFERENCE`; it is not an empirical or external
-  validation reference and unknown real-world inputs still fail closed.
+  `IN_REFERENCE`, `WARNING` and `OUTSIDE_REFERENCE`. v0.4.1 also adds a label-independent
+  `EMPIRICAL_DEVELOPMENT_REFERENCE_ONLY` research profile; neither is external validation,
+  and unknown real-world inputs still fail closed.
 - **Implemented, not externally validated:** XBRL/PDF reconciliation, temporal state,
   constrained provider, Agent critic/verifier, risk-case workflow, RBAC/API keys and storage.
-- **Pending:** prospective E5, an empirical reference distribution, calibrated admission
-  policy, external validation and production/regulatory evaluation.
+- **Pending:** prospective E5, an E5-frozen reference-distribution design, calibrated
+  admission policy, external validation and production/regulatory evaluation.
 
 [Project Status](PROJECT_STATUS.md) is the authoritative maturity inventory. See the
-[v0.4.0 release notes](RELEASE_NOTES_v0.4.0.md) and [Changelog](CHANGELOG.md) for release
+[v0.4.1 release notes](RELEASE_NOTES_v0.4.1.md) and [Changelog](CHANGELOG.md) for release
 scope and history.
 
 ## Repository map
@@ -430,6 +452,7 @@ before any deployment.
 - [API Reference](docs/API_REFERENCE.md)
 - [Contributing](CONTRIBUTING.md)
 - [Changelog](CHANGELOG.md)
+- [v0.4.1 release notes](RELEASE_NOTES_v0.4.1.md)
 - [v0.4.0 release notes](RELEASE_NOTES_v0.4.0.md)
 - [v0.3.4 release notes](RELEASE_NOTES_v0.3.4.md)
 - [Failure Lab](failure_lab/README.md)

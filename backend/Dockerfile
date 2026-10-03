@@ -37,7 +37,7 @@ RUN python -m venv /opt/venv \
 # *constraint* file here, so the dev extra is never installed).
 # ---------------------------------------------------------------------------
 FROM ${PYTHON_BASE} AS runtime
-ARG OCI_VERSION=0.4.0
+ARG OCI_VERSION=0.4.1
 ARG OCI_REVISION=unknown
 ARG OCI_CREATED=1970-01-01T00:00:00Z
 LABEL org.opencontainers.image.title="FinRisk API" \
@@ -80,6 +80,14 @@ RUN apt-get update \
     && apt-get install -y --no-install-recommends --only-upgrade libpcre2-8-0 \
     && rm -rf /var/lib/apt/lists/*
 COPY --from=builder /opt/venv /opt/venv
+# The current 3.12-slim manifest still carries libpcre2-8-0 deb13u2 even though
+# Debian has published deb13u3 for CVE-2026-103111. Install that fixed revision
+# explicitly so the release image is reproducible and the security update cannot
+# be lost when an upstream tag is rebuilt.
+RUN apt-get update \
+    && apt-get install --no-install-recommends --only-upgrade -y \
+       libpcre2-8-0=10.46-1~deb13u3 \
+    && rm -rf /var/lib/apt/lists/*
 # Harden the runtime: `pip` is build tooling, and the copy it ships also carries its
 # own vendored `msgpack` (GHSA-6v7p-g79w-8964) and `setuptools` (CVE-2025-47273) —
 # two HIGH advisories that Trivy reports against this image and that the application

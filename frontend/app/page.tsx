@@ -53,7 +53,7 @@ export default function Page() {
 
   return (
     <>
-      <AppHeader origin="offline-sample" runtime="v0.4.0-dev" />
+      <AppHeader origin="offline-sample" runtime="v0.4.1-dev" />
       <main className="showcaseShell">
         <section className="showcaseHero" id="overview">
           <div className="heroCopy">
@@ -303,7 +303,7 @@ export default function Page() {
             <span>Evidence-grounded financial risk intelligence</span>
           </div>
           <p>
-            v0.4.0 development · Research prototype · Assurance policy is heuristic and UNCALIBRATED.<br />
+            v0.4.1 development · Research prototype · Assurance policy is heuristic and UNCALIBRATED.<br />
             Not a bankruptcy probability, credit rating, investment recommendation or regulatory determination.
           </p>
         </footer>

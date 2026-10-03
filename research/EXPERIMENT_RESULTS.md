@@ -228,6 +228,25 @@ Canonical detail: [E4-R final report](e4r_automated_robustness/FINAL_REPORT.md),
 [study protocol](e4r_automated_robustness/STUDY_PROTOCOL.md) and
 [interpretation policy](e4r_automated_robustness/INTERPRETATION_POLICY.md).
 
+## v0.4.1 StrongTabularReference retrospective development
+
+Using the approved, design-exposed E4-S verified subset (675 companies, 235 events), the
+prespecified grouped nested-CV procedure selected the `VO` block with Histogram Gradient
+Boosting. Out-of-fold AUROC is 0.881789 and PR-AUC is 0.828968; descriptive Brier is
+0.128121 for an explicitly uncalibrated score. These are
+`RETROSPECTIVE_DEVELOPMENT_SELECTION_METRICS`, not independent validation.
+
+The V/O/VO/CC development AUROCs are 0.872060 / 0.835933 / 0.881789 / 0.676736.
+O-only performance shows that reporting observability carries predictive information in
+this historical cohort; it does not make missingness financial severity or establish a
+causal effect. Complete-case coverage is 154/675 (22.8%) with 10 events.
+
+The S1 development-only selective policy reduces coverage from 1.000000 to 0.832593 and
+selective error from 0.189630 to 0.131673. The rule was hash-bound before the final
+comparison; it is neither calibrated nor an E5 result. S2/S3/S4 are
+`NOT_ESTIMABLE_IN_V0.4.1`. Canonical values are in
+[`strong_tabular_reference/artifacts/canonical_results.json`](strong_tabular_reference/artifacts/canonical_results.json).
+
 ## Current conclusion
 
 E4 established a limited improvement from temporal structured signal over the

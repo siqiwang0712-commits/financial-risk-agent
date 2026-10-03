@@ -1,4 +1,7 @@
 {
+ "artifact_role": "LEGACY_DESIGN_MATERIAL_NOT_FREEZE_CANDIDATE",
+ "freeze_eligible": false,
+ "authoritative_config": "research/e5/experiment_config.json",
  "study": "E5 — Prospective Validation of Assured Selective Financial Decisions",
  "status": "PROSPECTIVE_NOT_FROZEN",
  "readiness": "DRAFT_WAITING_FOR_V040_ARCHITECTURE_STABILIZATION",

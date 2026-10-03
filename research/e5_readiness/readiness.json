@@ -1,0 +1,93 @@
+{
+ "areas": {
+  "assurance_policy_stability": {
+   "reason": "The actual v0.4.1 heuristic policy/version/hash is bound; E5 nomination/freeze remains open.",
+   "status": "PARTIAL"
+  },
+  "calibration_design": {
+   "reason": "v0.4.1 is resolved as UNCALIBRATED; E5 must freeze that state or a valid disjoint calibration design.",
+   "status": "PARTIAL"
+  },
+  "decision_certificate_stability": {
+   "reason": "Implemented and internally replay-tested; no E5 schema/version freeze exists.",
+   "status": "PARTIAL"
+  },
+  "development_data_contract": {
+   "reason": "Temporal, endpoint, provenance, grouping, feature, integrity, exposure and E5-isolation gates are machine-validated.",
+   "status": "READY"
+  },
+  "development_data_eligibility_audit": {
+   "reason": "All plausible repository sources are classified with endpoint, feature, provenance, exposure and scale limitations.",
+   "status": "READY"
+  },
+  "development_data_proposal": {
+   "reason": "Superseded by the approved 675-row manifest; all 2,000 source companies are registered for future E5 exclusion.",
+   "status": "READY"
+  },
+  "deterministic_replay": {
+   "reason": "The fitted historical reference verifies component hashes before trusted loading and replays a fixed sample under Python 3.12.",
+   "status": "READY"
+  },
+  "e5_governance_freeze_chain": {
+   "reason": "The authoritative S0-S4 contract, config and active harness agree; the chain remains unfrozen and freeze-critical fields remain unresolved.",
+   "status": "PARTIAL"
+  },
+  "feature_schema_stability": {
+   "reason": "A validated draft schema now exists but is deliberately not frozen or extraction-bound.",
+   "status": "PARTIAL"
+  },
+  "financial_observability_separation": {
+   "reason": "Production types, split logic and tests enforce distinct value and reporting vectors.",
+   "status": "READY"
+  },
+  "model_config_environment_provenance": {
+   "reason": "The historical reference binds data, schema, folds, selection, runtime, model and preprocessor identities; E5 binding remains separate.",
+   "status": "READY"
+  },
+  "outcome_isolation": {
+   "reason": "The staged fail-closed harness is bound to the authoritative draft and tested synthetically; no protocol freeze has occurred.",
+   "status": "PARTIAL"
+  },
+  "prediction_input_contract": {
+   "reason": "The five arms are conceptually unified, but exact arm input and implementation identities remain unfrozen.",
+   "status": "PARTIAL"
+  },
+  "preprocessing_isolation": {
+   "reason": "The executed grouped nested-CV runner enforces fold-local preprocessing and no implicit V indicators.",
+   "status": "READY"
+  },
+  "previous_cohort_exclusion_reproducibility": {
+   "reason": "research/e4/_cache/previous_270.json is unpublished, so disjointness cannot be proven.",
+   "status": "BLOCKED"
+  },
+  "prospective_cohort_isolation": {
+   "reason": "No cohort is enumerated, correctly, but eligibility and complete historical exclusion are unresolved.",
+   "status": "BLOCKED"
+  },
+  "reference_distribution_design": {
+   "reason": "A label-independent EMPIRICAL_DEVELOPMENT_REFERENCE_ONLY profile exists; it is not E5-frozen or external.",
+   "status": "PARTIAL"
+  },
+  "research_statistics_infrastructure": {
+   "reason": "Paired inference, grouped CV, bootstrap, multiplicity and selective-risk utilities are reusable.",
+   "status": "READY"
+  },
+  "strong_reference": {
+   "reason": "Approved historical data, mechanical selection, fitted artifacts, hashes, diagnostics and replay exist; the E5 identity remains unfrozen.",
+   "status": "READY"
+  },
+  "strong_reference_artifact_contract": {
+   "reason": "Eligible blocks, finite candidate grids, deterministic selection, provenance, output, replay and hash-identity requirements are machine-validated.",
+   "status": "READY"
+  }
+ },
+ "evidence_boundary": {
+  "e5": "NOT_RUN_NOT_FROZEN",
+  "external_validation": "NOT_ESTABLISHED",
+  "historical_e1_e4": "UNCHANGED",
+  "strong_tabular_reference": "FITTED_RETROSPECTIVE_DEVELOPMENT_NOT_E5_FROZEN"
+ },
+ "schema_version": "1",
+ "status": "BLOCKED",
+ "study": "E5"
+}

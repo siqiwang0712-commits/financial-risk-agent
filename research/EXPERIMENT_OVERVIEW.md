@@ -1,5 +1,18 @@
 # FinRisk Experiment Overview
 
+## v0.4.1 retrospective development boundary
+
+v0.4.1 adds a mechanically selected and replayable `StrongTabularReference-v1` using the
+675-row E4-S verified subset, with all 2,000 source-cohort companies reserved for future
+E5 exclusion. This work is `RETROSPECTIVE_DEVELOPMENT`, `DESIGN_EXPOSED`,
+`UNCALIBRATED`, and not independent validation. It also adds V/O/VO/CC observability
+diagnostics, a label-independent empirical development reference, selective-evaluation
+tooling, and stage-aware E5 preflight. Production decision behavior is unchanged.
+
+The fitted historical artifact is ready for replay, but its E5 freeze identity remains
+`TO_BE_FROZEN`. E5 remains `BLOCKED / DRAFT_NOT_FROZEN`; no E5 cohort, prediction, or
+outcome exists. See [`strong_tabular_reference/`](strong_tabular_reference/README.md).
+
 ## v0.4 development boundary
 
 v0.4 is an engineering and architecture iteration: **ASSURANCE RUNTIME IMPLEMENTED;
@@ -52,7 +65,8 @@ E4-R sit between E4 and E5 because they exist to make E5 designable.
 | `ChatGPT5.6 Sol` comparator | Structured A0/A1/A2 comparison executed by Codex sub-Agents | 50 frozen anonymous cases; 150/150 judgments; 18 verified; 5 events | `POST_HOC` | Point estimates are insufficiently powered and do not change E4. The name is an internal codename, not an official model identity. | [Comparator methodology](e4_posthoc/model_capacity/sol_codex_agent/METHODOLOGY.md) |
 | E4-S statistical audit | Re-test E4's primary inference under a correctly specified correlated-model test, and re-execute the frozen pipeline from public inputs | E4's published summary; a 675-observation / 235-event re-execution cohort | `POST_E4_STATISTICAL_AUDIT` | E4's conclusion survives; its stated justification does not. E4's exact rows remain unpublished. | [E4-S audit report](e4_statistical_audit/AUDIT_REPORT.md) |
 | E4-R automated robustness | Test whether B6's temporal gain is robust, and whether conventional tabular learning explains or beats it | Same 675 / 235 cohort; 11 nested-CV baselines, 7 ablations, 20,000-replicate bootstraps | `POST_HOC_AUTOMATED_ROBUSTNESS` | Strong tabular models beat B6 decisively, but a material share of that advantage is reporting structure rather than financial-value signal. | [E4-R final report](e4r_automated_robustness/FINAL_REPORT.md) |
-| E5 | Future confirmatory study | A new untouched time window is required | Protocol only / `NOT_TESTED` | No E5 cohort, predictions, labels or results exist. | [E5 protocol](e5/protocol/STUDY_PROTOCOL.md) |
+| StrongTabularReference-v1 | Build the reproducible future S0 historical-development reference | E4-S verified 675 / 235; all 2,000 source companies excluded from future E5 | `RETROSPECTIVE_DEVELOPMENT` / `DESIGN_EXPOSED` | Prespecified selection chose VO + histogram gradient boosting; O-only signal remains substantial; no prospective claim follows. | [Reference package](strong_tabular_reference/README.md) |
+| E5 | Future confirmatory five-arm study of selective authorization | A new untouched time window is required | `DRAFT_NOT_FROZEN` / `NOT_TESTED` | S0-S4 are defined conceptually; no E5 cohort, predictions, labels or results exist. B0/B6 are historical anchors, not the competitive reference. | [Authoritative E5 draft](e5/STUDY_PROTOCOL_DRAFT.md) |
 
 ## What E4 supports
 
@@ -101,8 +115,8 @@ evidence, and neither licenses an E5 claim.
   signal.
 
 The one design conclusion both studies produce is stated in
-[the results summary](EXPERIMENT_RESULTS.md): E5's primary benchmark can no
-longer be B0.
+[the results summary](EXPERIMENT_RESULTS.md): neither B0 nor B6 alone is an adequate
+competitive E5 reference; the reference-selection procedure must be frozen prospectively.
 
 ## Reading order
 

@@ -1,0 +1,52 @@
+{
+ "e5_executed": false,
+ "e5_frozen": false,
+ "inputs": {
+  "assurance_policy_hash": "c0ce6ed4752c53e67f3528de1013a4a6ff4d512b1790cde1c6628b354c8b9053",
+  "authoritative_protocol": "research/e5/STUDY_PROTOCOL_DRAFT.md",
+  "calibration_status": "RESOLVED_AS_UNCALIBRATED_FOR_V0.4.1",
+  "certificate_schema": "decision-certificate-v0.4",
+  "development_data_status": "APPROVED_FOR_STRONG_REFERENCE_DEVELOPMENT",
+  "development_exclusions": "ALL_2000_SOURCE_COHORT_COMPANIES",
+  "historical_s0_artifact_hash": "3e1ebd825f1699bcc88e52a531bf9199aad3e93a671cfe28640f15dd33759a26",
+  "historical_s0_status": "FITTED_HISTORICAL_NOT_E5_FROZEN"
+ },
+ "preflight_sha256": "db112fad648a27a050448c831224ab31b8a7637d07f1570d55d1e3f29cd12cc6",
+ "schema_version": "1",
+ "stages": {
+  "cohort_freeze": {
+   "blockers": [
+    "future feature/outcome window is unavailable and cohort is not enumerated",
+    "research/e4/_cache/previous_270.json is unavailable",
+    "future eligibility and sampling rules remain TO_BE_FROZEN"
+   ],
+   "status": "BLOCKED"
+  },
+  "outcome_unlock": {
+   "blockers": [
+    "prediction freeze has not completed",
+    "arm completeness, deviation log, adjudication and analysis policy are not frozen"
+   ],
+   "status": "NOT_YET_APPLICABLE"
+  },
+  "prediction_freeze": {
+   "blockers": [
+    "protocol and cohort freezes have not completed",
+    "final E5-bound S0 identity and S1-S4 implementation identities are not frozen",
+    "prediction environment/container and outcome-mount isolation are not frozen"
+   ],
+   "status": "NOT_YET_APPLICABLE"
+  },
+  "protocol_freeze": {
+   "blockers": [
+    "primary authorization-quality estimands remain TO_BE_FROZEN",
+    "multiplicity alpha and minimum meaningful effects remain TO_BE_FROZEN",
+    "final E5 reference-distribution design remains TO_BE_FROZEN",
+    "S1 threshold/policy identity remains TO_BE_FROZEN for prospective E5"
+   ],
+   "status": "BLOCKED"
+  }
+ },
+ "status": "BLOCKED",
+ "study": "E5"
+}

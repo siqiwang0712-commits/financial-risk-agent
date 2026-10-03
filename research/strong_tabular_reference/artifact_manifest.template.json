@@ -1,0 +1,136 @@
+{
+ "artifact": "StrongTabularReference-v1",
+ "artifact_role": "FUTURE_E5_S0_PREDICTIVE_REFERENCE",
+ "calibration": {
+  "artifact_sha256": "NOT_APPLICABLE",
+  "probability_interpretation_allowed": false,
+  "status": "UNCALIBRATED"
+ },
+ "development_data": {
+  "contract_template": "research/strong_tabular_reference/development_data_manifest.template.json",
+  "proposal": "research/strong_tabular_reference/development_data_proposal.json",
+  "proposal_status": "SUPERSEDED_BY_APPROVED_MANIFEST",
+  "approval_status": "APPROVED_FOR_STRONG_REFERENCE_DEVELOPMENT",
+  "company_count": "TO_BE_NOMINATED",
+  "company_disjointness_status": "TO_BE_PROVEN",
+  "company_identity_manifest": "TO_BE_NOMINATED",
+  "dataset_id": "TO_BE_NOMINATED",
+  "e5_artifacts_referenced": false,
+  "e5_overlap_status": "TO_BE_PROVEN_NO_OVERLAP",
+  "endpoint_version": "TO_BE_NOMINATED",
+  "exclusion_manifest_identity": "TO_BE_NOMINATED",
+  "feature_period": "TO_BE_NOMINATED",
+  "manifest_sha256": "TO_BE_NOMINATED",
+  "observation_count": "TO_BE_NOMINATED",
+  "observation_cutoff_utc": "TO_BE_NOMINATED",
+  "outcome_period": "TO_BE_NOMINATED",
+  "source": "TO_BE_NOMINATED",
+  "source_artifact_hashes": "TO_BE_NOMINATED",
+  "use_scope": "DEVELOPMENT_SELECTION_AND_FINAL_DEVELOPMENT_FIT_ONLY"
+ },
+ "feature_contract": {
+  "candidate_feature_orders": {
+   "V": ["current_ratio", "debt_to_assets", "net_margin", "cfo_to_net_income", "fcf_margin", "revenue_growth", "operating_cash_flow_growth", "total_debt_growth", "cash_growth"],
+   "VO": ["current_ratio", "debt_to_assets", "net_margin", "cfo_to_net_income", "fcf_margin", "revenue_growth", "operating_cash_flow_growth", "total_debt_growth", "cash_growth", "observed__current_ratio", "observed__debt_to_assets", "observed__net_margin", "observed__cfo_to_net_income", "observed__fcf_margin", "observed__revenue_growth", "observed__operating_cash_flow_growth", "observed__total_debt_growth", "observed__cash_growth"]
+  },
+  "feature_definitions_source": "research/strong_tabular_reference/feature_schema.json",
+  "feature_schema_sha256": "90219904d55805c2bd55457bfe2bbe1a92a34765768857e77004322fe7f3a836",
+  "feature_schema_version": "1",
+  "ordered_feature_names": "TO_BE_FITTED",
+  "selected_feature_block": "TO_BE_SELECTED",
+  "selected_feature_types": "TO_BE_FITTED",
+  "temporal_cutoff_contract": "feature_schema.json::temporal_cutoff_rules"
+ },
+ "hashes": {
+  "contract_hash": "TO_BE_COMPUTED_FROM_DRAFT_CONTRACT_IDENTITY",
+  "e5_freeze_identity": "TO_BE_FROZEN",
+  "fitted_artifact_hash": "TO_BE_FITTED",
+  "fitted_artifact_hash_rule": "SHA-256 over canonical JSON of this manifest after removing only hashes.fitted_artifact_hash",
+  "fitted_model_sha256": "TO_BE_FITTED",
+  "fitted_preprocessor_sha256": "TO_BE_FITTED",
+  "selection_record_sha256": "TO_BE_FITTED",
+  "verification_report_sha256": "TO_BE_FITTED"
+ },
+ "model": {
+  "candidate_selection_record": "TO_BE_FITTED",
+  "exact_hyperparameters": "TO_BE_FITTED",
+  "family": "TO_BE_SELECTED",
+  "fitted_state": "TO_BE_FITTED",
+  "library": "scikit-learn",
+  "library_version": "TO_BE_FITTED",
+  "random_state": "TO_BE_FITTED",
+  "serialized_artifact": "TO_BE_FITTED"
+ },
+ "output_contract": {
+  "calibration_rule": "reference_model_score is not a validated probability while calibration_status is UNCALIBRATED",
+  "fields": [
+   {"name": "schema_version", "type": "string"},
+   {"name": "reference_model_score", "type": "number_in_closed_interval_0_1"},
+   {"name": "score_semantics", "type": "string_constant_UNCALIBRATED_RANKING_SCORE"},
+   {"name": "calibration_status", "type": "string_constant_UNCALIBRATED"},
+   {"name": "model_artifact_id", "type": "string"},
+   {"name": "feature_schema_sha256", "type": "sha256"},
+   {"name": "input_packet_id", "type": "string"},
+   {"name": "input_packet_sha256", "type": "sha256"},
+   {"name": "prediction_cutoff_utc", "type": "rfc3339_datetime"},
+   {"name": "inference_created_at_utc", "type": "rfc3339_datetime"},
+   {"name": "source_commit", "type": "git_commit"},
+   {"name": "runtime_identity", "type": "string"}
+  ],
+  "final_decision_authority": "NONE_PREDICTION_ONLY",
+  "schema_version": "1"
+ },
+ "preprocessing": {
+  "categorical_handling": "NOT_APPLICABLE_NO_CATEGORICAL_PREDICTORS",
+  "feature_selection": {
+   "fitted_state": "NOT_APPLICABLE",
+   "method": "DISABLED"
+  },
+  "imputation": {
+   "automatic_missing_indicators": false,
+   "fitted_state": "TO_BE_FITTED",
+   "method": "median numeric inside training pipeline; none for explicit observability booleans"
+  },
+  "library": "scikit-learn",
+  "library_version": "TO_BE_FITTED",
+  "scaling": {
+   "fitted_state": "TO_BE_FITTED",
+   "method": "standardize logistic numeric inputs; passthrough booleans; NOT_APPLICABLE for histogram gradient boosting"
+  },
+  "serialized_artifact": "TO_BE_FITTED"
+ },
+ "replay": {
+  "cross_platform_byte_identical_scores_claimed": false,
+  "independent_reconstruction_tolerance": "TO_BE_FROZEN",
+  "ordered_features_required": true,
+  "pinned_runtime_deterministic_inference_required": true,
+  "serialized_artifact_byte_identity_required": true
+ },
+ "runtime": {
+  "container_image_digest": "TO_BE_FROZEN_OR_NOT_APPLICABLE",
+  "environment_lock_path": "requirements.lock",
+  "environment_lock_sha256": "TO_BE_FROZEN",
+  "inference_entry_point": "TO_BE_IMPLEMENTED",
+  "package_versions": "TO_BE_FITTED",
+  "python_version": "TO_BE_FITTED",
+  "source_commit": "TO_BE_FROZEN"
+ },
+ "schema_version": "1",
+ "selection": {
+  "candidate_family_list": ["logistic_regression", "histogram_gradient_boosting"],
+  "candidate_status": "NOT_EVALUATED",
+  "config_sha256": "a9b11364638dccdfc0a85ffe7e64d1efe350e036e95424c864538c3376e5cde0",
+  "grouped_nested_cv_policy": "experiment_config.json::cross_validation",
+  "primary_metric": "AUROC",
+  "search_spaces": "experiment_config.json::candidate_model_families",
+  "secondary_metric": "PR_AUC",
+  "selection_record": "TO_BE_FITTED",
+  "tie_rule": "experiment_config.json::future_model_selection_rule.tie_rule"
+ },
+ "serialization_security": {
+  "hash_verification_before_load": true,
+  "trusted_artifact_only": true,
+  "untrusted_pickle_or_joblib_load_forbidden": true
+ },
+ "status": "DRAFT_NOT_FROZEN"
+}

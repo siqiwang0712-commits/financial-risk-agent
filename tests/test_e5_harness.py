@@ -19,8 +19,8 @@ import pytest
 REPO_ROOT = Path(__file__).resolve().parents[1]
 HARNESS_DIR = REPO_ROOT / "research" / "e5" / "harness"
 
-PROTOCOL_ARTIFACT = "research/e5/protocol/STUDY_PROTOCOL.md"
-CONFIG_ARTIFACT = "research/e5/protocol/experiment_config.json"
+PROTOCOL_ARTIFACT = "research/e5/STUDY_PROTOCOL_DRAFT.md"
+CONFIG_ARTIFACT = "research/e5/experiment_config.json"
 
 
 def _protocol_artifacts() -> list[dict]:
@@ -41,7 +41,7 @@ def _freeze_protocol(stage_dir: Path) -> dict:
 # --------------------------------------------------------------------------------------
 
 
-def test_stage_registry_is_ten_stages_with_contiguous_sequences() -> None:
+def test_stage_registry_is_nine_stages_with_contiguous_sequences() -> None:
     # The brief numbers them 0..8; the registry is the single source of truth.
     assert [stage.sequence for stage in e5_harness.STAGES] == list(range(9))
     assert e5_harness.STAGES[0].name == "protocol"

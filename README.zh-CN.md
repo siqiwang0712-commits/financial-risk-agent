@@ -6,7 +6,7 @@
 
 # FinRisk
 
-### 受保证的选择性金融智能——v0.4.0 评审候选版本
+### 受保证的选择性金融智能——v0.4.1 发布评审候选版本
 
 [![CI](https://github.com/siqiwang0712-commits/financial-risk-agent/actions/workflows/ci.yml/badge.svg)](https://github.com/siqiwang0712-commits/financial-risk-agent/actions/workflows/ci.yml)
 [![Python 3.11+](https://img.shields.io/badge/Python-3.11%2B-3776AB?logo=python&logoColor=white)](https://www.python.org/)
@@ -194,6 +194,23 @@ SEC 源数据获取见[可复现性指南](research/EXPERIMENT_REPRODUCIBILITY.m
 
 ## 研究概览
 
+### v0.4.1 回顾性开发参考模型
+
+v0.4.1 新增可复现、仅用于研究的 `StrongTabularReference-v1`。在**设计已暴露**且标签
+可得性具有选择性的 E4-S 开发子集（675 家公司、235 个事件）上，预先规定的流程机械选择了
+`VO` + Histogram Gradient Boosting。其折外**回顾性开发** AUROC 为 **0.881789**，
+PR-AUC 为 **0.828968**。这些不是独立验证估计。分数仍为 `UNCALIBRATED`，不能授权决策，
+也没有接入生产评分路径。
+
+可观测性诊断的 AUROC 分别为：财务值 `V` 0.872060、仅报告可观测性 `O` 0.835933、
+显式组合 `VO` 0.881789，以及 154 条完整案例敏感性子集 `CC` 0.676736。报告可得性在该
+历史队列中携带回顾性预测信息，但这不是因果结论，也不是财务严重程度。详见
+[规范结果](research/strong_tabular_reference/artifacts/canonical_results.json)、
+[诊断报告](research/strong_tabular_reference/OBSERVABILITY_DIAGNOSTIC.md)和
+[v0.4.1 发布说明](RELEASE_NOTES_v0.4.1.md)。
+
+E5 仍为 `BLOCKED / DRAFT_NOT_FROZEN`：不存在未来队列、预测、结果或冻结身份。
+
 当前证据面以锁定的 v0.3.4/E4 研究及其明确标注为事后分析的审计为主。更早的 pilot 和
 v0.3.1 产物仍保留为历史审计记录，但不再作为主要结果面。
 
@@ -231,7 +248,7 @@ v0.3.1 产物仍保留为历史审计记录，但不再作为主要结果面。
 
 ## 项目状态与成熟度
 
-当前本地目标是 **v0.4.0 review — Assured Selective Financial Intelligence**。
+当前本地目标是 **v0.4.1 发布评审——Research Readiness & Strong Reference**。
 Assurance 权威边界、确定性证据脆弱性、决策充分证据、分布有效性诊断和 Decision Certificate
 已经实现。这是工程版本：它没有修改冻结的 E4 结果，没有声称得到更强预测器，也没有冻结或运行 E5。
 
@@ -241,13 +258,15 @@ Assurance 权威边界、确定性证据脆弱性、决策充分证据、分布�
   有效性状态、证书哈希、重放集成、API 契约、Workbench 层级、Python 3.11/3.12、
   可安装产物，以及 Docker/PostgreSQL 重启持久性。
 - **仅限开发参考：** 一个带哈希的合成 profile 可复现地覆盖 `IN_REFERENCE`、`WARNING`
-  和 `OUTSIDE_REFERENCE`；它不是经验或外部验证参考，未知真实输入仍按失败关闭处理。
+  和 `OUTSIDE_REFERENCE`。v0.4.1 另增不使用标签构建的
+  `EMPIRICAL_DEVELOPMENT_REFERENCE_ONLY` 研究 profile；两者都不是外部验证参考，
+  未知真实输入仍按失败关闭处理。
 - **已实现但未外部验证：** XBRL/PDF 核对、时序状态、受约束 provider、Agent critic/verifier、
   风险案例流程、RBAC/API key 与存储。
-- **待完成：** 前瞻性 E5、经验参考分布、校准准入策略、外部验证及生产/监管评估。
+- **待完成：** 前瞻性 E5、E5 冻结的参考分布设计、校准准入策略、外部验证及生产/监管评估。
 
 [项目状态](PROJECT_STATUS.md)是成熟度的权威清单。发布范围与历史见
-[v0.4.0 发布说明](RELEASE_NOTES_v0.4.0.md)和[变更日志](CHANGELOG.md)。
+[v0.4.1 发布说明](RELEASE_NOTES_v0.4.1.md)和[变更日志](CHANGELOG.md)。
 
 ## 仓库结构
 
@@ -316,6 +335,7 @@ failure_lab/  注入故障目录及预期的失败关闭行为
 - [API 参考](docs/API_REFERENCE.md)
 - [贡献指南](CONTRIBUTING.md)
 - [变更日志](CHANGELOG.md)
+- [v0.4.1 发布说明](RELEASE_NOTES_v0.4.1.md)
 - [v0.4.0 发布说明](RELEASE_NOTES_v0.4.0.md)
 - [v0.3.4 发布说明](RELEASE_NOTES_v0.3.4.md)
 - [Failure Lab](failure_lab/README.md)

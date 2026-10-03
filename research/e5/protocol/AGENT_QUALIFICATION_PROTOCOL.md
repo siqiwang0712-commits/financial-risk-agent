@@ -1,6 +1,11 @@
 # E5 Agent Qualification Protocol
 
-Status: **OUTCOME-BLIND — MUST COMPLETE BEFORE THE COHORT FREEZE**
+> **LEGACY DESIGN COMPONENT — NOT A FREEZE CANDIDATE.** The outcome-blind
+> qualification gates remain reusable, but the former single A2/A3 selection framing is
+> superseded. A future S2/S3 identity must be nominated under
+> [`../STUDY_PROTOCOL_DRAFT.md`](../STUDY_PROTOCOL_DRAFT.md).
+
+Status: **LEGACY_DESIGN_MATERIAL — REUSABLE QUALIFICATION MECHANICS**
 
 Purpose: choose exactly one confirmatory Agent model, and prove its operational
 reliability, without ever observing an E5 outcome. Model selection must never be

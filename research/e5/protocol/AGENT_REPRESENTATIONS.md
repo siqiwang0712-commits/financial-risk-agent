@@ -1,6 +1,10 @@
 # E5 Agent Representations — Definitions, Confound Surface, and A3
 
-Status: **PROSPECTIVE — FROZEN IN THE PROTOCOL COMMIT**
+> **LEGACY DESIGN MATERIAL — NOT A FREEZE CANDIDATE.** A0–A3 and the A2/B6
+> confound analysis are preserved for representation design and diagnostics. They do not
+> select the current S2/S3 representation or define a primary hypothesis.
+
+Status: **LEGACY_DESIGN_MATERIAL — REPRESENTATION EVIDENCE ONLY**
 
 ---
 

@@ -34,7 +34,7 @@ DEFAULT_REQUIRED_VARIABLES = {"FINRISK_SEC_MAX_ARCHIVE_MEMBER_BYTES": "214748364
 
 
 def _read_required_variables() -> dict[str, str]:
-    config = E5_DIR / "protocol" / "experiment_config.json"
+    config = E5_DIR / "experiment_config.json"
     if not config.is_file():
         return dict(DEFAULT_REQUIRED_VARIABLES)
     payload = json.loads(config.read_text(encoding="utf-8"))
@@ -42,7 +42,7 @@ def _read_required_variables() -> dict[str, str]:
     return {
         name: str(value)
         for name, value in declared.items()
-        if not name.startswith("_")
+        if name != "status" and not name.startswith("_")
     } or dict(DEFAULT_REQUIRED_VARIABLES)
 
 

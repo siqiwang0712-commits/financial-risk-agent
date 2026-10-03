@@ -1,6 +1,11 @@
 # E5 Inference Policy
 
-Status: **PROSPECTIVE — FROZEN BEFORE OUTCOME ACCESS**
+> **LEGACY DESIGN COMPONENT — NOT A FREEZE CANDIDATE.** Paired inference,
+> company-level resampling and the warning against label permutation remain reusable.
+> The former B6/A2/Hybrid hypotheses are superseded by the S0–S4 hierarchy in
+> [`../STUDY_PROTOCOL_DRAFT.md`](../STUDY_PROTOCOL_DRAFT.md).
+
+Status: **LEGACY_DESIGN_MATERIAL — REUSABLE STATISTICAL METHODS**
 
 This document fixes *how* E5 computes uncertainty and p-values, and — importantly —
 which procedures are forbidden. It exists because E4's primary inference did not test the

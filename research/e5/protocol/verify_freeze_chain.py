@@ -1,4 +1,8 @@
-"""Verify the E5 staged freeze chain.
+"""Verify the legacy E5 staged freeze-chain format.
+
+LEGACY DESIGN INFRASTRUCTURE — NOT THE CURRENT PROTOCOL FREEZE ENTRY POINT. The active
+S0-S4 harness and authority are named in ``research/e5/experiment_config.json``. This
+verifier remains reusable for historical manifests and hash-chain mechanics only.
 
 Reads ``research/e5/freeze/<stage>.json`` manifests and mechanically checks:
 
