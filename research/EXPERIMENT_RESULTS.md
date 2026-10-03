@@ -228,6 +228,16 @@ Canonical detail: [E4-R final report](e4r_automated_robustness/FINAL_REPORT.md),
 [study protocol](e4r_automated_robustness/STUDY_PROTOCOL.md) and
 [interpretation policy](e4r_automated_robustness/INTERPRETATION_POLICY.md).
 
+## v0.4.1 retrospective development results
+
+The aggregate v0.4.1 development results are published separately from company-level
+records and execution artifacts. The selected strong-reference diagnostic reports AUROC
+0.881789 and PR-AUC 0.828968 on the historically exposed E4-S verified subset. Scores
+remain uncalibrated, E5 remains blocked and unfrozen, and these results are not independent
+or prospective validation.
+
+See the [v0.4.1 aggregate result package](results/v0.4.1/README.md).
+
 ## Current conclusion
 
 E4 established a limited improvement from temporal structured signal over the
