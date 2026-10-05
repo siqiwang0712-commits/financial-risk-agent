@@ -18,6 +18,7 @@ research/results/public_v1/*.svg text eol=lf
 research/results/v0.3.1/*.csv text eol=lf
 research/results/v0.3.1/*.json text eol=lf
 research/results/v0.3.1/*.svg text eol=lf
+research/results/v0.4.1/*.json text eol=lf
 
 # Frozen forensic manifests hash exact artifact bytes. Preserve their original
 # CRLF byte representation on every platform instead of applying text filters.

@@ -1,0 +1,43 @@
+{
+  "schema_version": "1",
+  "release": "v0.4.1",
+  "status": "RETROSPECTIVE_DEVELOPMENT",
+  "evidence_class": "DESIGN_EXPOSED",
+  "calibration_status": "UNCALIBRATED",
+  "row_level_data_published": false,
+  "cohort": {
+    "observations": 675,
+    "companies": 675,
+    "events": 235,
+    "non_events": 440
+  },
+  "strong_reference": {
+    "feature_block": "VO",
+    "model_family": "histogram_gradient_boosting",
+    "auroc": 0.8817891682785299,
+    "pr_auc": 0.8289679250748645,
+    "brier_descriptive_uncalibrated": 0.12812086027177813
+  },
+  "feature_block_diagnostics": {
+    "V": {"n": 675, "events": 235, "coverage": 1.0, "auroc": 0.8720599613152804, "pr_auc": 0.7985083818890261, "brier_descriptive_uncalibrated": 0.133378708853772},
+    "O": {"n": 675, "events": 235, "coverage": 1.0, "auroc": 0.8359332688588008, "pr_auc": 0.7717517661455398, "brier_descriptive_uncalibrated": 0.14501121478901083},
+    "VO": {"n": 675, "events": 235, "coverage": 1.0, "auroc": 0.8817891682785299, "pr_auc": 0.8289679250748645, "brier_descriptive_uncalibrated": 0.12812086027177813},
+    "CC": {"n": 154, "events": 10, "coverage": 0.22814814814814816, "auroc": 0.6767361111111111, "pr_auc": 0.20729150184608552, "brier_descriptive_uncalibrated": 0.062268660953343644}
+  },
+  "selective_policy_diagnostic": {
+    "S0": {"coverage": 1.0, "review_rate": 0.0, "selective_error": 0.18962962962962962, "erroneous_authorized_decision_rate": 0.18962962962962962, "out_of_reference_authorization_rate": 0.0637037037037037},
+    "S1": {"coverage": 0.8325925925925926, "review_rate": 0.1674074074074074, "selective_error": 0.13167259786476868, "erroneous_authorized_decision_rate": 0.10962962962962963, "out_of_reference_authorization_rate": 0.054814814814814816},
+    "S2": "NOT_ESTIMABLE_IN_V0.4.1",
+    "S3": "NOT_ESTIMABLE_IN_V0.4.1",
+    "S4": "NOT_ESTIMABLE_IN_V0.4.1"
+  },
+  "e5_status": "BLOCKED_DRAFT_NOT_FROZEN",
+  "claims_not_established": [
+    "CALIBRATION",
+    "PREDICTIVE_SUPERIORITY",
+    "PROSPECTIVE_VALIDATION",
+    "EXTERNAL_VALIDATION",
+    "PRODUCTION_OR_REGULATORY_VALIDITY",
+    "SAFETY_GUARANTEE"
+  ]
+}

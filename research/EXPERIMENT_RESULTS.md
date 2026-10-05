@@ -247,6 +247,9 @@ comparison; it is neither calibrated nor an E5 result. S2/S3/S4 are
 `NOT_ESTIMABLE_IN_V0.4.1`. Canonical values are in
 [`strong_tabular_reference/artifacts/canonical_results.json`](strong_tabular_reference/artifacts/canonical_results.json).
 
+The public, aggregate-only publication excludes company-level records, execution artifacts
+and fitted models. See the [v0.4.1 aggregate result package](results/v0.4.1/README.md).
+
 ## Current conclusion
 
 E4 established a limited improvement from temporal structured signal over the

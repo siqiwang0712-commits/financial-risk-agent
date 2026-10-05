@@ -47,6 +47,8 @@ research/e4/_cache/
 !research/results/public_v1/*.svg
 !research/results/v0.3.1/
 !research/results/v0.3.1/**
+!research/results/v0.4.1/
+!research/results/v0.4.1/**
 *.pem
 *.key
 secrets.*
