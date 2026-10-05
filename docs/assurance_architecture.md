@@ -140,11 +140,14 @@ automation is withheld and an actionable proposal is routed to `REVIEW` or `ABST
 > Existing assurance claims are not asserted outside the validated reference
 > distribution.
 
-The repository contains a hash-bound synthetic profile scoped as
+The runtime contains a hash-bound synthetic profile scoped as
 `DEVELOPMENT_REFERENCE_ONLY`. It exists only to exercise all validity states in the demo
 and deterministic tests; it has one synthetic source fixture and is not representative of
-an issuer population. Runtime inputs without an explicitly supplied supported profile
-report `UNKNOWN`. No empirical or externally validated v0.4 reference profile exists.
+an issuer population. v0.4.1 also checks in a separate research-only
+`EMPIRICAL_DEVELOPMENT_REFERENCE_ONLY` profile built without labels from the 2,000-row
+historical E4-S source population. It supports retrospective S0/S1 development diagnostics;
+it is not installed as the production Assurance reference and is not external validation.
+Runtime inputs without an explicitly supplied supported profile report `UNKNOWN`.
 
 ## Financial values and reporting observability
 
@@ -226,8 +229,9 @@ certificate hash.
 | Deterministic unit/integration validation | complete for v0.4 release scope |
 | Internal development validation | complete |
 | Synthetic development reference | implemented; development only |
+| Empirical development reference | implemented; retrospective research only |
 | Calibrated admission policy | not established |
-| Frozen empirical/external reference distribution | not established |
+| Frozen external/production reference distribution | not established |
 | Prospective E5 validation | pending |
 | External/production/regulatory validation | not established |
 

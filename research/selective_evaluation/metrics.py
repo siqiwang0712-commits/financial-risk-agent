@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import math
 from collections.abc import Iterable
 
 
@@ -53,6 +54,8 @@ def evaluate_decisions(
         support = list(support_verified)
         if len(support) != len(y):
             raise ValueError("support annotations must align with labels")
+        if any(type(value) is not bool for value in support):
+            raise ValueError("support annotations must be booleans")
         result["unsupported_authorized_decision_rate"] = _rate(
             sum(not support[index] for index in authorized), len(y)
         )
@@ -62,6 +65,8 @@ def evaluate_decisions(
         reference = list(in_reference)
         if len(reference) != len(y):
             raise ValueError("reference annotations must align with labels")
+        if any(type(value) is not bool for value in reference):
+            raise ValueError("reference annotations must be booleans")
         result["out_of_reference_authorization_rate"] = _rate(
             sum(not reference[index] for index in authorized), len(y)
         )
@@ -80,6 +85,10 @@ def risk_coverage_curve(labels: Iterable[int], scores: Iterable[float]) -> list[
     s = [float(value) for value in scores]
     if len(y) != len(s) or not y:
         raise ValueError("labels and scores must be equally sized and non-empty")
+    if any(value not in {0, 1} for value in y):
+        raise ValueError("labels must be binary")
+    if any(not math.isfinite(value) or value < 0.0 or value > 1.0 for value in s):
+        raise ValueError("scores must be finite values in [0, 1]")
     order = sorted(range(len(y)), key=lambda index: (-abs(s[index] - 0.5), index))
     errors = 0
     points = []

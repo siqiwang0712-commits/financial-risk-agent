@@ -36,13 +36,22 @@ def verify_versions() -> None:
     lock = _json("frontend/package-lock.json")
     if f'version = "{expected}"' not in pyproject:
         raise SystemExit("pyproject version drift")
+    if 'license = "Apache-2.0"' not in pyproject or 'requires-python = ">=3.11,<3.13"' not in pyproject:
+        raise SystemExit("Python package license/interpreter metadata drift")
     if frontend.get("version") != expected or lock.get("version") != expected:
         raise SystemExit("frontend version drift")
+    if frontend.get("license") != "Apache-2.0":
+        raise SystemExit("frontend license metadata drift")
     if (lock.get("packages") or {}).get("", {}).get("version") != expected:
         raise SystemExit("frontend lock root version drift")
     for relative in ("backend/Dockerfile", "frontend/Dockerfile"):
-        if f"ARG OCI_VERSION={expected}" not in (ROOT / relative).read_text():
+        dockerfile = (ROOT / relative).read_text()
+        if f"ARG OCI_VERSION={expected}" not in dockerfile:
             raise SystemExit(f"container version drift: {relative}")
+        if 'org.opencontainers.image.licenses="Apache-2.0"' not in dockerfile:
+            raise SystemExit(f"container license drift: {relative}")
+    if "Apache License" not in (ROOT / "LICENSE").read_text(encoding="utf-8")[:200]:
+        raise SystemExit("LICENSE does not contain the declared Apache license")
 
 
 def verify_headlines() -> None:
@@ -58,19 +67,40 @@ def verify_headlines() -> None:
         "0.872060": results["observability_blocks"]["V"]["auroc"],
         "0.835933": results["observability_blocks"]["O"]["auroc"],
         "0.676736": results["observability_blocks"]["CC"]["auroc"],
-        manifest["hashes"]["fitted_artifact_hash"]: True,
     }
     for relative in ("README.md", "README.zh-CN.md"):
         text = (ROOT / relative).read_text(encoding="utf-8")
-        for token in list(expected)[:5]:
+        for token in expected:
             if token not in text:
                 raise SystemExit(f"headline drift: {token} absent from {relative}")
     notes = (ROOT / "RELEASE_NOTES_v0.4.1.md").read_text(encoding="utf-8")
-    for token in expected:
+    release_tokens = {
+        *expected,
+        str(results["development_oof"]["n"]),
+        str(results["development_oof"]["events"]),
+        "440",
+        "154",
+        "10",
+        str(results["development_oof"]["brier_descriptive_uncalibrated"]),
+        results["selected_feature_block"],
+        results["selected_model_family"],
+        results["empirical_reference_sha256"],
+        manifest["hashes"]["fitted_artifact_hash"],
+        "UNCALIBRATED",
+        "RETROSPECTIVE_DEVELOPMENT",
+    }
+    for token in release_tokens:
         if token not in notes:
             raise SystemExit(f"release-note headline drift: {token}")
     if not re.search(r"E5 remains.*DRAFT_NOT_FROZEN", notes, re.DOTALL):
         raise SystemExit("release notes do not preserve the E5 boundary")
+    active_status = "\n".join(
+        (ROOT / relative).read_text(encoding="utf-8")
+        for relative in ("PROJECT_STATUS.md", "RELEASE_NOTES_v0.4.1.md")
+    )
+    for stale in ("713 passed", "14 skipped", "90.52%"):
+        if stale in active_status:
+            raise SystemExit(f"stale release-verification headline: {stale}")
 
 
 def main() -> int:
@@ -78,26 +108,27 @@ def main() -> int:
     parser.add_argument(
         "--ci",
         action="store_true",
-        help="skip slow duplicate historical recomputation; never skips v0.4.1 artifacts",
+        help="CI-compatible output; all release-critical historical checks still run",
     )
-    args = parser.parse_args()
+    parser.parse_args()
     RUNTIME.mkdir(parents=True, exist_ok=True)
     verify_versions()
-    verify_headlines()
     run("StrongTabularReference draft contract", [sys.executable, "-m", "research.strong_tabular_reference.contract"])
     run("fitted artifact and replay", [sys.executable, "-m", "research.strong_tabular_reference.verify_artifact"])
+    # Headline prose is checked only after the canonical result has been independently
+    # rebuilt from its hash-bound OOF, selection, reference and selective artifacts.
+    verify_headlines()
     backend_env = {**os.environ, "PYTHONPATH": str(ROOT / "backend")}
     run("v0.4.1 runtime identities", [sys.executable, "scripts/generate_v041_runtime_identities.py", "--check"], env=backend_env)
     run("E5 stage-aware preflight", [sys.executable, "scripts/e5_preflight.py", "--check"])
     run("authoritative E5 contract", [sys.executable, "-m", "research.e5.validate_study_contract"])
     run("E5 remains NOT_FROZEN", [sys.executable, "research/e5/protocol/verify_freeze_chain.py", "--report-only"])
     run("frozen E4 public artifacts", [sys.executable, "scripts/verify_e4_public_artifacts.py"])
-    if not args.ci:
-        run(
-            "E4-S integrity",
-            [sys.executable, "research/e4_statistical_audit/verify_audit.py", "--quick", "--out", str(RUNTIME / "e4s.json")],
-        )
-        run("E4-R integrity", [sys.executable, "research/e4r_automated_robustness/verify_e4r.py"])
+    run(
+        "E4-S integrity",
+        [sys.executable, "research/e4_statistical_audit/verify_audit.py", "--quick", "--out", str(RUNTIME / "e4s.json")],
+    )
+    run("E4-R integrity", [sys.executable, "research/e4r_automated_robustness/verify_e4r.py"])
     run("Markdown links", [sys.executable, "scripts/check_markdown_links.py"])
     print("v0.4.1 checked-in release artifacts: PASS")
     return 0

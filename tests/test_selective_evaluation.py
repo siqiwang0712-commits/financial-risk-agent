@@ -1,3 +1,5 @@
+import pytest
+
 from research.selective_evaluation import evaluate_decisions, risk_coverage_curve
 
 
@@ -29,3 +31,16 @@ def test_risk_coverage_curve_is_deterministic() -> None:
     second = risk_coverage_curve([0, 1, 1], [0.1, 0.9, 0.6])
     assert first == second
     assert first[-1]["coverage"] == 1.0
+
+
+@pytest.mark.parametrize("value", [float("nan"), float("inf"), -0.01, 1.01])
+def test_risk_coverage_rejects_invalid_scores(value: float) -> None:
+    with pytest.raises(ValueError, match="finite values"):
+        risk_coverage_curve([0, 1], [0.1, value])
+
+
+def test_annotation_types_fail_closed() -> None:
+    with pytest.raises(ValueError, match="support annotations must be booleans"):
+        evaluate_decisions([0], ["PASS"], support_verified=["false"])
+    with pytest.raises(ValueError, match="reference annotations must be booleans"):
+        evaluate_decisions([0], ["PASS"], in_reference=[0])

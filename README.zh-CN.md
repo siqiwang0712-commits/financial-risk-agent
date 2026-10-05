@@ -9,8 +9,8 @@
 ### 受保证的选择性金融智能——v0.4.1 发布评审候选版本
 
 [![CI](https://github.com/siqiwang0712-commits/financial-risk-agent/actions/workflows/ci.yml/badge.svg)](https://github.com/siqiwang0712-commits/financial-risk-agent/actions/workflows/ci.yml)
-[![Python 3.11+](https://img.shields.io/badge/Python-3.11%2B-3776AB?logo=python&logoColor=white)](https://www.python.org/)
-[![License](https://img.shields.io/badge/license-MIT-d45b3e)](LICENSE)
+[![Python 3.11–3.12](https://img.shields.io/badge/Python-3.11%E2%80%933.12-3776AB?logo=python&logoColor=white)](https://www.python.org/)
+[![License](https://img.shields.io/badge/license-Apache--2.0-d45b3e)](LICENSE)
 
 **一个把金融风险预测与决策授权明确分开的研究系统。**
 
@@ -203,8 +203,9 @@ PR-AUC 为 **0.828968**。这些不是独立验证估计。分数仍为 `UNCALIB
 也没有接入生产评分路径。
 
 可观测性诊断的 AUROC 分别为：财务值 `V` 0.872060、仅报告可观测性 `O` 0.835933、
-显式组合 `VO` 0.881789，以及 154 条完整案例敏感性子集 `CC` 0.676736。报告可得性在该
-历史队列中携带回顾性预测信息，但这不是因果结论，也不是财务严重程度。详见
+显式组合 `VO` 0.881789，以及 154 条完整案例敏感性子集 `CC` 0.676736。CC 仅含 10 个
+事件，因此只是小样本敏感性结果，不能与全队列估计直接比较。报告可得性在该历史队列中
+携带回顾性预测信息，但这不是因果结论，也不是财务严重程度。详见
 [规范结果](research/strong_tabular_reference/artifacts/canonical_results.json)、
 [诊断报告](research/strong_tabular_reference/OBSERVABILITY_DIAGNOSTIC.md)和
 [v0.4.1 发布说明](RELEASE_NOTES_v0.4.1.md)。
@@ -369,7 +370,7 @@ FinRisk 是研究原型。它：
 
 ## 许可证
 
-项目采用 [MIT License](LICENSE)。
+项目采用 [Apache License 2.0](LICENSE)。
 
 ---
 

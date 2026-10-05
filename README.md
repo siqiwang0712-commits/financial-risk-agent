@@ -9,8 +9,8 @@
 ### Assured selective financial intelligence — v0.4.1 release-review candidate
 
 [![CI](https://github.com/siqiwang0712-commits/financial-risk-agent/actions/workflows/ci.yml/badge.svg)](https://github.com/siqiwang0712-commits/financial-risk-agent/actions/workflows/ci.yml)
-[![Python 3.11+](https://img.shields.io/badge/Python-3.11%2B-3776AB?logo=python&logoColor=white)](https://www.python.org/)
-[![License](https://img.shields.io/badge/license-MIT-d45b3e)](LICENSE)
+[![Python 3.11–3.12](https://img.shields.io/badge/Python-3.11%E2%80%933.12-3776AB?logo=python&logoColor=white)](https://www.python.org/)
+[![License](https://img.shields.io/badge/license-Apache--2.0-d45b3e)](LICENSE)
 
 **A research system that separates financial-risk prediction from decision authorization.**
 
@@ -235,9 +235,11 @@ is **0.828968**. These are not independent validation estimates. The score is
 
 The corresponding observability diagnostic finds AUROC `0.872060` for values (`V`),
 `0.835933` for observability only (`O`), `0.881789` for their explicit combination
-(`VO`), and `0.676736` on the 154-row complete-case sensitivity subset (`CC`). Reporting
-availability therefore carries retrospective predictive information here; it is not a
-causal finding or financial severity. See the
+(`VO`), and `0.676736` on the 154-row complete-case sensitivity subset (`CC`). CC contains
+only 10 events, so its estimate is a small-subset sensitivity result and is not directly
+comparable to the full-cohort estimates. Reporting availability therefore carries
+retrospective predictive information here; it is not a causal finding or financial
+severity. See the
 [canonical results](research/strong_tabular_reference/artifacts/canonical_results.json),
 [diagnostic report](research/strong_tabular_reference/OBSERVABILITY_DIAGNOSTIC.md), and
 [v0.4.1 release notes](RELEASE_NOTES_v0.4.1.md).
@@ -490,7 +492,7 @@ Read [Contributing](CONTRIBUTING.md) for the full rules and verification command
 
 ## License
 
-Released under the [MIT License](LICENSE).
+Released under the [Apache License 2.0](LICENSE).
 
 ---
 

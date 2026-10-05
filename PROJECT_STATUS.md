@@ -29,7 +29,8 @@ Maturity:
 | Assurance Runtime | IMPLEMENTED |
 | Internal development validation | COMPLETE |
 | Synthetic development reference | IMPLEMENTED — `DEVELOPMENT_REFERENCE_ONLY` |
-| Empirical/external v0.4 reference distribution | NOT ESTABLISHED |
+| Empirical development reference | IMPLEMENTED — `EMPIRICAL_DEVELOPMENT_REFERENCE_ONLY`; research only |
+| External/production reference distribution | NOT ESTABLISHED |
 | Calibrated admission policy | NOT ESTABLISHED |
 | Prospective E5 validation | PENDING — NOT FROZEN |
 | External/production/regulatory validation | NOT ESTABLISHED |
@@ -181,16 +182,17 @@ Status date: 2026-09-23. This remains a research prototype. Predictive superiori
 
 ## Current Local Verification
 
-- Python 3.11.16 and 3.12.14 each pass the complete backend suite: 713 passed,
-  14 environment-gated skips and 90.52% line coverage against the unchanged 90% gate.
+- Python 3.11.16 and 3.12.14 each pass the complete backend suite: 726 passed,
+  18 environment-gated skips; Python 3.12 records 90.90% line coverage against the
+  unchanged 90% gate.
 - Twelve PostgreSQL 17 runtime tests pass after migration; development and release-oriented
   Compose smoke paths cover readiness/liveness, authentication, v0.4 API serialization,
   certificate persistence, API restart, post-restart retrieval and deterministic replay.
 - The frontend passes 33 semantic tests, ESLint, TypeScript checking and the Next.js
   standalone production build.
-- Wheel and source distributions build; a clean Python 3.12 environment outside the
-  source tree imports the wheel, starts the API, runs deterministic assessment and verifies
-  Assurance and the Decision Certificate.
+- Wheel and source distributions build; clean Python 3.11 and 3.12 environments outside
+  the source import path install the wheel, start the API, run deterministic assessment
+  and verify Assurance and the Decision Certificate.
 - Ruff, historical integrity checks, E4-S 44/44, E4-R 136/136, E5 `NOT_FROZEN`, Markdown
   links, generated fixtures, `git diff --check`, and the authoritative release gate pass.
 - These are local/CI-equivalent engineering checks. They are not evidence of external

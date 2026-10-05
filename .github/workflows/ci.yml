@@ -41,7 +41,18 @@ jobs:
       # can silently invalidate a frozen manifest if they drift, so they are linted and
       # typed like any other source directory.
       - run: ruff check backend tests scripts research
-      - run: git diff --check HEAD^ HEAD
+      - name: Reject whitespace errors across the complete pushed/PR change
+        shell: bash
+        run: |
+          set -euo pipefail
+          base='${{ github.event.pull_request.base.sha || github.event.before }}'
+          if [[ -z "$base" || "$base" =~ ^0+$ ]]; then
+            base='HEAD^'
+          fi
+          if ! git cat-file -e "${base}^{commit}" 2>/dev/null; then
+            git fetch --no-tags --depth=1 origin "$base"
+          fi
+          git diff --check "${base}..HEAD"
       - run: python scripts/validate_postgres_migration.py
       - run: pytest --cov=finrisk --cov-report=term-missing --cov-fail-under=90
       - name: Verify prospective empirical provenance fails closed
@@ -69,9 +80,9 @@ jobs:
   docker-smoke:
     runs-on: ubuntu-latest
     env:
-      POSTGRES_PASSWORD: ci-only-strong-password-v032
+      POSTGRES_PASSWORD: ci-only-strong-password-v041
       FINRISK_LLM_PROVIDER: mock
-      FINRISK_BOOTSTRAP_TOKEN: ci-only-bootstrap-token-v032
+      FINRISK_BOOTSTRAP_TOKEN: ci-only-bootstrap-token-v041
       # Smoke clients reuse the repository's bounded HTTP helpers without
       # installing the application package on the GitHub runner.
       PYTHONPATH: backend

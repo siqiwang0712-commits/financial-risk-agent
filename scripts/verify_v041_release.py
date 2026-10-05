@@ -1,4 +1,4 @@
-"""Run the complete local v0.4.0 release-review gate.
+"""Run the complete local v0.4.1 release gate.
 
 The command intentionally includes slow interpreter, package, frontend, research, and
 container checks. It never pushes, tags, publishes, or creates a release.
@@ -17,7 +17,7 @@ from urllib.error import URLError
 from urllib.request import ProxyHandler, build_opener
 
 ROOT = Path(__file__).resolve().parents[1]
-STAGE = ROOT / ".runtime" / "v040-release-gate"
+STAGE = ROOT / ".runtime" / "v041-release-gate"
 
 
 def run(label: str, command: list[str], *, env: dict[str, str] | None = None) -> None:
@@ -68,27 +68,42 @@ def python_gate(python: str, label: str) -> None:
 
 def package_gate(python311: str, python312: str) -> None:
     dist = STAGE / "dist"
-    venv = STAGE / "wheel-venv"
-    work = STAGE / "wheel-work"
-    dist.mkdir(parents=True)
-    work.mkdir(parents=True)
+    dist.mkdir(parents=True, exist_ok=True)
+    for artifact in (*dist.glob("finrisk_agent-*.whl"), *dist.glob("finrisk_agent-*.tar.gz")):
+        artifact.unlink()
     run("build wheel and sdist", [python311, "-m", "build", "--outdir", str(dist)])
-    wheels = list(dist.glob("finrisk_agent-0.4.0-*.whl"))
-    archives = list(dist.glob("finrisk_agent-0.4.0.tar.gz"))
+    wheels = list(dist.glob("finrisk_agent-0.4.1-*.whl"))
+    archives = list(dist.glob("finrisk_agent-0.4.1.tar.gz"))
     if len(wheels) != 1 or len(archives) != 1:
-        raise SystemExit("package build did not produce exactly one v0.4.0 wheel and sdist")
-    run("create clean package environment", [python312, "-m", "venv", str(venv)])
-    installed = venv / ("Scripts/python.exe" if os.name == "nt" else "bin/python")
-    run("install wheel", [str(installed), "-m", "pip", "install", str(wheels[0])])
-    run("installed dependency consistency", [str(installed), "-m", "pip", "check"])
-    run(
-        "installed package/API/Assurance/certificate smoke",
-        [str(installed), str(ROOT / "scripts" / "verify_installed_package.py")],
-        env={**os.environ, "FINRISK_LLM_PROVIDER": "mock", "PYTHONPATH": ""},
-    )
+        raise SystemExit("package build did not produce exactly one v0.4.1 wheel and sdist")
+    for label, python in (("Python 3.11", python311), ("Python 3.12", python312)):
+        venv = STAGE / f"wheel-venv-{label[-4:].replace('.', '')}"
+        if venv.exists():
+            shutil.rmtree(venv)
+        run(f"create clean package environment ({label})", [python, "-m", "venv", str(venv)])
+        installed = venv / ("Scripts/python.exe" if os.name == "nt" else "bin/python")
+        run(
+            f"install wheel ({label})",
+            [
+                str(installed),
+                "-m",
+                "pip",
+                "install",
+                "-c",
+                str(ROOT / "requirements.lock"),
+                str(wheels[0]),
+            ],
+        )
+        run(f"installed dependency consistency ({label})", [str(installed), "-m", "pip", "check"])
+        run(
+            f"installed package/API/Assurance/certificate smoke ({label})",
+            [str(installed), str(ROOT / "scripts" / "verify_installed_package.py")],
+            env={**os.environ, "FINRISK_LLM_PROVIDER": "mock", "PYTHONPATH": ""},
+        )
 
 
 def research_and_docs_gate(python: str) -> None:
+    run("v0.4.1 checked-in artifact gate", [python, "scripts/verify_v041.py"])
     run("frozen E4 public artifacts", [python, "scripts/verify_e4_public_artifacts.py"])
     run(
         "E4-S independent audit",
@@ -114,6 +129,7 @@ def research_and_docs_gate(python: str) -> None:
 
 
 def frontend_gate(npm: str) -> None:
+    run("frontend clean dependency install", [npm, "--prefix", "frontend", "ci"])
     for task in ("test", "lint", "typecheck", "build"):
         run(f"frontend {task}", [npm, "--prefix", "frontend", "run", task])
 
@@ -130,19 +146,29 @@ def container_gate(docker: str, python: str) -> None:
     release = ["docker-compose.release.yml"]
     dev_env = {
         **common,
-        "POSTGRES_PASSWORD": "v040-gate-development-password",
-        "FINRISK_BOOTSTRAP_TOKEN": "v040-gate-development-bootstrap",
+        "POSTGRES_PASSWORD": "v041-gate-development-password",
+        "FINRISK_BOOTSTRAP_TOKEN": "v041-gate-development-bootstrap",
     }
     release_env = {
         **common,
-        "POSTGRES_PASSWORD": "v040-gate-release-password",
-        "FINRISK_BOOTSTRAP_TOKEN": "v040-gate-release-bootstrap",
+        "POSTGRES_PASSWORD": "v041-gate-release-password",
+        "FINRISK_BOOTSTRAP_TOKEN": "v041-gate-release-bootstrap",
         "FINRISK_API_IMAGE": "financial-risk-agent-api:latest",
         "FINRISK_WEB_IMAGE": "financial-risk-agent-web:latest",
     }
     subprocess.run(compose(docker, release, "down", "-v"), cwd=ROOT, env=release_env, check=False)
     subprocess.run(compose(docker, development, "down", "-v"), cwd=ROOT, env=dev_env, check=False)
     try:
+        run(
+            "build release API candidate",
+            [docker, "build", "-f", "backend/Dockerfile", "-t", release_env["FINRISK_API_IMAGE"], "."],
+            env=release_env,
+        )
+        run(
+            "build release web candidate",
+            [docker, "build", "-f", "frontend/Dockerfile", "-t", release_env["FINRISK_WEB_IMAGE"], "frontend"],
+            env=release_env,
+        )
         run("development Compose build/start", compose(docker, development, "up", "--build", "-d", "postgres", "migrate", "api", "web"), env=dev_env)
         wait_http("http://127.0.0.1:8000/health/ready")
         wait_http("http://127.0.0.1:8000/health/live")
@@ -161,7 +187,7 @@ def container_gate(docker: str, python: str) -> None:
         run("release container HTTP contracts", [python, "scripts/verify_docker_health.py"], env=release_env)
         postgres_env = {
             **release_env,
-            "DATABASE_URL": "postgresql://finrisk:v040-gate-release-password@127.0.0.1:55432/finrisk",
+            "DATABASE_URL": "postgresql://finrisk:v041-gate-release-password@127.0.0.1:55432/finrisk",
         }
         run("PostgreSQL migration idempotence", [python, "scripts/validate_postgres_migration.py"], env=postgres_env)
         run("PostgreSQL integration tests", [python, "-m", "pytest", "tests/test_postgres_runtime.py", "-q", "--basetemp", str(STAGE / "pytest-postgres")], env=postgres_env)
@@ -193,12 +219,16 @@ def main() -> int:
     run("ruff", [args.python311, "-m", "ruff", "check", "backend", "tests", "scripts", "research"])
     python_gate(args.python311, "Python 3.11")
     python_gate(args.python312, "Python 3.12")
-    research_and_docs_gate(args.python311)
+    # The fitted StrongTabularReference pickle is replayable only in its pinned
+    # Python 3.12 numeric runtime. Product tests still run under both supported
+    # interpreters above; using 3.11 here must fail closed rather than silently
+    # relaxing the artifact's runtime identity.
+    research_and_docs_gate(args.python312)
     frontend_gate(args.npm)
     package_gate(args.python311, args.python312)
     container_gate(args.docker_bin, args.python311)
-    run("working-tree whitespace", ["git", "diff", "--check"])
-    print("\nRELEASE GATE: READY FOR v0.4.0 REVIEW")
+    run("working-tree whitespace", ["git", "diff", "HEAD", "--check"])
+    print("\nRELEASE GATE: READY FOR v0.4.1 RELEASE")
     return 0
 
 

@@ -1,5 +1,10 @@
 * text=auto
 
+# Dependency locks are byte identities for release/research provenance. Keep the active
+# constraints portable instead of letting core.autocrlf change their hash per platform.
+requirements.lock text eol=lf
+research/strong_tabular_reference/artifacts/generation_requirements.lock text eol=lf
+
 # PDFs are binary. Without this, `text=auto` treats a generated PDF as text: git
 # rewrites its line endings on checkout, which shifts the byte offsets the xref
 # table points at, and the `git diff --check HEAD^ HEAD` CI gate reports the

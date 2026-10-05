@@ -80,9 +80,13 @@ output is `reference_model_score`, not a probability, and has
 `final_decision_authority = NONE_PREDICTION_ONLY`.
 
 The loader accepts repository-generated artifacts under the fixed research artifact root,
-verifies model and preprocessor SHA-256 values before deserialization, and rejects hash
-drift. Replay guarantees exact artifact bytes/hashes and deterministic inference in the
-pinned runtime; cross-platform bit-identical floating point is not claimed.
+verifies the manifest, feature schema, development-data identity, model and preprocessor
+SHA-256 values before deserialization, and requires callers to supply the exact ordered
+feature names. Replay guarantees exact artifact bytes/hashes and deterministic inference
+in the pinned Python 3.12.14 / NumPy 2.5.3 / scikit-learn 1.9.1 runtime; cross-platform
+bit-identical floating point is not claimed. The product package supports Python 3.11 and
+3.12, but a mismatched numeric stack must reject this fitted research replay rather than
+claim reproduction.
 
 Three identities remain distinct:
 
@@ -98,6 +102,9 @@ Three identities remain distinct:
 - [`artifacts/empirical_development_reference.json`](artifacts/empirical_development_reference.json)
   is `EMPIRICAL_DEVELOPMENT_REFERENCE_ONLY`. It is built from prediction-time data without
   labels and keeps financial-value and observability profiles separate.
+- Its recorded in-reference rule is deliberately narrow: observed registered financial
+  values must lie within all-source-row q01–q99 bounds. Missingness is reported separately;
+  the resulting rate is not a general distribution-validity or safety estimate.
 - [`artifacts/selective_evaluation.json`](artifacts/selective_evaluation.json) records an
   S0/S1 `RETROSPECTIVE_DEVELOPMENT_DRY_RUN`. S2/S3/S4 are
   `NOT_ESTIMABLE_IN_V0.4.1`; no irreproducible LLM comparison was forced.
@@ -109,6 +116,18 @@ Verify checked-in artifacts without retraining:
 ```bash
 python -m research.strong_tabular_reference.verify_artifact
 ```
+
+For a source environment, install against the complete matrix lock:
+
+```bash
+python -m pip install -c requirements.lock -e ".[dev,postgres,research]"
+```
+
+The fitted artifact's `runtime_identity.json` remains bound to the earlier Windows CRLF
+lock identity. `artifacts/generation_requirements.lock` preserves the same content in
+portable LF form, and the verifier explicitly reconstructs and checks the recorded byte
+identity. The active root lock was completed and pinned to LF during release audit without
+rewriting that generation provenance.
 
 Rebuild from the approved frozen source packet (expensive; performs nested CV):
 
