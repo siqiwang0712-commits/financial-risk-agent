@@ -182,21 +182,17 @@ Status date: 2026-09-23. This remains a research prototype. Predictive superiori
 
 ## Current Local Verification
 
-- Python 3.11.16 and 3.12.14 each pass the complete backend suite: 726 passed,
-  18 environment-gated skips; Python 3.12 records 90.90% line coverage against the
-  unchanged 90% gate.
-- Twelve PostgreSQL 17 runtime tests pass after migration; development and release-oriented
-  Compose smoke paths cover readiness/liveness, authentication, v0.4 API serialization,
-  certificate persistence, API restart, post-restart retrieval and deterministic replay.
-- The frontend passes 33 semantic tests, ESLint, TypeScript checking and the Next.js
-  standalone production build.
-- Wheel and source distributions build; clean Python 3.11 and 3.12 environments outside
-  the source import path install the wheel, start the API, run deterministic assessment
-  and verify Assurance and the Decision Certificate.
-- Ruff, historical integrity checks, E4-S 44/44, E4-R 136/136, E5 `NOT_FROZEN`, Markdown
-  links, generated fixtures, `git diff --check`, and the authoritative release gate pass.
-- These are local/CI-equivalent engineering checks. They are not evidence of external
-  production operation, predictive validity or calibration.
+Current commands, test totals, coverage, warning classification, packaging and exact
+remote verification links are centralized in the [v0.4.1 release audit](docs/RELEASE_AUDIT_v0.4.1.md).
+Both supported Python interpreters pass the full local suite with the unchanged 90%
+coverage gate; frontend and clean installed-wheel checks also pass. Local tests without
+a running PostgreSQL/HTTP stack retain explicitly environment-gated skips, not blanket
+exceptions. The current local gate stops at Docker because this host's Desktop engine
+does not start; Docker/PostgreSQL evidence must come from the final commit's remote CI
+and Container Release dry-run, not an earlier local run.
+
+Engineering verification is not external production operation, prospective predictive
+validation, probability calibration or regulatory validity. E5 remains unfrozen.
 
 ## Experiments Completed
 

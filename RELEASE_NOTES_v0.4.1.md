@@ -9,7 +9,10 @@ v0.4.1 moves the v0.4 Assurance architecture from engineering-only readiness tow
 measurable prospective-study foundation. It adds a reproducible historical strong tabular
 reference, explicit reporting-observability diagnostics, a label-independent empirical
 development reference, selective-evaluation tooling, and stage-aware E5 preflight.
-Production scoring, Assurance admission behavior, and frozen E1–E4-R evidence are unchanged.
+Financial scoring and the historical fitted reference are unchanged. Final review hardens
+pre-parse upload admission, numeric contradiction provenance, malformed Assurance verification
+and missing-authorization display; previously unsupported paths can now require review or
+abstention. Frozen E1–E4-R evidence is unchanged.
 
 ## StrongTabularReference-v1
 
@@ -107,17 +110,11 @@ Explicit expensive rebuild:
 python -m research.strong_tabular_reference.run_development
 ```
 
-Verified locally on Windows:
-
-- Python 3.11.16 and 3.12.14: `726 passed, 18 skipped`; Python 3.12 line coverage
-  `90.90%` against the unchanged 90% gate;
-- Ruff: pass; frontend: 33/33 tests, ESLint, TypeScript and production build pass;
-- E4 public integrity: pass; E4-S: 44/44; E4-R: 136/136; E5 freeze chain: `NOT_FROZEN`;
-- wheel and sdist build, clean Python 3.11/3.12 wheel installs and
-  API/Assurance/certificate smoke: pass;
-- Docker development and release Compose, PostgreSQL migration/idempotence, 12 integration
-  tests, restart persistence, API/certificate replay and timeout/retry path: pass;
-- Markdown links, canonical headline checks and `git diff --check`: pass.
+The [final release audit](docs/RELEASE_AUDIT_v0.4.1.md) is the single current record of
+commands, actual test totals/coverage, warnings, clean wheel checks, and remote image
+verification. Local backend/frontend/research/package checks pass; this host's Docker
+Desktop engine fails to start, so the local gate does **not** claim an aggregate pass.
+Container evidence must identify the final branch HEAD and its `publish=false` workflow.
 
 No nested-CV rebuild runs during normal CI.
 
