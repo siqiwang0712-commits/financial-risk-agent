@@ -5,6 +5,10 @@
 requirements.lock text eol=lf
 research/strong_tabular_reference/artifacts/generation_requirements.lock text eol=lf
 
+# The approved development manifest binds the original CRLF label-schema bytes.
+# Keep that exact representation on Linux too; do not rewrite frozen source hashes.
+research/label_schema.json text eol=crlf
+
 # PDFs are binary. Without this, `text=auto` treats a generated PDF as text: git
 # rewrites its line endings on checkout, which shifts the byte offsets the xref
 # table points at, and the `git diff --check HEAD^ HEAD` CI gate reports the
