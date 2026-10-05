@@ -6,6 +6,7 @@ from datetime import UTC, date, datetime
 from typing import TYPE_CHECKING
 
 from .auth import authorize
+from .decision import verified_material_path
 from .decision_bundle import DecisionBundle, verify_decision_bundle
 from .domain import (
     AuditEvent,
@@ -44,7 +45,7 @@ def verified_evidence_ids(snapshot, risk_domain: str) -> set[str]:
     identifiers: set[str] = set()
     for path in paths:
         domain = aliases.get(path.get("risk_domain"), path.get("risk_domain"))
-        if path.get("evidence_path_status") != "VERIFIED" or domain != risk_domain:
+        if not verified_material_path(path) or domain != risk_domain:
             continue
         for evidence in path.get("source_evidence", []):
             canonical = json.dumps(
@@ -165,8 +166,7 @@ class EnterpriseRiskService:
             }
             verified = [
                 path for path in trace.get("paths", [])
-                if path.get("evidence_path_status") == "VERIFIED"
-                and path.get("source_evidence")
+                if verified_material_path(path)
                 and aliases.get(path.get("risk_domain"), path.get("risk_domain"))
                 == case.domain.value
             ]

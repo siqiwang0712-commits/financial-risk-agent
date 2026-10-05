@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import Any
 
-from ..enterprise.decision import canonical_hash
+from ..enterprise.decision import canonical_hash, verified_material_path
 from .domain import (
     EvidenceAssurance,
     EvidenceAssuranceState,
@@ -31,6 +31,12 @@ def evidence_identifier(value: dict[str, Any]) -> str:
         if value.get(key) is not None
     }
     return f"evidence_{canonical_hash(material)[:20]}"
+
+
+def _verified_path(path: dict[str, Any]) -> bool:
+    if path.get("rule_or_model") == "narrative_numeric_consistency":
+        return verified_material_path(path)
+    return path.get("evidence_path_status") == "VERIFIED"
 
 
 def _path_evidence(path: dict[str, Any]) -> list[dict[str, Any]]:
@@ -73,7 +79,7 @@ def dependencies_from_paths(paths: list[dict[str, Any]]) -> list[EvidenceDepende
                 risk_dimension=str(path.get("risk_domain") or "unknown"),
                 score=score,
                 claims=claims,
-                verified=path.get("evidence_path_status") == "VERIFIED",
+                verified=_verified_path(path),
             )
         )
     return dependencies
@@ -89,7 +95,7 @@ def assess_evidence(
     verified_paths = [
         path
         for path in paths
-        if path.get("evidence_path_status") == "VERIFIED"
+        if _verified_path(path)
         and not (
             removed_evidence_ids
             & {evidence_identifier(item) for item in _path_evidence(path)}

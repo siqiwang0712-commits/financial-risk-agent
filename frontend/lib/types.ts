@@ -67,6 +67,9 @@ export interface Contradiction {
   conflicting_evidence: string[];
   interpretation: string;
   evidence: Evidence;
+  /** Absent in legacy payloads; absence never verifies the numeric comparison. */
+  required_inputs?: string[];
+  input_provenance?: Record<string, Evidence[]>;
 }
 
 export interface ClaimConsistencyEvaluation {

@@ -41,6 +41,18 @@ replaced with zero. A broken material evidence path triggers review or abstentio
 Agent records plan steps, tool names, statuses, summaries, admitted evidence, rationale
 and confidence; it does not retain or expose hidden chain-of-thought.
 
+Verifying a management quotation does not verify the financial values used to contradict
+it. Narrative/numeric contradiction paths require verified provenance for every material
+current/prior-period input; legacy quote-only paths cannot satisfy Assurance or the
+Accepted/Resolved workflow proof gates. Missing numeric provenance remains unverified.
+
+PDF uploads authenticate before multipart parsing. The backend bounds the measured
+encoded request to the configured file limit plus 64 KiB of framing, regardless of
+`Content-Length`, and admits at most two concurrent upload/analysis requests per API
+process. The request-body read has a 30-second total budget (`408` on timeout).
+Excess capacity returns `503` with `Retry-After`; existing per-file, page,
+text and worker-timeout limits still apply. This is a resource bound, not a malware sandbox.
+
 Each analysis can freeze its inputs into an immutable snapshot: input hash, document
 version, policy and rule versions, prompt/model version, fusion strategy, configuration
 and timestamp. Replay produces a separate result and diff rather than overwriting the

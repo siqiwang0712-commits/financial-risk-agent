@@ -1438,13 +1438,31 @@ export const DEMO_FIXTURE: DemoFixture = {
                 "unit": null
               }
             ],
-            "required_inputs": [],
-            "input_provenance": {},
+            "required_inputs": [
+              "cash:2025",
+              "cash:2024",
+              "operating_cash_flow:2025",
+              "operating_cash_flow:2024",
+              "short_term_debt:2025",
+              "short_term_debt:2024",
+              "current_assets:2025",
+              "current_liabilities:2025"
+            ],
+            "input_provenance": {
+              "cash:2025": [],
+              "cash:2024": [],
+              "operating_cash_flow:2025": [],
+              "operating_cash_flow:2024": [],
+              "short_term_debt:2025": [],
+              "short_term_debt:2024": [],
+              "current_assets:2025": [],
+              "current_liabilities:2025": []
+            },
             "rule_or_model": "narrative_numeric_consistency",
             "rule_version": "64a92069682b8af5042bf05fb1d04be09c3d39b37dfbd6fd9ececf0c8a58d7bc",
             "fusion_version": "hierarchical_escalation:9776c631a261",
             "confidence": 0.9,
-            "coverage": 1.0,
+            "coverage": 0.0,
             "disagreement": 0.435,
             "fusion_contribution": {
               "method": "hierarchical_escalation",
@@ -1456,7 +1474,7 @@ export const DEMO_FIXTURE: DemoFixture = {
               "risk_dimension": "liquidity",
               "computational_contribution": 85
             },
-            "evidence_path_status": "VERIFIED",
+            "evidence_path_status": "UNVERIFIED",
             "path": [
               "document",
               "evidence_span",
@@ -1468,16 +1486,16 @@ export const DEMO_FIXTURE: DemoFixture = {
             ]
           }
         ],
-        "verified_path_count": 2,
+        "verified_path_count": 1,
         "material_path_count": 17,
-        "proof_coverage": 0.118,
+        "proof_coverage": 0.059,
         "initial_fusion_decision": "ABSTAIN",
         "failure_aware_proposal": "ABSTAIN",
         "failure_aware_decision": "ABSTAIN",
         "review_proposal": "ABSTAIN",
         "review_decision": "ABSTAIN",
         "final_decision": "ABSTAIN",
-        "assurance_certificate_hash": "a6e753637f40a2c84e46d6b86350264c02bf8bfd0226549ddef8fcf00bdd6ee6"
+        "assurance_certificate_hash": "759d6a8196c2eac4c4b37176eca4649e2cae2ab89b3ec5940632876c2080610c"
       },
       "role_review": {
         "analyst": [
@@ -1938,8 +1956,8 @@ export const DEMO_FIXTURE: DemoFixture = {
           "risk_after": 95.0,
           "delta_risk": 0.0,
           "coverage_before": 0.045,
-          "coverage_after": 0.118,
-          "delta_coverage": 0.073,
+          "coverage_after": 0.059,
+          "delta_coverage": 0.014,
           "disagreement_before": 0.435,
           "disagreement_after": 0.435,
           "delta_disagreement": 0.0,
@@ -1957,39 +1975,35 @@ export const DEMO_FIXTURE: DemoFixture = {
         "evidence_assurance": {
           "state": "PARTIAL",
           "material_path_count": 17,
-          "verified_path_count": 2,
-          "coverage": 0.117647,
+          "verified_path_count": 1,
+          "coverage": 0.058824,
           "verified_evidence_ids": [
-            "evidence_58466f281bbf3b983dae",
-            "evidence_ed5efb86f7fc76e73e22"
+            "evidence_58466f281bbf3b983dae"
           ],
           "supported_claims": [
-            "BUS_003",
-            "DISCLOSURE_TENSION_001"
+            "BUS_003"
           ],
           "diagnostics": [
             "Only part of the material decision path is verified."
           ]
         },
         "evidence_fragility": {
-          "state": "FRAGILE",
-          "largest_single_evidence_impact": 67.0,
+          "state": "STABLE",
+          "largest_single_evidence_impact": null,
           "decision_flip_count": 0,
           "decision_flip_rate": 0.0,
           "severity_change_count": 1,
           "affected_dimensions": [
-            "business_going_concern",
-            "liquidity"
+            "business_going_concern"
           ],
           "affected_claims": [
-            "BUS_003",
-            "DISCLOSURE_TENSION_001"
+            "BUS_003"
           ],
           "ablations": [
             {
               "evidence_id": "evidence_58466f281bbf3b983dae",
-              "score_delta": -10.0,
-              "severity_change": false,
+              "score_delta": null,
+              "severity_change": true,
               "proposed_decision_change": false,
               "final_decision_impact": false,
               "recomputed_proposed_decision": "ABSTAIN",
@@ -1998,20 +2012,6 @@ export const DEMO_FIXTURE: DemoFixture = {
               ],
               "affected_claims": [
                 "BUS_003"
-              ]
-            },
-            {
-              "evidence_id": "evidence_ed5efb86f7fc76e73e22",
-              "score_delta": -67.0,
-              "severity_change": true,
-              "proposed_decision_change": false,
-              "final_decision_impact": false,
-              "recomputed_proposed_decision": "ABSTAIN",
-              "affected_dimensions": [
-                "liquidity"
-              ],
-              "affected_claims": [
-                "DISCLOSURE_TENSION_001"
               ]
             }
           ]
@@ -2040,18 +2040,16 @@ export const DEMO_FIXTURE: DemoFixture = {
         "calibration_status": "UNCALIBRATED",
         "reason_codes": [
           "INSUFFICIENT_VERIFIED_EVIDENCE",
-          "EVIDENCE_FRAGILITY_HIGH",
           "RUNTIME_FAILURE_REQUIRES_REVIEW",
           "ASSURANCE_POLICY_UNCALIBRATED",
           "PROPOSED_DECISION_WITHHELD"
         ],
         "policy_version": "assurance-policy-v0.4.0-development",
         "policy_hash": "c0ce6ed4752c53e67f3528de1013a4a6ff4d512b1790cde1c6628b354c8b9053",
-        "certificate_hash": "a6e753637f40a2c84e46d6b86350264c02bf8bfd0226549ddef8fcf00bdd6ee6",
+        "certificate_hash": "759d6a8196c2eac4c4b37176eca4649e2cae2ab89b3ec5940632876c2080610c",
         "diagnostics": {
           "authorization_blockers": [
             "evidence",
-            "fragility",
             "runtime_failure"
           ],
           "runtime_failures": [
@@ -2062,15 +2060,15 @@ export const DEMO_FIXTURE: DemoFixture = {
         }
       },
       "decision_certificate": {
-        "bundle_id": "bundle_3189520ed17edbffb968",
+        "bundle_id": "bundle_8428fa48abc03b73cb01",
         "organization_id": "local",
         "entity_id": "Northstar Components (Synthetic)",
-        "created_at": "2026-10-03T09:22:07.749315+00:00",
+        "created_at": "2026-10-05T10:22:54.731062+00:00",
         "document_hashes": {
           "Annual Report": "4b04f86ed1c1757d9f6b5a73a5fd6a12aac55b6d275411faeb032fc4fcba5688"
         },
         "input_hash": "3511ad46222dcd978c78ba31533b84d1cf676f2036d70b61aad9ed5da3e38003",
-        "output_hash": "5e55f0e7bbf71e9e855867da538985a79d1a5fa3db4fba0b3c6ef59a2345db96",
+        "output_hash": "b0b48eb887b288dd95ac03a0d1c426e8ff0b5951ed380ec48578ee8fb18bdcf2",
         "risk_state": {
           "score": 95.0,
           "severity": "critical",
@@ -2752,13 +2750,31 @@ export const DEMO_FIXTURE: DemoFixture = {
                 "unit": null
               }
             ],
-            "required_inputs": [],
-            "input_provenance": {},
+            "required_inputs": [
+              "cash:2025",
+              "cash:2024",
+              "operating_cash_flow:2025",
+              "operating_cash_flow:2024",
+              "short_term_debt:2025",
+              "short_term_debt:2024",
+              "current_assets:2025",
+              "current_liabilities:2025"
+            ],
+            "input_provenance": {
+              "cash:2025": [],
+              "cash:2024": [],
+              "operating_cash_flow:2025": [],
+              "operating_cash_flow:2024": [],
+              "short_term_debt:2025": [],
+              "short_term_debt:2024": [],
+              "current_assets:2025": [],
+              "current_liabilities:2025": []
+            },
             "rule_or_model": "narrative_numeric_consistency",
             "rule_version": "64a92069682b8af5042bf05fb1d04be09c3d39b37dfbd6fd9ececf0c8a58d7bc",
             "fusion_version": "hierarchical_escalation:9776c631a261",
             "confidence": 0.9,
-            "coverage": 1.0,
+            "coverage": 0.0,
             "disagreement": 0.435,
             "fusion_contribution": {
               "method": "hierarchical_escalation",
@@ -2770,7 +2786,7 @@ export const DEMO_FIXTURE: DemoFixture = {
               "risk_dimension": "liquidity",
               "computational_contribution": 85
             },
-            "evidence_path_status": "VERIFIED",
+            "evidence_path_status": "UNVERIFIED",
             "path": [
               "document",
               "evidence_span",
@@ -3919,8 +3935,8 @@ export const DEMO_FIXTURE: DemoFixture = {
             "risk_after": 95.0,
             "delta_risk": 0.0,
             "coverage_before": 0.045,
-            "coverage_after": 0.118,
-            "delta_coverage": 0.073,
+            "coverage_after": 0.059,
+            "delta_coverage": 0.014,
             "disagreement_before": 0.435,
             "disagreement_after": 0.435,
             "delta_disagreement": 0.0,
@@ -3930,7 +3946,7 @@ export const DEMO_FIXTURE: DemoFixture = {
             "estimated_cost_usd": 0.0
           }
         ],
-        "bundle_hash": "3189520ed17edbffb9686a4dcfd9fbf94f56d7fa54e91f66284ee260e20bfddd",
+        "bundle_hash": "8428fa48abc03b73cb01ae88df07cfc76f66dd862bc9d8c0e530ec5b7f8d038f",
         "proposed_decision": "ABSTAIN",
         "assurance": {
           "proposed_decision": "ABSTAIN",
@@ -3940,39 +3956,35 @@ export const DEMO_FIXTURE: DemoFixture = {
           "evidence_assurance": {
             "state": "PARTIAL",
             "material_path_count": 17,
-            "verified_path_count": 2,
-            "coverage": 0.117647,
+            "verified_path_count": 1,
+            "coverage": 0.058824,
             "verified_evidence_ids": [
-              "evidence_58466f281bbf3b983dae",
-              "evidence_ed5efb86f7fc76e73e22"
+              "evidence_58466f281bbf3b983dae"
             ],
             "supported_claims": [
-              "BUS_003",
-              "DISCLOSURE_TENSION_001"
+              "BUS_003"
             ],
             "diagnostics": [
               "Only part of the material decision path is verified."
             ]
           },
           "evidence_fragility": {
-            "state": "FRAGILE",
-            "largest_single_evidence_impact": 67.0,
+            "state": "STABLE",
+            "largest_single_evidence_impact": null,
             "decision_flip_count": 0,
             "decision_flip_rate": 0.0,
             "severity_change_count": 1,
             "affected_dimensions": [
-              "business_going_concern",
-              "liquidity"
+              "business_going_concern"
             ],
             "affected_claims": [
-              "BUS_003",
-              "DISCLOSURE_TENSION_001"
+              "BUS_003"
             ],
             "ablations": [
               {
                 "evidence_id": "evidence_58466f281bbf3b983dae",
-                "score_delta": -10.0,
-                "severity_change": false,
+                "score_delta": null,
+                "severity_change": true,
                 "proposed_decision_change": false,
                 "final_decision_impact": false,
                 "recomputed_proposed_decision": "ABSTAIN",
@@ -3981,20 +3993,6 @@ export const DEMO_FIXTURE: DemoFixture = {
                 ],
                 "affected_claims": [
                   "BUS_003"
-                ]
-              },
-              {
-                "evidence_id": "evidence_ed5efb86f7fc76e73e22",
-                "score_delta": -67.0,
-                "severity_change": true,
-                "proposed_decision_change": false,
-                "final_decision_impact": false,
-                "recomputed_proposed_decision": "ABSTAIN",
-                "affected_dimensions": [
-                  "liquidity"
-                ],
-                "affected_claims": [
-                  "DISCLOSURE_TENSION_001"
                 ]
               }
             ]
@@ -4023,18 +4021,16 @@ export const DEMO_FIXTURE: DemoFixture = {
           "calibration_status": "UNCALIBRATED",
           "reason_codes": [
             "INSUFFICIENT_VERIFIED_EVIDENCE",
-            "EVIDENCE_FRAGILITY_HIGH",
             "RUNTIME_FAILURE_REQUIRES_REVIEW",
             "ASSURANCE_POLICY_UNCALIBRATED",
             "PROPOSED_DECISION_WITHHELD"
           ],
           "policy_version": "assurance-policy-v0.4.0-development",
           "policy_hash": "c0ce6ed4752c53e67f3528de1013a4a6ff4d512b1790cde1c6628b354c8b9053",
-          "certificate_hash": "a6e753637f40a2c84e46d6b86350264c02bf8bfd0226549ddef8fcf00bdd6ee6",
+          "certificate_hash": "759d6a8196c2eac4c4b37176eca4649e2cae2ab89b3ec5940632876c2080610c",
           "diagnostics": {
             "authorization_blockers": [
               "evidence",
-              "fragility",
               "runtime_failure"
             ],
             "runtime_failures": [
@@ -4060,7 +4056,7 @@ export const DEMO_FIXTURE: DemoFixture = {
         "replay": {
           "deterministic": true,
           "input_hash": "3511ad46222dcd978c78ba31533b84d1cf676f2036d70b61aad9ed5da3e38003",
-          "output_hash": "5e55f0e7bbf71e9e855867da538985a79d1a5fa3db4fba0b3c6ef59a2345db96",
+          "output_hash": "b0b48eb887b288dd95ac03a0d1c426e8ff0b5951ed380ec48578ee8fb18bdcf2",
           "component_versions": {
             "rules": "64a92069682b8af5042bf05fb1d04be09c3d39b37dfbd6fd9ececf0c8a58d7bc",
             "scoring": "1f9e90b86bd627f47b39e0ed0aec6cb488993ad2b8be8dae9c200e533ffa6040",
@@ -4077,7 +4073,7 @@ export const DEMO_FIXTURE: DemoFixture = {
           }
         },
         "certificate_version": "decision-certificate-v0.4",
-        "certificate_hash": "3189520ed17edbffb9686a4dcfd9fbf94f56d7fa54e91f66284ee260e20bfddd"
+        "certificate_hash": "8428fa48abc03b73cb01ae88df07cfc76f66dd862bc9d8c0e530ec5b7f8d038f"
       }
     },
     "assurance": {
@@ -4088,39 +4084,35 @@ export const DEMO_FIXTURE: DemoFixture = {
       "evidence_assurance": {
         "state": "PARTIAL",
         "material_path_count": 17,
-        "verified_path_count": 2,
-        "coverage": 0.117647,
+        "verified_path_count": 1,
+        "coverage": 0.058824,
         "verified_evidence_ids": [
-          "evidence_58466f281bbf3b983dae",
-          "evidence_ed5efb86f7fc76e73e22"
+          "evidence_58466f281bbf3b983dae"
         ],
         "supported_claims": [
-          "BUS_003",
-          "DISCLOSURE_TENSION_001"
+          "BUS_003"
         ],
         "diagnostics": [
           "Only part of the material decision path is verified."
         ]
       },
       "evidence_fragility": {
-        "state": "FRAGILE",
-        "largest_single_evidence_impact": 67.0,
+        "state": "STABLE",
+        "largest_single_evidence_impact": null,
         "decision_flip_count": 0,
         "decision_flip_rate": 0.0,
         "severity_change_count": 1,
         "affected_dimensions": [
-          "business_going_concern",
-          "liquidity"
+          "business_going_concern"
         ],
         "affected_claims": [
-          "BUS_003",
-          "DISCLOSURE_TENSION_001"
+          "BUS_003"
         ],
         "ablations": [
           {
             "evidence_id": "evidence_58466f281bbf3b983dae",
-            "score_delta": -10.0,
-            "severity_change": false,
+            "score_delta": null,
+            "severity_change": true,
             "proposed_decision_change": false,
             "final_decision_impact": false,
             "recomputed_proposed_decision": "ABSTAIN",
@@ -4129,20 +4121,6 @@ export const DEMO_FIXTURE: DemoFixture = {
             ],
             "affected_claims": [
               "BUS_003"
-            ]
-          },
-          {
-            "evidence_id": "evidence_ed5efb86f7fc76e73e22",
-            "score_delta": -67.0,
-            "severity_change": true,
-            "proposed_decision_change": false,
-            "final_decision_impact": false,
-            "recomputed_proposed_decision": "ABSTAIN",
-            "affected_dimensions": [
-              "liquidity"
-            ],
-            "affected_claims": [
-              "DISCLOSURE_TENSION_001"
             ]
           }
         ]
@@ -4171,18 +4149,16 @@ export const DEMO_FIXTURE: DemoFixture = {
       "calibration_status": "UNCALIBRATED",
       "reason_codes": [
         "INSUFFICIENT_VERIFIED_EVIDENCE",
-        "EVIDENCE_FRAGILITY_HIGH",
         "RUNTIME_FAILURE_REQUIRES_REVIEW",
         "ASSURANCE_POLICY_UNCALIBRATED",
         "PROPOSED_DECISION_WITHHELD"
       ],
       "policy_version": "assurance-policy-v0.4.0-development",
       "policy_hash": "c0ce6ed4752c53e67f3528de1013a4a6ff4d512b1790cde1c6628b354c8b9053",
-      "certificate_hash": "a6e753637f40a2c84e46d6b86350264c02bf8bfd0226549ddef8fcf00bdd6ee6",
+      "certificate_hash": "759d6a8196c2eac4c4b37176eca4649e2cae2ab89b3ec5940632876c2080610c",
       "diagnostics": {
         "authorization_blockers": [
           "evidence",
-          "fragility",
           "runtime_failure"
         ],
         "runtime_failures": [
@@ -4282,19 +4258,39 @@ export const DEMO_FIXTURE: DemoFixture = {
           "quote": "Management believes liquidity remains strong",
           "value": null,
           "unit": null
+        },
+        "required_inputs": [
+          "cash:2025",
+          "cash:2024",
+          "operating_cash_flow:2025",
+          "operating_cash_flow:2024",
+          "short_term_debt:2025",
+          "short_term_debt:2024",
+          "current_assets:2025",
+          "current_liabilities:2025"
+        ],
+        "input_provenance": {
+          "cash:2025": [],
+          "cash:2024": [],
+          "operating_cash_flow:2025": [],
+          "operating_cash_flow:2024": [],
+          "short_term_debt:2025": [],
+          "short_term_debt:2024": [],
+          "current_assets:2025": [],
+          "current_liabilities:2025": []
         }
       }
     ],
     "decision_certificate": {
-      "bundle_id": "bundle_3189520ed17edbffb968",
+      "bundle_id": "bundle_8428fa48abc03b73cb01",
       "organization_id": "local",
       "entity_id": "Northstar Components (Synthetic)",
-      "created_at": "2026-10-03T09:22:07.749315+00:00",
+      "created_at": "2026-10-05T10:22:54.731062+00:00",
       "document_hashes": {
         "Annual Report": "4b04f86ed1c1757d9f6b5a73a5fd6a12aac55b6d275411faeb032fc4fcba5688"
       },
       "input_hash": "3511ad46222dcd978c78ba31533b84d1cf676f2036d70b61aad9ed5da3e38003",
-      "output_hash": "5e55f0e7bbf71e9e855867da538985a79d1a5fa3db4fba0b3c6ef59a2345db96",
+      "output_hash": "b0b48eb887b288dd95ac03a0d1c426e8ff0b5951ed380ec48578ee8fb18bdcf2",
       "risk_state": {
         "score": 95.0,
         "severity": "critical",
@@ -4976,13 +4972,31 @@ export const DEMO_FIXTURE: DemoFixture = {
               "unit": null
             }
           ],
-          "required_inputs": [],
-          "input_provenance": {},
+          "required_inputs": [
+            "cash:2025",
+            "cash:2024",
+            "operating_cash_flow:2025",
+            "operating_cash_flow:2024",
+            "short_term_debt:2025",
+            "short_term_debt:2024",
+            "current_assets:2025",
+            "current_liabilities:2025"
+          ],
+          "input_provenance": {
+            "cash:2025": [],
+            "cash:2024": [],
+            "operating_cash_flow:2025": [],
+            "operating_cash_flow:2024": [],
+            "short_term_debt:2025": [],
+            "short_term_debt:2024": [],
+            "current_assets:2025": [],
+            "current_liabilities:2025": []
+          },
           "rule_or_model": "narrative_numeric_consistency",
           "rule_version": "64a92069682b8af5042bf05fb1d04be09c3d39b37dfbd6fd9ececf0c8a58d7bc",
           "fusion_version": "hierarchical_escalation:9776c631a261",
           "confidence": 0.9,
-          "coverage": 1.0,
+          "coverage": 0.0,
           "disagreement": 0.435,
           "fusion_contribution": {
             "method": "hierarchical_escalation",
@@ -4994,7 +5008,7 @@ export const DEMO_FIXTURE: DemoFixture = {
             "risk_dimension": "liquidity",
             "computational_contribution": 85
           },
-          "evidence_path_status": "VERIFIED",
+          "evidence_path_status": "UNVERIFIED",
           "path": [
             "document",
             "evidence_span",
@@ -6143,8 +6157,8 @@ export const DEMO_FIXTURE: DemoFixture = {
           "risk_after": 95.0,
           "delta_risk": 0.0,
           "coverage_before": 0.045,
-          "coverage_after": 0.118,
-          "delta_coverage": 0.073,
+          "coverage_after": 0.059,
+          "delta_coverage": 0.014,
           "disagreement_before": 0.435,
           "disagreement_after": 0.435,
           "delta_disagreement": 0.0,
@@ -6154,7 +6168,7 @@ export const DEMO_FIXTURE: DemoFixture = {
           "estimated_cost_usd": 0.0
         }
       ],
-      "bundle_hash": "3189520ed17edbffb9686a4dcfd9fbf94f56d7fa54e91f66284ee260e20bfddd",
+      "bundle_hash": "8428fa48abc03b73cb01ae88df07cfc76f66dd862bc9d8c0e530ec5b7f8d038f",
       "proposed_decision": "ABSTAIN",
       "assurance": {
         "proposed_decision": "ABSTAIN",
@@ -6164,39 +6178,35 @@ export const DEMO_FIXTURE: DemoFixture = {
         "evidence_assurance": {
           "state": "PARTIAL",
           "material_path_count": 17,
-          "verified_path_count": 2,
-          "coverage": 0.117647,
+          "verified_path_count": 1,
+          "coverage": 0.058824,
           "verified_evidence_ids": [
-            "evidence_58466f281bbf3b983dae",
-            "evidence_ed5efb86f7fc76e73e22"
+            "evidence_58466f281bbf3b983dae"
           ],
           "supported_claims": [
-            "BUS_003",
-            "DISCLOSURE_TENSION_001"
+            "BUS_003"
           ],
           "diagnostics": [
             "Only part of the material decision path is verified."
           ]
         },
         "evidence_fragility": {
-          "state": "FRAGILE",
-          "largest_single_evidence_impact": 67.0,
+          "state": "STABLE",
+          "largest_single_evidence_impact": null,
           "decision_flip_count": 0,
           "decision_flip_rate": 0.0,
           "severity_change_count": 1,
           "affected_dimensions": [
-            "business_going_concern",
-            "liquidity"
+            "business_going_concern"
           ],
           "affected_claims": [
-            "BUS_003",
-            "DISCLOSURE_TENSION_001"
+            "BUS_003"
           ],
           "ablations": [
             {
               "evidence_id": "evidence_58466f281bbf3b983dae",
-              "score_delta": -10.0,
-              "severity_change": false,
+              "score_delta": null,
+              "severity_change": true,
               "proposed_decision_change": false,
               "final_decision_impact": false,
               "recomputed_proposed_decision": "ABSTAIN",
@@ -6205,20 +6215,6 @@ export const DEMO_FIXTURE: DemoFixture = {
               ],
               "affected_claims": [
                 "BUS_003"
-              ]
-            },
-            {
-              "evidence_id": "evidence_ed5efb86f7fc76e73e22",
-              "score_delta": -67.0,
-              "severity_change": true,
-              "proposed_decision_change": false,
-              "final_decision_impact": false,
-              "recomputed_proposed_decision": "ABSTAIN",
-              "affected_dimensions": [
-                "liquidity"
-              ],
-              "affected_claims": [
-                "DISCLOSURE_TENSION_001"
               ]
             }
           ]
@@ -6247,18 +6243,16 @@ export const DEMO_FIXTURE: DemoFixture = {
         "calibration_status": "UNCALIBRATED",
         "reason_codes": [
           "INSUFFICIENT_VERIFIED_EVIDENCE",
-          "EVIDENCE_FRAGILITY_HIGH",
           "RUNTIME_FAILURE_REQUIRES_REVIEW",
           "ASSURANCE_POLICY_UNCALIBRATED",
           "PROPOSED_DECISION_WITHHELD"
         ],
         "policy_version": "assurance-policy-v0.4.0-development",
         "policy_hash": "c0ce6ed4752c53e67f3528de1013a4a6ff4d512b1790cde1c6628b354c8b9053",
-        "certificate_hash": "a6e753637f40a2c84e46d6b86350264c02bf8bfd0226549ddef8fcf00bdd6ee6",
+        "certificate_hash": "759d6a8196c2eac4c4b37176eca4649e2cae2ab89b3ec5940632876c2080610c",
         "diagnostics": {
           "authorization_blockers": [
             "evidence",
-            "fragility",
             "runtime_failure"
           ],
           "runtime_failures": [
@@ -6284,7 +6278,7 @@ export const DEMO_FIXTURE: DemoFixture = {
       "replay": {
         "deterministic": true,
         "input_hash": "3511ad46222dcd978c78ba31533b84d1cf676f2036d70b61aad9ed5da3e38003",
-        "output_hash": "5e55f0e7bbf71e9e855867da538985a79d1a5fa3db4fba0b3c6ef59a2345db96",
+        "output_hash": "b0b48eb887b288dd95ac03a0d1c426e8ff0b5951ed380ec48578ee8fb18bdcf2",
         "component_versions": {
           "rules": "64a92069682b8af5042bf05fb1d04be09c3d39b37dfbd6fd9ececf0c8a58d7bc",
           "scoring": "1f9e90b86bd627f47b39e0ed0aec6cb488993ad2b8be8dae9c200e533ffa6040",
@@ -6301,7 +6295,7 @@ export const DEMO_FIXTURE: DemoFixture = {
         }
       },
       "certificate_version": "decision-certificate-v0.4",
-      "certificate_hash": "3189520ed17edbffb9686a4dcfd9fbf94f56d7fa54e91f66284ee260e20bfddd"
+      "certificate_hash": "8428fa48abc03b73cb01ae88df07cfc76f66dd862bc9d8c0e530ec5b7f8d038f"
     },
     "dimensions": {
       "liquidity": {

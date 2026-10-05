@@ -73,6 +73,13 @@ estimates are required. Tests do not require a live provider.
 
 ### PDF upload and process boundary
 
+API-key admission precedes multipart parsing. The encoded request is limited to the
+configured file ceiling plus 64 KiB of framing, counting all parts and measured bytes
+even without an accurate `Content-Length` (`413` on excess). Body reads have a
+30-second total budget (`408`); at most two upload/analysis requests run concurrently
+per API process (`503` with `Retry-After` when full). The exact-limit PDF remains
+accepted with normal framing; the per-file ceiling is still checked separately.
+
 PDF uploads validate their magic bytes and the configured limits:
 
 - `FINRISK_MAX_UPLOAD_BYTES`
