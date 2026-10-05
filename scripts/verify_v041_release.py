@@ -7,10 +7,12 @@ container checks. It never pushes, tags, publishes, or creates a release.
 from __future__ import annotations
 
 import argparse
+import json
 import os
 import shutil
 import subprocess
 import sys
+import tempfile
 import time
 from pathlib import Path
 from urllib.error import URLError
@@ -20,9 +22,15 @@ ROOT = Path(__file__).resolve().parents[1]
 STAGE = ROOT / ".runtime" / "v041-release-gate"
 
 
-def run(label: str, command: list[str], *, env: dict[str, str] | None = None) -> None:
+def run(
+    label: str,
+    command: list[str],
+    *,
+    env: dict[str, str] | None = None,
+    cwd: Path = ROOT,
+) -> None:
     print(f"\n== {label} ==", flush=True)
-    completed = subprocess.run(command, cwd=ROOT, env=env, check=False)
+    completed = subprocess.run(command, cwd=cwd, env=env, check=False)
     if completed.returncode:
         raise SystemExit(f"{label} failed with exit code {completed.returncode}")
 
@@ -43,14 +51,27 @@ def wait_http(url: str, timeout: float = 180) -> None:
 
 
 def compose(docker: str, files: list[str], *args: str) -> list[str]:
-    command = [docker, "compose"]
+    # All volumes removed by this gate belong to this disposable test project,
+    # never the operator's default Compose project.
+    command = [docker, "compose", "--project-name", "finrisk-v041-release-gate"]
     for filename in files:
         command.extend(("-f", filename))
     return [*command, *args]
 
 
 def python_gate(python: str, label: str) -> None:
+    expected = [3, int(label.rsplit(".", 1)[1])]
+    actual = json.loads(subprocess.check_output(
+        [python, "-c", "import json,sys; print(json.dumps(list(sys.version_info[:2])))"],
+        text=True,
+    ))
+    if actual != expected:
+        raise SystemExit(f"{label} requires {expected}, supplied interpreter is {actual}")
     run(f"{label} dependency consistency", [python, "-m", "pip", "check"])
+    run(
+        f"{label} locked dependency security audit",
+        [python, "-m", "pip_audit", "--strict", "--no-deps", "-r", "requirements.lock"],
+    )
     run(
         f"{label} backend tests and coverage",
         [
@@ -59,7 +80,11 @@ def python_gate(python: str, label: str) -> None:
             "pytest",
             "--cov=finrisk",
             "--cov-report=term-missing",
+            f"--cov-report=json:{STAGE / ('coverage-' + label[-4:].replace('.', '') + '.json')}",
             "--cov-fail-under=90",
+            "-o",
+            f"cache_dir={STAGE / 'pytest-cache'}",
+            f"--junitxml={STAGE / ('tests-' + label[-4:].replace('.', '') + '.xml')}",
             "--basetemp",
             str(STAGE / f"pytest-{label.lower().replace(' ', '-') }"),
         ],
@@ -95,11 +120,13 @@ def package_gate(python311: str, python312: str) -> None:
             ],
         )
         run(f"installed dependency consistency ({label})", [str(installed), "-m", "pip", "check"])
-        run(
-            f"installed package/API/Assurance/certificate smoke ({label})",
-            [str(installed), str(ROOT / "scripts" / "verify_installed_package.py")],
-            env={**os.environ, "FINRISK_LLM_PROVIDER": "mock", "PYTHONPATH": ""},
-        )
+        with tempfile.TemporaryDirectory(prefix="finrisk-wheel-smoke-") as isolated:
+            run(
+                f"installed package/API/Assurance/certificate smoke ({label})",
+                [str(installed), str(ROOT / "scripts" / "verify_installed_package.py")],
+                env={**os.environ, "FINRISK_LLM_PROVIDER": "mock", "PYTHONPATH": ""},
+                cwd=Path(isolated),
+            )
 
 
 def research_and_docs_gate(python: str) -> None:
@@ -130,6 +157,7 @@ def research_and_docs_gate(python: str) -> None:
 
 def frontend_gate(npm: str) -> None:
     run("frontend clean dependency install", [npm, "--prefix", "frontend", "ci"])
+    run("frontend production dependency audit", [npm, "--prefix", "frontend", "audit", "--omit=dev", "--audit-level=high"])
     for task in ("test", "lint", "typecheck", "build"):
         run(f"frontend {task}", [npm, "--prefix", "frontend", "run", task])
 
@@ -153,8 +181,8 @@ def container_gate(docker: str, python: str) -> None:
         **common,
         "POSTGRES_PASSWORD": "v041-gate-release-password",
         "FINRISK_BOOTSTRAP_TOKEN": "v041-gate-release-bootstrap",
-        "FINRISK_API_IMAGE": "financial-risk-agent-api:latest",
-        "FINRISK_WEB_IMAGE": "financial-risk-agent-web:latest",
+        "FINRISK_API_IMAGE": "finrisk-v041-gate-api:candidate",
+        "FINRISK_WEB_IMAGE": "finrisk-v041-gate-web:candidate",
     }
     subprocess.run(compose(docker, release, "down", "-v"), cwd=ROOT, env=release_env, check=False)
     subprocess.run(compose(docker, development, "down", "-v"), cwd=ROOT, env=dev_env, check=False)
@@ -228,7 +256,8 @@ def main() -> int:
     package_gate(args.python311, args.python312)
     container_gate(args.docker_bin, args.python311)
     run("working-tree whitespace", ["git", "diff", "HEAD", "--check"])
-    print("\nRELEASE GATE: READY FOR v0.4.1 RELEASE")
+    print("\nLOCAL RELEASE GATE: PASS")
+    print("FINAL REMOTE CONTAINER RELEASE DRY-RUN REQUIRED (version=v0.4.1, publish=false)")
     return 0
 
 

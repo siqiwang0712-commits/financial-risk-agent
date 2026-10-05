@@ -16,7 +16,7 @@
 - Promoted current package/frontend/container identity to 0.4.1 without changing production
   financial-risk or Assurance behavior.
 
-## [0.4.0] - Unreleased
+## [0.4.0] - 2026-10-02
 
 ### Assurance architecture
 

@@ -11,11 +11,11 @@ name: Container Release
 #   3. scan    Trivy (CRITICAL blocks, HIGH is strict) + secret scan on the same digest
 #   4. publish attest (SBOM + build provenance) and add the release tags to the SAME
 #              digest. Nothing is rebuilt after verification, so the digest that was
-#              tested is byte-for-byte the digest that `v0.3.x`, `sha-<commit>` and
+#              tested is byte-for-byte the digest that `vX.Y.Z`, `sha-<commit>` and
 #              `latest` end up pointing at.
 #
 # Identity model (see docs/CONTAINER_RELEASE.md):
-#   v0.3.x        release identity   - what humans deploy
+#   vX.Y.Z        release identity   - what humans deploy
 #   sha-<commit>  source identity    - which tree it was built from
 #   sha256:<...>  artifact identity  - the only reproducible reference
 #   latest        convenience only   - never a reproducibility reference
@@ -221,9 +221,9 @@ jobs:
       contents: read
       packages: read
     env:
-      POSTGRES_PASSWORD: ci-only-strong-password-v033
+      POSTGRES_PASSWORD: ci-only-strong-password-container-validation
       FINRISK_LLM_PROVIDER: mock
-      FINRISK_BOOTSTRAP_TOKEN: ci-only-bootstrap-token-v033
+      FINRISK_BOOTSTRAP_TOKEN: ci-only-bootstrap-token-container-validation
       PYTHONPATH: backend
       FINRISK_EXPECTED_RUNTIME: ${{ needs.prepare.outputs.version }}
       CANDIDATE_API_IMAGE: ghcr.io/siqiwang0712-commits/financial-risk-agent-api@${{ needs.build-api.outputs.digest }}
@@ -329,12 +329,12 @@ jobs:
       contents: read
       packages: read
     env:
-      POSTGRES_PASSWORD: ci-only-strong-password-v033
+      POSTGRES_PASSWORD: ci-only-strong-password-container-validation
       FINRISK_LLM_PROVIDER: mock
       # `api.py` compares this with `== "1"`, so `true` would silently disable
       # bootstrap and make the health script's first call return 403.
       FINRISK_ENABLE_ORG_BOOTSTRAP: "1"
-      FINRISK_BOOTSTRAP_TOKEN: ci-only-bootstrap-token-v033
+      FINRISK_BOOTSTRAP_TOKEN: ci-only-bootstrap-token-container-validation
       PYTHONPATH: backend
       FINRISK_EXPECTED_RUNTIME: ${{ needs.prepare.outputs.version }}
       FINRISK_API_IMAGE: ghcr.io/siqiwang0712-commits/financial-risk-agent-api@${{ needs.build-api.outputs.digest }}
