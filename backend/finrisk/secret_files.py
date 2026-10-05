@@ -15,8 +15,9 @@ from pathlib import Path
 def env_or_file(name: str) -> str | None:
     """Read a secret from `<NAME>_FILE` (Docker/K8s secret mount) or from the env.
 
-    Preferring the file form keeps secrets out of `docker inspect` output and out
-    of the process environment, which is visible to any child process.
+    Using only the file form avoids placing the secret value in the environment.
+    File precedence does not remove an inline value already supplied by the operator
+    (including a Compose-generated DATABASE_URL) from `docker inspect` or child processes.
 
     Failure is *loud*, never silent: a configured-but-unreadable `<NAME>_FILE` raises
     instead of quietly falling back to `<NAME>`, because a fallback would either

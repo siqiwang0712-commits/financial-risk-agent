@@ -175,9 +175,13 @@ otherwise would be an unverified platform claim.
 * No secret is baked into a layer, and none appears in the image's own environment.
 * Runtime secrets are supplied through the existing `<NAME>_FILE` mechanism
   (`backend/finrisk/secret_files.py`): `DATABASE_URL_FILE`, `OPENAI_API_KEY_FILE`,
-  `FINRISK_BOOTSTRAP_TOKEN_FILE`. Mount a file and the value never appears in
-  `docker inspect`, in the build, or in a shell history. `<VAR>_FILE` wins over
-  `<VAR>` when set.
+  `FINRISK_BOOTSTRAP_TOKEN_FILE`. `<VAR>_FILE` wins over `<VAR>` when set, and an
+  unreadable configured file fails closed. Mount the file in every consuming service
+  (including both `migrate` and `api` for database credentials). File contents are
+  not added to the container environment by this mechanism; remove any inline secret
+  environment values/DSNs as well, because file precedence does **not** remove those
+  values from `docker inspect` or shell history. Configure the LLM provider explicitly;
+  the mounted OpenAI key is consumed only by the configured OpenAI provider.
 * The workflow authenticates with `GITHUB_TOKEN` only — no PAT, no extra secret.
 
 ## Deploying (first run matters)
@@ -320,7 +324,7 @@ omitted instead of advertising a transport guarantee the deployment does not pro
 
 ### Pinning and verifying a deployed image
 
-Release tags such as `v0.3.4` and `latest` are convenient references; the digest is the
+Release tags such as `vX.Y.Z` and `latest` are convenient references; the digest is the
 artifact identity. Set `FINRISK_API_IMAGE` and `FINRISK_WEB_IMAGE` to
 `ghcr.io/...:<tag>@sha256:<digest>` for a reproducible deployment. Use the digests emitted
 by the release workflow for the exact tag being deployed; documentation-only commits can
@@ -331,8 +335,8 @@ change an image digest because the image records the source revision.
 FINRISK_VERSION=sha-<full-commit-sha> docker compose -f docker-compose.release.yml up -d
 
 # Stronger: pin each image to the exact promoted artifact digest.
-FINRISK_API_IMAGE=ghcr.io/siqiwang0712-commits/financial-risk-agent-api:v0.3.4@sha256:<api-digest> \
-FINRISK_WEB_IMAGE=ghcr.io/siqiwang0712-commits/financial-risk-agent-web:v0.3.4@sha256:<web-digest> \
+FINRISK_API_IMAGE=ghcr.io/siqiwang0712-commits/financial-risk-agent-api:vX.Y.Z@sha256:<api-digest> \
+FINRISK_WEB_IMAGE=ghcr.io/siqiwang0712-commits/financial-risk-agent-web:vX.Y.Z@sha256:<web-digest> \
 docker compose -f docker-compose.release.yml up -d
 ```
 
@@ -360,10 +364,10 @@ Workflow default is `contents: read`. Per job:
 
 ```bash
 # dry run — builds, verifies and scans, but creates no release tag
-gh workflow run container-release.yml -f version=v0.3.4 -f publish=false
+gh workflow run container-release.yml --ref try-v0.4.1 -f version=v0.4.1 -f publish=false
 
-# real release
-gh workflow run container-release.yml -f version=v0.3.4 -f publish=true
+# Human-authorized publication only after all gates; use the exact intended release ref.
+gh workflow run container-release.yml --ref <release-ref> -f version=vX.Y.Z -f publish=true
 ```
 
 Pushing a `vX.Y.Z` tag also runs it with publishing enabled. The `prepare` job refuses
