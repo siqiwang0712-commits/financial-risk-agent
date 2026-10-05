@@ -1,18 +1,47 @@
-# v0.4.1 final release audit
+# FinRisk v0.4.1 — Final Release Audit
 
-Status: **RELEASE CANDIDATE — NOT RELEASED**. No tag, GitHub
-Release or container release-tag publication has been performed. Engineering readiness
-does not establish prospective, external, production, regulatory or calibrated validity.
+Status: **RELEASED — ENGINEERING RELEASE GATES PASSED**
 
-## Evidence identity
+Engineering release status does not establish prospective, external, production,
+regulatory, calibrated or safety validity.
 
-The reviewed release fixes are in `85e0e5dac5015c41973acf42cd03aa110789f46a`,
-`dd2f03aa885444b6b3f6fce7a953d8b04ea961c5` and
-`b91462742b30e8271eff27f2bca5c1225588a3bd` on `try-v0.4.1`. Later audit-document
-commits do not change the tested runtime. Final remote checks must still target their
-exact HEAD, because OCI source identity changes even for documentation-only commits.
+## 1. Release identity
 
-## Issues and disposition
+| Identity | Value |
+|---|---|
+| Software version / release date | v0.4.1 / 2026-10-05 |
+| Final preparation branch | `try-v0.4.1` |
+| Final runtime source tested by normal CI and Container Release | `00fc338f73be0529a4adc6a1705d518af7bf8030` |
+| Python package / frontend package | `0.4.1` / `0.4.1` |
+| Documentation closeout source | Documentation-only successor to the runtime SHA; exact commit identity is recorded in Git history |
+
+This is the maintainer-requested final release-state documentation snapshot. The
+closeout operation commits and pushes documentation only; it does not create a tag,
+GitHub Release or container release tag. Those publication actions remain with the
+maintainer. The engineering evidence below records a non-publishing dry-run, not a
+claim that release images or attestations have already been published.
+
+The reviewed runtime fixes include `85e0e5dac5015c41973acf42cd03aa110789f46a`,
+`dd2f03aa885444b6b3f6fce7a953d8b04ea961c5`,
+`b91462742b30e8271eff27f2bca5c1225588a3bd` and the retained-report fix in the final
+runtime SHA. Documentation-only changes do not alter those tested runtime files.
+They do create a new source identity: rebuilding an image from the closeout commit
+can change its OCI revision and digest. Do not attribute the tested digests below to
+that new build or assume a future publication digest without checking its own run.
+
+## 2. Final verdict
+
+The research-prototype software satisfies the audited engineering gates: both supported
+Python versions, unchanged coverage threshold, frontend, clean package installs,
+research integrity, and digest-bound real-stack/container security checks passed.
+The final normal CI and Container Release dry-run completed successfully; report retention
+was verified by downloading and inspecting the actual artifact.
+
+The local Docker aggregate check remained blocked by the host environment. Remote
+real-stack evidence supplies the deployment verification; it does not rewrite the local
+failure as a pass. E5 remains `BLOCKED / DRAFT_NOT_FROZEN / NOT EXECUTED`.
+
+## 3. Issues found and resolved
 
 | Area | Finding | Disposition |
 |---|---|---|
@@ -23,11 +52,11 @@ exact HEAD, because OCI source identity changes even for documentation-only comm
 | Mounted LLM secret | `OPENAI_API_KEY_FILE` was documented but not read by the provider. | Use the existing file-secret helper; file precedence and unreadable-file failure are tested. |
 | Secret wording | File precedence was incorrectly described as removing inline environment secrets. | Clarify that inline DSNs/secrets still appear in container inspection; operators must mount files and remove inline values. |
 | Local release gate | Interpreter identities, dependency audits and outside-checkout wheel imports were not all enforced. | Verify interpreter versions, audit both stacks, assert installed resources, isolate Compose cleanup, retain the 90% threshold and all checks. |
-| Metadata | Released v0.4.0 was still `Unreleased`; workflow examples used earlier release identifiers. | Record its actual 2026-10-02 release date; use generic workflow labels/current dry-run examples. v0.4.1 remains unreleased. |
+| Metadata | Released v0.4.0 was still `Unreleased`; workflow examples used earlier release identifiers. | Preserve v0.4.0's 2026-10-02 date, record v0.4.1's 2026-10-05 date, and use generic release-tag mechanics. |
 | Verification prose | Old local test/coverage totals were duplicated. | Centralize the current evidence here; distinguish local, normal CI and digest-bound release checks. |
 | Retained scan evidence | The first dry-run validated JSON reports, but the uploader excluded hidden `.runtime/` files and silently retained nothing. | Explicitly include hidden files only for `.runtime/trivy-*.json`; missing upload files are an error. A regression test reproduces the old failure. |
 
-## Local verification, 2026-10-05
+## 4. Local verification, 2026-10-05
 
 | Check | Actual result |
 |---|---|
@@ -46,7 +75,7 @@ exact HEAD, because OCI source identity changes even for documentation-only comm
 | Local Docker aggregate gate | **BLOCKED BY HOST ENVIRONMENT**, not passed: Desktop's Linux-engine pipe is absent; official start/restart did not recover it |
 
 The 18 local skips are 12 real-PostgreSQL tests and six deployed-HTTP contract tests.
-They must run in the real-stack remote checks. The 84 pytest warnings comprise 32
+All ran in the final normal CI matrix below. The 84 pytest warnings comprise 32
 expected all-missing-feature imputation warnings, 50 upstream scikit-learn `penalty`
 deprecations (future compatibility work), and two intentional single-class-fold warnings.
 No new filters or suppressions were added. pip-audit recommends full dependency hashes;
@@ -60,7 +89,7 @@ every research-statistics, test, data and documentation file, nor a production s
 certification. Trusted pickle artifacts remain hash-checked before loading; arbitrary
 untrusted serialized models must not be loaded.
 
-## Exact commands
+### Exact local commands
 
 ```powershell
 $env:FINRISK_LLM_PROVIDER = 'mock'
@@ -96,27 +125,69 @@ $env:COVERAGE_FILE = '.runtime/coverage-final312'
   -o cache_dir=.runtime/pytest-cache-final-matrix312-isolated
 ```
 
-## Final remote evidence
+## 5. Final normal CI evidence
 
-Normal CI and the final `Container Release` dry-run must be checked job by job on the
-exact final commit. Dispatch only with `version=v0.4.1`, `publish=false`. Candidate
-image digests must be identical across build, both Compose validations, scans and any
-later human-authorized promotion; no rebuild between verification and promotion.
+[Normal CI run 37302574534](https://github.com/siqiwang0712-commits/financial-risk-agent/actions/runs/37302574534)
+completed successfully on `00fc338f73be0529a4adc6a1705d518af7bf8030`.
 
-The source-identity-matched job results are retained in GitHub Actions rather than
-embedding this document's own future commit hash. Before publication, verify the
-release candidate SHA against both the [normal CI runs](https://github.com/siqiwang0712-commits/financial-risk-agent/actions/workflows/ci.yml?query=branch%3Atry-v0.4.1)
-and [Container Release runs](https://github.com/siqiwang0712-commits/financial-risk-agent/actions/workflows/container-release.yml?query=branch%3Atry-v0.4.1).
-The final audit handoff records their exact run IDs and commit SHA. A successful source
-CI run alone is insufficient: both digest-bound Compose checks and all four API/Web
-vulnerability/secret scans must pass, while the dry-run publication job must be skipped.
-The `trivy-results` artifact must also be downloadable and contain both valid,
-candidate-digest-bound JSON reports. The first audit dry-run, run `37300287238` at
-`21b670ef8fee4615a660a34e8e4ca04038e05edf`, was green but did not retain those files;
-it is therefore **not** sufficient final release evidence. The corrected uploader
-requires a new source-identity-matched dry-run and actual artifact inspection.
+| Job | Result |
+|---|---|
+| backend (3.11), job 111738547973 | 781 passed, 0 skipped, 84 warnings; 92.08% coverage; 300.71 seconds |
+| backend (3.12), job 111738548019 | 781 passed, 0 skipped, 84 warnings; 92.08% coverage; 559.42 seconds |
+| frontend, job 111738547904 | 34 tests passed; production dependency audit, lint, TypeScript and build passed |
+| docker-smoke, job 111738547727 | Real PostgreSQL/Compose health, authenticated workflow, persistence/restart and timeout/retry passed |
 
-## Research boundary
+Both backend jobs passed Ruff, dependency consistency/audits and idempotent PostgreSQL
+migration checks. The research verification stage passed the fitted reference replay,
+runtime identities, E5 preflight, E4 public integrity, E4-S 44/44, E4-R 136/136 and
+Markdown links. The 90% coverage gate was not lowered. Linux ran the 18 real-stack tests
+skipped on local Windows; therefore the local and remote totals/coverage are deliberately
+reported separately, not normalized into one number.
+
+## 6. Final Container Release dry-run
+
+[Container Release run 37302629899](https://github.com/siqiwang0712-commits/financial-risk-agent/actions/runs/37302629899)
+completed successfully on the same runtime SHA, with `workflow_dispatch`,
+`version=v0.4.1`, `publish=false`.
+
+| Job | Result |
+|---|---|
+| prepare / build-api / build-web | Passed; candidate images built once |
+| verify, job 111739084097 | Passed on exact candidate digests: migration, schema sentinels, readiness/liveness, bootstrap/authentication, API serialization, Assurance/certificate flow, restart retrieval/replay and timeout/retry |
+| verify-release-compose, job 111739084112 | Passed on those same digests; operator-facing stack, migration, health, authentication and PostgreSQL restart persistence verified |
+| scan, job 111739084124 | API/Web vulnerability scans, secret scans, image-secret checks and digest-bound JSON verification passed |
+| dry-run | Passed; explicitly recorded that no release tags were published |
+| publish | Intentionally skipped; no SBOM/attestation promotion or release-tag publication claimed from this run |
+
+The earlier [dry-run 37300287238](https://github.com/siqiwang0712-commits/financial-risk-agent/actions/runs/37300287238)
+at `21b670ef8fee4615a660a34e8e4ca04038e05edf` was green but failed to retain Trivy JSON
+files because the uploader excluded hidden paths. It was rejected as insufficient final
+evidence. The final runtime commit fixed that uploader, added a regression test and
+passed the new dry-run with actual report download/inspection. That issue is resolved,
+not an outstanding requirement for another audit dry-run.
+
+## 7. Artifact and security evidence
+
+Candidate tag: `candidate-00fc338-37302629899`; platform: `linux/amd64`.
+Both build outputs, both runtime verification jobs and scans used these exact digests:
+
+| Image | Verified candidate digest |
+|---|---|
+| `financial-risk-agent-api` (also `migrate`) | `sha256:a0a1eefcaff46174782fe7bf453059123ac6e3adf2a640dfedb545e5fe36bb44` |
+| `financial-risk-agent-web` | `sha256:adc32489b6d4e105fa6de792f9655466ac51e511ce13d3a9c425b14d7f071358` |
+
+The run retained `trivy-results`, artifact ID **11342570650**, a **50,408-byte** ZIP.
+Its downloaded archive SHA-256 was
+`d9568ae7f816cbfd0a0084ec8ec42c16c2cf525a878a99aab9b880641b105415`.
+It contains `trivy-api.json` and `trivy-web.json`, each valid schema-2 JSON bound to
+the appropriate candidate digest and containing zero recorded vulnerability findings
+**under the configured `CRITICAL,HIGH`, `--ignore-unfixed` scan policy**.
+The separate `CRITICAL,HIGH,MEDIUM` secret scans also passed. `.trivyignore` has no
+suppressed findings. This is scoped scan evidence, not proof that all vulnerabilities,
+all severities or future advisories are absent. Actions artifact retention is finite;
+the recorded run/artifact identities identify the inspected evidence.
+
+## 8. Research-integrity boundary
 
 Original frozen E4 has **674** verified outcomes (235 events). E4-S replication and
 StrongTabularReference development have **675** verified companies/observations
@@ -124,4 +195,28 @@ StrongTabularReference development have **675** verified companies/observations
 counts. Every one of the **2,000** E4-S source companies remains a future E5 exclusion.
 Historical E1–E4-R evidence and fitted reference artifacts are byte-unchanged. Development
 metrics remain design-exposed retrospective evidence, not unbiased or prospective
-validation. Scores and policy remain `UNCALIBRATED`; E5 remains unexecuted/unfrozen.
+validation. Scores and policy remain `UNCALIBRATED`; E5 remains
+`BLOCKED / DRAFT_NOT_FROZEN / NOT EXECUTED`.
+
+Canonical historical-development metrics remain AUROC `0.8817891682785299`, PR-AUC
+`0.8289679250748645`, and descriptive uncalibrated Brier `0.12812086027177813`.
+They are `RETROSPECTIVE_DEVELOPMENT_SELECTION_METRICS`, `DESIGN_EXPOSED`, not prospective
+or external estimates. E4-R's negative competitive finding remains unchanged. S2/S3/S4
+are not estimable from this tabular development packet. Release documentation changes
+no empirical number, fitted model, frozen CSV/JSON, OOF prediction or manifest hash.
+
+## 9. Remaining limitations and future work
+
+- **Engineering:** local Docker Desktop remains unavailable; Linux/ARM64, managed
+  production storage, operational chaos testing and production SLAs are not established.
+  Upstream dependency deprecations require future maintenance, not suppressed failures.
+- **Research:** E5 needs an untouched future window/cohort, final arm/reference identities,
+  primary estimands, multiplicity/effect thresholds, the unpublished 270-company
+  exclusion, prospective isolation proof, prediction freeze and outcome unlock.
+- **Calibration/reference validity:** the policy is heuristic and scores uncalibrated.
+  The empirical profile is `EMPIRICAL_DEVELOPMENT_REFERENCE_ONLY`, historically exposed,
+  research-only, not externally/production validated or E5-frozen.
+- **External/production/regulatory/safety:** none is established by these engineering
+  gates. Human review remains necessary for material financial decisions.
+
+These are explicit maturity boundaries and future work, not hidden failed release gates.

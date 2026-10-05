@@ -6,7 +6,7 @@
 
 # FinRisk
 
-### 受保证的选择性金融智能——v0.4.1 发布评审候选版本
+### 受保证的选择性金融智能——v0.4.1
 
 [![CI](https://github.com/siqiwang0712-commits/financial-risk-agent/actions/workflows/ci.yml/badge.svg)](https://github.com/siqiwang0712-commits/financial-risk-agent/actions/workflows/ci.yml)
 [![Python 3.11–3.12](https://img.shields.io/badge/Python-3.11%E2%80%933.12-3776AB?logo=python&logoColor=white)](https://www.python.org/)
@@ -15,6 +15,9 @@
 **一个把金融风险预测与决策授权明确分开的研究系统。**
 
 [English](README.md) | 简体中文
+
+当前版本：**v0.4.1 · 2026-10-05 发布** ·
+[发布说明](RELEASE_NOTES_v0.4.1.md) · [工程审计](docs/RELEASE_AUDIT_v0.4.1.md)
 
 [快速开始](#快速开始) · [工作原理](#工作原理) ·
 [研究概览](#研究概览) · [文档导航](#文档导航)
@@ -42,6 +45,13 @@ FinRisk 是一个开放的金融风险研究系统，用于分析财务恶化信
 这就是 v0.3.x 到 v0.4 的变化：v0.3.x 提供以证据为基础的风险分析；v0.4 把决策授权提升为
 独立且失败关闭的运行时层。风险严重度、证据支持度、脆弱性、分布有效性、模型分歧和校准
 状态保持分离。
+
+### v0.4.1 新增了什么？
+
+v0.4.1 围绕上述架构完成研究准备与发布加固：新增仅用于研究的 StrongTabularReference-v1、
+已批准的历史开发数据、明确区分 V/O/VO/CC 的可观测性诊断、经验开发参考分布、选择性评估
+工具和分阶段 E5 预检。同时加固上传准入、数值证据来源、非法 Assurance 状态拒绝，以及
+受证书约束的授权展示。软件发布不等于前瞻或外部验证；E5 仍受阻，尚未冻结。
 
 ## 为什么需要 FinRisk？
 
@@ -94,7 +104,7 @@ Decision Certificate
 4. **证书层**——把输入/文档摘要、组件版本、候选决策、保证结果、最终决策和重放信息写入内容哈希证书。
 
 `FinRiskPipeline` 仍是 API、Agent 与工具注册表共享的计算所有者；`AssuranceEngine` 是唯一的
-授权所有者。系统强制执行：`没有 AssuranceResult，就没有已授权的最终决策`。
+授权所有者。系统强制执行：`没有有效的 AssuranceResult，就没有已授权的 final_decision`。
 
 详见[v0.4 Assurance 架构](docs/assurance_architecture.md)、
 [完整架构与平台边界](docs/enterprise_platform.md)、
@@ -148,7 +158,8 @@ docker compose up --build
 
 Workbench 位于 `http://localhost:3000`，API 位于 `http://localhost:8000`。
 
-也可通过 `docker-compose.release.yml` 使用已发布的 GHCR 镜像：
+使用维护者发布的镜像时，可通过 `docker-compose.release.yml` 启动，并固定到实际发布运行的
+镜像摘要。已审计的 v0.4.1 容器运行是未发布的 dry-run，不代表 v0.4.1 镜像发布标签已经存在：
 
 ```bash
 cp .env.release.example .env    # 编辑密钥和首次引导设置
@@ -197,7 +208,7 @@ SEC 源数据获取见[可复现性指南](research/EXPERIMENT_REPRODUCIBILITY.m
 ### v0.4.1 回顾性开发参考模型
 
 v0.4.1 新增可复现、仅用于研究的 `StrongTabularReference-v1`。在**设计已暴露**且标签
-可得性具有选择性的 E4-S 开发子集（675 家公司、235 个事件）上，预先规定的流程机械选择了
+可得性具有选择性的 E4-S 开发子集（675 条观测 / 675 家公司、235 个事件和 440 个非事件）上，预先规定的流程机械选择了
 `VO` + Histogram Gradient Boosting。其折外**回顾性开发** AUROC 为 **0.881789**，
 PR-AUC 为 **0.828968**。这些不是独立验证估计。分数仍为 `UNCALIBRATED`，不能授权决策，
 也没有接入生产评分路径。
@@ -210,10 +221,11 @@ PR-AUC 为 **0.828968**。这些不是独立验证估计。分数仍为 `UNCALIB
 [诊断报告](research/strong_tabular_reference/OBSERVABILITY_DIAGNOSTIC.md)和
 [v0.4.1 发布说明](RELEASE_NOTES_v0.4.1.md)。
 
-E5 仍为 `BLOCKED / DRAFT_NOT_FROZEN`：不存在未来队列、预测、结果或冻结身份。
+E4-S 源队列的全部 2,000 家公司必须从未来 E5 中排除。E5 仍为
+`BLOCKED / DRAFT_NOT_FROZEN`：不存在未来队列、预测、结果或冻结身份。
 
-当前证据面以锁定的 v0.3.4/E4 研究及其明确标注为事后分析的审计为主。更早的 pilot 和
-v0.3.1 产物仍保留为历史审计记录，但不再作为主要结果面。
+原始 E4 证据来自锁定的 v0.3.4 实现及其明确标注为事后分析的审计。E4 的 674 个可核验结果
+与上述 E4-S 的 675 条开发观测是不同的历史对象。更早的 pilot 和 v0.3.1 产物仍保留为历史审计记录。
 
 | E4 结果 | 数值 |
 |---|---:|
@@ -249,9 +261,9 @@ v0.3.1 产物仍保留为历史审计记录，但不再作为主要结果面。
 
 ## 项目状态与成熟度
 
-当前本地目标是 **v0.4.1 发布评审——Research Readiness & Strong Reference**。
+**v0.4.1——Research Readiness & Strong Reference** 于 **2026-10-05 发布**。
 Assurance 权威边界、确定性证据脆弱性、决策充分证据、分布有效性诊断和 Decision Certificate
-已经实现。这是工程版本：它没有修改冻结的 E4 结果，没有声称得到更强预测器，也没有冻结或运行 E5。
+已经实现。这是研究原型的软件发布：它没有修改冻结的 E4 结果，没有证明前瞻预测优势，也没有冻结或运行 E5。
 
 - **在有限研究范围内已验证：** 确定性样例、自动质量门槛、冻结 E4 产物完整性，以及 B6 相对
   B0 在 674 个可核验 E4 结果上的改进。
@@ -268,6 +280,8 @@ Assurance 权威边界、确定性证据脆弱性、决策充分证据、分布�
 
 [项目状态](PROJECT_STATUS.md)是成熟度的权威清单。发布范围与历史见
 [v0.4.1 发布说明](RELEASE_NOTES_v0.4.1.md)和[变更日志](CHANGELOG.md)。
+[最终工程审计](docs/RELEASE_AUDIT_v0.4.1.md)记录了已测试的运行时代码 SHA、通过的 CI 与
+容器 dry-run，以及本地环境限制。
 
 ## 仓库结构
 
@@ -337,6 +351,7 @@ failure_lab/  注入故障目录及预期的失败关闭行为
 - [贡献指南](CONTRIBUTING.md)
 - [变更日志](CHANGELOG.md)
 - [v0.4.1 发布说明](RELEASE_NOTES_v0.4.1.md)
+- [v0.4.1 最终工程审计](docs/RELEASE_AUDIT_v0.4.1.md)
 - [v0.4.0 发布说明](RELEASE_NOTES_v0.4.0.md)
 - [v0.3.4 发布说明](RELEASE_NOTES_v0.3.4.md)
 - [Failure Lab](failure_lab/README.md)
@@ -348,7 +363,8 @@ FinRisk 是研究原型。它：
 - 尚未校准（`UNCALIBRATED`），不是破产、违约或判断正确性的概率；
 - 当前 Assurance 策略仍是启发式策略，不是已校准的选择性风险保证；
 - 不能断言已经获得外部验证的分布有效性；仓库内合成参考明确标记为
-  `DEVELOPMENT_REFERENCE_ONLY`；
+  `DEVELOPMENT_REFERENCE_ONLY`，历史经验研究参考为 `EMPIRICAL_DEVELOPMENT_REFERENCE_ONLY`，
+  不是 E5 冻结参考，也不是生产参考；
 - 不是信用评级、舞弊认定或投资建议；
 - 不能证明可核验研究子集之外的总体人群表现；
 - 不是对重大金融决策进行人工复核的已验证替代品；

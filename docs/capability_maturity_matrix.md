@@ -1,6 +1,7 @@
 # Capability Maturity Matrix
 
-Updated: 2026-10-02. `Production` means externally operated and validated; no row currently meets that standard.
+Updated: 2026-10-05. v0.4.1 is released. `Production` means externally operated and
+validated, not software release status; no row currently meets that standard.
 
 `Wired` asks a different question from the other columns: is this capability reachable
 from a live entry point (`/api/v1/documents/analyze`, `/api/v1/agent/assess`, or the
@@ -20,16 +21,18 @@ caller actually reaches, not that it is broken.
 | Assurance authority boundary | Yes | Yes | Yes | Synthetic/internal only | Internal development | No |
 | Evidence fragility | Yes | Yes | Yes | Synthetic dependency graphs | Deterministic property tests | No |
 | Decision-Sufficient Evidence | Yes | Yes | Yes | Synthetic dependency graphs | Exact/approximation contract tests | No |
-| Distribution validity | Yes | Yes | Yes | Synthetic development profile only | Internal mechanics complete; empirical validity NOT ESTABLISHED | No |
-| Financial/reporting feature separation | Yes | Yes | Yes | Runtime payloads | Internal development | No |
+| Distribution validity | Yes | Yes | Yes | Synthetic runtime profile; historical empirical research profile | Internal mechanics; no external/production validity or E5-frozen reference | No |
+| Financial/reporting feature separation | Yes | Yes | Yes | Runtime payloads; 675-row historical V/O/VO/CC diagnostics | Internal development; observability is not financial severity | No |
+| StrongTabularReference-v1 | Yes | Yes | No | 675 companies / 235 events / 440 non-events | Design-exposed retrospective selection/replay; uncalibrated | No |
+| Empirical development reference | Yes | Yes | No | 2,000 historical source companies; built without labels | `EMPIRICAL_DEVELOPMENT_REFERENCE_ONLY`; not external/production validated or E5-frozen | No |
 | Correlated-evidence de-duplication | Yes | Yes | No | Fixture only | Monotonicity property test | No |
 | Temporal risk state/attribution | Yes | Yes | Yes | 30-company numeric trajectories | Executed; usefulness not validated | No |
 | Temporal evidence graph | Yes | Yes | No | No | No | No |
 | Applicability Router | Yes | Yes | Yes | No sector validation | No | No |
-| Calibration/selective policy eligibility | Yes | Yes | Yes | n=3 diagnostic only | No | No |
+| Calibration/selective policy eligibility | Yes | Yes | Yes | n=3 pilot; 675-row research-only S0/S1 selective dry-run | Mechanics tested; policy/scores remain `UNCALIBRATED` | No |
 | Analyst–Critic–Verifier review | Yes | Yes | Yes | Offline semantics | No | No |
 | Decision Certificate/replay | Yes | Yes | Yes | Synthetic + PostgreSQL restart smoke | Internal development | No |
-| Risk Case mitigation lifecycle | Yes | Yes | Yes | Controlled fixture | Local only | No |
+| Risk Case mitigation lifecycle | Yes | Yes | Yes | Controlled fixtures | Local/CI mechanics, not external operation | No |
 | Champion–Challenger gate | Yes | Yes | No | No qualified candidate run | No | No |
 | Human–AI study | Protocol + analysis | Yes, synthetic | No | No participants | NOT RUN | No |
 | PostgreSQL persistence | Schema + adapter | Migration/restart and Compose smoke | Yes | No production deployment | Runtime-tested | No |
@@ -43,6 +46,15 @@ caller actually reaches, not that it is broken.
   `hierarchical_escalation` directly, which consumes per-dimension maxima without
   invoking the de-duplication step.
 - **Champion–Challenger gate**, **Human–AI study** — offline/analysis-only by design.
+- **StrongTabularReference-v1**, **Empirical development reference** — research artifacts
+  and offline entry points; not silently installed into live scoring or Assurance.
+
+The empirical profile is historical and design-exposed. Its label-independent generation
+does not remove prior research exposure or establish prospective validity. All 2,000
+source companies remain future E5 exclusions. E5 remains `BLOCKED / DRAFT_NOT_FROZEN`.
+The existing runtime synthetic profile remains `DEVELOPMENT_REFERENCE_ONLY`; unknown or
+unsupported observations still fail closed. Offline selective diagnostics are not
+evidence of a calibrated runtime policy.
 
 Temporal risk state and selective automation are wired through explicit enterprise
 endpoints; they are not silently applied to the one-shot assessment contract.

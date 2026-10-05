@@ -1,15 +1,19 @@
 # Project Status
 
-## v0.4.1 release-review candidate — Research Readiness & Strong Reference
+## v0.4.1 — Research Readiness & Strong Reference
 
-Status: **READY FOR v0.4.1 RELEASE REVIEW; PROSPECTIVE AND EXTERNAL VALIDATION PENDING**
+Released: **2026-10-05**
+
+Status: **RELEASED; PROSPECTIVE E5 AND EXTERNAL VALIDATION PENDING**
 
 v0.4 separates prediction from authorization. Metrics, rules, models, fusion and Agent
 reasoning emit `proposed_decision`; only `AssuranceEngine` can issue
 `final_decision`. Both live assessment paths enforce a hash-verified
 `AssuranceResult` publication boundary.
 
-Implemented locally:
+### Engineering maturity
+
+Implemented:
 
 - typed Assurance domain model, versioned policy and stable reason codes;
 - verified evidence-path assurance with fail-closed semantics;
@@ -39,8 +43,18 @@ The default policy is `HEURISTIC_POLICY` and runtime calibration remains
 `UNCALIBRATED`; no probability or finite-sample reliability guarantee is exposed.
 Historical E1–E4-R artifacts remain unchanged.
 
+Final normal CI and the digest-bound Container Release dry-run passed on runtime source
+`00fc338f73be0529a4adc6a1705d518af7bf8030`. Both supported Python versions passed with
+the unchanged 90% coverage gate; package installs, frontend, migrations, readiness,
+Assurance/certificate replay and PostgreSQL restart persistence were verified. Exact
+local/remote totals and retained scan evidence are in the
+[final release audit](docs/RELEASE_AUDIT_v0.4.1.md). The closeout commit changes
+documentation only; container publication and tag creation are maintainer actions.
+
+### Research maturity
+
 v0.4.1 adds a `DESIGN_EXPOSED_HISTORICAL_DEVELOPMENT` StrongTabularReference built from
-675 E4-S verified rows (235 events), while conservatively registering all 2,000 E4-S
+675 E4-S verified companies/rows (235 events, 440 non-events), while conservatively registering all 2,000 E4-S
 source companies for future E5 exclusion. Prespecified grouped nested CV selected `VO` +
 Histogram Gradient Boosting (development OOF AUROC 0.881789; PR-AUC 0.828968). These are
 retrospective development metrics, not validation. The score remains `UNCALIBRATED` and
@@ -180,7 +194,7 @@ Status date: 2026-09-23. This remains a research prototype. Predictive superiori
 - External or managed PostgreSQL deployment validation. Local and CI PostgreSQL 17 validation exists; no production database was provisioned.
 - Calibrated probability of default. The heuristic score is explicitly not a bankruptcy probability.
 
-## Current Local Verification
+## Current Engineering Verification
 
 Current commands, test totals, coverage, warning classification, packaging and exact
 remote verification links are centralized in the [v0.4.1 release audit](docs/RELEASE_AUDIT_v0.4.1.md).
@@ -188,8 +202,11 @@ Both supported Python interpreters pass the full local suite with the unchanged 
 coverage gate; frontend and clean installed-wheel checks also pass. Local tests without
 a running PostgreSQL/HTTP stack retain explicitly environment-gated skips, not blanket
 exceptions. The current local gate stops at Docker because this host's Desktop engine
-does not start; Docker/PostgreSQL evidence must come from the final commit's remote CI
-and Container Release dry-run, not an earlier local run.
+does not start. Docker/PostgreSQL checks passed remotely in normal CI run
+[37302574534](https://github.com/siqiwang0712-commits/financial-risk-agent/actions/runs/37302574534)
+and Container Release dry-run
+[37302629899](https://github.com/siqiwang0712-commits/financial-risk-agent/actions/runs/37302629899)
+on the tested runtime SHA above. This does not retroactively make the local Docker gate pass.
 
 Engineering verification is not external production operation, prospective predictive
 validation, probability calibration or regulatory validity. E5 remains unfrozen.

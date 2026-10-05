@@ -1,20 +1,27 @@
 # FinRisk v0.4.1 — Research Readiness & Strong Reference
 
-**Version:** `0.4.1` · **Status:** release-review candidate; prospective E5 and external
-validation remain pending.
+**Version:** `0.4.1` · **Released:** 2026-10-05
+
+Research-prototype software release. Prospective E5 and external validation remain
+pending; scores and the Assurance policy remain `UNCALIBRATED`.
 
 ## Why v0.4.1 exists
 
-v0.4.1 moves the v0.4 Assurance architecture from engineering-only readiness toward a
-measurable prospective-study foundation. It adds a reproducible historical strong tabular
-reference, explicit reporting-observability diagnostics, a label-independent empirical
-development reference, selective-evaluation tooling, and stage-aware E5 preflight.
-Financial scoring and the historical fitted reference are unchanged. Final review hardens
-pre-parse upload admission, numeric contradiction provenance, malformed Assurance verification
-and missing-authorization display; previously unsupported paths can now require review or
-abstention. Frozen E1–E4-R evidence is unchanged.
+v0.4 introduced a separate authorization layer: prediction components propose a decision;
+only a valid, policy-bound AssuranceResult can authorize `final_decision` and a Decision
+Certificate. v0.4.1 completes research-readiness and release hardening around that boundary,
+without claiming new prospective predictive evidence.
 
-## StrongTabularReference-v1
+The release adds a reproducible historical strong tabular reference, approved historical
+development manifest, V/O/VO/CC observability diagnostics, label-independent empirical
+development reference, selective-evaluation machinery and stage-aware E5 preflight.
+It also hardens pre-parse upload admission, numeric contradiction provenance, malformed
+Assurance rejection, certificate-bound authorization display and mounted-secret handling.
+Previously unsupported paths can now require review or abstention. Financial scoring,
+fitted historical reference artifacts and frozen E1–E4-R evidence were not changed by
+release hardening or documentation closeout.
+
+## StrongTabularReference-v1 and approved development data
 
 - Development source: frozen E4-S replication packet; 675 verified companies/observations,
   235 events and 440 non-events.
@@ -40,7 +47,10 @@ abstention. Frozen E1–E4-R evidence is unchanged.
 
 These metrics are `RETROSPECTIVE_DEVELOPMENT_SELECTION_METRICS`, not independent or
 prospective performance estimates. The output is an `UNCALIBRATED_RANKING_SCORE`, not a
-probability, and it has no final-decision authority.
+probability, and it has no final-decision authority. The approved source is explicitly
+`DESIGN_EXPOSED`; it cannot serve again as fresh validation. See the
+[canonical results](research/strong_tabular_reference/artifacts/canonical_results.json)
+and [reference artifact contract](research/strong_tabular_reference/README.md).
 
 ## Reporting observability
 
@@ -96,7 +106,52 @@ arm identities, future time window/cohort, the unpublished 270-company exclusion
 prediction environment/isolation, prediction freeze, and outcome unlock. E5 remains
 `BLOCKED / DRAFT_NOT_FROZEN`; no E5 cohort, prediction, outcome, or final freeze hash exists.
 
-## Verification
+Original frozen E4 contains 674 verified outcomes and 235 events; E4-S / this historical
+development reference contains 675 observations, 235 events and 440 non-events. These
+are distinct historical objects. B0/B6 remain historical anchors, not the strongest
+competitive reference. E4-R's finding that learned tabular baselines outperform B6 remains
+visible and unchanged. See the [research overview](research/EXPERIMENT_OVERVIEW.md).
+
+## Final engineering verification
+
+Final runtime source: `00fc338f73be0529a4adc6a1705d518af7bf8030`.
+The final documentation commit changes no runtime or research artifact. Its SHA is
+recorded in Git history; the following evidence belongs to the tested runtime source,
+not to a newly built image from the documentation commit.
+
+| Gate | Verified evidence |
+|---|---|
+| Normal CI | [37302574534](https://github.com/siqiwang0712-commits/financial-risk-agent/actions/runs/37302574534): all four jobs passed |
+| Python 3.11 / 3.12 on Linux | Each: 781 passed, 0 skipped, 84 warnings, 92.08% coverage; required threshold remains 90% |
+| Ruff and backend dependency audits | Passed; `pip check` and locked `pip-audit` passed |
+| Frontend | 34 tests, lint, TypeScript and production build passed; production dependency audit reported 0 vulnerabilities |
+| Package / clean installs | Local wheel and sdist build passed; clean installed-wheel API/pipeline/Assurance/certificate smoke passed outside the checkout on both Python versions |
+| Research gates | StrongTabularReference artifact/replay, release runtime identities and E5 preflight passed; E4 public integrity passed, E4-S 44/44, E4-R 136/136 |
+| Container dry-run | [37302629899](https://github.com/siqiwang0712-commits/financial-risk-agent/actions/runs/37302629899): `workflow_dispatch`, `version=v0.4.1`, `publish=false` |
+| Real-stack verification | Both build jobs, development-overlay verification and release Compose verification passed using exact candidate digests |
+| PostgreSQL / API | Migrations, readiness/liveness, bootstrap/authentication, v0.4.1 serialization, certificate generation/replay and restart persistence passed |
+| Timeout / retry | Controlled 504 followed by explicit retry returning 504 passed |
+| Container security | Both vulnerability and secret scans passed; candidate identity was verified and both Trivy JSON reports were retained and inspected |
+| Publication | Skipped in the audited dry-run; no release-tag publication is claimed by that evidence |
+
+Local Windows suites each recorded 763 passed, 18 environment-gated skips and 91.09%
+coverage. The 18 real-PostgreSQL/deployed-HTTP tests ran in remote CI, explaining its
+higher count and coverage. Docker Desktop's Linux engine was unavailable locally:
+the local aggregate Docker gate did not pass. Remote container results supply the actual
+deployment evidence, not a retroactive local pass.
+
+The [final release audit](docs/RELEASE_AUDIT_v0.4.1.md) is the authoritative record of
+commands, warning classifications, run identities, candidate digests and retained report
+integrity. Engineering gates passing is not production certification or a safety guarantee.
+
+## Compatibility and verification commands
+
+Assessment schemas continue to distinguish `risk_score`, `risk_severity`,
+`proposed_decision`, `assurance`, `final_decision` and `decision_certificate`.
+Legacy aliases do not gain authorization authority. Quote-only numeric proof,
+malformed Assurance or missing authorization may now be rejected where previously
+accepted; callers must handle `REVIEW` / `ABSTAIN` and explicit failure states.
+Mounted file secrets take precedence but do not remove separately supplied inline secrets.
 
 Lightweight checked-in artifact gate:
 
@@ -104,19 +159,10 @@ Lightweight checked-in artifact gate:
 python scripts/verify_v041.py
 ```
 
-Explicit expensive rebuild:
-
-```bash
-python -m research.strong_tabular_reference.run_development
-```
-
-The [final release audit](docs/RELEASE_AUDIT_v0.4.1.md) is the single current record of
-commands, actual test totals/coverage, warnings, clean wheel checks, and remote image
-verification. Local backend/frontend/research/package checks pass; this host's Docker
-Desktop engine fails to start, so the local gate does **not** claim an aggregate pass.
-Container evidence must identify the final branch HEAD and its `publish=false` workflow.
-
-No nested-CV rebuild runs during normal CI.
+The complete engineering gate is `scripts/verify_v041_release.py`; individual stages
+remain visible there. Artifact verification does not refit models. No nested-CV rebuild
+runs during normal CI. Development reproduction instructions remain in the reference
+package rather than being a release prerequisite to regenerate canonical results.
 
 ## Limitations
 
