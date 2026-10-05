@@ -1,6 +1,10 @@
 # E5 Blinded Outcome Adjudication Protocol
 
-Status: **PROSPECTIVE — FROZEN BEFORE OUTCOME ACCESS**
+> **LEGACY DESIGN COMPONENT — NOT ITSELF A FREEZE CANDIDATE.** Blinding,
+> independent review and non-coercion mechanics remain reusable. The exact version must be
+> nominated by the authoritative S0–S4 protocol before outcome access.
+
+Status: **LEGACY_DESIGN_MATERIAL — REUSABLE ADJUDICATION MECHANICS**
 
 Purpose: raise high-quality outcome coverage above E4's 33.7% deterministic rate
 **without** letting any knowledge of system performance leak into the labels.

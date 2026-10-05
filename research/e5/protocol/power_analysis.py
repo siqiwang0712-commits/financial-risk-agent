@@ -1,4 +1,8 @@
-"""Simulation-based prospective power analysis for E5.
+"""Legacy simulation-based prospective power-analysis utility for E5.
+
+LEGACY DESIGN INFRASTRUCTURE — NOT THE CURRENT E5 HYPOTHESIS DEFINITION. The paired-AUROC
+machinery remains reusable, but the B6/Agent hypothesis below is superseded by the S0-S4
+authority in ``research/e5/STUDY_PROTOCOL_DRAFT.md``.
 
 Design intent
 -------------

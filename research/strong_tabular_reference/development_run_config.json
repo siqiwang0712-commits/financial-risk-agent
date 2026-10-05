@@ -1,0 +1,50 @@
+{
+ "schema_version": "1",
+ "study": "StrongTabularReference-v1-historical-development",
+ "status": "FROZEN_BEFORE_DEVELOPMENT_EXECUTION",
+ "evidence_status": "RETROSPECTIVE_DEVELOPMENT",
+ "source_dataset": "e4s-replication-verified-development-v1",
+ "candidate_contract": "research/strong_tabular_reference/experiment_config.json",
+ "candidate_feature_blocks": ["V", "VO"],
+ "diagnostic_feature_blocks": ["V", "O", "VO", "CC"],
+ "outer_folds": 5,
+ "inner_folds": 5,
+ "master_seed": 20261002,
+ "selection_rule": [
+  "higher unrounded mean outer-fold AUROC",
+  "higher unrounded mean outer-fold PR-AUC",
+  "logistic_regression before histogram_gradient_boosting",
+  "V before VO",
+  "canonical parameter JSON lexical order"
+ ],
+ "diagnostic_rule": "V and VO use their nested candidate results; O and CC use nested CV restricted to the mechanically selected S0 family and its declared grid. O and CC cannot win S0.",
+ "s0_decision_rule": {
+  "threshold": 0.5,
+  "score_at_or_above": "FLAG",
+  "score_below": "PASS"
+ },
+ "s1_selective_policy": {
+  "status": "FROZEN_BEFORE_S0_S1_COMPARISON",
+  "policy_id": "s1-fixed-review-band-v1",
+  "authorize_flag_at_or_above": 0.65,
+  "authorize_pass_below": 0.35,
+  "otherwise": "REVIEW",
+  "rationale": "Fixed symmetric development-only review band; not optimized against E5 or post-run S0/S1 results."
+ },
+ "reference_profile": {
+  "status": "EMPIRICAL_DEVELOPMENT_REFERENCE_ONLY",
+  "population": "all 2000 E4-S source-cohort prediction-time feature rows",
+  "labels_permitted_in_construction": false,
+  "quantiles": [0.01, 0.05, 0.25, 0.5, 0.75, 0.95, 0.99],
+  "in_reference_rule": "All observed registered value features lie within their source-population q01-q99 bounds; missing values are assessed separately through observability and do not alter financial values.",
+  "dimensions": ["FINANCIAL_VALUE", "REPORTING_OBSERVABILITY"]
+ },
+ "calibration": {
+  "status": "UNCALIBRATED",
+  "probability_interpretation_allowed": false
+ },
+ "s2_s3_s4": {
+  "status": "NOT_ESTIMABLE_IN_V0.4.1",
+  "reason": "A fair same-cohort run would require frozen reproducible Agent representations and full filing-text packets not present in the tabular replication packet."
+ }
+}

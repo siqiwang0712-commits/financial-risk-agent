@@ -1,0 +1,129 @@
+{
+ "schema_version": "1",
+ "dataset_id": "e4s-replication-verified-development-proposal-v1",
+ "status": "PROPOSED_NOT_APPROVED",
+ "purpose": "STRONG_TABULAR_REFERENCE_DEVELOPMENT",
+ "creation_source": "EXISTING_FROZEN_PUBLIC_REPLICATION_ARTIFACTS",
+ "proposal": {
+  "strategy": "REUSE_E4S_REPLICATION_VERIFIED_ROWS_AS_DESIGN_EXPOSED_DEVELOPMENT_DATA",
+  "rationale": "This is the only repository dataset with adequate scale, company identity, source hashes, a versioned forward endpoint, and direct support for all StrongTabularReference-v1 features. It is historically exposed and cannot provide fresh validation.",
+  "included": "The 675 VERIFIED rows in the public E4-S replication cohort, subject to final manifest approval.",
+  "explicitly_excluded": [
+   "E4-R predictions, fitted models, metrics, rankings, and derived result artifacts",
+   "REVIEW and INSUFFICIENT rows as supervised labels",
+   "the unreconstructable exact-E4 row dataset",
+   "public-pilot holistic labels",
+   "all E5 cohort, outcome, proxy, and post-prediction information"
+  ]
+ },
+ "population": {
+  "company_count": 675,
+  "observation_count": 675,
+  "source_population_company_count": 2000,
+  "source_population_observation_count": 2000,
+  "known_label_count": 675,
+  "known_event_count": 235,
+  "company_year_structure": "ONE_FY2024_10K_OBSERVATION_PER_COMPANY",
+  "sector_scope": "PUBLIC_SEC_FILERS_IN_REPLICATION_COHORT",
+  "inclusion_criteria": ["E4-S replication row", "outcome status VERIFIED"],
+  "exclusion_criteria": ["outcome status REVIEW", "outcome status INSUFFICIENT"],
+  "primary_empirical_source": true,
+  "synthetic_only": false
+ },
+ "temporal_contract": {
+  "feature_start": "2024-07-01",
+  "feature_end": "2025-06-30",
+  "feature_cutoff_rule": "Only facts from the selected FY2024 10-K available by its SEC accepted timestamp may enter the row.",
+  "outcome_start": "2025-07-01",
+  "outcome_end": "2026-06-30",
+  "outcome_horizon": "12_MONTH_FORWARD_WINDOW",
+  "filing_availability_rule": "SELECTED_10K_ACCEPTED_WITHIN_FEATURE_WINDOW",
+  "accepted_or_filing_timestamp_policy": "SEC_ACCEPTED_TIMESTAMP_IS_THE_INFORMATION_CUTOFF"
+ },
+ "endpoint": {
+  "name": "financial_deterioration_12m",
+  "version": "deterministic_forward_outcome_rule_v1",
+  "implementation_identity": "research/e4_statistical_audit/replication/outcome_report.json",
+  "compatibility_status": "COMPATIBLE_WITH_CURRENT_V1_REFERENCE_TASK_E5_ENDPOINT_VERSION_STILL_TO_BE_FROZEN",
+  "label_states": ["VERIFIED", "REVIEW", "INSUFFICIENT"]
+ },
+ "feature_contract": {
+  "feature_schema_version": "1",
+  "feature_schema_sha256": "90219904d55805c2bd55457bfe2bbe1a92a34765768857e77004322fe7f3a836",
+  "permitted_feature_blocks": ["V", "VO"],
+  "feature_reconstruction_entry_point": "research/e4_statistical_audit/replicate_e4.py",
+  "feature_source_identity": "research/e4_statistical_audit/replication/features.json.gz"
+ },
+ "provenance": {
+  "source_files": [
+   "research/e4_statistical_audit/replication/cohort.json",
+   "research/e4_statistical_audit/replication/features.json.gz",
+   "research/e4_statistical_audit/replication/outcomes.json",
+   "research/e4_statistical_audit/replication/input_inventory.json",
+   "research/e4_statistical_audit/replication/feature_report.json",
+   "research/e4_statistical_audit/replication/outcome_report.json"
+  ],
+  "source_artifact_hashes": {
+   "cohort.json": "3270f108518fad9599e8902c1143d2b36842480579b82a315c0633b0a3803be1",
+   "features.json.gz": "62e2d3cc1c8fe6152ad6ea1aabd2a4a85863411368effb6aa8769d31ff599801",
+   "outcomes.json": "15acb5d1a89f60deb212c8dc17cfb423942a37e7b9c403d98a047ba7ae99bab2",
+   "input_inventory.json": "f06f1804bc83c165ce211ae4ae88985ffe00105ab50786e2df349e30bc5b98d7",
+   "feature_report.json": "26872ab2eaca745aacb02cffc5ae158a16ca1e6934d9b295c54c9022bb0fd73f",
+   "outcome_report.json": "a791173fc145b283e812ba32d5df73ef0dbfd2455a5ddb57b065f9a32d9d75b0"
+  },
+  "source_archive_identities": ["SEC_FSDS_2024Q3_TO_2025Q2_FEATURE_ARCHIVES", "SEC_FSDS_2025Q3_TO_2026Q2_OUTCOME_ARCHIVES"],
+  "accession_cik_identity_policy": "CIK_AND_ACCESSION_FROM_REPLICATION_COHORT_MANIFEST",
+  "acquisition_method": "EXISTING_E4S_PUBLIC_SEC_FSDS_REPLICATION_PIPELINE",
+  "code_commit": "TO_BE_BOUND_AT_APPROVAL",
+  "hash_verification_status": "VERIFIED_BY_EXISTING_REPLICATION_MANIFEST"
+ },
+ "isolation": {
+  "historical_study_relationships": {
+   "E1": "SAME_30_COMPANY_CORPUS_LINEAGE_AS_E3_ZERO_CIK_OVERLAP_WITH_REPLICATION",
+   "E2": "SAME_30_COMPANY_CORPUS_LINEAGE_AS_E3_ZERO_CIK_OVERLAP_WITH_REPLICATION",
+   "E3": "ZERO_CIK_OVERLAP_WITH_REPLICATION_COHORT",
+   "E4": "HIGH_OVERLAP_WITH_EXACT_E4_BUT_NOT_IDENTICAL_BECAUSE_270_EXCLUSION_WAS_UNAVAILABLE",
+   "E4_S": "SOURCE_COHORT",
+   "E4_R": "SAME_675_VERIFIED_ROWS_WERE_HEAVILY_ANALYZED"
+  },
+  "historical_research_exposure": "DESIGN_EXPOSED",
+  "exposure_consequence": "Historical performance is optimistic for model-family and grid choices and is not an unbiased estimate of future S0 performance.",
+  "e5_overlap_status": "E5_NOT_ENUMERATED",
+  "e5_artifacts_referenced": false,
+  "e5_future_exclusion_obligation": true,
+  "e5_exclusion_scope": "ALL_2000_SOURCE_COHORT_COMPANIES_AS_A_CONSERVATIVE_BOUNDARY",
+  "development_company_manifest": "research/e4_statistical_audit/replication/cohort.json",
+  "same_company_rows_must_remain_grouped": true,
+  "company_group_key": "cik"
+ },
+ "label_access": {
+  "historical_development_labels_may_be_used": true,
+  "e5_outcomes_forbidden": true,
+  "e5_outcome_proxies_forbidden": true,
+  "post_prediction_e5_information_forbidden": true,
+  "definition": "Outcome-blind means blind to E5 outcomes, not blind to legitimate historical development labels."
+ },
+ "eligibility_gates": {
+  "provenance": "SATISFIED_FOR_PROPOSAL",
+  "temporal": "SATISFIED_FOR_PROPOSAL",
+  "endpoint": "CONDITIONAL_E5_ENDPOINT_VERSION_MUST_BE_RECONCILED",
+  "company_identity": "SATISFIED_FOR_PROPOSAL",
+  "grouping": "SATISFIED_FOR_PROPOSAL",
+  "feature_contract": "SATISFIED_FOR_PROPOSAL",
+  "integrity": "SATISFIED_FOR_PROPOSAL",
+  "e5_isolation": "PENDING_APPROVED_EXCLUSION_MANIFEST_BINDING",
+  "exposure_recording": "SATISFIED_DESIGN_EXPOSED"
+ },
+ "integrity": {
+  "canonicalization": "UTF-8 JSON, object keys sorted, indent=1, ensure_ascii=false, one trailing newline",
+  "canonical_manifest_sha256": "TO_BE_COMPUTED_ON_APPROVAL",
+  "source_manifest_hashes": "RECORDED_IN_PROVENANCE",
+  "validation_status": "PROPOSAL_VALIDATED_NOT_APPROVED"
+ },
+ "approval_blockers": [
+  "Reconcile deterministic_forward_outcome_rule_v1 with the endpoint version later nominated for E5.",
+  "Materialize and hash the exact 675-row admitted-development company manifest and conservatively bind the 2000-company E5 exclusion scope.",
+  "Bind the reconstruction code commit and reverify every source hash.",
+  "Approve the dataset before any candidate evaluation, preprocessing fit, or model fit."
+ ]
+}

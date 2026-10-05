@@ -12,7 +12,7 @@ from .assurance import (
     ReportingObservabilityVector,
     separate_financial_and_reporting_features,
 )
-from .contradictions import detect_contradictions, evaluate_claim_consistency
+from .contradictions import CHECKS, detect_contradictions, evaluate_claim_consistency
 from .domain import Assessment, RuleSignal
 from .enterprise.applicability import (
     ALTMAN_VARIANT_REQUIREMENTS,
@@ -293,6 +293,10 @@ class FinRiskPipeline:
             return refs if groups and all(groups) else []
 
         def fact_requirements(name: str) -> list[tuple[str, int]]:
+            if name == "fcf_growth":
+                return metric_requirements("free_cash_flow_growth")
+            if name.endswith("_growth"):
+                return metric_requirements(name)
             if name in metrics:
                 return metric_requirements(name)
             if name in {"accounts_receivable_growth_gap", "inventory_growth_gap"}:
@@ -407,6 +411,20 @@ class FinRiskPipeline:
                 for key in signal.required_inputs
             }
         contradictions=detect_contradictions(accepted,facts)
+        # A verified quotation proves what management said, not the numbers used
+        # to contradict it. Bind every adverse check to current/prior source facts.
+        for contradiction in contradictions:
+            requirements = list(dict.fromkeys(
+                requirement
+                for check in CHECKS.get(contradiction.category, ())
+                if facts.get(check.metric) is not None and check.predicate(facts[check.metric])
+                for requirement in fact_requirements(check.metric)
+            ))
+            contradiction.required_inputs = [f"{key}:{period}" for key, period in requirements]
+            contradiction.input_provenance = {
+                f"{key}:{period}": period_refs(key, period)
+                for key, period in requirements
+            }
         # Claim-level consistency is derived here, from the same `accepted` claims
         # and the same thick `facts` that produced `contradictions`, so the tension
         # list can never contradict the contradiction list.

@@ -24,7 +24,7 @@ and cannot drift apart.
 
 ## The invariant
 
-> Build once → test that exact image → verify → attest → promote that exact digest.
+> Build once → test exact digest → scan exact digest → attest exact digest → promote exact digest.
 
 Concretely:
 
@@ -35,7 +35,7 @@ Concretely:
    nothing is rebuilt — and runs the project's full runtime gate chain against it.
 3. `scan` runs Trivy against the same digest.
 4. `publish` attaches SBOM and build-provenance attestations to that digest and then
-   adds `v0.3.x`, `sha-<commit>` and `latest` to it. The candidate tag is deliberately
+   adds `vX.Y.Z`, `sha-<commit>` and `latest` to it. The candidate tag is deliberately
    left in place — the registry rejects the delete API, so the pipeline cannot remove it
    (see Known limitations). Promotion is a registry-side copy: the manifest bytes for the
    verified digest are `GET` under their own `Content-Type` and `PUT` under each tag,
@@ -94,12 +94,11 @@ container path; it runs the same gates that `ci.yml` runs.
 ## Verification chain (job `verify-release-compose`)
 
 The step above exercises the *development* stack with the candidate images swapped in.
-That leaves `docker-compose.release.yml` — the file an operator actually runs, and the
-only stack definition here with no `build:` — executed by nothing. It could rot
-silently: a broken healthcheck, a dropped `depends_on` condition or a reintroduced
-`build:` would ship inside a release that reported itself green.
+The separate `verify-release-compose` job also exercises `docker-compose.release.yml` —
+the operator-facing definition with no `build:` — to detect broken healthchecks,
+dependency conditions or an accidentally reintroduced source build.
 
-So a second job boots that file too, with `FINRISK_API_IMAGE` / `FINRISK_WEB_IMAGE`
+It boots that file with `FINRISK_API_IMAGE` / `FINRISK_WEB_IMAGE`
 pointed at the same candidate digests:
 
 1. Asserts `docker-compose.release.yml` contains no `build:` section. (Checked in both
@@ -132,7 +131,10 @@ require it, so a broken deployment file can no longer be promoted.
   above use — the job installs one Trivy, not two — and are uploaded as a build artifact
   for audit. A report that is missing, unparseable, or that does not name the candidate
   digest fails the job, so a scanner that never ran cannot be mistaken for a scan that
-  ran and found nothing.
+  ran and found nothing. The `trivy-results` uploader explicitly includes the hidden
+  `.runtime/` directory only for the two report files, and missing upload files fail.
+  Final v0.4.1 dry-run report retention and download verification are recorded in the
+  [release audit](RELEASE_AUDIT_v0.4.1.md).
 
 ## Supply-chain artifacts (job `publish`)
 
@@ -175,9 +177,13 @@ otherwise would be an unverified platform claim.
 * No secret is baked into a layer, and none appears in the image's own environment.
 * Runtime secrets are supplied through the existing `<NAME>_FILE` mechanism
   (`backend/finrisk/secret_files.py`): `DATABASE_URL_FILE`, `OPENAI_API_KEY_FILE`,
-  `FINRISK_BOOTSTRAP_TOKEN_FILE`. Mount a file and the value never appears in
-  `docker inspect`, in the build, or in a shell history. `<VAR>_FILE` wins over
-  `<VAR>` when set.
+  `FINRISK_BOOTSTRAP_TOKEN_FILE`. `<VAR>_FILE` wins over `<VAR>` when set, and an
+  unreadable configured file fails closed. Mount the file in every consuming service
+  (including both `migrate` and `api` for database credentials). File contents are
+  not added to the container environment by this mechanism; remove any inline secret
+  environment values/DSNs as well, because file precedence does **not** remove those
+  values from `docker inspect` or shell history. Configure the LLM provider explicitly;
+  the mounted OpenAI key is consumed only by the configured OpenAI provider.
 * The workflow authenticates with `GITHUB_TOKEN` only — no PAT, no extra secret.
 
 ## Deploying (first run matters)
@@ -260,7 +266,7 @@ docker compose -f docker-compose.release.yml up -d
 |---|---|---|
 | `POSTGRES_PASSWORD` | Yes | Applied when the PostgreSQL volume is first initialized; see the credential lifecycle below. |
 | `FINRISK_LLM_PROVIDER` | Yes | Fail-closed when absent. Use `openai` for a real provider; `mock` is a deterministic test provider, not a production default. |
-| `OPENAI_API_KEY` / `OPENAI_API_KEY_FILE` | When required by the provider | The `_FILE` form keeps the value out of `docker inspect` and shell history. |
+| `OPENAI_API_KEY` / `OPENAI_API_KEY_FILE` | When required by the provider | Mounted file contents are not copied into the environment; remove any separately supplied inline secret to keep it out of `docker inspect` and shell history. |
 | `FINRISK_ENABLE_ORG_BOOTSTRAP` | First provisioning only | Defaults to `0`; enable only long enough to create the first organization and ADMIN key. |
 | `FINRISK_BOOTSTRAP_TOKEN` / `FINRISK_BOOTSTRAP_TOKEN_FILE` | With bootstrap enabled in production | Gates the unauthenticated route that mints the first ADMIN key. |
 
@@ -320,7 +326,7 @@ omitted instead of advertising a transport guarantee the deployment does not pro
 
 ### Pinning and verifying a deployed image
 
-Release tags such as `v0.3.4` and `latest` are convenient references; the digest is the
+Release tags such as `vX.Y.Z` and `latest` are convenient references; the digest is the
 artifact identity. Set `FINRISK_API_IMAGE` and `FINRISK_WEB_IMAGE` to
 `ghcr.io/...:<tag>@sha256:<digest>` for a reproducible deployment. Use the digests emitted
 by the release workflow for the exact tag being deployed; documentation-only commits can
@@ -331,8 +337,8 @@ change an image digest because the image records the source revision.
 FINRISK_VERSION=sha-<full-commit-sha> docker compose -f docker-compose.release.yml up -d
 
 # Stronger: pin each image to the exact promoted artifact digest.
-FINRISK_API_IMAGE=ghcr.io/siqiwang0712-commits/financial-risk-agent-api:v0.3.4@sha256:<api-digest> \
-FINRISK_WEB_IMAGE=ghcr.io/siqiwang0712-commits/financial-risk-agent-web:v0.3.4@sha256:<web-digest> \
+FINRISK_API_IMAGE=ghcr.io/siqiwang0712-commits/financial-risk-agent-api:vX.Y.Z@sha256:<api-digest> \
+FINRISK_WEB_IMAGE=ghcr.io/siqiwang0712-commits/financial-risk-agent-web:vX.Y.Z@sha256:<web-digest> \
 docker compose -f docker-compose.release.yml up -d
 ```
 
@@ -360,10 +366,10 @@ Workflow default is `contents: read`. Per job:
 
 ```bash
 # dry run — builds, verifies and scans, but creates no release tag
-gh workflow run container-release.yml -f version=v0.3.4 -f publish=false
+gh workflow run container-release.yml --ref try-v0.4.1 -f version=v0.4.1 -f publish=false
 
-# real release
-gh workflow run container-release.yml -f version=v0.3.4 -f publish=true
+# Human-authorized publication only after all gates; use the exact intended release ref.
+gh workflow run container-release.yml --ref <release-ref> -f version=vX.Y.Z -f publish=true
 ```
 
 Pushing a `vX.Y.Z` tag also runs it with publishing enabled. The `prepare` job refuses
@@ -392,6 +398,15 @@ service, so the migration job and the server are the same artifact.
 > a new digest — including a commit that only edits this document. Read the digest from
 > the run that published the tag you intend to deploy rather than from this page.
 
+## v0.4.1 engineering verification record
+
+The final `publish=false` dry-run used runtime source
+`00fc338f73be0529a4adc6a1705d518af7bf8030` and passed both Compose paths and all scan
+gates. Exact candidate digests and downloaded Trivy report identities are in the
+[v0.4.1 release audit](RELEASE_AUDIT_v0.4.1.md). Publication was skipped: those candidate
+digests are verified engineering artifacts, not proof of v0.4.1 release tags or attestations.
+For an actual published deployment, read the digest from the maintainer's publication run.
+
 ## Known limitations
 
 * Single architecture (`linux/amd64`). `linux/arm64` is deliberately not published:
@@ -405,9 +420,9 @@ service, so the migration job and the server are the same artifact.
   `405 UNSUPPORTED`), so the pipeline cannot remove them, not even its own successful
   run's. They are never advertised and are harmless, but the package's version list in
   the GitHub UI grows. Prune them there (`Packages → the image → Delete version`) if
-  the list becomes noisy. Note that a dry run's candidate digest differs from the
-  published one even when the image content is identical, because the build stamps
-  `org.opencontainers.image.revision` with the current commit.
+  the list becomes noisy. Separate builds can produce different digests, including when
+  a documentation commit changes `org.opencontainers.image.revision`. Within a single
+  successful run, promotion must preserve the tested candidate digest exactly.
 * The pipeline verifies the images, not a Kubernetes/Helm deployment target; there is
   none in this repository.
 * Attestations live as OCI referrer manifests next to the image, not on

@@ -1,0 +1,92 @@
+{
+ "artifact": "StrongTabularReference-v1",
+ "development_data": {
+  "company_count": 675,
+  "events": 235,
+  "historical_exposure": "DESIGN_EXPOSED_HISTORICAL_DEVELOPMENT",
+  "manifest": "../development_data_manifest.json",
+  "manifest_sha256": "4b58f3101bb75c69029333bf83f18d4c2a927363fdae2eebdf48353b32ee1fdf",
+  "observation_count": 675
+ },
+ "evidence_status": "RETROSPECTIVE_DEVELOPMENT",
+ "feature_contract": {
+  "feature_schema_sha256": "90219904d55805c2bd55457bfe2bbe1a92a34765768857e77004322fe7f3a836",
+  "ordered_feature_names": [
+   "current_ratio",
+   "debt_to_assets",
+   "net_margin",
+   "cfo_to_net_income",
+   "fcf_margin",
+   "revenue_growth",
+   "operating_cash_flow_growth",
+   "total_debt_growth",
+   "cash_growth",
+   "observed__current_ratio",
+   "observed__debt_to_assets",
+   "observed__net_margin",
+   "observed__cfo_to_net_income",
+   "observed__fcf_margin",
+   "observed__revenue_growth",
+   "observed__operating_cash_flow_growth",
+   "observed__total_debt_growth",
+   "observed__cash_growth"
+  ],
+  "selected_feature_block": "VO"
+ },
+ "hashes": {
+  "candidate_results_sha256": "f50b1cba82b9b2dff3cb3bc49b1cb9a2a530a32d1c14b8438daf89d54a41aa67",
+  "e5_freeze_identity": "TO_BE_FROZEN",
+  "empirical_reference_sha256": "506dfb50f14a063e510518f11f35ca4f25384a81fd46f0f33c2dc97d3dc6efea",
+  "fitted_artifact_hash": "3e1ebd825f1699bcc88e52a531bf9199aad3e93a671cfe28640f15dd33759a26",
+  "fitted_model_sha256": "7a523e4061ce324ee2f4554a0000cb3caa283ff051595bd5d27c86429835d833",
+  "fitted_preprocessor_sha256": "473fde6b6078d2d3de0527e259cf10fad45441e7737fd19181d1a99da49e48e6",
+  "fold_assignments_sha256": "fc981b826e33af08c08d00666aa8d5c9e3828d0a75e76f0e8de552491be9fa22",
+  "observability_diagnostic_sha256": "28cd407b452a6eb93d1f646654db0700f2ae7f9a985360fa54bdbfc7b12bf21b",
+  "oof_predictions_sha256": "e055985e62819743a7b69c25e087e01e5c00cddce09385b5bc83552ec3f9758c",
+  "replay_sample_sha256": "ba2fcb18cb86ec61c1c3235730fc72a7a3d857e69c86ea38d8d93a61fe3557b0",
+  "runtime_identity_sha256": "d217495df7cdd396802a794f6b7629e9935702ea435ca568438df552a8a2fe0c",
+  "selection_record_sha256": "f67142a60a4b59bbd1b26c094f42297071d9f70e67e4e1d092ec08745e9cd494",
+  "selective_evaluation_sha256": "e1a273c97d0e365b1b54a191027560917382dbc92b192c45d67edc0140c57006",
+  "verification_report_sha256": "bb6511b1770eaffff9adcfb7adf17554fd2f386c9183e51a47f2d635efd5160c"
+ },
+ "model": {
+  "exact_hyperparameters": {
+   "early_stopping": false,
+   "l2_regularization": 1.0,
+   "learning_rate": 0.05,
+   "loss": "log_loss",
+   "max_leaf_nodes": 7,
+   "min_samples_leaf": 20
+  },
+  "family": "histogram_gradient_boosting",
+  "serialized_artifact": "model.pkl"
+ },
+ "output_contract": {
+  "calibration_status": "UNCALIBRATED",
+  "field": "reference_model_score",
+  "final_decision_authority": "NONE_PREDICTION_ONLY",
+  "probability_interpretation_allowed": false,
+  "score_semantics": "UNCALIBRATED_RANKING_SCORE"
+ },
+ "preprocessing": {
+  "automatic_missing_indicators": false,
+  "fit_scope": "FULL_APPROVED_DEVELOPMENT_SET_AFTER_NESTED_SELECTION",
+  "serialized_artifact": "preprocessor.pkl"
+ },
+ "runtime": {
+  "numpy_version": "2.5.3",
+  "platform": "Windows-11-10.0.26200-SP0",
+  "python_version": "3.12.14",
+  "requirements_lock_sha256": "c910dcce669e014b7d3cfd89973fd36cf099a5b6c661dae80464b4bad6158140",
+  "scikit_learn_version": "1.9.1",
+  "serialization": "python_pickle_protocol_5_trusted_hash_verified_artifacts_only",
+  "source_commit": "af3fb09add10d990b2cc9a8b8bb23ccd5de98b52",
+  "working_tree_state": "UNCOMMITTED_V0.4.1_RESEARCH_DEVELOPMENT"
+ },
+ "schema_version": "1",
+ "selection": {
+  "mechanical_no_override": true,
+  "record": "selection_record.json"
+ },
+ "status": "FITTED_HISTORICAL_NOT_E5_FROZEN"
+}

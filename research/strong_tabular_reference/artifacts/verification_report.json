@@ -1,0 +1,20 @@
+{
+ "checks": {
+  "all_oof_scores_finite": true,
+  "approved_development_manifest": true,
+  "calibration_uncalibrated": true,
+  "candidate_blocks_only_v_vo": true,
+  "candidate_count_4": true,
+  "development_observations_675": true,
+  "e5_artifacts_not_accessed": true,
+  "future_e5_exclusions_2000": true,
+  "human_override_absent": true,
+  "observability_separate_from_values": true,
+  "reference_construction_label_independent": true,
+  "selected_block_s0_eligible": true,
+  "unique_companies_675": true
+ },
+ "schema_version": "1",
+ "scope": "BUILD_TIME_RETROSPECTIVE_DEVELOPMENT_VERIFICATION",
+ "status": "PASS"
+}

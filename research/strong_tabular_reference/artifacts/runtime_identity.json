@@ -1,0 +1,10 @@
+{
+ "numpy_version": "2.5.3",
+ "platform": "Windows-11-10.0.26200-SP0",
+ "python_version": "3.12.14",
+ "requirements_lock_sha256": "c910dcce669e014b7d3cfd89973fd36cf099a5b6c661dae80464b4bad6158140",
+ "scikit_learn_version": "1.9.1",
+ "serialization": "python_pickle_protocol_5_trusted_hash_verified_artifacts_only",
+ "source_commit": "af3fb09add10d990b2cc9a8b8bb23ccd5de98b52",
+ "working_tree_state": "UNCOMMITTED_V0.4.1_RESEARCH_DEVELOPMENT"
+}

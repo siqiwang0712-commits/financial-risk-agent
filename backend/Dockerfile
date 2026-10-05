@@ -37,7 +37,7 @@ RUN python -m venv /opt/venv \
 # *constraint* file here, so the dev extra is never installed).
 # ---------------------------------------------------------------------------
 FROM ${PYTHON_BASE} AS runtime
-ARG OCI_VERSION=0.4.0
+ARG OCI_VERSION=0.4.1
 ARG OCI_REVISION=unknown
 ARG OCI_CREATED=1970-01-01T00:00:00Z
 LABEL org.opencontainers.image.title="FinRisk API" \
@@ -45,7 +45,7 @@ LABEL org.opencontainers.image.title="FinRisk API" \
       org.opencontainers.image.source="https://github.com/siqiwang0712-commits/financial-risk-agent" \
       org.opencontainers.image.url="https://github.com/siqiwang0712-commits/financial-risk-agent" \
       org.opencontainers.image.documentation="https://github.com/siqiwang0712-commits/financial-risk-agent/blob/main/README.md" \
-      org.opencontainers.image.licenses="MIT" \
+      org.opencontainers.image.licenses="Apache-2.0" \
       org.opencontainers.image.vendor="siqiwang0712-commits" \
       org.opencontainers.image.base.name="docker.io/library/python:3.12-slim" \
       org.opencontainers.image.base.digest="sha256:dddfd7e07f9d15aeeca61529320492139d21cac7f0070c00609243e51e4e0016" \
@@ -80,6 +80,14 @@ RUN apt-get update \
     && apt-get install -y --no-install-recommends --only-upgrade libpcre2-8-0 \
     && rm -rf /var/lib/apt/lists/*
 COPY --from=builder /opt/venv /opt/venv
+# The current 3.12-slim manifest still carries libpcre2-8-0 deb13u2 even though
+# Debian has published deb13u3 for CVE-2026-103111. Install that fixed revision
+# explicitly so the release image is reproducible and the security update cannot
+# be lost when an upstream tag is rebuilt.
+RUN apt-get update \
+    && apt-get install --no-install-recommends --only-upgrade -y \
+       libpcre2-8-0=10.46-1~deb13u3 \
+    && rm -rf /var/lib/apt/lists/*
 # Harden the runtime: `pip` is build tooling, and the copy it ships also carries its
 # own vendored `msgpack` (GHSA-6v7p-g79w-8964) and `setuptools` (CVE-2025-47273) —
 # two HIGH advisories that Trivy reports against this image and that the application

@@ -29,7 +29,7 @@ RUN npm run build
 # Stage 2 — runtime.
 # ---------------------------------------------------------------------------
 FROM ${NODE_BASE} AS runtime
-ARG OCI_VERSION=0.4.0
+ARG OCI_VERSION=0.4.1
 ARG OCI_REVISION=unknown
 ARG OCI_CREATED=1970-01-01T00:00:00Z
 LABEL org.opencontainers.image.title="FinRisk Web" \
@@ -37,7 +37,7 @@ LABEL org.opencontainers.image.title="FinRisk Web" \
       org.opencontainers.image.source="https://github.com/siqiwang0712-commits/financial-risk-agent" \
       org.opencontainers.image.url="https://github.com/siqiwang0712-commits/financial-risk-agent" \
       org.opencontainers.image.documentation="https://github.com/siqiwang0712-commits/financial-risk-agent/blob/main/README.md" \
-      org.opencontainers.image.licenses="MIT" \
+      org.opencontainers.image.licenses="Apache-2.0" \
       org.opencontainers.image.vendor="siqiwang0712-commits" \
       org.opencontainers.image.base.name="docker.io/library/node:22-alpine" \
       org.opencontainers.image.base.digest="sha256:b6f26b36c8ff49624cfdac716b8ea1138d606df02586a77d364bb5536a634f85" \

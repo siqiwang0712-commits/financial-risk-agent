@@ -16,6 +16,7 @@ from urllib.parse import urlparse
 from pydantic import BaseModel, ConfigDict, Field, ValidationError
 
 from .domain import Evidence, NarrativeClaim
+from .secret_files import env_or_file
 
 
 class NarrativeProvider(Protocol):
@@ -161,7 +162,7 @@ class StructuredLLMProvider:
             raise ValueError(
                 "LLM endpoint must use HTTPS (or loopback HTTP) without embedded credentials"
             )
-        self.api_key = api_key or os.getenv("OPENAI_API_KEY")
+        self.api_key = api_key or env_or_file("OPENAI_API_KEY")
         self.model = model
         self.endpoint = endpoint
         self.max_retries = max_retries

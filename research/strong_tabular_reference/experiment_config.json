@@ -1,0 +1,178 @@
+{
+ "artifact_contract": {
+  "contract_identity": "research/strong_tabular_reference/contract_identity.json",
+  "manifest_template": "research/strong_tabular_reference/artifact_manifest.template.json",
+  "rule": "A serialized model file alone is not a StrongTabularReference-v1 artifact. Feature, data, preprocessing, model, selection, runtime, output and hash identities are all required.",
+  "fitted_artifact_hash_rule": "SHA-256 over canonical JSON of the completed fitted manifest after removing only hashes.fitted_artifact_hash; all component hashes must already be populated.",
+  "status": "DRAFT_NOT_FROZEN"
+ },
+ "calibration": {
+  "design_requirement": "Any future calibration fit must use companies and time windows disjoint from model development and prospective E5 evaluation.",
+  "probability_interpretation_allowed": false,
+  "status": "UNCALIBRATED"
+ },
+ "development_data_contract": {
+  "audit": "research/strong_tabular_reference/DATA_ELIGIBILITY_AUDIT.md",
+  "manifest_template": "research/strong_tabular_reference/development_data_manifest.template.json",
+  "manifest_template_sha256": "b6667605987fc22e91ae73a78d80181c076b253e834705f803d069e0ff1028f3",
+  "proposal": "research/strong_tabular_reference/development_data_proposal.json",
+  "proposal_status": "SUPERSEDED_BY_APPROVED_MANIFEST",
+  "approved_manifest": "research/strong_tabular_reference/development_data_manifest.json",
+  "approval_status": "APPROVED_FOR_STRONG_REFERENCE_DEVELOPMENT",
+  "approval_required_before_candidate_evaluation": true,
+  "e5_future_exclusion_required_for_every_development_company": true,
+  "outcome_blind_semantics": "E5_OUTCOMES_FORBIDDEN_HISTORICAL_DEVELOPMENT_LABELS_PERMITTED"
+ },
+ "candidate_model_families": [
+  {
+   "family": "logistic_regression",
+   "fixed_parameters": {
+    "class_weight": "NONE",
+    "max_iter": 5000,
+    "penalty": "l2",
+    "solver": "lbfgs"
+   },
+   "library": "scikit-learn",
+   "role": "interpretable_linear_candidate",
+   "search_space": {
+    "C": [0.01, 0.1, 1.0, 10.0]
+   }
+  },
+  {
+   "family": "histogram_gradient_boosting",
+   "fixed_parameters": {
+    "early_stopping": false,
+    "loss": "log_loss"
+   },
+   "library": "scikit-learn",
+   "role": "nonlinear_tabular_candidate",
+   "search_space": {
+    "l2_regularization": [0.0, 1.0],
+    "learning_rate": [0.05, 0.1],
+    "max_leaf_nodes": [7, 15, 31],
+    "min_samples_leaf": [5, 20]
+   }
+  }
+ ],
+ "cross_validation": {
+  "company_disjoint": true,
+  "group_key": "company_id",
+  "inner_folds": 5,
+  "outer_folds": 5,
+  "scheme": "nested_stratified_group_cross_validation",
+  "shuffle": true,
+  "split_feasibility_rule": "Every evaluated fold must contain both endpoint classes; infeasible development data make selection ineligible rather than permitting a weaker split.",
+  "stratification_key": "development_endpoint_label"
+ },
+ "feature_blocks": {
+  "CC": {
+   "features": ["current_ratio", "debt_to_assets", "net_margin", "cfo_to_net_income", "fcf_margin", "revenue_growth", "operating_cash_flow_growth", "total_debt_growth", "cash_growth"],
+   "role": "COMPLETE_CASE_SENSITIVITY_ONLY",
+   "s0_candidate_eligible": false,
+   "row_policy": "retain rows with every V feature observed; do not use observability columns as predictors"
+  },
+  "O": {
+   "features": ["observed__current_ratio", "observed__debt_to_assets", "observed__net_margin", "observed__cfo_to_net_income", "observed__fcf_margin", "observed__revenue_growth", "observed__operating_cash_flow_growth", "observed__total_debt_growth", "observed__cash_growth"],
+   "role": "OBSERVABILITY_ONLY_DIAGNOSTIC",
+   "s0_candidate_eligible": false,
+   "row_policy": "all otherwise eligible rows"
+  },
+  "V": {
+   "features": ["current_ratio", "debt_to_assets", "net_margin", "cfo_to_net_income", "fcf_margin", "revenue_growth", "operating_cash_flow_growth", "total_debt_growth", "cash_growth"],
+   "role": "S0_CANDIDATE_FINANCIAL_VALUES_ONLY",
+   "s0_candidate_eligible": true,
+   "row_policy": "all otherwise eligible rows; fold-local imputation without missing indicators"
+  },
+  "VO": {
+   "features": ["current_ratio", "debt_to_assets", "net_margin", "cfo_to_net_income", "fcf_margin", "revenue_growth", "operating_cash_flow_growth", "total_debt_growth", "cash_growth", "observed__current_ratio", "observed__debt_to_assets", "observed__net_margin", "observed__cfo_to_net_income", "observed__fcf_margin", "observed__revenue_growth", "observed__operating_cash_flow_growth", "observed__total_debt_growth", "observed__cash_growth"],
+   "role": "S0_CANDIDATE_VALUES_PLUS_EXPLICIT_OBSERVABILITY",
+   "s0_candidate_eligible": true,
+   "row_policy": "all otherwise eligible rows"
+  }
+ },
+ "feature_schema_sha256": "90219904d55805c2bd55457bfe2bbe1a92a34765768857e77004322fe7f3a836",
+ "future_model_selection_rule": {
+  "candidate_eligibility": [
+   "candidate family and all parameters match this config",
+   "feature block is S0-candidate eligible",
+   "all outer and inner folds are company-disjoint and endpoint-feasible",
+   "every outer observation receives exactly one finite score",
+   "no leakage, schema, preprocessing-isolation or provenance check fails"
+  ],
+  "final_hyperparameter_fit": "After family/block selection, run the same grouped inner-CV rule on the complete approved development set, rank grid points by AUROC then PR_AUC then canonical parameter JSON, and fit once on that development set.",
+  "freeze_requirement": "This config, feature schema, artifact template, approved development-data manifest and runtime lock must be frozen before candidate evaluation and before any E5 cohort or outcome access.",
+  "objective": "Select a competitive reproducible reference on approved development data, not the best result from unrestricted historical tuning.",
+  "primary_ranking_metric": "mean_outer_fold_AUROC",
+  "secondary_ranking_metric": "mean_outer_fold_PR_AUC",
+  "selection_unit": "eligible model_family plus eligible_feature_block",
+  "tie_rule": [
+   "higher unrounded mean_outer_fold_AUROC",
+   "higher unrounded mean_outer_fold_PR_AUC",
+   "logistic_regression before histogram_gradient_boosting",
+   "V before VO",
+   "canonical JSON lexical order as final total-order guard"
+  ],
+  "winner_record_requirement": "The selection record must contain every eligible and failed candidate, fold metrics, selected parameters, ranking keys, integrity findings and the deterministic winner rationale."
+ },
+ "leakage_guards": {
+  "feature_registry_allowlist_only": true,
+  "future_period_fields_forbidden": true,
+  "maximum_information_timing": "PREDICTION_CUTOFF",
+  "outcome_fields_forbidden": true,
+  "outcome_mount_forbidden_during_fit_and_prediction": true,
+  "selection_may_use_e5_cohort_or_outcomes": false
+ },
+ "metrics": {
+  "primary": "AUROC",
+  "secondary": ["PR_AUC"],
+  "descriptive_only": ["Brier_score", "risk_coverage", "error_coverage", "coverage"]
+ },
+ "preprocessing": {
+  "categorical_handling": "NOT_APPLICABLE_NO_CATEGORICAL_PREDICTORS",
+  "feature_selection": {
+   "fit_scope": "TRAINING_FOLD_ONLY",
+   "policy": "DISABLED"
+  },
+  "fit_scope": "TRAINING_FOLD_ONLY",
+  "imputation": {
+   "automatic_missing_indicators": false,
+   "fit_scope": "TRAINING_FOLD_ONLY",
+   "strategy": "median for V/VO numeric fields; none for O booleans; none for CC"
+  },
+  "scaling": {
+   "fit_scope": "TRAINING_FOLD_ONLY",
+   "policy": "standardize logistic numeric inputs; pass observability booleans through; no scaling for histogram gradient boosting"
+  }
+ },
+ "random_seed_policy": {
+  "derivation": "one frozen master seed plus named deterministic child seeds",
+  "master_seed": 20261002,
+  "repeat_policy": "no seed shopping; all prespecified runs and failures are retained"
+ },
+ "replay_contract": {
+  "artifact_guarantee": "Serialized files, manifests and selection records must match their recorded SHA-256 exactly.",
+  "independent_reconstruction_tolerance": "TO_BE_FROZEN",
+  "pinned_runtime_guarantee": "Identical ordered inputs under the pinned runtime/container must reproduce score payloads deterministically.",
+  "prohibited_claim": "Cross-platform byte-identical floating-point inference is not asserted.",
+  "verification_order": ["verify manifest and artifact hashes", "verify trusted provenance", "load artifacts", "validate ordered input schema", "run inference", "compare score outputs under the applicable guarantee"]
+ },
+ "runtime_contract": {
+  "environment_lock": "requirements.lock",
+  "inference_entry_point": "TO_BE_IMPLEMENTED",
+  "python_supported_versions": ["3.11", "3.12"],
+  "required_identity_fields": ["python_version", "package_versions", "environment_lock_sha256", "source_commit", "container_image_digest_or_NOT_APPLICABLE"]
+ },
+ "scope": "Preparatory research infrastructure only; not part of the production FinRisk pipeline.",
+ "serialization_security": {
+  "allowed_origin": "trusted repository or release artifact only",
+  "hash_verification_before_load": true,
+  "untrusted_pickle_or_joblib_load_forbidden": true
+ },
+ "status": "DRAFT_NOT_FROZEN",
+ "study": "StrongTabularReference-v1",
+ "training_runner_contract": {
+  "inputs": ["feature_schema", "experiment_config", "approved_development_data_manifest"],
+  "outputs": ["serialized_preprocessor", "serialized_model", "selection_record", "artifact_manifest", "verification_report"],
+  "status": "INTERFACE_ONLY_NOT_IMPLEMENTED"
+ }
+}

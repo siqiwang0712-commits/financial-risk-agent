@@ -254,6 +254,8 @@ def verify_assurance_payload(
     }
     if not required.issubset(value):
         return False
+    if not isinstance(value["automation_allowed"], bool):
+        return False
     content = {key: value[key] for key in required - {"certificate_hash"}}
     if canonical_hash(content) != value["certificate_hash"]:
         return False
@@ -278,6 +280,13 @@ def verify_assurance_payload(
     ):
         return False
     if status is AssuranceStatus.PASSED and not value["automation_allowed"]:
+        return False
+    fragility_blocks = fragility_state is EvidenceFragilityState.FRAGILE or (
+        fragility_state is EvidenceFragilityState.NOT_ESTIMABLE
+        and expected_policy is not None
+        and expected_policy.review_on_fragility_not_estimable
+    )
+    if fragility_blocks and (value["automation_allowed"] or final in {Decision.PASS, Decision.FLAG}):
         return False
     if value["automation_allowed"] and (
             final is not proposed
@@ -304,17 +313,14 @@ def verify_assurance_payload(
             return False
         if AssuranceReasonCode.ASSURANCE_POLICY_UNCALIBRATED not in reason_codes:
             return False
-    if (
+    # Malformed nested states and unknown reason codes fail closed above, even
+    # when a caller recomputes the content hash.
+    return not (
         expected_policy is not None
         and expected_policy.require_distribution_reference
         and final in {Decision.PASS, Decision.FLAG}
         and distribution_state is not DistributionValidityState.IN_REFERENCE
-    ):
-        return False
-    # Accessing every enum above is deliberate: malformed nested states and
-    # unknown reason codes fail closed even when an attacker recomputes a hash.
-    _ = fragility_state
-    return True
+    )
 
 
 def authorized_final_decision(

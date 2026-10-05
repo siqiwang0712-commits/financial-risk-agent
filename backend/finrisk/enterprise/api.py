@@ -10,7 +10,7 @@ from fastapi import APIRouter, Depends, Header, HTTPException, Request
 
 from .applicability import applicability_report
 from .calibration import selective_decision
-from .decision import create_snapshot, replay_diff
+from .decision import create_snapshot, replay_diff, verified_material_path
 from .domain import (
     Principal,
     RiskCase,
@@ -158,8 +158,7 @@ def enterprise_router(
         }
         verified_paths = [
             path for path in trace.get("paths", [])
-            if path.get("evidence_path_status") == "VERIFIED"
-            and path.get("source_evidence")
+            if verified_material_path(path)
             and aliases.get(path.get("risk_domain"), path.get("risk_domain"))
             == req.domain.value
         ]

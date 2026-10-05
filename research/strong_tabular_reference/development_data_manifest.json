@@ -1,0 +1,143 @@
+{
+ "creation_source": "EXISTING_FROZEN_PUBLIC_E4S_REPLICATION_ARTIFACTS",
+ "dataset_id": "e4s-replication-verified-development-v1",
+ "eligibility_gates": {
+  "company_identity": "PASS",
+  "e5_isolation": "PASS",
+  "endpoint": "PASS",
+  "exposure_recording": "PASS",
+  "feature_contract": "PASS",
+  "grouping": "PASS",
+  "integrity": "PASS",
+  "provenance": "PASS",
+  "temporal": "PASS"
+ },
+ "endpoint": {
+  "compatibility_status": "ENDPOINT_COMPATIBLE_FOR_DEVELOPMENT",
+  "development_status": "HISTORICAL_DEVELOPMENT_ENDPOINT_V1",
+  "e5_status": "E5_ENDPOINT_COMPATIBILITY_TO_BE_CONFIRMED_AT_PROTOCOL_FREEZE",
+  "horizon": "12_MONTHS",
+  "implementation_identity": "research/e4_statistical_audit/replication/outcome_report.json",
+  "implementation_sha256": "a791173fc145b283e812ba32d5df73ef0dbfd2455a5ddb57b065f9a32d9d75b0",
+  "label_schema": "research/label_schema.json",
+  "label_schema_sha256": "b58761de4083d1d75af1497aeda14ee28c253a59ef63bddb330f6f4ee38f022c",
+  "label_states": [
+   "VERIFIED",
+   "REVIEW",
+   "INSUFFICIENT"
+  ],
+  "material_change_rule": "If the frozen E5 endpoint materially changes, StrongTabularReference-v1 must be re-developed or re-qualified before E5 prediction.",
+  "name": "financial_deterioration_12m",
+  "version": "deterministic_forward_outcome_rule_v1"
+ },
+ "feature_contract": {
+  "feature_reconstruction_entry_point": "research/e4_statistical_audit/replicate_e4.py",
+  "feature_schema_sha256": "90219904d55805c2bd55457bfe2bbe1a92a34765768857e77004322fe7f3a836",
+  "feature_schema_version": "1",
+  "feature_source_identity": "research/e4_statistical_audit/replication/features.json.gz",
+  "permitted_feature_blocks": [
+   "V",
+   "VO"
+  ]
+ },
+ "integrity": {
+  "canonical_manifest_sha256": "4b58f3101bb75c69029333bf83f18d4c2a927363fdae2eebdf48353b32ee1fdf",
+  "canonicalization": "UTF-8 JSON, object keys sorted, indent=1, ensure_ascii=false, one trailing newline",
+  "source_manifest_hashes": "RECORDED_IN_PROVENANCE",
+  "validation_status": "APPROVED_AND_MECHANICALLY_VALIDATED"
+ },
+ "isolation": {
+  "company_group_key": "cik",
+  "development_company_manifest": "research/strong_tabular_reference/artifacts/development_companies_675.json",
+  "development_company_manifest_sha256": "75dc947040908c82018436107a74960b05eaf3978c014c60d4ddd8e4b8ec3706",
+  "e5_artifacts_referenced": false,
+  "e5_exclusion_manifest": "research/strong_tabular_reference/artifacts/e5_exclusion_companies_2000.json",
+  "e5_exclusion_manifest_sha256": "be7982e8c4079a583cfdd3697bd47659c378f17205fa37a37f2f6e10084be081",
+  "e5_exclusion_scope": "ALL_2000_SOURCE_COHORT_COMPANIES",
+  "e5_future_exclusion_obligation": true,
+  "e5_overlap_status": "E5_NOT_ENUMERATED",
+  "historical_research_exposure": "DESIGN_EXPOSED_HISTORICAL_DEVELOPMENT",
+  "historical_study_relationships": {
+   "E1": "ZERO_CIK_OVERLAP_WITH_REPLICATION_VIA_E3_LINEAGE",
+   "E2": "ZERO_CIK_OVERLAP_WITH_REPLICATION_VIA_E3_LINEAGE",
+   "E3": "ZERO_CIK_OVERLAP_WITH_REPLICATION_COHORT",
+   "E4": "HIGH_OVERLAP_NOT_IDENTICAL",
+   "E4_R": "SAME_675_VERIFIED_ROWS_HEAVILY_ANALYZED",
+   "E4_S": "SOURCE_COHORT"
+  },
+  "same_company_rows_must_remain_grouped": true
+ },
+ "label_access": {
+  "definition": "Outcome-blind means blind to E5 outcomes, not legitimate historical development labels.",
+  "e5_outcome_proxies_forbidden": true,
+  "e5_outcomes_forbidden": true,
+  "historical_development_labels_may_be_used": true,
+  "post_prediction_e5_information_forbidden": true
+ },
+ "population": {
+  "company_count": 675,
+  "company_year_structure": "ONE_FY2024_10K_OBSERVATION_PER_COMPANY",
+  "exclusion_criteria": [
+   "outcome status REVIEW",
+   "outcome status INSUFFICIENT"
+  ],
+  "inclusion_criteria": [
+   "E4-S replication row",
+   "outcome status VERIFIED"
+  ],
+  "observation_count": 675,
+  "primary_empirical_source": true,
+  "sector_scope": "PUBLIC_SEC_FILERS_IN_REPLICATION_COHORT",
+  "source_population_company_count": 2000,
+  "synthetic_only": false,
+  "verified_label_selection_is_selective": true
+ },
+ "provenance": {
+  "accession_cik_identity_policy": "CIK_AND_ACCESSION_FROM_REPLICATION_COHORT_MANIFEST",
+  "acquisition_method": "E4S_PUBLIC_SEC_FSDS_REPLICATION_PIPELINE",
+  "code_commit": "af3fb09add10d990b2cc9a8b8bb23ccd5de98b52",
+  "hash_verification_status": "VERIFIED",
+  "source_archive_identities": [
+   "SEC_FSDS_2024Q3_TO_2025Q2_FEATURE_ARCHIVES",
+   "SEC_FSDS_2025Q3_TO_2026Q2_OUTCOME_ARCHIVES"
+  ],
+  "source_artifact_hashes": {
+   "approve_development_data.py": "dbebb4117f99dd99b8509c85ebc5b72b58b0c44dc8a4ef0a92f31fca1510d899",
+   "cohort.json": "3270f108518fad9599e8902c1143d2b36842480579b82a315c0633b0a3803be1",
+   "development_companies_675.json": "75dc947040908c82018436107a74960b05eaf3978c014c60d4ddd8e4b8ec3706",
+   "development_run_config.json": "8e049805894850dd90c62c87b5fcb3c306e921c43e21be99ffe1139a6fcba9df",
+   "e5_exclusion_companies_2000.json": "be7982e8c4079a583cfdd3697bd47659c378f17205fa37a37f2f6e10084be081",
+   "experiment_config.json": "50cb1fbc5c39e6ddb8019c48a6768fefeec08b3f1dfd2e2aff291829e0b409bd",
+   "feature_report.json": "26872ab2eaca745aacb02cffc5ae158a16ca1e6934d9b295c54c9022bb0fd73f",
+   "feature_schema.json": "86fd4f23c640d19f5503b73524cfc03dbdc617a2a50c0b73360f459011c5ee8b",
+   "features.json.gz": "62e2d3cc1c8fe6152ad6ea1aabd2a4a85863411368effb6aa8769d31ff599801",
+   "input_inventory.json": "f06f1804bc83c165ce211ae4ae88985ffe00105ab50786e2df349e30bc5b98d7",
+   "label_schema.json": "b58761de4083d1d75af1497aeda14ee28c253a59ef63bddb330f6f4ee38f022c",
+   "outcome_report.json": "a791173fc145b283e812ba32d5df73ef0dbfd2455a5ddb57b065f9a32d9d75b0",
+   "outcomes.json": "15acb5d1a89f60deb212c8dc17cfb423942a37e7b9c403d98a047ba7ae99bab2",
+   "run_development.py": "b995cd9dec99d1d715adbdeb6bb89d69df39f5b651c48bfbd17dfbf5a517a0f6"
+  },
+  "source_files": [
+   "research/e4_statistical_audit/replication/cohort.json",
+   "research/e4_statistical_audit/replication/features.json.gz",
+   "research/e4_statistical_audit/replication/outcomes.json",
+   "research/e4_statistical_audit/replication/input_inventory.json",
+   "research/e4_statistical_audit/replication/feature_report.json",
+   "research/e4_statistical_audit/replication/outcome_report.json"
+  ],
+  "working_tree_state": "UNCOMMITTED_V0.4.1_RESEARCH_DEVELOPMENT"
+ },
+ "purpose": "STRONG_TABULAR_REFERENCE_DEVELOPMENT",
+ "schema_version": "1",
+ "status": "APPROVED_FOR_STRONG_REFERENCE_DEVELOPMENT",
+ "temporal_contract": {
+  "accepted_or_filing_timestamp_policy": "SEC_ACCEPTED_TIMESTAMP_IS_INFORMATION_CUTOFF",
+  "feature_cutoff_rule": "Selected FY2024 10-K facts available by SEC accepted timestamp only.",
+  "feature_end": "2025-06-30",
+  "feature_start": "2024-07-01",
+  "filing_availability_rule": "SELECTED_10K_ACCEPTED_WITHIN_FEATURE_WINDOW",
+  "outcome_end": "2026-06-30",
+  "outcome_horizon": "12_MONTH_FORWARD_WINDOW",
+  "outcome_start": "2025-07-01"
+ }
+}

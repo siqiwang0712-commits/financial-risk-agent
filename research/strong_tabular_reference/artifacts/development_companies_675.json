@@ -1,0 +1,6761 @@
+{
+ "company_count": 675,
+ "dataset_id": "e4s-replication-verified-development-v1",
+ "events": 235,
+ "non_events": 440,
+ "observation_count": 675,
+ "rows": [
+  {
+   "accepted": "2025-02-14 14:59:00.0",
+   "accession": "0000049826-25-000007",
+   "cik": "0000049826",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000002",
+   "observation_id": "R_OBS_000002",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-03-03 16:35:00.0",
+   "accession": "0001625297-25-000016",
+   "cik": "0001625297",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000005",
+   "observation_id": "R_OBS_000005",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-24 09:34:00.0",
+   "accession": "0001504337-25-000005",
+   "cik": "0001441236",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000009",
+   "observation_id": "R_OBS_000009",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-19 19:43:00.0",
+   "accession": "0001022652-25-000005",
+   "cik": "0001022652",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000012",
+   "observation_id": "R_OBS_000012",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-25 07:01:00.0",
+   "accession": "0000950170-25-026060",
+   "cik": "0000007431",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000014",
+   "observation_id": "R_OBS_000014",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-18 08:01:00.0",
+   "accession": "0001670076-25-000041",
+   "cik": "0001670076",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000018",
+   "observation_id": "R_OBS_000018",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-03-27 16:05:00.0",
+   "accession": "0000950170-25-046044",
+   "cik": "0000799288",
+   "feature_period_end": "20250131",
+   "masked_company_id": "R_COMPANY_000020",
+   "observation_id": "R_OBS_000020",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-03-25 08:10:00.0",
+   "accession": "0000950170-25-044099",
+   "cik": "0001488039",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000030",
+   "observation_id": "R_OBS_000030",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-01-10 17:02:00.0",
+   "accession": "0001558370-25-000129",
+   "cik": "0000315374",
+   "feature_period_end": "20241031",
+   "masked_company_id": "R_COMPANY_000034",
+   "observation_id": "R_OBS_000034",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-03-13 16:05:00.0",
+   "accession": "0001628280-25-012591",
+   "cik": "0001980088",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000036",
+   "observation_id": "R_OBS_000036",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-01-29 20:01:00.0",
+   "accession": "0001326801-25-000017",
+   "cik": "0001326801",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000042",
+   "observation_id": "R_OBS_000042",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-03-19 17:27:00.0",
+   "accession": "0001829126-25-001913",
+   "cik": "0001813603",
+   "feature_period_end": "20241130",
+   "masked_company_id": "R_COMPANY_000043",
+   "observation_id": "R_OBS_000043",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-14 11:33:00.0",
+   "accession": "0001043277-25-000012",
+   "cik": "0001043277",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000044",
+   "observation_id": "R_OBS_000044",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-03-07 16:09:00.0",
+   "accession": "0000950170-25-035500",
+   "cik": "0001531177",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000045",
+   "observation_id": "R_OBS_000045",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-28 20:26:00.0",
+   "accession": "0000920371-25-000051",
+   "cik": "0000920371",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000050",
+   "observation_id": "R_OBS_000050",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-28 15:06:00.0",
+   "accession": "0001437749-25-005690",
+   "cik": "0001047335",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000058",
+   "observation_id": "R_OBS_000058",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-03-18 16:54:00.0",
+   "accession": "0001562151-25-000007",
+   "cik": "0001562151",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000062",
+   "observation_id": "R_OBS_000062",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-20 16:37:00.0",
+   "accession": "0001047862-25-000011",
+   "cik": "0001047862",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000069",
+   "observation_id": "R_OBS_000069",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-03-20 16:02:00.0",
+   "accession": "0001177609-25-000009",
+   "cik": "0001177609",
+   "feature_period_end": "20250131",
+   "masked_company_id": "R_COMPANY_000072",
+   "observation_id": "R_OBS_000072",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-01-28 16:15:00.0",
+   "accession": "0001549595-25-000016",
+   "cik": "0001549595",
+   "feature_period_end": "20241130",
+   "masked_company_id": "R_COMPANY_000073",
+   "observation_id": "R_OBS_000073",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-24 16:53:00.0",
+   "accession": "0000950170-25-025741",
+   "cik": "0000732834",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000074",
+   "observation_id": "R_OBS_000074",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-01-31 17:25:00.0",
+   "accession": "0001493152-25-004500",
+   "cik": "0001007019",
+   "feature_period_end": "20241031",
+   "masked_company_id": "R_COMPANY_000075",
+   "observation_id": "R_OBS_000075",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-21 16:08:00.0",
+   "accession": "0000038725-25-000026",
+   "cik": "0000038725",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000076",
+   "observation_id": "R_OBS_000076",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-04-01 16:11:00.0",
+   "accession": "0001628280-25-015891",
+   "cik": "0001792781",
+   "feature_period_end": "20250131",
+   "masked_company_id": "R_COMPANY_000079",
+   "observation_id": "R_OBS_000079",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-03-03 16:42:00.0",
+   "accession": "0001692787-25-000007",
+   "cik": "0001692787",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000082",
+   "observation_id": "R_OBS_000082",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2024-07-30 16:08:00.0",
+   "accession": "0000066382-24-000053",
+   "cik": "0000066382",
+   "feature_period_end": "20240531",
+   "masked_company_id": "R_COMPANY_000088",
+   "observation_id": "R_OBS_000088",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-27 21:58:00.0",
+   "accession": "0001384101-25-000014",
+   "cik": "0001384101",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000089",
+   "observation_id": "R_OBS_000089",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-13 16:06:00.0",
+   "accession": "0001014473-25-000006",
+   "cik": "0001014473",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000093",
+   "observation_id": "R_OBS_000093",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-04-01 07:31:00.0",
+   "accession": "0001437749-25-010360",
+   "cik": "0000875657",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000096",
+   "observation_id": "R_OBS_000096",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-03-04 06:24:00.0",
+   "accession": "0000950170-25-031309",
+   "cik": "0001658551",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000098",
+   "observation_id": "R_OBS_000098",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-12 09:20:00.0",
+   "accession": "0001802768-25-000010",
+   "cik": "0001802768",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000099",
+   "observation_id": "R_OBS_000099",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-28 07:16:00.0",
+   "accession": "0000950170-25-029512",
+   "cik": "0001674930",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000101",
+   "observation_id": "R_OBS_000101",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-20 14:16:00.0",
+   "accession": "0000950170-25-023983",
+   "cik": "0001389170",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000112",
+   "observation_id": "R_OBS_000112",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-27 16:04:00.0",
+   "accession": "0001013934-25-000007",
+   "cik": "0001013934",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000114",
+   "observation_id": "R_OBS_000114",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-03-21 16:16:00.0",
+   "accession": "0000950170-25-043210",
+   "cik": "0001873529",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000118",
+   "observation_id": "R_OBS_000118",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-28 15:01:00.0",
+   "accession": "0001558370-25-001926",
+   "cik": "0000098677",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000119",
+   "observation_id": "R_OBS_000119",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-14 15:19:00.0",
+   "accession": "0000790051-25-000077",
+   "cik": "0000790051",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000122",
+   "observation_id": "R_OBS_000122",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-26 16:45:00.0",
+   "accession": "0001628280-25-008201",
+   "cik": "0001046102",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000128",
+   "observation_id": "R_OBS_000128",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-25 16:25:00.0",
+   "accession": "0001289848-25-000032",
+   "cik": "0001289848",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000129",
+   "observation_id": "R_OBS_000129",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-03-04 17:25:00.0",
+   "accession": "0001973476-25-000018",
+   "cik": "0001973476",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000130",
+   "observation_id": "R_OBS_000130",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-27 18:59:00.0",
+   "accession": "0001692819-25-000013",
+   "cik": "0001692819",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000132",
+   "observation_id": "R_OBS_000132",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-20 16:02:00.0",
+   "accession": "0000007084-25-000011",
+   "cik": "0000007084",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000133",
+   "observation_id": "R_OBS_000133",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-19 19:32:00.0",
+   "accession": "0000885590-25-000007",
+   "cik": "0000885590",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000137",
+   "observation_id": "R_OBS_000137",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-03-10 07:16:00.0",
+   "accession": "0000950170-25-035910",
+   "cik": "0001807120",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000142",
+   "observation_id": "R_OBS_000142",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-03-26 07:31:00.0",
+   "accession": "0000950170-25-044775",
+   "cik": "0001357874",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000144",
+   "observation_id": "R_OBS_000144",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-03-28 18:01:00.0",
+   "accession": "0000950170-25-046994",
+   "cik": "0001833214",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000146",
+   "observation_id": "R_OBS_000146",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-03-25 16:23:00.0",
+   "accession": "0001628280-25-014738",
+   "cik": "0001776909",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000147",
+   "observation_id": "R_OBS_000147",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-03-06 16:22:00.0",
+   "accession": "0000950170-25-034706",
+   "cik": "0001377630",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000148",
+   "observation_id": "R_OBS_000148",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-25 17:16:00.0",
+   "accession": "0000950170-25-026848",
+   "cik": "0001818201",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000151",
+   "observation_id": "R_OBS_000151",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-03-07 18:03:00.0",
+   "accession": "0001007587-25-000003",
+   "cik": "0001007587",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000159",
+   "observation_id": "R_OBS_000159",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-27 16:31:00.0",
+   "accession": "0000950170-25-029134",
+   "cik": "0001673358",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000160",
+   "observation_id": "R_OBS_000160",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-03-07 08:15:00.0",
+   "accession": "0000950170-25-035151",
+   "cik": "0001776661",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000161",
+   "observation_id": "R_OBS_000161",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-19 10:11:00.0",
+   "accession": "0000059478-25-000067",
+   "cik": "0000059478",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000163",
+   "observation_id": "R_OBS_000163",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-28 17:21:00.0",
+   "accession": "0001793659-25-000047",
+   "cik": "0001793659",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000169",
+   "observation_id": "R_OBS_000169",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-27 15:29:00.0",
+   "accession": "0001580905-25-000010",
+   "cik": "0001580905",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000170",
+   "observation_id": "R_OBS_000170",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-12 16:25:00.0",
+   "accession": "0000950170-25-018873",
+   "cik": "0001404655",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000171",
+   "observation_id": "R_OBS_000171",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-27 17:43:00.0",
+   "accession": "0001628280-25-008786",
+   "cik": "0001622536",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000172",
+   "observation_id": "R_OBS_000172",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-25 16:32:00.0",
+   "accession": "0000950170-25-026756",
+   "cik": "0000949870",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000173",
+   "observation_id": "R_OBS_000173",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-21 12:00:00.0",
+   "accession": "0000107815-25-000107",
+   "cik": "0000107833",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000186",
+   "observation_id": "R_OBS_000186",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-25 17:48:00.0",
+   "accession": "0000088205-25-000007",
+   "cik": "0000088205",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000187",
+   "observation_id": "R_OBS_000187",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-03-03 15:15:00.0",
+   "accession": "0001437749-25-005903",
+   "cik": "0001280452",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000189",
+   "observation_id": "R_OBS_000189",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-20 07:35:00.0",
+   "accession": "0000798354-25-000047",
+   "cik": "0000798354",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000190",
+   "observation_id": "R_OBS_000190",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-07 16:11:00.0",
+   "accession": "0000833640-25-000043",
+   "cik": "0000833640",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000193",
+   "observation_id": "R_OBS_000193",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2024-08-16 16:09:00.0",
+   "accession": "0001952073-24-000022",
+   "cik": "0001952073",
+   "feature_period_end": "20240630",
+   "masked_company_id": "R_COMPANY_000194",
+   "observation_id": "R_OBS_000194",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-20 17:01:00.0",
+   "accession": "0001065696-25-000015",
+   "cik": "0001065696",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000195",
+   "observation_id": "R_OBS_000195",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-03-24 16:04:00.0",
+   "accession": "0001404644-25-000012",
+   "cik": "0001404644",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000197",
+   "observation_id": "R_OBS_000197",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-04-14 16:01:00.0",
+   "accession": "0001654954-25-004233",
+   "cik": "0000314227",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000198",
+   "observation_id": "R_OBS_000198",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-20 21:40:00.0",
+   "accession": "0001481792-25-000010",
+   "cik": "0001481792",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000199",
+   "observation_id": "R_OBS_000199",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-25 18:51:00.0",
+   "accession": "0001411579-25-000042",
+   "cik": "0001411579",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000202",
+   "observation_id": "R_OBS_000202",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-03-18 16:43:00.0",
+   "accession": "0001999371-25-002786",
+   "cik": "0001430306",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000205",
+   "observation_id": "R_OBS_000205",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2024-08-15 16:47:00.0",
+   "accession": "0001838862-24-000030",
+   "cik": "0000012659",
+   "feature_period_end": "20240630",
+   "masked_company_id": "R_COMPANY_000211",
+   "observation_id": "R_OBS_000211",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-03-27 17:07:00.0",
+   "accession": "0001079973-25-000490",
+   "cik": "0001282224",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000212",
+   "observation_id": "R_OBS_000212",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-25 16:11:00.0",
+   "accession": "0001649094-25-000028",
+   "cik": "0001649094",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000215",
+   "observation_id": "R_OBS_000215",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2024-10-23 06:12:00.0",
+   "accession": "0001493152-24-042140",
+   "cik": "0001703073",
+   "feature_period_end": "20240630",
+   "masked_company_id": "R_COMPANY_000218",
+   "observation_id": "R_OBS_000218",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-03-11 16:02:00.0",
+   "accession": "0001558370-25-002703",
+   "cik": "0001640266",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000219",
+   "observation_id": "R_OBS_000219",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-03-28 07:31:00.0",
+   "accession": "0001628280-25-015331",
+   "cik": "0001785424",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000221",
+   "observation_id": "R_OBS_000221",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2024-08-13 13:32:00.0",
+   "accession": "0001493152-24-031531",
+   "cik": "0000820771",
+   "feature_period_end": "20240430",
+   "masked_company_id": "R_COMPANY_000222",
+   "observation_id": "R_OBS_000222",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-25 15:38:00.0",
+   "accession": "0001566011-25-000004",
+   "cik": "0001566011",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000227",
+   "observation_id": "R_OBS_000227",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-03-03 09:05:00.0",
+   "accession": "0000950170-25-030421",
+   "cik": "0001402436",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000232",
+   "observation_id": "R_OBS_000232",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-26 16:01:00.0",
+   "accession": "0001014739-25-000012",
+   "cik": "0001014739",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000233",
+   "observation_id": "R_OBS_000233",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-27 16:44:00.0",
+   "accession": "0001628280-25-008724",
+   "cik": "0001819994",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000237",
+   "observation_id": "R_OBS_000237",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-10 21:01:00.0",
+   "accession": "0001000753-25-000008",
+   "cik": "0001000753",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000238",
+   "observation_id": "R_OBS_000238",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2024-11-25 11:37:00.0",
+   "accession": "0001718227-24-000102",
+   "cik": "0001718227",
+   "feature_period_end": "20240930",
+   "masked_company_id": "R_COMPANY_000245",
+   "observation_id": "R_OBS_000245",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-03-06 16:16:00.0",
+   "accession": "0000950170-25-034661",
+   "cik": "0001109116",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000247",
+   "observation_id": "R_OBS_000247",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-26 16:37:00.0",
+   "accession": "0001171759-25-000012",
+   "cik": "0001171759",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000249",
+   "observation_id": "R_OBS_000249",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-03-17 10:52:00.0",
+   "accession": "0001437749-25-007867",
+   "cik": "0000070487",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000250",
+   "observation_id": "R_OBS_000250",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-04-15 16:31:00.0",
+   "accession": "0001437749-25-012075",
+   "cik": "0001017655",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000252",
+   "observation_id": "R_OBS_000252",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-03-10 17:07:00.0",
+   "accession": "0001628280-25-011745",
+   "cik": "0001606163",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000257",
+   "observation_id": "R_OBS_000257",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-03-17 16:46:00.0",
+   "accession": "0001680873-25-000006",
+   "cik": "0001680873",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000260",
+   "observation_id": "R_OBS_000260",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2024-11-22 13:13:00.0",
+   "accession": "0000854775-24-000033",
+   "cik": "0000854775",
+   "feature_period_end": "20240930",
+   "masked_company_id": "R_COMPANY_000265",
+   "observation_id": "R_OBS_000265",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-03-19 15:49:00.0",
+   "accession": "0000950170-25-041974",
+   "cik": "0001394056",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000267",
+   "observation_id": "R_OBS_000267",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-25 07:10:00.0",
+   "accession": "0000950170-25-026068",
+   "cik": "0001680581",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000270",
+   "observation_id": "R_OBS_000270",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-21 16:07:00.0",
+   "accession": "0001628280-25-007110",
+   "cik": "0000001800",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000276",
+   "observation_id": "R_OBS_000276",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-28 16:21:00.0",
+   "accession": "0001366868-25-000033",
+   "cik": "0001366868",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000278",
+   "observation_id": "R_OBS_000278",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-27 17:05:00.0",
+   "accession": "0000077543-25-000025",
+   "cik": "0000077543",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000279",
+   "observation_id": "R_OBS_000279",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-03-26 16:06:00.0",
+   "accession": "0001013762-25-002711",
+   "cik": "0001735041",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000282",
+   "observation_id": "R_OBS_000282",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-25 16:16:00.0",
+   "accession": "0000031791-25-000009",
+   "cik": "0000031791",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000284",
+   "observation_id": "R_OBS_000284",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-27 17:34:00.0",
+   "accession": "0001437749-25-005526",
+   "cik": "0001777921",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000288",
+   "observation_id": "R_OBS_000288",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-03-13 16:16:00.0",
+   "accession": "0001213900-25-023709",
+   "cik": "0000778164",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000289",
+   "observation_id": "R_OBS_000289",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-03-20 16:03:00.0",
+   "accession": "0001516551-25-000027",
+   "cik": "0001516551",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000291",
+   "observation_id": "R_OBS_000291",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2024-12-11 16:53:00.0",
+   "accession": "0001872789-24-000037",
+   "cik": "0001872789",
+   "feature_period_end": "20240930",
+   "masked_company_id": "R_COMPANY_000293",
+   "observation_id": "R_OBS_000293",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-03-26 16:06:00.0",
+   "accession": "0001437749-25-009350",
+   "cik": "0001213809",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000297",
+   "observation_id": "R_OBS_000297",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-07 11:48:00.0",
+   "accession": "0001037646-25-000012",
+   "cik": "0001037646",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000301",
+   "observation_id": "R_OBS_000301",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-04-16 16:06:00.0",
+   "accession": "0001213900-25-032573",
+   "cik": "0001376231",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000302",
+   "observation_id": "R_OBS_000302",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-20 17:21:00.0",
+   "accession": "0000950170-25-024305",
+   "cik": "0000775158",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000304",
+   "observation_id": "R_OBS_000304",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-19 11:43:00.0",
+   "accession": "0001361658-25-000012",
+   "cik": "0001361658",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000307",
+   "observation_id": "R_OBS_000307",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-03-11 16:06:00.0",
+   "accession": "0000950170-25-037131",
+   "cik": "0001690585",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000314",
+   "observation_id": "R_OBS_000314",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-28 16:02:00.0",
+   "accession": "0001708035-25-000070",
+   "cik": "0001708035",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000315",
+   "observation_id": "R_OBS_000315",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-03-31 06:45:00.0",
+   "accession": "0001654954-25-003575",
+   "cik": "0001030192",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000317",
+   "observation_id": "R_OBS_000317",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2024-08-15 16:02:00.0",
+   "accession": "0001116132-24-000018",
+   "cik": "0001116132",
+   "feature_period_end": "20240630",
+   "masked_company_id": "R_COMPANY_000322",
+   "observation_id": "R_OBS_000322",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-03-06 11:39:00.0",
+   "accession": "0001606268-25-000006",
+   "cik": "0001606268",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000324",
+   "observation_id": "R_OBS_000324",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-11 07:10:00.0",
+   "accession": "0001336047-25-000006",
+   "cik": "0001336047",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000330",
+   "observation_id": "R_OBS_000330",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-26 15:47:00.0",
+   "accession": "0000058492-25-000136",
+   "cik": "0000058492",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000331",
+   "observation_id": "R_OBS_000331",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-03-04 16:32:00.0",
+   "accession": "0001683168-25-001330",
+   "cik": "0001420520",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000332",
+   "observation_id": "R_OBS_000332",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-10 17:01:00.0",
+   "accession": "0000950170-25-017154",
+   "cik": "0000755001",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000334",
+   "observation_id": "R_OBS_000334",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-03-25 19:01:00.0",
+   "accession": "0001378950-25-000036",
+   "cik": "0001378950",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000336",
+   "observation_id": "R_OBS_000336",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-25 16:55:00.0",
+   "accession": "0001084048-25-000007",
+   "cik": "0001084048",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000343",
+   "observation_id": "R_OBS_000343",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-03-04 16:37:00.0",
+   "accession": "0000950170-25-032199",
+   "cik": "0001920145",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000351",
+   "observation_id": "R_OBS_000351",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2024-08-23 07:01:00.0",
+   "accession": "0001511737-24-000053",
+   "cik": "0001511737",
+   "feature_period_end": "20240630",
+   "masked_company_id": "R_COMPANY_000353",
+   "observation_id": "R_OBS_000353",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-03-20 07:31:00.0",
+   "accession": "0001493152-25-010978",
+   "cik": "0000318306",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000358",
+   "observation_id": "R_OBS_000358",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-18 16:15:00.0",
+   "accession": "0000789570-25-000008",
+   "cik": "0000789570",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000365",
+   "observation_id": "R_OBS_000365",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-03-26 11:52:00.0",
+   "accession": "0001185185-25-000219",
+   "cik": "0001696088",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000368",
+   "observation_id": "R_OBS_000368",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-26 16:10:00.0",
+   "accession": "0001759425-25-000014",
+   "cik": "0001759425",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000372",
+   "observation_id": "R_OBS_000372",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-03-07 17:03:00.0",
+   "accession": "0001558370-25-002509",
+   "cik": "0001124524",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000374",
+   "observation_id": "R_OBS_000374",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2024-11-20 16:08:00.0",
+   "accession": "0000829224-24-000057",
+   "cik": "0000829224",
+   "feature_period_end": "20240930",
+   "masked_company_id": "R_COMPANY_000376",
+   "observation_id": "R_OBS_000376",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-04-01 16:19:00.0",
+   "accession": "0001558370-25-004267",
+   "cik": "0000056873",
+   "feature_period_end": "20250131",
+   "masked_company_id": "R_COMPANY_000383",
+   "observation_id": "R_OBS_000383",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-26 06:20:00.0",
+   "accession": "0001840502-25-000019",
+   "cik": "0001840502",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000388",
+   "observation_id": "R_OBS_000388",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-03-10 15:41:00.0",
+   "accession": "0001020710-25-000036",
+   "cik": "0001020710",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000392",
+   "observation_id": "R_OBS_000392",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-27 16:14:00.0",
+   "accession": "0001558370-25-001813",
+   "cik": "0001120914",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000394",
+   "observation_id": "R_OBS_000394",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-25 16:18:00.0",
+   "accession": "0001616000-25-000022",
+   "cik": "0001616000",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000398",
+   "observation_id": "R_OBS_000398",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-25 13:22:00.0",
+   "accession": "0001628280-25-007620",
+   "cik": "0000789460",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000403",
+   "observation_id": "R_OBS_000403",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-25 16:26:00.0",
+   "accession": "0000950170-25-026724",
+   "cik": "0001640428",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000407",
+   "observation_id": "R_OBS_000407",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-03-05 17:39:00.0",
+   "accession": "0001532286-25-000008",
+   "cik": "0001532286",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000409",
+   "observation_id": "R_OBS_000409",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-21 16:08:00.0",
+   "accession": "0000950170-25-024839",
+   "cik": "0001116942",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000412",
+   "observation_id": "R_OBS_000412",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-03-25 16:19:00.0",
+   "accession": "0001628280-25-014731",
+   "cik": "0001326380",
+   "feature_period_end": "20250131",
+   "masked_company_id": "R_COMPANY_000413",
+   "observation_id": "R_OBS_000413",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-03-25 16:02:00.0",
+   "accession": "0000950170-25-044350",
+   "cik": "0001768446",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000417",
+   "observation_id": "R_OBS_000417",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2024-11-22 17:20:00.0",
+   "accession": "0001674910-24-000152",
+   "cik": "0001674910",
+   "feature_period_end": "20240930",
+   "masked_company_id": "R_COMPANY_000419",
+   "observation_id": "R_OBS_000419",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-25 16:44:00.0",
+   "accession": "0001375365-25-000004",
+   "cik": "0001375365",
+   "feature_period_end": "20240630",
+   "masked_company_id": "R_COMPANY_000421",
+   "observation_id": "R_OBS_000421",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-03-03 07:20:00.0",
+   "accession": "0001558370-25-002000",
+   "cik": "0001393434",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000422",
+   "observation_id": "R_OBS_000422",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-03-31 16:22:00.0",
+   "accession": "0001641172-25-001755",
+   "cik": "0001847986",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000426",
+   "observation_id": "R_OBS_000426",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-04-14 16:58:00.0",
+   "accession": "0001262463-25-000100",
+   "cik": "0001494413",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000431",
+   "observation_id": "R_OBS_000431",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-26 17:53:00.0",
+   "accession": "0000899751-25-000009",
+   "cik": "0000899751",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000434",
+   "observation_id": "R_OBS_000434",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-19 16:40:00.0",
+   "accession": "0000034088-25-000010",
+   "cik": "0000034088",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000439",
+   "observation_id": "R_OBS_000439",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-04-28 07:45:00.0",
+   "accession": "0001788230-25-000048",
+   "cik": "0001788230",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000442",
+   "observation_id": "R_OBS_000442",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2024-10-01 06:11:00.0",
+   "accession": "0001493152-24-038926",
+   "cik": "0001836754",
+   "feature_period_end": "20240630",
+   "masked_company_id": "R_COMPANY_000448",
+   "observation_id": "R_OBS_000448",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-03-11 16:12:00.0",
+   "accession": "0001490281-25-000005",
+   "cik": "0001490281",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000452",
+   "observation_id": "R_OBS_000452",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-27 16:54:00.0",
+   "accession": "0000950170-25-029180",
+   "cik": "0001682745",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000453",
+   "observation_id": "R_OBS_000453",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-05-08 17:29:00.0",
+   "accession": "0001641172-25-009319",
+   "cik": "0001752828",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000457",
+   "observation_id": "R_OBS_000457",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-27 16:49:00.0",
+   "accession": "0001562762-25-000036",
+   "cik": "0000078128",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000459",
+   "observation_id": "R_OBS_000459",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-19 16:32:00.0",
+   "accession": "0001628280-25-006389",
+   "cik": "0001056903",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000466",
+   "observation_id": "R_OBS_000466",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-27 14:08:00.0",
+   "accession": "0000277948-25-000008",
+   "cik": "0000277948",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000467",
+   "observation_id": "R_OBS_000467",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2024-08-08 16:07:00.0",
+   "accession": "0001628280-24-036123",
+   "cik": "0001754301",
+   "feature_period_end": "20240630",
+   "masked_company_id": "R_COMPANY_000474",
+   "observation_id": "R_OBS_000474",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-03-03 16:17:00.0",
+   "accession": "0001558370-25-002044",
+   "cik": "0001616543",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000479",
+   "observation_id": "R_OBS_000479",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2024-12-19 16:20:00.0",
+   "accession": "0001802974-24-000053",
+   "cik": "0001802974",
+   "feature_period_end": "20241031",
+   "masked_company_id": "R_COMPANY_000480",
+   "observation_id": "R_OBS_000480",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-03-31 17:28:00.0",
+   "accession": "0000950170-25-047918",
+   "cik": "0000798528",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000499",
+   "observation_id": "R_OBS_000499",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-03-14 08:01:00.0",
+   "accession": "0000950170-25-039122",
+   "cik": "0001083446",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000501",
+   "observation_id": "R_OBS_000501",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-03-03 13:47:00.0",
+   "accession": "0001398659-25-000035",
+   "cik": "0001398659",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000505",
+   "observation_id": "R_OBS_000505",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-25 16:29:00.0",
+   "accession": "0001628280-25-007740",
+   "cik": "0001725255",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000511",
+   "observation_id": "R_OBS_000511",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-20 06:33:00.0",
+   "accession": "0001877322-25-000021",
+   "cik": "0001877322",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000516",
+   "observation_id": "R_OBS_000516",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-20 06:06:00.0",
+   "accession": "0001130310-25-000040",
+   "cik": "0001130310",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000517",
+   "observation_id": "R_OBS_000517",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2024-09-26 16:06:00.0",
+   "accession": "0001437749-24-030062",
+   "cik": "0001385818",
+   "feature_period_end": "20240630",
+   "masked_company_id": "R_COMPANY_000518",
+   "observation_id": "R_OBS_000518",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-03-31 16:14:00.0",
+   "accession": "0001437749-25-010192",
+   "cik": "0001337298",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000522",
+   "observation_id": "R_OBS_000522",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-14 16:44:00.0",
+   "accession": "0000950170-25-021340",
+   "cik": "0001800667",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000525",
+   "observation_id": "R_OBS_000525",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2024-11-19 14:43:00.0",
+   "accession": "0001632790-24-000102",
+   "cik": "0001632790",
+   "feature_period_end": "20240930",
+   "masked_company_id": "R_COMPANY_000532",
+   "observation_id": "R_OBS_000532",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-20 12:44:00.0",
+   "accession": "0001856485-25-000008",
+   "cik": "0001856485",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000534",
+   "observation_id": "R_OBS_000534",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-25 16:11:00.0",
+   "accession": "0001274494-25-000010",
+   "cik": "0001274494",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000535",
+   "observation_id": "R_OBS_000535",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-24 16:43:00.0",
+   "accession": "0000081362-25-000014",
+   "cik": "0000081362",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000544",
+   "observation_id": "R_OBS_000544",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-03-31 16:02:00.0",
+   "accession": "0001213900-25-026225",
+   "cik": "0001655923",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000545",
+   "observation_id": "R_OBS_000545",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-26 16:30:00.0",
+   "accession": "0001827090-25-000014",
+   "cik": "0001827090",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000546",
+   "observation_id": "R_OBS_000546",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-27 16:10:00.0",
+   "accession": "0000950170-25-029037",
+   "cik": "0001889956",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000549",
+   "observation_id": "R_OBS_000549",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-21 15:43:00.0",
+   "accession": "0000082811-25-000046",
+   "cik": "0000082811",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000550",
+   "observation_id": "R_OBS_000550",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-27 16:26:00.0",
+   "accession": "0000950170-25-029100",
+   "cik": "0001845257",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000551",
+   "observation_id": "R_OBS_000551",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-03-11 16:22:00.0",
+   "accession": "0001462056-25-000015",
+   "cik": "0001462056",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000554",
+   "observation_id": "R_OBS_000554",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-26 17:01:00.0",
+   "accession": "0000950170-25-027896",
+   "cik": "0001340476",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000555",
+   "observation_id": "R_OBS_000555",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-03-04 16:40:00.0",
+   "accession": "0001570562-25-000020",
+   "cik": "0001570562",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000564",
+   "observation_id": "R_OBS_000564",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2024-09-06 16:01:00.0",
+   "accession": "0001437749-24-028638",
+   "cik": "0000100378",
+   "feature_period_end": "20240630",
+   "masked_company_id": "R_COMPANY_000568",
+   "observation_id": "R_OBS_000568",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-21 16:07:00.0",
+   "accession": "0000950170-25-024838",
+   "cik": "0000061986",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000571",
+   "observation_id": "R_OBS_000571",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-26 17:17:00.0",
+   "accession": "0000950170-25-027933",
+   "cik": "0001690334",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000575",
+   "observation_id": "R_OBS_000575",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-03-31 16:26:00.0",
+   "accession": "0001079973-25-000555",
+   "cik": "0001396536",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000576",
+   "observation_id": "R_OBS_000576",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-27 16:31:00.0",
+   "accession": "0001558370-25-001819",
+   "cik": "0001557746",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000579",
+   "observation_id": "R_OBS_000579",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-03-04 16:32:00.0",
+   "accession": "0001437749-25-006116",
+   "cik": "0000846913",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000581",
+   "observation_id": "R_OBS_000581",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-20 17:24:00.0",
+   "accession": "0000089800-25-000030",
+   "cik": "0000089800",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000582",
+   "observation_id": "R_OBS_000582",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2024-11-13 17:07:00.0",
+   "accession": "0000876523-24-000048",
+   "cik": "0000876523",
+   "feature_period_end": "20240930",
+   "masked_company_id": "R_COMPANY_000584",
+   "observation_id": "R_OBS_000584",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-19 16:36:00.0",
+   "accession": "0000006201-25-000010",
+   "cik": "0000006201",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000586",
+   "observation_id": "R_OBS_000586",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-27 06:02:00.0",
+   "accession": "0000950170-25-028273",
+   "cik": "0001795139",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000587",
+   "observation_id": "R_OBS_000587",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-11 17:29:00.0",
+   "accession": "0000064040-25-000052",
+   "cik": "0000064040",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000589",
+   "observation_id": "R_OBS_000589",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-03-10 17:08:00.0",
+   "accession": "0001729149-25-000056",
+   "cik": "0001729149",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000590",
+   "observation_id": "R_OBS_000590",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-13 07:02:00.0",
+   "accession": "0001628280-25-005302",
+   "cik": "0001418819",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000591",
+   "observation_id": "R_OBS_000591",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-27 16:13:00.0",
+   "accession": "0001599901-25-000059",
+   "cik": "0001599901",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000592",
+   "observation_id": "R_OBS_000592",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-03-11 07:30:00.0",
+   "accession": "0000950170-25-036828",
+   "cik": "0002012593",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000597",
+   "observation_id": "R_OBS_000597",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-28 20:16:00.0",
+   "accession": "0001820721-25-000023",
+   "cik": "0001820721",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000601",
+   "observation_id": "R_OBS_000601",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-28 07:45:00.0",
+   "accession": "0001563411-25-000005",
+   "cik": "0001563411",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000602",
+   "observation_id": "R_OBS_000602",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-14 12:06:00.0",
+   "accession": "0000931148-25-000028",
+   "cik": "0000931148",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000609",
+   "observation_id": "R_OBS_000609",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-27 08:01:00.0",
+   "accession": "0000070866-25-000010",
+   "cik": "0000070866",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000612",
+   "observation_id": "R_OBS_000612",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-03-26 20:27:00.0",
+   "accession": "0001628280-25-015037",
+   "cik": "0000719955",
+   "feature_period_end": "20250131",
+   "masked_company_id": "R_COMPANY_000616",
+   "observation_id": "R_OBS_000616",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-03-17 17:03:00.0",
+   "accession": "0001717310-25-000002",
+   "cik": "0001717310",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000618",
+   "observation_id": "R_OBS_000618",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-28 08:43:00.0",
+   "accession": "0001801368-25-000009",
+   "cik": "0001801368",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000622",
+   "observation_id": "R_OBS_000622",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-03-03 16:02:00.0",
+   "accession": "0001558370-25-002037",
+   "cik": "0000894405",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000624",
+   "observation_id": "R_OBS_000624",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-18 08:45:00.0",
+   "accession": "0001315098-25-000033",
+   "cik": "0001315098",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000627",
+   "observation_id": "R_OBS_000627",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-03-20 18:37:00.0",
+   "accession": "0000354950-25-000085",
+   "cik": "0000354950",
+   "feature_period_end": "20250131",
+   "masked_company_id": "R_COMPANY_000632",
+   "observation_id": "R_OBS_000632",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-03-27 17:14:00.0",
+   "accession": "0001437749-25-009645",
+   "cik": "0001902314",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000634",
+   "observation_id": "R_OBS_000634",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-25 16:07:00.0",
+   "accession": "0001628280-25-007721",
+   "cik": "0001831097",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000635",
+   "observation_id": "R_OBS_000635",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-03-31 13:17:00.0",
+   "accession": "0001641172-25-001576",
+   "cik": "0000771999",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000636",
+   "observation_id": "R_OBS_000636",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-03-31 08:47:00.0",
+   "accession": "0001628280-25-015555",
+   "cik": "0001040896",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000637",
+   "observation_id": "R_OBS_000637",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-25 17:12:00.0",
+   "accession": "0001784535-25-000011",
+   "cik": "0001784535",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000638",
+   "observation_id": "R_OBS_000638",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-26 17:45:00.0",
+   "accession": "0001558370-25-001617",
+   "cik": "0000866829",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000639",
+   "observation_id": "R_OBS_000639",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2024-12-27 14:57:00.0",
+   "accession": "0001174947-24-001397",
+   "cik": "0000012040",
+   "feature_period_end": "20240930",
+   "masked_company_id": "R_COMPANY_000643",
+   "observation_id": "R_OBS_000643",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-14 07:03:00.0",
+   "accession": "0001158463-25-000005",
+   "cik": "0001158463",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000644",
+   "observation_id": "R_OBS_000644",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-03-28 17:36:00.0",
+   "accession": "0001641172-25-001344",
+   "cik": "0001140215",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000645",
+   "observation_id": "R_OBS_000645",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-28 10:03:00.0",
+   "accession": "0001628280-25-008893",
+   "cik": "0000944148",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000653",
+   "observation_id": "R_OBS_000653",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-27 14:21:00.0",
+   "accession": "0000071691-25-000047",
+   "cik": "0000071691",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000656",
+   "observation_id": "R_OBS_000656",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-03-18 07:10:00.0",
+   "accession": "0000950170-25-040759",
+   "cik": "0001703647",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000657",
+   "observation_id": "R_OBS_000657",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-03-21 09:22:00.0",
+   "accession": "0001013762-25-000774",
+   "cik": "0000087050",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000658",
+   "observation_id": "R_OBS_000658",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-14 17:03:00.0",
+   "accession": "0000950170-25-021413",
+   "cik": "0001122904",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000662",
+   "observation_id": "R_OBS_000662",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-26 08:01:00.0",
+   "accession": "0000950170-25-027339",
+   "cik": "0001936258",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000663",
+   "observation_id": "R_OBS_000663",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-26 07:34:00.0",
+   "accession": "0001628280-25-007962",
+   "cik": "0000835011",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000669",
+   "observation_id": "R_OBS_000669",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-28 13:40:00.0",
+   "accession": "0000037785-25-000030",
+   "cik": "0000037785",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000671",
+   "observation_id": "R_OBS_000671",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-25 20:00:00.0",
+   "accession": "0000950170-25-027077",
+   "cik": "0000104918",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000673",
+   "observation_id": "R_OBS_000673",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2024-09-13 16:24:00.0",
+   "accession": "0001437749-24-029155",
+   "cik": "0001088413",
+   "feature_period_end": "20240531",
+   "masked_company_id": "R_COMPANY_000674",
+   "observation_id": "R_OBS_000674",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-27 18:12:00.0",
+   "accession": "0001424929-25-000007",
+   "cik": "0001424929",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000679",
+   "observation_id": "R_OBS_000679",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2024-11-20 10:44:00.0",
+   "accession": "0001437749-24-035823",
+   "cik": "0001126956",
+   "feature_period_end": "20240930",
+   "masked_company_id": "R_COMPANY_000681",
+   "observation_id": "R_OBS_000681",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-03-27 16:06:00.0",
+   "accession": "0001641172-25-000925",
+   "cik": "0001360214",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000682",
+   "observation_id": "R_OBS_000682",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-13 10:02:00.0",
+   "accession": "0001616862-25-000013",
+   "cik": "0001616862",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000684",
+   "observation_id": "R_OBS_000684",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-03-03 17:08:00.0",
+   "accession": "0002014596-25-000011",
+   "cik": "0002014596",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000690",
+   "observation_id": "R_OBS_000690",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-03-31 08:46:00.0",
+   "accession": "0001683168-25-002047",
+   "cik": "0001829794",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000693",
+   "observation_id": "R_OBS_000693",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-12 16:21:00.0",
+   "accession": "0001101302-25-000015",
+   "cik": "0001101302",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000695",
+   "observation_id": "R_OBS_000695",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-25 16:27:00.0",
+   "accession": "0001445305-25-000034",
+   "cik": "0001445305",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000697",
+   "observation_id": "R_OBS_000697",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-13 16:08:00.0",
+   "accession": "0001866581-25-000048",
+   "cik": "0001866581",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000698",
+   "observation_id": "R_OBS_000698",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-25 12:41:00.0",
+   "accession": "0000950170-25-026262",
+   "cik": "0001161728",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000700",
+   "observation_id": "R_OBS_000700",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-28 08:19:00.0",
+   "accession": "0001558370-25-001889",
+   "cik": "0001649904",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000708",
+   "observation_id": "R_OBS_000708",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-13 16:17:00.0",
+   "accession": "0001280784-25-000007",
+   "cik": "0001280784",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000710",
+   "observation_id": "R_OBS_000710",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-03-14 16:05:00.0",
+   "accession": "0000950170-25-039394",
+   "cik": "0001819253",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000713",
+   "observation_id": "R_OBS_000713",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-25 16:34:00.0",
+   "accession": "0001590895-25-000068",
+   "cik": "0001590895",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000715",
+   "observation_id": "R_OBS_000715",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-27 14:10:00.0",
+   "accession": "0001489393-25-000008",
+   "cik": "0001489393",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000718",
+   "observation_id": "R_OBS_000718",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-03-03 08:17:00.0",
+   "accession": "0001030894-25-000014",
+   "cik": "0001030894",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000719",
+   "observation_id": "R_OBS_000719",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2024-12-18 12:33:00.0",
+   "accession": "0000737758-24-000087",
+   "cik": "0000737758",
+   "feature_period_end": "20241031",
+   "masked_company_id": "R_COMPANY_000721",
+   "observation_id": "R_OBS_000721",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-24 07:59:00.0",
+   "accession": "0000880266-25-000011",
+   "cik": "0000880266",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000724",
+   "observation_id": "R_OBS_000724",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-03-17 16:12:00.0",
+   "accession": "0001628280-25-013103",
+   "cik": "0001898496",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000734",
+   "observation_id": "R_OBS_000734",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-03-03 17:23:00.0",
+   "accession": "0000949157-25-000024",
+   "cik": "0000949157",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000735",
+   "observation_id": "R_OBS_000735",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-26 16:17:00.0",
+   "accession": "0001031308-25-000002",
+   "cik": "0001031308",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000736",
+   "observation_id": "R_OBS_000736",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-03-11 08:02:00.0",
+   "accession": "0001819516-25-000012",
+   "cik": "0001819516",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000740",
+   "observation_id": "R_OBS_000740",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-03-24 16:17:00.0",
+   "accession": "0001628280-25-014490",
+   "cik": "0001849056",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000741",
+   "observation_id": "R_OBS_000741",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-28 14:28:00.0",
+   "accession": "0000784199-25-000029",
+   "cik": "0000784199",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000742",
+   "observation_id": "R_OBS_000742",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-04-03 06:20:00.0",
+   "accession": "0000950170-25-049918",
+   "cik": "0001937987",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000745",
+   "observation_id": "R_OBS_000745",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-25 16:16:00.0",
+   "accession": "0000856982-25-000011",
+   "cik": "0000856982",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000746",
+   "observation_id": "R_OBS_000746",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-27 16:23:00.0",
+   "accession": "0000950170-25-029086",
+   "cik": "0001861795",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000750",
+   "observation_id": "R_OBS_000750",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-28 16:06:00.0",
+   "accession": "0001558370-25-001940",
+   "cik": "0000075252",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000755",
+   "observation_id": "R_OBS_000755",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-03-31 16:10:00.0",
+   "accession": "0001641172-25-001715",
+   "cik": "0001518461",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000756",
+   "observation_id": "R_OBS_000756",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-03-03 17:21:00.0",
+   "accession": "0000950170-25-031056",
+   "cik": "0000926282",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000759",
+   "observation_id": "R_OBS_000759",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-03-27 19:47:00.0",
+   "accession": "0001013762-25-003507",
+   "cik": "0001801602",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000760",
+   "observation_id": "R_OBS_000760",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-03-13 15:40:00.0",
+   "accession": "0001558370-25-002897",
+   "cik": "0001371489",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000765",
+   "observation_id": "R_OBS_000765",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-27 16:06:00.0",
+   "accession": "0001410578-25-000216",
+   "cik": "0000744218",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000771",
+   "observation_id": "R_OBS_000771",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-03-03 16:02:00.0",
+   "accession": "0001401257-25-000012",
+   "cik": "0001401257",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000772",
+   "observation_id": "R_OBS_000772",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-03-20 16:10:00.0",
+   "accession": "0000950170-25-042662",
+   "cik": "0000885639",
+   "feature_period_end": "20250131",
+   "masked_company_id": "R_COMPANY_000773",
+   "observation_id": "R_OBS_000773",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-25 13:19:00.0",
+   "accession": "0000063908-25-000012",
+   "cik": "0000063908",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000784",
+   "observation_id": "R_OBS_000784",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-07 12:12:00.0",
+   "accession": "0000100885-25-000042",
+   "cik": "0000100885",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000787",
+   "observation_id": "R_OBS_000787",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-26 16:13:00.0",
+   "accession": "0001447669-25-000035",
+   "cik": "0001447669",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000790",
+   "observation_id": "R_OBS_000790",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-26 16:33:00.0",
+   "accession": "0001628280-25-008189",
+   "cik": "0001796209",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000793",
+   "observation_id": "R_OBS_000793",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-26 15:37:00.0",
+   "accession": "0001013871-25-000006",
+   "cik": "0001013871",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000796",
+   "observation_id": "R_OBS_000796",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-25 16:13:00.0",
+   "accession": "0000051143-25-000015",
+   "cik": "0000051143",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000797",
+   "observation_id": "R_OBS_000797",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-20 16:08:00.0",
+   "accession": "0001616707-25-000022",
+   "cik": "0001616707",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000800",
+   "observation_id": "R_OBS_000800",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-20 16:06:00.0",
+   "accession": "0000950170-25-024135",
+   "cik": "0001866692",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000810",
+   "observation_id": "R_OBS_000810",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-03-31 16:56:00.0",
+   "accession": "0001760689-25-000010",
+   "cik": "0001760689",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000813",
+   "observation_id": "R_OBS_000813",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-03-25 16:07:00.0",
+   "accession": "0001558370-25-003621",
+   "cik": "0001626971",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000819",
+   "observation_id": "R_OBS_000819",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2024-10-22 16:48:00.0",
+   "accession": "0001683168-24-007300",
+   "cik": "0001557798",
+   "feature_period_end": "20240731",
+   "masked_company_id": "R_COMPANY_000824",
+   "observation_id": "R_OBS_000824",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-03-31 08:22:00.0",
+   "accession": "0000950170-25-047224",
+   "cik": "0001828161",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000827",
+   "observation_id": "R_OBS_000827",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-13 16:58:00.0",
+   "accession": "0000089089-25-000011",
+   "cik": "0000089089",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000829",
+   "observation_id": "R_OBS_000829",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-26 16:20:00.0",
+   "accession": "0000277509-25-000012",
+   "cik": "0000277509",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000837",
+   "observation_id": "R_OBS_000837",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-21 16:41:00.0",
+   "accession": "0001692063-25-000023",
+   "cik": "0001692063",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000838",
+   "observation_id": "R_OBS_000838",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-03-03 17:20:00.0",
+   "accession": "0001609253-25-000027",
+   "cik": "0001609253",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000839",
+   "observation_id": "R_OBS_000839",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2024-10-21 15:02:00.0",
+   "accession": "0000006955-24-000046",
+   "cik": "0000006955",
+   "feature_period_end": "20240831",
+   "masked_company_id": "R_COMPANY_000841",
+   "observation_id": "R_OBS_000841",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-19 16:14:00.0",
+   "accession": "0000768899-25-000043",
+   "cik": "0000768899",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000842",
+   "observation_id": "R_OBS_000842",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-21 15:40:00.0",
+   "accession": "0001628280-25-007092",
+   "cik": "0001018963",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000843",
+   "observation_id": "R_OBS_000843",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-03-27 16:01:00.0",
+   "accession": "0001683168-25-001929",
+   "cik": "0001956955",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000846",
+   "observation_id": "R_OBS_000846",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-26 15:09:00.0",
+   "accession": "0001842022-25-000003",
+   "cik": "0001842022",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000847",
+   "observation_id": "R_OBS_000847",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-04-15 16:35:00.0",
+   "accession": "0001520138-25-000120",
+   "cik": "0001883835",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000848",
+   "observation_id": "R_OBS_000848",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-03-11 17:20:00.0",
+   "accession": "0001628280-25-012095",
+   "cik": "0001337013",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000850",
+   "observation_id": "R_OBS_000850",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-26 17:21:00.0",
+   "accession": "0001140361-25-006103",
+   "cik": "0000909724",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000851",
+   "observation_id": "R_OBS_000851",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-27 16:10:00.0",
+   "accession": "0001447362-25-000031",
+   "cik": "0001447362",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000853",
+   "observation_id": "R_OBS_000853",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-27 16:31:00.0",
+   "accession": "0000950170-25-029137",
+   "cik": "0001661181",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000854",
+   "observation_id": "R_OBS_000854",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-13 13:59:00.0",
+   "accession": "0001786842-25-000008",
+   "cik": "0001786842",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000857",
+   "observation_id": "R_OBS_000857",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-13 06:01:00.0",
+   "accession": "0001558370-25-000893",
+   "cik": "0001318220",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000862",
+   "observation_id": "R_OBS_000862",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-03-13 07:07:00.0",
+   "accession": "0001453687-25-000060",
+   "cik": "0001453687",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000864",
+   "observation_id": "R_OBS_000864",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-03-26 07:29:00.0",
+   "accession": "0001766502-25-000014",
+   "cik": "0001766502",
+   "feature_period_end": "20250131",
+   "masked_company_id": "R_COMPANY_000866",
+   "observation_id": "R_OBS_000866",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-13 17:22:00.0",
+   "accession": "0001506307-25-000008",
+   "cik": "0001506307",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000867",
+   "observation_id": "R_OBS_000867",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2024-11-27 08:58:00.0",
+   "accession": "0000067887-24-000166",
+   "cik": "0000067887",
+   "feature_period_end": "20240930",
+   "masked_company_id": "R_COMPANY_000869",
+   "observation_id": "R_OBS_000869",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-03-10 16:53:00.0",
+   "accession": "0001437749-25-006851",
+   "cik": "0001692427",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000870",
+   "observation_id": "R_OBS_000870",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-21 15:58:00.0",
+   "accession": "0001618756-25-000087",
+   "cik": "0001618756",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000874",
+   "observation_id": "R_OBS_000874",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-28 16:08:00.0",
+   "accession": "0001108426-25-000014",
+   "cik": "0001108426",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000875",
+   "observation_id": "R_OBS_000875",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-03-14 16:29:00.0",
+   "accession": "0001493152-25-010384",
+   "cik": "0001540684",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000876",
+   "observation_id": "R_OBS_000876",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-03-25 16:49:00.0",
+   "accession": "0001628280-25-014752",
+   "cik": "0001836981",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000880",
+   "observation_id": "R_OBS_000880",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-18 06:02:00.0",
+   "accession": "0001558370-25-001038",
+   "cik": "0000927003",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000883",
+   "observation_id": "R_OBS_000883",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-03-17 16:32:00.0",
+   "accession": "0001558370-25-003128",
+   "cik": "0000879585",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000884",
+   "observation_id": "R_OBS_000884",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-18 10:56:00.0",
+   "accession": "0000047111-25-000014",
+   "cik": "0000047111",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000886",
+   "observation_id": "R_OBS_000886",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-05 09:15:00.0",
+   "accession": "0001628280-25-003936",
+   "cik": "0001786431",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000887",
+   "observation_id": "R_OBS_000887",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-03-26 15:58:00.0",
+   "accession": "0001683168-25-001888",
+   "cik": "0001496443",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000890",
+   "observation_id": "R_OBS_000890",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-03-03 16:12:00.0",
+   "accession": "0001857816-25-000015",
+   "cik": "0001857816",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000891",
+   "observation_id": "R_OBS_000891",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-25 16:09:00.0",
+   "accession": "0001724521-25-000040",
+   "cik": "0001724521",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000893",
+   "observation_id": "R_OBS_000893",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-03-03 17:08:00.0",
+   "accession": "0001628280-25-009503",
+   "cik": "0000913241",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000895",
+   "observation_id": "R_OBS_000895",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2024-11-13 16:44:00.0",
+   "accession": "0000915840-24-000069",
+   "cik": "0000915840",
+   "feature_period_end": "20240930",
+   "masked_company_id": "R_COMPANY_000896",
+   "observation_id": "R_OBS_000896",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-12 16:47:00.0",
+   "accession": "0001058290-25-000017",
+   "cik": "0001058290",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000898",
+   "observation_id": "R_OBS_000898",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-01-27 06:11:00.0",
+   "accession": "0000815097-25-000007",
+   "cik": "0000815097",
+   "feature_period_end": "20241130",
+   "masked_company_id": "R_COMPANY_000899",
+   "observation_id": "R_OBS_000899",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-20 16:32:00.0",
+   "accession": "0000832101-25-000010",
+   "cik": "0000832101",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000900",
+   "observation_id": "R_OBS_000900",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-28 11:26:00.0",
+   "accession": "0001733998-25-000020",
+   "cik": "0001733998",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000908",
+   "observation_id": "R_OBS_000908",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-03-13 16:56:00.0",
+   "accession": "0001738827-25-000041",
+   "cik": "0001738827",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000913",
+   "observation_id": "R_OBS_000913",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-03-31 08:32:00.0",
+   "accession": "0001628280-25-015552",
+   "cik": "0000788816",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000915",
+   "observation_id": "R_OBS_000915",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-19 16:19:00.0",
+   "accession": "0001332349-25-000037",
+   "cik": "0001332349",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000918",
+   "observation_id": "R_OBS_000918",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-27 12:02:00.0",
+   "accession": "0001510295-25-000012",
+   "cik": "0001510295",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000919",
+   "observation_id": "R_OBS_000919",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-04-18 13:05:00.0",
+   "accession": "0001641172-25-005354",
+   "cik": "0001539850",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000921",
+   "observation_id": "R_OBS_000921",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2024-09-05 16:41:00.0",
+   "accession": "0000858877-24-000017",
+   "cik": "0000858877",
+   "feature_period_end": "20240731",
+   "masked_company_id": "R_COMPANY_000922",
+   "observation_id": "R_OBS_000922",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-03-14 16:02:00.0",
+   "accession": "0000950170-25-039384",
+   "cik": "0001537054",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000923",
+   "observation_id": "R_OBS_000923",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-03-10 16:16:00.0",
+   "accession": "0001918712-25-000014",
+   "cik": "0001918712",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000924",
+   "observation_id": "R_OBS_000924",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-01-29 17:23:00.0",
+   "accession": "0001493152-25-004175",
+   "cik": "0001083743",
+   "feature_period_end": "20240630",
+   "masked_company_id": "R_COMPANY_000926",
+   "observation_id": "R_OBS_000926",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-20 16:06:00.0",
+   "accession": "0000950170-25-024136",
+   "cik": "0001590955",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000928",
+   "observation_id": "R_OBS_000928",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-07 16:18:00.0",
+   "accession": "0000950170-25-016295",
+   "cik": "0001056696",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000933",
+   "observation_id": "R_OBS_000933",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-20 10:11:00.0",
+   "accession": "0001050915-25-000005",
+   "cik": "0001050915",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000934",
+   "observation_id": "R_OBS_000934",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-03-31 19:54:00.0",
+   "accession": "0001437749-25-010329",
+   "cik": "0001377149",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000940",
+   "observation_id": "R_OBS_000940",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-06-16 09:00:00.0",
+   "accession": "0001641172-25-015188",
+   "cik": "0001473490",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000945",
+   "observation_id": "R_OBS_000945",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-03-03 12:02:00.0",
+   "accession": "0001524472-25-000013",
+   "cik": "0001524472",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000946",
+   "observation_id": "R_OBS_000946",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-26 17:32:00.0",
+   "accession": "0001628280-25-008240",
+   "cik": "0001538379",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000948",
+   "observation_id": "R_OBS_000948",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-21 07:11:00.0",
+   "accession": "0001682852-25-000022",
+   "cik": "0001682852",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000949",
+   "observation_id": "R_OBS_000949",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-03-12 17:26:00.0",
+   "accession": "0001558370-25-002822",
+   "cik": "0001436208",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000953",
+   "observation_id": "R_OBS_000953",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-27 16:03:00.0",
+   "accession": "0001635282-25-000029",
+   "cik": "0001635282",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000956",
+   "observation_id": "R_OBS_000956",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-26 16:37:00.0",
+   "accession": "0001373670-25-000007",
+   "cik": "0001373670",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000962",
+   "observation_id": "R_OBS_000962",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-03-31 11:47:00.0",
+   "accession": "0000075288-25-000033",
+   "cik": "0000075288",
+   "feature_period_end": "20250131",
+   "masked_company_id": "R_COMPANY_000964",
+   "observation_id": "R_OBS_000964",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-27 16:39:00.0",
+   "accession": "0001000623-25-000009",
+   "cik": "0001000623",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000966",
+   "observation_id": "R_OBS_000966",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-25 16:19:00.0",
+   "accession": "0001628280-25-007732",
+   "cik": "0000310158",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000970",
+   "observation_id": "R_OBS_000970",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-20 13:57:00.0",
+   "accession": "0000950170-25-023962",
+   "cik": "0001005757",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000973",
+   "observation_id": "R_OBS_000973",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-27 16:04:00.0",
+   "accession": "0000100517-25-000046",
+   "cik": "0000100517",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000974",
+   "observation_id": "R_OBS_000974",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-06-09 17:05:00.0",
+   "accession": "0001437749-25-019879",
+   "cik": "0001018281",
+   "feature_period_end": "20240630",
+   "masked_company_id": "R_COMPANY_000975",
+   "observation_id": "R_OBS_000975",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-13 08:32:00.0",
+   "accession": "0001178670-25-000026",
+   "cik": "0001178670",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000977",
+   "observation_id": "R_OBS_000977",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-26 17:08:00.0",
+   "accession": "0001385849-25-000004",
+   "cik": "0001385849",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000979",
+   "observation_id": "R_OBS_000979",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2024-11-19 16:25:00.0",
+   "accession": "0001410578-24-002030",
+   "cik": "0000868857",
+   "feature_period_end": "20240930",
+   "masked_company_id": "R_COMPANY_000980",
+   "observation_id": "R_OBS_000980",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-05 14:52:00.0",
+   "accession": "0001103982-25-000030",
+   "cik": "0001103982",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000981",
+   "observation_id": "R_OBS_000981",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-21 16:20:00.0",
+   "accession": "0001402057-25-000018",
+   "cik": "0001402057",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000982",
+   "observation_id": "R_OBS_000982",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-03-03 06:12:00.0",
+   "accession": "0001559865-25-000007",
+   "cik": "0001559865",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000983",
+   "observation_id": "R_OBS_000983",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-03-31 16:59:00.0",
+   "accession": "0001193125-25-068851",
+   "cik": "0001588272",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000984",
+   "observation_id": "R_OBS_000984",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2024-09-24 06:33:00.0",
+   "accession": "0000730263-24-000010",
+   "cik": "0000730263",
+   "feature_period_end": "20240731",
+   "masked_company_id": "R_COMPANY_000985",
+   "observation_id": "R_OBS_000985",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-05-02 12:44:00.0",
+   "accession": "0001683168-25-003051",
+   "cik": "0001652958",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000989",
+   "observation_id": "R_OBS_000989",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-27 16:40:00.0",
+   "accession": "0000950170-25-029150",
+   "cik": "0001786205",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000991",
+   "observation_id": "R_OBS_000991",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-28 16:06:00.0",
+   "accession": "0000950170-25-029993",
+   "cik": "0001294133",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000993",
+   "observation_id": "R_OBS_000993",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-03-11 16:04:00.0",
+   "accession": "0001877939-25-000021",
+   "cik": "0001877939",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_000996",
+   "observation_id": "R_OBS_000996",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2024-08-08 20:10:00.0",
+   "accession": "0000943819-24-000013",
+   "cik": "0000943819",
+   "feature_period_end": "20240630",
+   "masked_company_id": "R_COMPANY_000997",
+   "observation_id": "R_OBS_000997",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-12 14:31:00.0",
+   "accession": "0001141391-25-000011",
+   "cik": "0001141391",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001008",
+   "observation_id": "R_OBS_001008",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-26 08:01:00.0",
+   "accession": "0000950170-25-027338",
+   "cik": "0001851003",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001010",
+   "observation_id": "R_OBS_001010",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-25 16:31:00.0",
+   "accession": "0000950170-25-026747",
+   "cik": "0001468328",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001011",
+   "observation_id": "R_OBS_001011",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-27 16:16:00.0",
+   "accession": "0000950170-25-029067",
+   "cik": "0001210677",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001018",
+   "observation_id": "R_OBS_001018",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-03-05 16:17:00.0",
+   "accession": "0001108524-25-000006",
+   "cik": "0001108524",
+   "feature_period_end": "20250131",
+   "masked_company_id": "R_COMPANY_001019",
+   "observation_id": "R_OBS_001019",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-03-31 16:48:00.0",
+   "accession": "0001630805-25-000007",
+   "cik": "0001630805",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001029",
+   "observation_id": "R_OBS_001029",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2024-12-12 20:32:00.0",
+   "accession": "0000047217-24-000080",
+   "cik": "0000047217",
+   "feature_period_end": "20241031",
+   "masked_company_id": "R_COMPANY_001036",
+   "observation_id": "R_OBS_001036",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-04-15 16:37:00.0",
+   "accession": "0001213900-25-032145",
+   "cik": "0001960847",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001049",
+   "observation_id": "R_OBS_001049",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-06-20 18:49:00.0",
+   "accession": "0001096906-25-000995",
+   "cik": "0001811999",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001050",
+   "observation_id": "R_OBS_001050",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-27 17:16:00.0",
+   "accession": "0001628280-25-008750",
+   "cik": "0001044777",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001052",
+   "observation_id": "R_OBS_001052",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-03-31 16:17:00.0",
+   "accession": "0001903596-25-000145",
+   "cik": "0001894954",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001054",
+   "observation_id": "R_OBS_001054",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-27 16:02:00.0",
+   "accession": "0001822479-25-000015",
+   "cik": "0001822479",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001056",
+   "observation_id": "R_OBS_001056",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-03-31 10:33:00.0",
+   "accession": "0001462418-25-000057",
+   "cik": "0001462418",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001057",
+   "observation_id": "R_OBS_001057",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-03-27 16:13:00.0",
+   "accession": "0001397187-25-000013",
+   "cik": "0001397187",
+   "feature_period_end": "20250131",
+   "masked_company_id": "R_COMPANY_001061",
+   "observation_id": "R_OBS_001061",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-03-14 16:18:00.0",
+   "accession": "0001437749-25-007734",
+   "cik": "0001981535",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001065",
+   "observation_id": "R_OBS_001065",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-03-19 16:16:00.0",
+   "accession": "0000950170-25-042017",
+   "cik": "0001534969",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001068",
+   "observation_id": "R_OBS_001068",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-03-24 16:04:00.0",
+   "accession": "0001437749-25-008956",
+   "cik": "0001822791",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001076",
+   "observation_id": "R_OBS_001076",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-21 07:15:00.0",
+   "accession": "0001883313-25-000013",
+   "cik": "0001883313",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001081",
+   "observation_id": "R_OBS_001081",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-20 08:54:00.0",
+   "accession": "0001561550-25-000025",
+   "cik": "0001561550",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001085",
+   "observation_id": "R_OBS_001085",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-21 07:51:00.0",
+   "accession": "0000821130-25-000023",
+   "cik": "0000821130",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001087",
+   "observation_id": "R_OBS_001087",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-27 15:36:00.0",
+   "accession": "0000950170-25-028949",
+   "cik": "0001142417",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001090",
+   "observation_id": "R_OBS_001090",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-12 06:48:00.0",
+   "accession": "0000064803-25-000007",
+   "cik": "0000064803",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001098",
+   "observation_id": "R_OBS_001098",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-04-15 09:10:00.0",
+   "accession": "0001214659-25-005868",
+   "cik": "0000896493",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001099",
+   "observation_id": "R_OBS_001099",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-28 16:21:00.0",
+   "accession": "0000882095-25-000006",
+   "cik": "0000882095",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001104",
+   "observation_id": "R_OBS_001104",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2024-11-12 07:02:00.0",
+   "accession": "0000032604-24-000041",
+   "cik": "0000032604",
+   "feature_period_end": "20240930",
+   "masked_company_id": "R_COMPANY_001108",
+   "observation_id": "R_OBS_001108",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-03-12 16:31:00.0",
+   "accession": "0001666071-25-000034",
+   "cik": "0001666071",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001109",
+   "observation_id": "R_OBS_001109",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-10 16:13:00.0",
+   "accession": "0001439288-25-000019",
+   "cik": "0001439288",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001111",
+   "observation_id": "R_OBS_001111",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-25 16:36:00.0",
+   "accession": "0001096056-25-000015",
+   "cik": "0001096056",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001113",
+   "observation_id": "R_OBS_001113",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-27 16:44:00.0",
+   "accession": "0001558370-25-001826",
+   "cik": "0001888886",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001114",
+   "observation_id": "R_OBS_001114",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-06 16:27:00.0",
+   "accession": "0001433195-25-000013",
+   "cik": "0001433195",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001122",
+   "observation_id": "R_OBS_001122",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-03-24 18:16:00.0",
+   "accession": "0001641172-25-000387",
+   "cik": "0001873835",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001123",
+   "observation_id": "R_OBS_001123",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-26 07:23:00.0",
+   "accession": "0001437749-25-005160",
+   "cik": "0001442145",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001126",
+   "observation_id": "R_OBS_001126",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-03-19 16:29:00.0",
+   "accession": "0001628280-25-013839",
+   "cik": "0001841761",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001128",
+   "observation_id": "R_OBS_001128",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2024-12-16 16:54:00.0",
+   "accession": "0000807863-24-000142",
+   "cik": "0000807863",
+   "feature_period_end": "20240930",
+   "masked_company_id": "R_COMPANY_001130",
+   "observation_id": "R_OBS_001130",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-11 15:58:00.0",
+   "accession": "0000026172-25-000007",
+   "cik": "0000026172",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001131",
+   "observation_id": "R_OBS_001131",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-03-13 16:38:00.0",
+   "accession": "0001683168-25-001583",
+   "cik": "0001289237",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001132",
+   "observation_id": "R_OBS_001132",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-03-31 09:04:00.0",
+   "accession": "0001835268-25-000014",
+   "cik": "0001835268",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001133",
+   "observation_id": "R_OBS_001133",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-03-04 16:16:00.0",
+   "accession": "0001628280-25-009852",
+   "cik": "0001635327",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001138",
+   "observation_id": "R_OBS_001138",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-28 16:22:00.0",
+   "accession": "0000950170-25-030037",
+   "cik": "0001057379",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001139",
+   "observation_id": "R_OBS_001139",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2024-08-02 16:20:00.0",
+   "accession": "0001137789-24-000068",
+   "cik": "0001137789",
+   "feature_period_end": "20240630",
+   "masked_company_id": "R_COMPANY_001140",
+   "observation_id": "R_OBS_001140",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-27 16:09:00.0",
+   "accession": "0001846069-25-000017",
+   "cik": "0001846069",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001145",
+   "observation_id": "R_OBS_001145",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-24 17:06:00.0",
+   "accession": "0000882835-25-000008",
+   "cik": "0000882835",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001146",
+   "observation_id": "R_OBS_001146",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-13 07:04:00.0",
+   "accession": "0001534504-25-000011",
+   "cik": "0001534504",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001152",
+   "observation_id": "R_OBS_001152",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-03-31 16:08:00.0",
+   "accession": "0001006837-25-000021",
+   "cik": "0001006837",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001153",
+   "observation_id": "R_OBS_001153",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-27 08:06:00.0",
+   "accession": "0001326732-25-000029",
+   "cik": "0001326732",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001161",
+   "observation_id": "R_OBS_001161",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-03-05 09:43:00.0",
+   "accession": "0001628280-25-010271",
+   "cik": "0001372299",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001168",
+   "observation_id": "R_OBS_001168",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-03-20 17:02:00.0",
+   "accession": "0001437749-25-008584",
+   "cik": "0001061069",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001169",
+   "observation_id": "R_OBS_001169",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-03-14 16:10:00.0",
+   "accession": "0001907982-25-000060",
+   "cik": "0001907982",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001178",
+   "observation_id": "R_OBS_001178",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-11 11:15:00.0",
+   "accession": "0001783180-25-000008",
+   "cik": "0001783180",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001181",
+   "observation_id": "R_OBS_001181",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-01-21 16:24:00.0",
+   "accession": "0000876167-25-000010",
+   "cik": "0000876167",
+   "feature_period_end": "20241130",
+   "masked_company_id": "R_COMPANY_001185",
+   "observation_id": "R_OBS_001185",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-04 19:54:00.0",
+   "accession": "0001564408-25-000019",
+   "cik": "0001564408",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001186",
+   "observation_id": "R_OBS_001186",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-10 16:15:00.0",
+   "accession": "0000950170-25-017077",
+   "cik": "0001114995",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001188",
+   "observation_id": "R_OBS_001188",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-04-15 14:28:00.0",
+   "accession": "0001213900-25-031944",
+   "cik": "0001009891",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001191",
+   "observation_id": "R_OBS_001191",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-04-14 20:19:00.0",
+   "accession": "0001683168-25-002554",
+   "cik": "0001110607",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001193",
+   "observation_id": "R_OBS_001193",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2024-11-26 07:34:00.0",
+   "accession": "0001546380-24-000043",
+   "cik": "0000825542",
+   "feature_period_end": "20240930",
+   "masked_company_id": "R_COMPANY_001194",
+   "observation_id": "R_OBS_001194",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2024-12-13 14:57:00.0",
+   "accession": "0001628280-24-051167",
+   "cik": "0000058361",
+   "feature_period_end": "20240930",
+   "masked_company_id": "R_COMPANY_001199",
+   "observation_id": "R_OBS_001199",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-04-15 16:06:00.0",
+   "accession": "0001171843-25-002214",
+   "cik": "0001376321",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001207",
+   "observation_id": "R_OBS_001207",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-18 18:03:00.0",
+   "accession": "0000950170-25-022560",
+   "cik": "0001021635",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001209",
+   "observation_id": "R_OBS_001209",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-04-15 17:28:00.0",
+   "accession": "0001213900-25-032213",
+   "cik": "0001529113",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001224",
+   "observation_id": "R_OBS_001224",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-03-31 16:11:00.0",
+   "accession": "0001479681-25-000006",
+   "cik": "0001479681",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001226",
+   "observation_id": "R_OBS_001226",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-18 17:09:00.0",
+   "accession": "0001667011-25-000010",
+   "cik": "0001667011",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001227",
+   "observation_id": "R_OBS_001227",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2024-07-30 16:23:00.0",
+   "accession": "0001654954-24-009642",
+   "cik": "0001040470",
+   "feature_period_end": "20240531",
+   "masked_company_id": "R_COMPANY_001229",
+   "observation_id": "R_OBS_001229",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-28 06:02:00.0",
+   "accession": "0001558370-25-001874",
+   "cik": "0001844862",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001232",
+   "observation_id": "R_OBS_001232",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-01-29 20:43:00.0",
+   "accession": "0001628280-25-003063",
+   "cik": "0001318605",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001233",
+   "observation_id": "R_OBS_001233",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-03-27 07:08:00.0",
+   "accession": "0001680367-25-000012",
+   "cik": "0001680367",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001236",
+   "observation_id": "R_OBS_001236",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-28 16:55:00.0",
+   "accession": "0001821825-25-000006",
+   "cik": "0001821825",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001237",
+   "observation_id": "R_OBS_001237",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-03-27 08:26:00.0",
+   "accession": "0000950170-25-045745",
+   "cik": "0001984086",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001242",
+   "observation_id": "R_OBS_001242",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-28 08:47:00.0",
+   "accession": "0000096943-25-000031",
+   "cik": "0000096943",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001248",
+   "observation_id": "R_OBS_001248",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-03-13 16:05:00.0",
+   "accession": "0001737287-25-000036",
+   "cik": "0001737287",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001250",
+   "observation_id": "R_OBS_001250",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-03-17 16:16:00.0",
+   "accession": "0000950170-25-040279",
+   "cik": "0001124105",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001254",
+   "observation_id": "R_OBS_001254",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-27 16:34:00.0",
+   "accession": "0000821189-25-000011",
+   "cik": "0000821189",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001256",
+   "observation_id": "R_OBS_001256",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-19 17:17:00.0",
+   "accession": "0000950170-25-023344",
+   "cik": "0000903129",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001257",
+   "observation_id": "R_OBS_001257",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-20 11:18:00.0",
+   "accession": "0001309108-25-000017",
+   "cik": "0001309108",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001259",
+   "observation_id": "R_OBS_001259",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-27 07:31:00.0",
+   "accession": "0000950170-25-028365",
+   "cik": "0001579733",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001262",
+   "observation_id": "R_OBS_001262",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-26 16:14:00.0",
+   "accession": "0001421517-25-000048",
+   "cik": "0001421517",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001264",
+   "observation_id": "R_OBS_001264",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-27 17:04:00.0",
+   "accession": "0000868780-25-000009",
+   "cik": "0000868780",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001266",
+   "observation_id": "R_OBS_001266",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-03-25 15:12:00.0",
+   "accession": "0001013762-25-002071",
+   "cik": "0001817825",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001267",
+   "observation_id": "R_OBS_001267",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-04-11 17:06:00.0",
+   "accession": "0001558370-25-004728",
+   "cik": "0001375205",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001269",
+   "observation_id": "R_OBS_001269",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-21 11:23:00.0",
+   "accession": "0000107815-25-000103",
+   "cik": "0000783325",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001274",
+   "observation_id": "R_OBS_001274",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-03-31 07:16:00.0",
+   "accession": "0000950170-25-047201",
+   "cik": "0001759138",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001278",
+   "observation_id": "R_OBS_001278",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-26 16:10:00.0",
+   "accession": "0000805928-25-000017",
+   "cik": "0000805928",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001281",
+   "observation_id": "R_OBS_001281",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-13 16:02:00.0",
+   "accession": "0000875320-25-000053",
+   "cik": "0000875320",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001284",
+   "observation_id": "R_OBS_001284",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-19 16:16:00.0",
+   "accession": "0001690820-25-000074",
+   "cik": "0001690820",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001285",
+   "observation_id": "R_OBS_001285",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2024-08-06 17:37:00.0",
+   "accession": "0001558370-24-011134",
+   "cik": "0001157408",
+   "feature_period_end": "20240630",
+   "masked_company_id": "R_COMPANY_001287",
+   "observation_id": "R_OBS_001287",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-03-03 16:28:00.0",
+   "accession": "0000950170-25-030897",
+   "cik": "0001109354",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001288",
+   "observation_id": "R_OBS_001288",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-03-11 16:19:00.0",
+   "accession": "0001558370-25-002711",
+   "cik": "0001860543",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001289",
+   "observation_id": "R_OBS_001289",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-14 14:23:00.0",
+   "accession": "0000014930-25-000025",
+   "cik": "0000014930",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001298",
+   "observation_id": "R_OBS_001298",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-27 06:13:00.0",
+   "accession": "0001651308-25-000031",
+   "cik": "0001651308",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001299",
+   "observation_id": "R_OBS_001299",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-27 07:46:00.0",
+   "accession": "0000950170-25-028375",
+   "cik": "0001727263",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001301",
+   "observation_id": "R_OBS_001301",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-25 09:31:00.0",
+   "accession": "0000950170-25-026131",
+   "cik": "0001076930",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001304",
+   "observation_id": "R_OBS_001304",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-14 17:53:00.0",
+   "accession": "0001093557-25-000036",
+   "cik": "0001093557",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001305",
+   "observation_id": "R_OBS_001305",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-19 16:31:00.0",
+   "accession": "0000950170-25-023242",
+   "cik": "0001108109",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001307",
+   "observation_id": "R_OBS_001307",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-21 14:58:00.0",
+   "accession": "0000950170-25-024770",
+   "cik": "0000916076",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001315",
+   "observation_id": "R_OBS_001315",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-03-17 14:52:00.0",
+   "accession": "0001628280-25-013046",
+   "cik": "0001500435",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001318",
+   "observation_id": "R_OBS_001318",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-03-13 17:06:00.0",
+   "accession": "0001853145-25-000009",
+   "cik": "0001853145",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001325",
+   "observation_id": "R_OBS_001325",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-27 17:51:00.0",
+   "accession": "0001352010-25-000007",
+   "cik": "0001352010",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001327",
+   "observation_id": "R_OBS_001327",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-03-17 16:13:00.0",
+   "accession": "0000950170-25-040259",
+   "cik": "0000006176",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001333",
+   "observation_id": "R_OBS_001333",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-03-17 17:18:00.0",
+   "accession": "0001558370-25-003141",
+   "cik": "0000788965",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001335",
+   "observation_id": "R_OBS_001335",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-19 16:21:00.0",
+   "accession": "0001425292-25-000004",
+   "cik": "0001425292",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001337",
+   "observation_id": "R_OBS_001337",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-03-06 09:19:00.0",
+   "accession": "0001628280-25-010797",
+   "cik": "0000872912",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001348",
+   "observation_id": "R_OBS_001348",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-03-28 09:12:00.0",
+   "accession": "0001641172-25-001062",
+   "cik": "0001930313",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001352",
+   "observation_id": "R_OBS_001352",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2024-12-13 16:05:00.0",
+   "accession": "0001493152-24-049988",
+   "cik": "0001297937",
+   "feature_period_end": "20240930",
+   "masked_company_id": "R_COMPANY_001356",
+   "observation_id": "R_OBS_001356",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-19 18:03:00.0",
+   "accession": "0001609804-25-000007",
+   "cik": "0001609804",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001361",
+   "observation_id": "R_OBS_001361",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-26 16:48:00.0",
+   "accession": "0000950170-25-027864",
+   "cik": "0001080014",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001363",
+   "observation_id": "R_OBS_001363",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-27 06:08:00.0",
+   "accession": "0001628280-25-008401",
+   "cik": "0000030305",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001364",
+   "observation_id": "R_OBS_001364",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-06 12:31:00.0",
+   "accession": "0000815556-25-000065",
+   "cik": "0000815556",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001365",
+   "observation_id": "R_OBS_001365",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-03-10 16:51:00.0",
+   "accession": "0001558370-25-002600",
+   "cik": "0002009684",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001368",
+   "observation_id": "R_OBS_001368",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-27 16:06:00.0",
+   "accession": "0000950170-25-029023",
+   "cik": "0001683606",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001370",
+   "observation_id": "R_OBS_001370",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2024-11-14 16:47:00.0",
+   "accession": "0000950170-24-127140",
+   "cik": "0000717954",
+   "feature_period_end": "20240831",
+   "masked_company_id": "R_COMPANY_001374",
+   "observation_id": "R_OBS_001374",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-03-19 17:12:00.0",
+   "accession": "0001821769-25-000021",
+   "cik": "0001821769",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001383",
+   "observation_id": "R_OBS_001383",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-04-15 14:28:00.0",
+   "accession": "0001654954-25-004295",
+   "cik": "0001320760",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001384",
+   "observation_id": "R_OBS_001384",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-26 17:10:00.0",
+   "accession": "0001658566-25-000014",
+   "cik": "0001658566",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001386",
+   "observation_id": "R_OBS_001386",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-04-01 14:16:00.0",
+   "accession": "0001781162-25-000008",
+   "cik": "0001781162",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001389",
+   "observation_id": "R_OBS_001389",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-24 17:01:00.0",
+   "accession": "0001558370-25-001390",
+   "cik": "0001368265",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001390",
+   "observation_id": "R_OBS_001390",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-25 16:16:00.0",
+   "accession": "0001437749-25-005059",
+   "cik": "0001575828",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001393",
+   "observation_id": "R_OBS_001393",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-03-06 17:41:00.0",
+   "accession": "0001767042-25-000010",
+   "cik": "0001767042",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001396",
+   "observation_id": "R_OBS_001396",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-19 16:13:00.0",
+   "accession": "0001782170-25-000018",
+   "cik": "0001782170",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001399",
+   "observation_id": "R_OBS_001399",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-05-27 16:53:00.0",
+   "accession": "0001654954-25-006144",
+   "cik": "0000924719",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001401",
+   "observation_id": "R_OBS_001401",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-20 17:21:00.0",
+   "accession": "0001388658-25-000028",
+   "cik": "0001388658",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001404",
+   "observation_id": "R_OBS_001404",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-26 16:01:00.0",
+   "accession": "0001376339-25-000009",
+   "cik": "0001376339",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001405",
+   "observation_id": "R_OBS_001405",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-20 17:37:00.0",
+   "accession": "0001145197-25-000007",
+   "cik": "0001145197",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001407",
+   "observation_id": "R_OBS_001407",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-21 11:44:00.0",
+   "accession": "0000040987-25-000026",
+   "cik": "0000040987",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001408",
+   "observation_id": "R_OBS_001408",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-03-11 16:53:00.0",
+   "accession": "0001436126-25-000026",
+   "cik": "0001436126",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001409",
+   "observation_id": "R_OBS_001409",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-05 09:18:00.0",
+   "accession": "0001804220-25-000011",
+   "cik": "0000872589",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001410",
+   "observation_id": "R_OBS_001410",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2024-11-29 14:36:00.0",
+   "accession": "0001410578-24-002066",
+   "cik": "0000784539",
+   "feature_period_end": "20240831",
+   "masked_company_id": "R_COMPANY_001413",
+   "observation_id": "R_OBS_001413",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-28 16:22:00.0",
+   "accession": "0001069183-25-000019",
+   "cik": "0001069183",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001415",
+   "observation_id": "R_OBS_001415",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-03-14 16:16:00.0",
+   "accession": "0001531152-25-000013",
+   "cik": "0001531152",
+   "feature_period_end": "20250131",
+   "masked_company_id": "R_COMPANY_001423",
+   "observation_id": "R_OBS_001423",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-04-15 17:20:00.0",
+   "accession": "0001640334-25-000660",
+   "cik": "0001575142",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001429",
+   "observation_id": "R_OBS_001429",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-03-31 16:10:00.0",
+   "accession": "0001628280-25-015649",
+   "cik": "0001819438",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001440",
+   "observation_id": "R_OBS_001440",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-26 16:40:00.0",
+   "accession": "0001214659-25-003520",
+   "cik": "0001385662",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001442",
+   "observation_id": "R_OBS_001442",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-03-04 21:10:00.0",
+   "accession": "0000787250-25-000012",
+   "cik": "0000787250",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001443",
+   "observation_id": "R_OBS_001443",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-20 20:21:00.0",
+   "accession": "0001164727-25-000011",
+   "cik": "0001164727",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001446",
+   "observation_id": "R_OBS_001446",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-04-01 06:29:00.0",
+   "accession": "0001628280-25-015753",
+   "cik": "0001853962",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001448",
+   "observation_id": "R_OBS_001448",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-03-13 19:52:00.0",
+   "accession": "0001171843-25-001472",
+   "cik": "0001123494",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001460",
+   "observation_id": "R_OBS_001460",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-19 16:12:00.0",
+   "accession": "0001835830-25-000014",
+   "cik": "0001835830",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001464",
+   "observation_id": "R_OBS_001464",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2024-12-19 16:20:00.0",
+   "accession": "0001410578-24-002104",
+   "cik": "0001357971",
+   "feature_period_end": "20240930",
+   "masked_company_id": "R_COMPANY_001465",
+   "observation_id": "R_OBS_001465",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-03-13 16:36:00.0",
+   "accession": "0001704711-25-000031",
+   "cik": "0001704711",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001469",
+   "observation_id": "R_OBS_001469",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-03-24 17:28:00.0",
+   "accession": "0001140361-25-010065",
+   "cik": "0001017303",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001472",
+   "observation_id": "R_OBS_001472",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-07 16:57:00.0",
+   "accession": "0001521332-25-000010",
+   "cik": "0001521332",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001478",
+   "observation_id": "R_OBS_001478",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-25 07:11:00.0",
+   "accession": "0001549346-25-000011",
+   "cik": "0001549346",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001481",
+   "observation_id": "R_OBS_001481",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-21 16:14:00.0",
+   "accession": "0001618755-25-000010",
+   "cik": "0001618755",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001483",
+   "observation_id": "R_OBS_001483",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-18 06:08:00.0",
+   "accession": "0001579241-25-000008",
+   "cik": "0001579241",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001484",
+   "observation_id": "R_OBS_001484",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-03-31 16:06:00.0",
+   "accession": "0000950170-25-047698",
+   "cik": "0001095981",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001485",
+   "observation_id": "R_OBS_001485",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-13 16:18:00.0",
+   "accession": "0000084839-25-000024",
+   "cik": "0000084839",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001486",
+   "observation_id": "R_OBS_001486",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-12 18:24:00.0",
+   "accession": "0001770787-25-000013",
+   "cik": "0001770787",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001497",
+   "observation_id": "R_OBS_001497",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-13 17:29:00.0",
+   "accession": "0001628280-25-005486",
+   "cik": "0001702780",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001498",
+   "observation_id": "R_OBS_001498",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-03-31 15:01:00.0",
+   "accession": "0001562762-25-000062",
+   "cik": "0000018255",
+   "feature_period_end": "20250131",
+   "masked_company_id": "R_COMPANY_001500",
+   "observation_id": "R_OBS_001500",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-20 20:04:00.0",
+   "accession": "0001288847-25-000028",
+   "cik": "0001288847",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001503",
+   "observation_id": "R_OBS_001503",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-20 11:23:00.0",
+   "accession": "0000950170-25-023852",
+   "cik": "0001034670",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001506",
+   "observation_id": "R_OBS_001506",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-03-21 06:24:00.0",
+   "accession": "0001558370-25-003413",
+   "cik": "0000029534",
+   "feature_period_end": "20250131",
+   "masked_company_id": "R_COMPANY_001509",
+   "observation_id": "R_OBS_001509",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-03-11 07:43:00.0",
+   "accession": "0001628280-25-011831",
+   "cik": "0001665988",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001510",
+   "observation_id": "R_OBS_001510",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-28 07:06:00.0",
+   "accession": "0001023024-25-000015",
+   "cik": "0001023024",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001512",
+   "observation_id": "R_OBS_001512",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-28 16:59:00.0",
+   "accession": "0001016281-25-000045",
+   "cik": "0001016281",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001513",
+   "observation_id": "R_OBS_001513",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-04-15 17:30:00.0",
+   "accession": "0001641172-25-004921",
+   "cik": "0000894871",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001518",
+   "observation_id": "R_OBS_001518",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-27 16:18:00.0",
+   "accession": "0001628280-25-008662",
+   "cik": "0001737706",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001520",
+   "observation_id": "R_OBS_001520",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-03-03 08:14:00.0",
+   "accession": "0001558370-25-002009",
+   "cik": "0001958140",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001521",
+   "observation_id": "R_OBS_001521",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-13 16:53:00.0",
+   "accession": "0000877212-25-000027",
+   "cik": "0000877212",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001524",
+   "observation_id": "R_OBS_001524",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2024-12-27 16:03:00.0",
+   "accession": "0001683168-24-009011",
+   "cik": "0000038264",
+   "feature_period_end": "20240930",
+   "masked_company_id": "R_COMPANY_001532",
+   "observation_id": "R_OBS_001532",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-03-06 14:23:00.0",
+   "accession": "0001597672-25-000008",
+   "cik": "0001597672",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001533",
+   "observation_id": "R_OBS_001533",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-14 16:07:00.0",
+   "accession": "0001451809-25-000034",
+   "cik": "0001451809",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001537",
+   "observation_id": "R_OBS_001537",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-03-27 16:12:00.0",
+   "accession": "0000950170-25-046074",
+   "cik": "0001994702",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001543",
+   "observation_id": "R_OBS_001543",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-21 16:07:00.0",
+   "accession": "0001467623-25-000011",
+   "cik": "0001467623",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001545",
+   "observation_id": "R_OBS_001545",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-13 16:04:00.0",
+   "accession": "0001628280-25-005392",
+   "cik": "0001487712",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001547",
+   "observation_id": "R_OBS_001547",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-03-06 16:06:00.0",
+   "accession": "0000950170-25-034601",
+   "cik": "0001314102",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001555",
+   "observation_id": "R_OBS_001555",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-03-26 07:01:00.0",
+   "accession": "0001641172-25-000677",
+   "cik": "0001577445",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001558",
+   "observation_id": "R_OBS_001558",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-26 16:09:00.0",
+   "accession": "0001286139-25-000044",
+   "cik": "0001286139",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001561",
+   "observation_id": "R_OBS_001561",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-27 12:23:00.0",
+   "accession": "0001477449-25-000005",
+   "cik": "0001477449",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001565",
+   "observation_id": "R_OBS_001565",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-03-05 16:26:00.0",
+   "accession": "0000008063-25-000017",
+   "cik": "0000008063",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001566",
+   "observation_id": "R_OBS_001566",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-03-03 16:02:00.0",
+   "accession": "0001341766-25-000024",
+   "cik": "0001341766",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001571",
+   "observation_id": "R_OBS_001571",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-26 06:33:00.0",
+   "accession": "0001082554-25-000005",
+   "cik": "0001082554",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001574",
+   "observation_id": "R_OBS_001574",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-03-17 16:45:00.0",
+   "accession": "0001503274-25-000031",
+   "cik": "0001503274",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001578",
+   "observation_id": "R_OBS_001578",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2024-12-19 17:05:00.0",
+   "accession": "0001628280-24-052099",
+   "cik": "0001045742",
+   "feature_period_end": "20240930",
+   "masked_company_id": "R_COMPANY_001580",
+   "observation_id": "R_OBS_001580",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-11 16:16:00.0",
+   "accession": "0000889900-25-000034",
+   "cik": "0000889900",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001584",
+   "observation_id": "R_OBS_001584",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-03-13 07:28:00.0",
+   "accession": "0001628280-25-012470",
+   "cik": "0001517022",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001585",
+   "observation_id": "R_OBS_001585",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-01-31 07:13:00.0",
+   "accession": "0001271833-25-000005",
+   "cik": "0001271833",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001588",
+   "observation_id": "R_OBS_001588",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-03-31 17:11:00.0",
+   "accession": "0001641172-25-001840",
+   "cik": "0001712762",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001592",
+   "observation_id": "R_OBS_001592",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-05-28 17:01:00.0",
+   "accession": "0000950170-25-078416",
+   "cik": "0002018064",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001593",
+   "observation_id": "R_OBS_001593",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-13 18:26:00.0",
+   "accession": "0000950170-25-020134",
+   "cik": "0000860730",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001594",
+   "observation_id": "R_OBS_001594",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-03-05 16:38:00.0",
+   "accession": "0001558370-25-002265",
+   "cik": "0000046129",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001595",
+   "observation_id": "R_OBS_001595",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-03-05 16:36:00.0",
+   "accession": "0001558370-25-002264",
+   "cik": "0001049606",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001598",
+   "observation_id": "R_OBS_001598",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-19 16:11:00.0",
+   "accession": "0001558370-25-001150",
+   "cik": "0001434588",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001601",
+   "observation_id": "R_OBS_001601",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-21 16:38:00.0",
+   "accession": "0001437749-25-004757",
+   "cik": "0000906553",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001603",
+   "observation_id": "R_OBS_001603",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-25 16:16:00.0",
+   "accession": "0001558370-25-001505",
+   "cik": "0001730430",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001607",
+   "observation_id": "R_OBS_001607",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-03-31 12:17:00.0",
+   "accession": "0001641172-25-001563",
+   "cik": "0000008504",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001610",
+   "observation_id": "R_OBS_001610",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-25 16:51:00.0",
+   "accession": "0000102729-25-000009",
+   "cik": "0000102729",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001612",
+   "observation_id": "R_OBS_001612",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-26 15:26:00.0",
+   "accession": "0000793952-25-000063",
+   "cik": "0000793952",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001615",
+   "observation_id": "R_OBS_001615",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-26 16:40:00.0",
+   "accession": "0001214659-25-003518",
+   "cik": "0001364397",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001616",
+   "observation_id": "R_OBS_001616",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-26 16:19:00.0",
+   "accession": "0001595974-25-000008",
+   "cik": "0001595974",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001617",
+   "observation_id": "R_OBS_001617",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-03-03 16:31:00.0",
+   "accession": "0000950170-25-030909",
+   "cik": "0001780312",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001618",
+   "observation_id": "R_OBS_001618",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-26 14:14:00.0",
+   "accession": "0000764180-25-000019",
+   "cik": "0000764180",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001619",
+   "observation_id": "R_OBS_001619",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-24 17:55:00.0",
+   "accession": "0001637757-25-000004",
+   "cik": "0001637757",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001622",
+   "observation_id": "R_OBS_001622",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2024-12-23 19:48:00.0",
+   "accession": "0001437749-24-038328",
+   "cik": "0001378590",
+   "feature_period_end": "20240930",
+   "masked_company_id": "R_COMPANY_001624",
+   "observation_id": "R_OBS_001624",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-21 15:22:00.0",
+   "accession": "0001514705-25-000004",
+   "cik": "0001514705",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001626",
+   "observation_id": "R_OBS_001626",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-03-07 16:07:00.0",
+   "accession": "0001834488-25-000053",
+   "cik": "0001834488",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001627",
+   "observation_id": "R_OBS_001627",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-03-10 08:46:00.0",
+   "accession": "0000950170-25-035949",
+   "cik": "0000081955",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001631",
+   "observation_id": "R_OBS_001631",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-03-04 07:59:00.0",
+   "accession": "0000950170-25-031322",
+   "cik": "0001631574",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001635",
+   "observation_id": "R_OBS_001635",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-28 07:00:00.0",
+   "accession": "0000950170-25-029507",
+   "cik": "0001492422",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001639",
+   "observation_id": "R_OBS_001639",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-27 16:10:00.0",
+   "accession": "0000046080-25-000027",
+   "cik": "0000046080",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001641",
+   "observation_id": "R_OBS_001641",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-03-03 11:19:00.0",
+   "accession": "0001558370-25-002017",
+   "cik": "0001001838",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001644",
+   "observation_id": "R_OBS_001644",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-27 11:44:00.0",
+   "accession": "0000950170-25-028533",
+   "cik": "0000075677",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001646",
+   "observation_id": "R_OBS_001646",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2024-11-20 15:36:00.0",
+   "accession": "0001350593-24-000079",
+   "cik": "0001350593",
+   "feature_period_end": "20240930",
+   "masked_company_id": "R_COMPANY_001647",
+   "observation_id": "R_OBS_001647",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-26 16:32:00.0",
+   "accession": "0000715787-25-000006",
+   "cik": "0000715787",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001649",
+   "observation_id": "R_OBS_001649",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2024-09-27 10:29:00.0",
+   "accession": "0001558370-24-013061",
+   "cik": "0001067294",
+   "feature_period_end": "20240731",
+   "masked_company_id": "R_COMPANY_001652",
+   "observation_id": "R_OBS_001652",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-14 12:26:00.0",
+   "accession": "0000950170-25-020763",
+   "cik": "0000042582",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001653",
+   "observation_id": "R_OBS_001653",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-03-25 06:59:00.0",
+   "accession": "0001410578-25-000443",
+   "cik": "0001855644",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001654",
+   "observation_id": "R_OBS_001654",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-14 16:34:00.0",
+   "accession": "0000066570-25-000007",
+   "cik": "0000066570",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001655",
+   "observation_id": "R_OBS_001655",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-04-15 15:34:00.0",
+   "accession": "0001096906-25-000507",
+   "cik": "0001352952",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001660",
+   "observation_id": "R_OBS_001660",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-26 16:58:00.0",
+   "accession": "0001709164-25-000008",
+   "cik": "0001709164",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001661",
+   "observation_id": "R_OBS_001661",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2024-11-29 15:34:00.0",
+   "accession": "0001868941-24-000070",
+   "cik": "0001868941",
+   "feature_period_end": "20240930",
+   "masked_company_id": "R_COMPANY_001662",
+   "observation_id": "R_OBS_001662",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-04 07:57:00.0",
+   "accession": "0001751788-25-000012",
+   "cik": "0001751788",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001666",
+   "observation_id": "R_OBS_001666",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-26 15:48:00.0",
+   "accession": "0000908315-25-000010",
+   "cik": "0000908315",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001673",
+   "observation_id": "R_OBS_001673",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-21 15:26:00.0",
+   "accession": "0001921963-25-000029",
+   "cik": "0001921963",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001674",
+   "observation_id": "R_OBS_001674",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-27 16:31:00.0",
+   "accession": "0001809519-25-000040",
+   "cik": "0001809519",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001676",
+   "observation_id": "R_OBS_001676",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-03-06 11:10:00.0",
+   "accession": "0000950170-25-034279",
+   "cik": "0001846084",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001677",
+   "observation_id": "R_OBS_001677",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2024-12-12 14:01:00.0",
+   "accession": "0000950170-24-135700",
+   "cik": "0001235468",
+   "feature_period_end": "20240930",
+   "masked_company_id": "R_COMPANY_001681",
+   "observation_id": "R_OBS_001681",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-03-28 15:03:00.0",
+   "accession": "0000950170-25-046656",
+   "cik": "0000019871",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001683",
+   "observation_id": "R_OBS_001683",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-26 16:02:00.0",
+   "accession": "0000030625-25-000039",
+   "cik": "0000030625",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001684",
+   "observation_id": "R_OBS_001684",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2024-11-22 14:09:00.0",
+   "accession": "0000063296-24-000094",
+   "cik": "0000063296",
+   "feature_period_end": "20240930",
+   "masked_company_id": "R_COMPANY_001691",
+   "observation_id": "R_OBS_001691",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-03-05 17:20:00.0",
+   "accession": "0001434728-25-000079",
+   "cik": "0001434728",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001694",
+   "observation_id": "R_OBS_001694",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-26 16:40:00.0",
+   "accession": "0001214659-25-003514",
+   "cik": "0001457919",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001697",
+   "observation_id": "R_OBS_001697",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-01-28 08:01:00.0",
+   "accession": "0001803599-25-000022",
+   "cik": "0001803599",
+   "feature_period_end": "20241130",
+   "masked_company_id": "R_COMPANY_001698",
+   "observation_id": "R_OBS_001698",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-14 17:24:00.0",
+   "accession": "0001140361-25-004907",
+   "cik": "0001021561",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001704",
+   "observation_id": "R_OBS_001704",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-27 16:27:00.0",
+   "accession": "0000950170-25-029104",
+   "cik": "0001756262",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001705",
+   "observation_id": "R_OBS_001705",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-03-06 18:38:00.0",
+   "accession": "0001558370-25-002429",
+   "cik": "0001370450",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001707",
+   "observation_id": "R_OBS_001707",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-03-27 21:06:00.0",
+   "accession": "0001641172-25-001011",
+   "cik": "0001505497",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001710",
+   "observation_id": "R_OBS_001710",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-24 17:13:00.0",
+   "accession": "0001486957-25-000008",
+   "cik": "0001486957",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001711",
+   "observation_id": "R_OBS_001711",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-20 12:50:00.0",
+   "accession": "0000098362-25-000055",
+   "cik": "0000098362",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001713",
+   "observation_id": "R_OBS_001713",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-03-06 16:02:00.0",
+   "accession": "0001829864-25-000016",
+   "cik": "0001829864",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001714",
+   "observation_id": "R_OBS_001714",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-03-27 16:12:00.0",
+   "accession": "0001072613-25-000246",
+   "cik": "0000887396",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001716",
+   "observation_id": "R_OBS_001716",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2024-12-16 17:12:00.0",
+   "accession": "0001558370-24-016299",
+   "cik": "0001540013",
+   "feature_period_end": "20240930",
+   "masked_company_id": "R_COMPANY_001719",
+   "observation_id": "R_OBS_001719",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-27 16:06:00.0",
+   "accession": "0001558370-25-001805",
+   "cik": "0001086600",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001725",
+   "observation_id": "R_OBS_001725",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-28 15:37:00.0",
+   "accession": "0000821483-25-000010",
+   "cik": "0000821483",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001730",
+   "observation_id": "R_OBS_001730",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-26 16:19:00.0",
+   "accession": "0000078890-25-000059",
+   "cik": "0000078890",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001731",
+   "observation_id": "R_OBS_001731",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-03-04 16:29:00.0",
+   "accession": "0001805077-25-000015",
+   "cik": "0001805077",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001733",
+   "observation_id": "R_OBS_001733",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-03-27 07:45:00.0",
+   "accession": "0001641172-25-000850",
+   "cik": "0001096275",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001735",
+   "observation_id": "R_OBS_001735",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-12 18:55:00.0",
+   "accession": "0001993004-25-000021",
+   "cik": "0001993004",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001736",
+   "observation_id": "R_OBS_001736",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-03-14 16:58:00.0",
+   "accession": "0001819974-25-000010",
+   "cik": "0001819974",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001737",
+   "observation_id": "R_OBS_001737",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-20 17:39:00.0",
+   "accession": "0001335258-25-000028",
+   "cik": "0001335258",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001738",
+   "observation_id": "R_OBS_001738",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-27 16:07:00.0",
+   "accession": "0001558370-25-001806",
+   "cik": "0000861884",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001740",
+   "observation_id": "R_OBS_001740",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-25 16:21:00.0",
+   "accession": "0001297989-25-000002",
+   "cik": "0001297989",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001741",
+   "observation_id": "R_OBS_001741",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-21 13:00:00.0",
+   "accession": "0001437749-25-004700",
+   "cik": "0000912061",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001743",
+   "observation_id": "R_OBS_001743",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-03-11 16:24:00.0",
+   "accession": "0000950170-25-037172",
+   "cik": "0001660334",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001749",
+   "observation_id": "R_OBS_001749",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-18 16:51:00.0",
+   "accession": "0001628280-25-006094",
+   "cik": "0000910329",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001750",
+   "observation_id": "R_OBS_001750",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-03-28 19:29:00.0",
+   "accession": "0001641172-25-001383",
+   "cik": "0002011208",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001755",
+   "observation_id": "R_OBS_001755",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2024-11-25 17:20:00.0",
+   "accession": "0000950170-24-130642",
+   "cik": "0001768267",
+   "feature_period_end": "20240930",
+   "masked_company_id": "R_COMPANY_001756",
+   "observation_id": "R_OBS_001756",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2024-08-05 16:17:00.0",
+   "accession": "0000080424-24-000083",
+   "cik": "0000080424",
+   "feature_period_end": "20240630",
+   "masked_company_id": "R_COMPANY_001757",
+   "observation_id": "R_OBS_001757",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-04-09 08:31:00.0",
+   "accession": "0001641172-25-003336",
+   "cik": "0001597846",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001761",
+   "observation_id": "R_OBS_001761",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-28 08:08:00.0",
+   "accession": "0001558370-25-001886",
+   "cik": "0001022671",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001763",
+   "observation_id": "R_OBS_001763",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-03-05 17:20:00.0",
+   "accession": "0001628280-25-010585",
+   "cik": "0001384195",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001766",
+   "observation_id": "R_OBS_001766",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-03-28 12:01:00.0",
+   "accession": "0000950170-25-046424",
+   "cik": "0001966983",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001767",
+   "observation_id": "R_OBS_001767",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-04-07 06:06:00.0",
+   "accession": "0000950170-25-051344",
+   "cik": "0001111741",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001781",
+   "observation_id": "R_OBS_001781",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-14 15:04:00.0",
+   "accession": "0000950170-25-021042",
+   "cik": "0001021860",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001782",
+   "observation_id": "R_OBS_001782",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2024-09-23 12:54:00.0",
+   "accession": "0001437749-24-029817",
+   "cik": "0000732026",
+   "feature_period_end": "20240630",
+   "masked_company_id": "R_COMPANY_001784",
+   "observation_id": "R_OBS_001784",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-21 08:29:00.0",
+   "accession": "0000874716-25-000037",
+   "cik": "0000874716",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001786",
+   "observation_id": "R_OBS_001786",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-03-12 17:10:00.0",
+   "accession": "0001558370-25-002819",
+   "cik": "0001362190",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001792",
+   "observation_id": "R_OBS_001792",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-03-06 16:07:00.0",
+   "accession": "0001867096-25-000039",
+   "cik": "0001867096",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001795",
+   "observation_id": "R_OBS_001795",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-20 12:34:00.0",
+   "accession": "0001037868-25-000012",
+   "cik": "0001037868",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001799",
+   "observation_id": "R_OBS_001799",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-03-26 16:15:00.0",
+   "accession": "0000950170-25-045242",
+   "cik": "0000728387",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001804",
+   "observation_id": "R_OBS_001804",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-28 16:53:00.0",
+   "accession": "0001723128-25-000012",
+   "cik": "0001723128",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001805",
+   "observation_id": "R_OBS_001805",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-27 07:33:00.0",
+   "accession": "0001656472-25-000014",
+   "cik": "0001656472",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001811",
+   "observation_id": "R_OBS_001811",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-03-06 16:06:00.0",
+   "accession": "0000950170-25-034598",
+   "cik": "0000069488",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001813",
+   "observation_id": "R_OBS_001813",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-03-31 17:00:00.0",
+   "accession": "0001477932-25-002248",
+   "cik": "0001718224",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001814",
+   "observation_id": "R_OBS_001814",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-07 21:51:00.0",
+   "accession": "0001731122-25-000185",
+   "cik": "0001762239",
+   "feature_period_end": "20241031",
+   "masked_company_id": "R_COMPANY_001818",
+   "observation_id": "R_OBS_001818",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-28 16:42:00.0",
+   "accession": "0000091767-25-000014",
+   "cik": "0000091767",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001819",
+   "observation_id": "R_OBS_001819",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-07 09:01:00.0",
+   "accession": "0001437749-25-003081",
+   "cik": "0001354866",
+   "feature_period_end": "20241130",
+   "masked_company_id": "R_COMPANY_001820",
+   "observation_id": "R_OBS_001820",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-10 09:24:00.0",
+   "accession": "0000702165-25-000008",
+   "cik": "0000702165",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001824",
+   "observation_id": "R_OBS_001824",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-12 18:12:00.0",
+   "accession": "0001713445-25-000018",
+   "cik": "0001713445",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001829",
+   "observation_id": "R_OBS_001829",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-28 17:19:00.0",
+   "accession": "0001410578-25-000248",
+   "cik": "0000865752",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001830",
+   "observation_id": "R_OBS_001830",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-03-03 12:39:00.0",
+   "accession": "0001219601-25-000009",
+   "cik": "0001219601",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001834",
+   "observation_id": "R_OBS_001834",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-26 16:08:00.0",
+   "accession": "0000700923-25-000006",
+   "cik": "0000700923",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001838",
+   "observation_id": "R_OBS_001838",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-14 16:07:00.0",
+   "accession": "0001543151-25-000008",
+   "cik": "0001543151",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001840",
+   "observation_id": "R_OBS_001840",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-03-17 16:13:00.0",
+   "accession": "0000950170-25-040256",
+   "cik": "0000031235",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001844",
+   "observation_id": "R_OBS_001844",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-03-13 06:04:00.0",
+   "accession": "0001437749-25-007375",
+   "cik": "0000101594",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001848",
+   "observation_id": "R_OBS_001848",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-03-13 14:17:00.0",
+   "accession": "0001779128-25-000010",
+   "cik": "0001779128",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001854",
+   "observation_id": "R_OBS_001854",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-27 14:22:00.0",
+   "accession": "0001551182-25-000006",
+   "cik": "0001551182",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001855",
+   "observation_id": "R_OBS_001855",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-20 16:06:00.0",
+   "accession": "0000950170-25-024137",
+   "cik": "0001365135",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001860",
+   "observation_id": "R_OBS_001860",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-26 16:06:00.0",
+   "accession": "0001546417-25-000034",
+   "cik": "0001546417",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001861",
+   "observation_id": "R_OBS_001861",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-19 07:00:00.0",
+   "accession": "0000950170-25-022760",
+   "cik": "0001121788",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001863",
+   "observation_id": "R_OBS_001863",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-05-02 16:35:00.0",
+   "accession": "0000950170-25-062847",
+   "cik": "0001579157",
+   "feature_period_end": "20250131",
+   "masked_company_id": "R_COMPANY_001867",
+   "observation_id": "R_OBS_001867",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-03-31 17:08:00.0",
+   "accession": "0001410578-25-000590",
+   "cik": "0002028336",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001868",
+   "observation_id": "R_OBS_001868",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-18 16:39:00.0",
+   "accession": "0000950170-25-022369",
+   "cik": "0001699838",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001869",
+   "observation_id": "R_OBS_001869",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-14 06:55:00.0",
+   "accession": "0000884887-25-000050",
+   "cik": "0000884887",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001872",
+   "observation_id": "R_OBS_001872",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-27 18:28:00.0",
+   "accession": "0001562088-25-000042",
+   "cik": "0001562088",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001873",
+   "observation_id": "R_OBS_001873",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-27 16:07:00.0",
+   "accession": "0001792044-25-000008",
+   "cik": "0001792044",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001874",
+   "observation_id": "R_OBS_001874",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-03-13 12:16:00.0",
+   "accession": "0000205402-25-000005",
+   "cik": "0000205402",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001875",
+   "observation_id": "R_OBS_001875",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-25 16:40:00.0",
+   "accession": "0000077360-25-000006",
+   "cik": "0000077360",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001878",
+   "observation_id": "R_OBS_001878",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-27 16:39:00.0",
+   "accession": "0000950170-25-029149",
+   "cik": "0001582313",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001880",
+   "observation_id": "R_OBS_001880",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-26 16:09:00.0",
+   "accession": "0001438133-25-000036",
+   "cik": "0001438133",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001881",
+   "observation_id": "R_OBS_001881",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-03-31 17:06:00.0",
+   "accession": "0001640334-25-000558",
+   "cik": "0000894556",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001882",
+   "observation_id": "R_OBS_001882",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-03-25 17:02:00.0",
+   "accession": "0000843006-25-000012",
+   "cik": "0000843006",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001884",
+   "observation_id": "R_OBS_001884",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-03-31 20:57:00.0",
+   "accession": "0001477932-25-002281",
+   "cik": "0001809750",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001886",
+   "observation_id": "R_OBS_001886",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-21 11:15:00.0",
+   "accession": "0000078814-25-000015",
+   "cik": "0000078814",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001890",
+   "observation_id": "R_OBS_001890",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-03-11 15:48:00.0",
+   "accession": "0001026655-25-000005",
+   "cik": "0001026655",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001894",
+   "observation_id": "R_OBS_001894",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-24 17:43:00.0",
+   "accession": "0001558370-25-001397",
+   "cik": "0001361538",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001897",
+   "observation_id": "R_OBS_001897",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-27 16:03:00.0",
+   "accession": "0001558370-25-001801",
+   "cik": "0001267565",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001899",
+   "observation_id": "R_OBS_001899",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-11 08:01:00.0",
+   "accession": "0001558370-25-000781",
+   "cik": "0000007536",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001901",
+   "observation_id": "R_OBS_001901",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-26 16:10:00.0",
+   "accession": "0001490978-25-000014",
+   "cik": "0001490978",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001905",
+   "observation_id": "R_OBS_001905",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-03-03 13:44:00.0",
+   "accession": "0000950170-25-030619",
+   "cik": "0000751978",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001906",
+   "observation_id": "R_OBS_001906",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-03-14 16:03:00.0",
+   "accession": "0000950170-25-039389",
+   "cik": "0000906709",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001907",
+   "observation_id": "R_OBS_001907",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-03-31 06:04:00.0",
+   "accession": "0001641172-25-001416",
+   "cik": "0001702924",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001908",
+   "observation_id": "R_OBS_001908",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-13 17:35:00.0",
+   "accession": "0000004281-25-000011",
+   "cik": "0000004281",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001911",
+   "observation_id": "R_OBS_001911",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-18 16:17:00.0",
+   "accession": "0001077183-25-000028",
+   "cik": "0001077183",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001917",
+   "observation_id": "R_OBS_001917",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-27 16:13:00.0",
+   "accession": "0000950170-25-029050",
+   "cik": "0001658247",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001918",
+   "observation_id": "R_OBS_001918",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-14 15:38:00.0",
+   "accession": "0000068505-25-000012",
+   "cik": "0000068505",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001920",
+   "observation_id": "R_OBS_001920",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-12 15:27:00.0",
+   "accession": "0000906163-25-000011",
+   "cik": "0000906163",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001923",
+   "observation_id": "R_OBS_001923",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-27 13:05:00.0",
+   "accession": "0001437749-25-005406",
+   "cik": "0000043196",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001927",
+   "observation_id": "R_OBS_001927",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-03-18 15:37:00.0",
+   "accession": "0001171843-25-001527",
+   "cik": "0001626878",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001928",
+   "observation_id": "R_OBS_001928",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-21 09:00:00.0",
+   "accession": "0001628280-25-006992",
+   "cik": "0001652535",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001936",
+   "observation_id": "R_OBS_001936",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-25 17:17:00.0",
+   "accession": "0001794515-25-000045",
+   "cik": "0001794515",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001939",
+   "observation_id": "R_OBS_001939",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-03-06 07:51:00.0",
+   "accession": "0000703604-25-000012",
+   "cik": "0000703604",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001940",
+   "observation_id": "R_OBS_001940",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-20 16:17:00.0",
+   "accession": "0001046257-25-000018",
+   "cik": "0001046257",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001942",
+   "observation_id": "R_OBS_001942",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-03-05 19:06:00.0",
+   "accession": "0001402829-25-000005",
+   "cik": "0001402829",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001946",
+   "observation_id": "R_OBS_001946",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-25 07:46:00.0",
+   "accession": "0001831651-25-000019",
+   "cik": "0001831651",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001947",
+   "observation_id": "R_OBS_001947",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-25 20:00:00.0",
+   "accession": "0000950170-25-027078",
+   "cik": "0001580560",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001949",
+   "observation_id": "R_OBS_001949",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-27 16:07:00.0",
+   "accession": "0001681459-25-000036",
+   "cik": "0001681459",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001953",
+   "observation_id": "R_OBS_001953",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-03-18 16:12:00.0",
+   "accession": "0001140361-25-009257",
+   "cik": "0001368514",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001957",
+   "observation_id": "R_OBS_001957",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-03-26 16:16:00.0",
+   "accession": "0001558370-25-003707",
+   "cik": "0001133869",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001959",
+   "observation_id": "R_OBS_001959",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-27 17:30:00.0",
+   "accession": "0001437749-25-005523",
+   "cik": "0001173489",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001960",
+   "observation_id": "R_OBS_001960",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-03-28 17:22:00.0",
+   "accession": "0001641172-25-001303",
+   "cik": "0002030954",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001961",
+   "observation_id": "R_OBS_001961",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-03-06 16:54:00.0",
+   "accession": "0001803737-25-000049",
+   "cik": "0001803737",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001964",
+   "observation_id": "R_OBS_001964",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-13 13:51:00.0",
+   "accession": "0000055135-25-000007",
+   "cik": "0000055135",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001968",
+   "observation_id": "R_OBS_001968",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-03-17 08:22:00.0",
+   "accession": "0001043000-25-000010",
+   "cik": "0001043000",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001969",
+   "observation_id": "R_OBS_001969",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-20 16:32:00.0",
+   "accession": "0001587732-25-000013",
+   "cik": "0001587732",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001972",
+   "observation_id": "R_OBS_001972",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-24 16:08:00.0",
+   "accession": "0001176334-25-000040",
+   "cik": "0001176334",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001973",
+   "observation_id": "R_OBS_001973",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2024-11-21 14:19:00.0",
+   "accession": "0001032220-24-000094",
+   "cik": "0001032220",
+   "feature_period_end": "20240930",
+   "masked_company_id": "R_COMPANY_001975",
+   "observation_id": "R_OBS_001975",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-03-13 16:45:00.0",
+   "accession": "0001628280-25-012640",
+   "cik": "0000080035",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001977",
+   "observation_id": "R_OBS_001977",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2024-08-30 07:04:00.0",
+   "accession": "0001144879-24-000216",
+   "cik": "0001144879",
+   "feature_period_end": "20240531",
+   "masked_company_id": "R_COMPANY_001979",
+   "observation_id": "R_OBS_001979",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-13 16:16:00.0",
+   "accession": "0001410578-25-000127",
+   "cik": "0001910139",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001983",
+   "observation_id": "R_OBS_001983",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-18 16:05:00.0",
+   "accession": "0000950170-25-022207",
+   "cik": "0001669811",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001988",
+   "observation_id": "R_OBS_001988",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2024-11-06 12:01:00.0",
+   "accession": "0000823277-24-000046",
+   "cik": "0000823277",
+   "feature_period_end": "20240831",
+   "masked_company_id": "R_COMPANY_001989",
+   "observation_id": "R_OBS_001989",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-03-26 16:16:00.0",
+   "accession": "0001437749-25-009359",
+   "cik": "0001813452",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_001991",
+   "observation_id": "R_OBS_001991",
+   "outcome": 1,
+   "outcome_status": "VERIFIED"
+  },
+  {
+   "accepted": "2025-02-20 16:13:00.0",
+   "accession": "0001558370-25-001222",
+   "cik": "0001035983",
+   "feature_period_end": "20241231",
+   "masked_company_id": "R_COMPANY_002000",
+   "observation_id": "R_OBS_002000",
+   "outcome": 0,
+   "outcome_status": "VERIFIED"
+  }
+ ],
+ "schema_version": "1",
+ "status": "APPROVED_DEVELOPMENT_COMPANY_SET"
+}

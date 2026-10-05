@@ -16,6 +16,49 @@ def canonical_hash(value: Any) -> str:
 NON_MATERIAL_REPLAY_FIELDS = frozenset({"latency_ms", "created_at"})
 
 
+def verified_numeric_inputs(required_inputs: list, provenance: dict) -> bool:
+    if not isinstance(required_inputs, list) or not required_inputs or not isinstance(provenance, dict):
+        return False
+    for name in required_inputs:
+        if not isinstance(name, str):
+            return False
+        references = provenance.get(name)
+        if not isinstance(references, list) or not references:
+            return False
+        if any(
+            not isinstance(item, dict)
+            or str(item.get("verification_status", "")).casefold() != "verified"
+            for item in references
+        ):
+            return False
+    return True
+
+
+def verified_material_path(path: dict) -> bool:
+    """Reject legacy quote-only numeric contradictions at workflow proof gates."""
+    if not isinstance(path, dict):
+        return False
+    evidence = path.get("source_evidence")
+    if not isinstance(evidence, list) or not evidence or not all(isinstance(item, dict) for item in evidence):
+        return False
+    return isinstance(path, dict) and (
+        path.get("evidence_path_status") == "VERIFIED"
+        and bool(path.get("source_evidence"))
+        and (
+            path.get("rule_or_model") != "narrative_numeric_consistency"
+            or (
+                all(
+                    isinstance(item, dict) and item.get("verification_status") == "verified"
+                    for item in evidence
+                )
+                and verified_numeric_inputs(
+                    path.get("required_inputs", []), path.get("input_provenance", {})
+                )
+            )
+        )
+    )
+
+
 def material_decision_payload(value: Any) -> Any:
     """Remove operational telemetry that must not change decision identity."""
 
@@ -42,11 +85,7 @@ def build_decision_trace(
             evidence = signal.get("source_refs", [])
             required_inputs = signal.get("required_inputs", [])
             provenance = signal.get("input_provenance", {})
-            verified = bool(required_inputs) and all(
-                provenance.get(name)
-                and all(item.get("verification_status", "").casefold() == "verified" for item in provenance[name])
-                for name in required_inputs
-            )
+            verified = verified_numeric_inputs(required_inputs, provenance)
             paths.append(
                 {
                     "reason_code": reason_code,
@@ -89,18 +128,19 @@ def build_decision_trace(
             )
     for index, contradiction in enumerate(assessment.get("contradictions", [])):
         evidence = [contradiction.get("evidence", {})]
-        verified = evidence[0].get("verification_status") == "verified"
+        required_inputs = contradiction.get("required_inputs", [])
+        provenance = contradiction.get("input_provenance", {})
+        verified = (
+            evidence[0].get("verification_status") == "verified"
+            and verified_numeric_inputs(required_inputs, provenance)
+        )
         paths.append(
             {
                 "reason_code": f"DISCLOSURE_TENSION_{index + 1:03d}",
                 "risk_domain": contradiction.get("category", "disclosure_tension"),
                 "source_evidence": evidence,
-                # A contradiction path's input is the narrative claim itself, not a
-                # normalised metric, so there is no metric provenance. The keys are
-                # still present (empty) because the frontend iterates them and an
-                # undefined value crashed the Decision paths tab.
-                "required_inputs": [],
-                "input_provenance": {},
+                "required_inputs": required_inputs,
+                "input_provenance": provenance,
                 "rule_or_model": "narrative_numeric_consistency",
                 "rule_version": component_versions.get("rules", "UNPINNED"),
                 "fusion_version": component_versions.get("fusion", "UNPINNED"),

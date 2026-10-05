@@ -126,6 +126,8 @@ class Contradiction:
     conflicting_evidence: list[str]
     interpretation: str
     evidence: Evidence
+    required_inputs: list[str] = field(default_factory=list)
+    input_provenance: dict[str, list[Evidence]] = field(default_factory=dict)
 
 
 @dataclass

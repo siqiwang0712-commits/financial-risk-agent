@@ -2,15 +2,16 @@
 
 Status: **PROSPECTIVE PROTOCOL — NOT FROZEN — NO CORPUS, NO ANNOTATIONS, NO RESULTS**
 
-Supersedes the narrative paragraph in `STUDY_PROTOCOL.md` §12, which remains the summary.
+The structured-study boundary is summarized in `../STUDY_PROTOCOL_DRAFT.md` §8.
 
 ---
 
 ## 1. Why this is a separate study
 
-Structured E5 asks whether an Agent's **risk ranking** adds value beyond B6. It does not
-test whether the Agent can *read a filing*. Those are different capabilities with different
-evidence requirements, and E4 already showed what happens when they are conflated: E4's
+Structured E5 asks **when a financial-risk decision should be authorized, reviewed or
+withheld** under the S0–S4 design. It does not test whether the Agent can *read a filing*.
+Those are different capabilities with different evidence requirements, and E4 already
+showed what happens when they are conflated: E4's
 Agent packets contained structured facts and engineered metrics, not MD&A or Risk Factors,
 so E4 cannot support any claim about document reasoning. Its own audit records this as a
 scope boundary, not a gap to be papered over.

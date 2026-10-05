@@ -16,3 +16,14 @@ test('a final decision is displayed only when Assurance and Certificate agree',(
   assert.equal(authorizedDecision({...payload,decision_certificate:null}),'UNAUTHORIZED');
   assert.equal(authorizedDecision({...payload,agent:{decision_certificate:{...certificate,certificate_hash:'other'}}}),'UNAUTHORIZED');
 });
+
+test('missing, null and invalid authorization never falls back to a proposal',()=>{
+  for(const state of [undefined,null,'','HIGH']) {
+    const assurance={proposed_decision:'FLAG',final_decision:state,policy_hash:'policy'};
+    const certificate={...assurance,certificate_hash:'cert'};
+    assert.equal(authorizedDecision({proposed_decision:'FLAG',final_decision:state,assurance,decision_certificate:certificate}),'UNAUTHORIZED');
+  }
+  assert.equal(authorizedDecision({assurance:{},decision_certificate:{}}),'UNAUTHORIZED');
+  const assurance={proposed_decision:'FLAG',final_decision:'REVIEW',policy_hash:'policy'};
+  assert.equal(authorizedDecision({proposed_decision:'FLAG',final_decision:'REVIEW',assurance,decision_certificate:{...assurance,certificate_hash:''}}),'UNAUTHORIZED');
+});

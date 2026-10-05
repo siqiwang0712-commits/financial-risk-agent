@@ -333,6 +333,22 @@ def test_uncalibrated_policy_never_exposes_probability_or_automation():
     assert not result.automation_allowed
 
 
+@pytest.mark.parametrize("mutation", [
+    {"automation_allowed": "false"}, {"automation_allowed": 1},
+    {"evidence_fragility": {"state": "FRAGILE"}},
+    {"evidence_fragility": {"state": "NOT_ESTIMABLE"}},
+])
+def test_rehashed_malformed_authorization_still_fails_closed(mutation):
+    engine = calibrated_engine()
+    payload = engine.evaluate(input_for(path("a"), path("b"), reference=REFERENCE)).to_dict()
+    assert payload["automation_allowed"] is True
+    payload.update(mutation)
+    payload["certificate_hash"] = canonical_hash({
+        key: value for key, value in payload.items() if key != "certificate_hash"
+    })
+    assert not verify_assurance_payload(payload, engine.policy)
+
+
 def test_decision_certificate_hash_covers_assurance_content():
     assurance = calibrated_engine().evaluate(
         input_for(path("a"), path("b"), reference=REFERENCE)

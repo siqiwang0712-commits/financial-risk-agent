@@ -1,106 +1,77 @@
 # E5 — Prospective Validation of Assured Selective Financial Decisions
 
-Status: **DRAFT — WAITING FOR v0.4 ARCHITECTURE STABILIZATION**
+Status: **BLOCKED / DRAFT_NOT_FROZEN**
 
-E5 is protocol-only. No cohort, prediction, label, result, final preregistration hash or research claim
-exists yet. E4 outcomes are already known, so neither unused E4 companies nor
-post-hoc E4 model/prompt/fusion choices may receive confirmatory status.
+No E5 cohort, prediction, label, result, preregistration hash or freeze manifest exists.
+The authoritative human draft is [`STUDY_PROTOCOL_DRAFT.md`](STUDY_PROTOCOL_DRAFT.md);
+its machine-readable companion is [`experiment_config.json`](experiment_config.json).
+Those are the only current structured-E5 study-contract files eligible for a future
+protocol freeze after their explicit blockers are resolved.
 
-The current E5 purpose is no longer “Agent/Hybrid versus B6.” Future E5 must evaluate
-whether assurance changes the safety and utility of selective financial decisions while
-retaining a strong predictive reference. Its comparison framework is:
+E5 asks whether Assurance improves selective authorization quality and utility on a
+future, company-disjoint cohort while retaining a competitive predictive reference. It
+does not reduce Assurance to AUROC and does not assume that withholding decisions improves
+prediction.
 
-1. strong tabular predictor;
-2. strong tabular predictor plus a frozen selective policy;
-3. raw Agent proposal;
-4. Agent proposal plus evidence verification;
-5. full FinRisk Assurance: evidence, fragility, distribution validity and admission policy.
+## Current five-arm design
 
-B0 and B6 remain historical anchors, not the default primary reference after E4-R showed
-that strong tabular models outperform B6. Ranking, calibration, risk–coverage behavior,
-unsafe-automation rate and abstention/review utility require distinct estimands.
-
-E5 must use a newly available future period, freeze all decisions before
-outcome access, and remain company-disjoint from E1–E4 and prior validation
-cohorts.
-
-## Protocol package
-
-`STUDY_PROTOCOL_DRAFT.md` is the current v0.4-aligned design note. The more detailed
-package under `protocol/` preserves useful governance, isolation and adjudication
-infrastructure, but its old B6/A2/Hybrid hypothesis framing is **legacy design material,
-not a freeze candidate**, until it is rewritten after the v0.4 contracts stabilize:
-
-| File | Purpose |
+| Arm | Conceptual role |
 |---|---|
-| `protocol/STUDY_PROTOCOL.md` | the protocol itself: isolation, estimand, systems, hypothesis hierarchy, power, adjudication, governance |
-| `protocol/INFERENCE_POLICY.md` | prespecified primary inference, permitted secondary procedures, forbidden procedures |
-| `protocol/AGENT_REPRESENTATIONS.md` | exact A0–A3 field lists, the A2/B6 confound surface (measured), the aggregation-equivalence diagnostic, and the A3 definition |
-| `protocol/representations.json` | the same in machine-readable form: field lists, forbidden keys, `temporal_evidence` schema, A3 eligibility |
-| `protocol/AGENT_QUALIFICATION_PROTOCOL.md` | outcome-blind model selection and its hard gates |
-| `protocol/OUTCOME_ADJUDICATION_PROTOCOL.md` | blinded two-tier adjudication and its reporting requirements |
-| `protocol/GOVERNANCE_WORKFLOW.md` | the nine stage commits and the freeze-manifest schema |
-| `protocol/experiment_config.json` | the machine-readable freeze payload |
-| `protocol/power_analysis.py` | simulation-based prospective power analysis |
-| `protocol/power_analysis.json` | its output: power curves, recommended cohort, attrition sensitivity |
-| `protocol/verify_freeze_chain.py` | mechanical verifier for the staged freeze chain |
+| `S0` | Strong Tabular Predictor selected prospectively under `StrongTabularReference-v1` |
+| `S1` | S0 plus a prospectively frozen simple selective policy |
+| `S2` | Raw Agent proposal with no final-decision authority |
+| `S3` | S2 plus evidence verification, excluding the remaining Full Assurance controls |
+| `S4` | Full FinRisk Assurance: evidence, fragility, distribution validity, admission policy and certificate-bound authorization |
 
-`protocol/` is written but **not frozen** and has no final preregistration hash. Nothing here has a cohort, a
-prediction, a label or a result.
+B0 and B6 remain historical reference and interpretability anchors. They may be reported
+for E4 continuity, but neither is S0 or the strongest competitive reference.
 
-## Narrative / evidence study
+[`StrongTabularReference-v1`](../strong_tabular_reference/README.md) now has a fitted,
+replayable `DESIGN_EXPOSED` historical-development artifact. It remains
+`DRAFT_NOT_FROZEN` for E5: its E5 identity is not frozen and its development metrics are
+not prospective evidence. E4-R informed the candidate design but cannot validate E5.
 
-`narrative/` holds the separate claim-level study, which tests whether the Agent can
-extract, ground and check claims against filing text (MD&A, Risk Factors, Liquidity, Debt,
-going-concern footnotes, auditor commentary). It is deliberately **not** merged into
-structured E5: structured E5 asks whether risk *ranking* adds value, this asks whether the
-Agent can *read a filing*, and E4's own audit records that E4's packets contained no
-document text at all.
+## Structured and narrative studies
 
-| File | Purpose |
+Structured E5 asks when a financial-risk decision should be authorized, reviewed or
+withheld. [`E5-Narrative`](narrative/NARRATIVE_PROTOCOL.md) separately asks whether an Agent
+can extract, ground, cite and verify claims in filing text. The studies retain separate
+protocols, configs, datasets, freeze identities, metrics, claims and future results.
+
+## Legacy protocol package
+
+The materials under [`protocol/`](protocol/) are preserved rather than rewritten as
+history. They cannot control a future structured-E5 freeze.
+
+| Legacy material | Current role |
 |---|---|
-| `narrative/NARRATIVE_PROTOCOL.md` | corpus, annotation schema, metrics N1–N5, instrument validation, systems, inference, failure taxonomy, governance |
-| `narrative/experiment_config.json` | the machine-readable freeze payload, including the annotation schema |
+| `protocol/STUDY_PROTOCOL.md` and `protocol/experiment_config.json` | superseded B6/A2/Hybrid scientific design; not freeze candidates |
+| `protocol/INFERENCE_POLICY.md` | reusable paired-inference, resampling and multiplicity guidance; old hypotheses superseded |
+| `protocol/AGENT_REPRESENTATIONS.md` / `representations.json` | reusable A0–A3 confound evidence; do not select S2/S3 |
+| `protocol/AGENT_QUALIFICATION_PROTOCOL.md` | reusable outcome-blind qualification gates; exact S2 identity remains open |
+| `protocol/OUTCOME_ADJUDICATION_PROTOCOL.md` | reusable blinding and non-coercion mechanics; exact version remains open |
+| `protocol/GOVERNANCE_WORKFLOW.md` / `verify_freeze_chain.py` | legacy governance design; the active registry is `harness/e5_harness.py` |
+| `protocol/power_analysis.py` / `power_analysis.json` | legacy AUROC planning infrastructure; not the power basis for the new authorization primary family |
 
-Its most important design element is **instrument validation**: controlled defects are
-planted into reference claims, and the metric implementation must recover them at a reported
-rate *before* any model output exists. A metric for citation correctness that cannot detect a
-deliberately wrong citation cannot be trusted to report one in model output — the same lesson
-the E4-S audit applies to E4's inference.
+The active harness now hashes the top-level authoritative draft and config. It reports
+`NOT_FROZEN` until a later, explicitly authorized protocol-freeze operation occurs.
 
-## Status of the freeze prerequisites
+## Current blockers
 
-Ready:
+Before protocol freeze, the project must still bind the historical reference into the E5
+identity and finalize the calibration disposition, E5 reference-distribution design, Assurance policy and
+certificate versions, primary authorization estimand, multiplicity alpha, meaningful
+effects/thresholds, eligibility/timing logic and S2/S3 identity.
 
-- hypothesis hierarchy H1/H2/H3 with Holm multiplicity over a three-test primary family;
-- primary test fixed to paired DeLong, with the label-permutation design explicitly
-  excluded as a test of AUROC equality (see `research/e4_statistical_audit/`);
-- one-company-per-semantic-request inference policy;
-- Agent qualification gates and lexicographic selection rule;
-- blinded adjudication protocol with a disagreement rule;
-- staged, hash-chained governance workflow with a verifier;
-- A0–A3 defined exactly as the frozen `packet()` builds them, with a test that fails if the
-  documentation and the code drift apart;
-- the A2/B6 confound surface measured and written down, with the aggregation-equivalence
-  diagnostic prespecified so a "the Agent re-weighted the baselines" result cannot be
-  reported as "the Agent adds value".
+The missing prior 270-company list remains a later cohort-freeze blocker. No list is
+invented here.
 
-Blocking:
+See the [readiness audit](../e5_readiness/READINESS_AUDIT.md) and
+[phase-specific blocker list](../e5_readiness/BLOCKERS.md).
 
-- The v0.4 API, policy, certificate schema and reference-distribution design must
-  stabilize before any comparator or estimand is frozen.
-- A strong tabular predictor and its separate calibration split must be selected without
-  E5 outcome access; B6 alone is not an adequate competitive baseline after E4-R.
+Validate current contract consistency without freezing anything:
 
-- **`research/e4/_cache/previous_270.json` is unpublished** (only its SHA-256 is pinned),
-  so company-disjointness against the prior 270-CIK cohort cannot be proven. This must be
-  published before the cohort freeze.
-- The minimum meaningful ΔAUROC is a design choice that must be declared in the freeze
-  commit; the power analysis reports a curve so the choice can be defended.
-- The monotone-re-derivation ceiling in `protocol/representations.json` is still `null` and
-  must be declared in the freeze commit.
-- **A3 needs a multi-period extraction** from the same accession, implemented and frozen
-  before the cohort is enumerated. E4's `build_features` extracts only two periods, so A3 is
-  currently ineligible and A2 is primary.
-- The E5 feature and outcome periods must actually become available before the cohort can
-  be enumerated.
+```bash
+python research/e5/validate_study_contract.py
+python research/e5/harness/verify_e5.py
+```

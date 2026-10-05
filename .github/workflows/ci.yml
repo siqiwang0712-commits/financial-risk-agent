@@ -25,11 +25,12 @@ jobs:
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
-          fetch-depth: 2
+          # Research artifact provenance verifies the recorded historical source commit.
+          fetch-depth: 0
       - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7
         with: {python-version: "${{ matrix.python-version }}"}
       - run: python -m pip install pip==26.2.0
-      - run: python -m pip install -c requirements.lock -e ".[dev,postgres]"
+      - run: python -m pip install -c requirements.lock -e ".[dev,postgres,research]"
       - run: python -m pip check
       - run: python -m pip install pip-audit
       # Auditing the installed environment would always fail here: this project's
@@ -41,13 +42,30 @@ jobs:
       # can silently invalidate a frozen manifest if they drift, so they are linted and
       # typed like any other source directory.
       - run: ruff check backend tests scripts research
-      - run: git diff --check HEAD^ HEAD
+      - name: Reject whitespace errors across the complete pushed/PR change
+        shell: bash
+        run: |
+          set -euo pipefail
+          base='${{ github.event.pull_request.base.sha || github.event.before }}'
+          if [[ -z "$base" || "$base" =~ ^0+$ ]]; then
+            base='HEAD^'
+          fi
+          if ! git cat-file -e "${base}^{commit}" 2>/dev/null; then
+            git fetch --no-tags --depth=1 origin "$base"
+          fi
+          git diff --check "${base}..HEAD"
       - run: python scripts/validate_postgres_migration.py
       - run: pytest --cov=finrisk --cov-report=term-missing --cov-fail-under=90
       - name: Verify prospective empirical provenance fails closed
         run: python scripts/run_empirical_validation.py --provenance-v2 --report .runtime/integrity-report.json
       - name: Verify frozen E4 public research artifacts
         run: python scripts/verify_e4_public_artifacts.py
+      - name: Verify v0.4.1 checked-in research artifacts (no retraining)
+        # The fitted research artifact pins Python 3.12 and its numeric stack.
+        # Both interpreters still run the full product/research test suite above,
+        # including fail-closed tests for an incompatible replay runtime.
+        if: matrix.python-version == '3.12'
+        run: python scripts/verify_v041.py --ci
   frontend:
     runs-on: ubuntu-latest
     defaults:
@@ -67,9 +85,9 @@ jobs:
   docker-smoke:
     runs-on: ubuntu-latest
     env:
-      POSTGRES_PASSWORD: ci-only-strong-password-v032
+      POSTGRES_PASSWORD: ci-only-strong-password-v041
       FINRISK_LLM_PROVIDER: mock
-      FINRISK_BOOTSTRAP_TOKEN: ci-only-bootstrap-token-v032
+      FINRISK_BOOTSTRAP_TOKEN: ci-only-bootstrap-token-v041
       # Smoke clients reuse the repository's bounded HTTP helpers without
       # installing the application package on the GitHub runner.
       PYTHONPATH: backend

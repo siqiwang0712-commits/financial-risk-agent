@@ -2,7 +2,7 @@
  "study": "E5-Narrative",
  "status": "PROSPECTIVE_NOT_FROZEN",
  "protocol_document": "research/e5/narrative/NARRATIVE_PROTOCOL.md",
- "separate_from": "structured E5 (research/e5/protocol/STUDY_PROTOCOL.md)",
+ "separate_from": "structured E5 (research/e5/STUDY_PROTOCOL_DRAFT.md)",
  "merge_with_structured_e5": false,
  "cross_study_claim_transfer": "forbidden: no metric from this study may be cited as evidence for a structured-E5 claim, or the reverse",
 

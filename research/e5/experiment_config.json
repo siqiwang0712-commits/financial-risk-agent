@@ -1,0 +1,241 @@
+{
+ "assurance": {
+  "certificate_schema_status": "TO_BE_FROZEN",
+  "full_assurance_arm": "S4",
+  "policy_maturity": "HEURISTIC_POLICY",
+  "policy_version_status": "TO_BE_FROZEN",
+  "runtime_status": "IMPLEMENTED_INTERNAL_DEVELOPMENT_VALIDATION_ONLY"
+ },
+ "authoritative_protocol": {
+  "freeze_allowed": false,
+  "path": "research/e5/STUDY_PROTOCOL_DRAFT.md",
+  "status": "DRAFT_NOT_FROZEN"
+ },
+ "calibration": {
+  "probability_interpretation_allowed": false,
+  "resolution_status": "RESOLVED_AS_UNCALIBRATED_FOR_V0.4.1",
+  "score_status": "UNCALIBRATED",
+  "valid_future_options": [
+   "FREEZE_COMPANY_AND_TIME_DISJOINT_CALIBRATION_DESIGN",
+   "FREEZE_E5_AS_UNCALIBRATED"
+  ]
+ },
+ "cohort": {
+  "company_disjointness": "TO_BE_PROVEN_BEFORE_COHORT_FREEZE",
+  "enumerated": false,
+  "previous_270_exclusion": "BLOCKED_BEFORE_COHORT_FREEZE",
+  "status": "NOT_ENUMERATED"
+ },
+ "comparison_questions": [
+  {
+   "comparison": "S1_vs_S0",
+   "question": "Does simple selective admission improve error/coverage relative to unconditional S0?",
+   "role": "KEY_SECONDARY"
+  },
+  {
+   "comparison": "S3_vs_S2",
+   "question": "Does evidence verification change unsupported or erroneous issued-decision behavior?",
+   "role": "KEY_SECONDARY"
+  },
+  {
+   "comparison": "S4_vs_S3",
+   "question": "What do the additional Assurance controls contribute beyond evidence verification?",
+   "role": "PRIMARY_CANDIDATE_P2"
+  },
+  {
+   "comparison": "S4_vs_S1",
+   "question": "Does Full Assurance improve authorization quality beyond a strong predictor with simple selection?",
+   "role": "PRIMARY_CANDIDATE_P1"
+  }
+ ],
+ "conceptual_arms": [
+  {
+   "authorization_authority": "NONE",
+   "id": "S0",
+   "implementation_status": "HISTORICAL_ARTIFACT_FITTED_E5_IDENTITY_TO_BE_FROZEN",
+   "name": "Strong Tabular Predictor",
+   "purpose": "competitive unconditional predictive reference"
+  },
+  {
+   "authorization_authority": "SIMPLE_SELECTIVE_POLICY_ONLY",
+   "id": "S1",
+   "implementation_status": "TO_BE_FROZEN",
+   "name": "Strong Tabular Predictor + Selective Policy",
+   "purpose": "isolate simple selective admission from Agent reasoning and Full Assurance"
+  },
+  {
+   "authorization_authority": "NONE_PROPOSAL_ONLY",
+   "id": "S2",
+   "implementation_status": "TO_BE_FROZEN",
+   "name": "Raw Agent Proposal",
+   "purpose": "measure a frozen Agent proposal path without final-decision authority"
+  },
+  {
+   "authorization_authority": "EVIDENCE_ONLY_ROUTING_NOT_FULL_ASSURANCE",
+   "id": "S3",
+   "implementation_status": "TO_BE_FROZEN",
+   "name": "Agent + Evidence Verification",
+   "purpose": "isolate evidence admission from the remaining Assurance controls"
+  },
+  {
+   "authorization_authority": "ASSURANCE_RESULT_AND_CERTIFICATE_REQUIRED",
+   "id": "S4",
+   "implementation_status": "IMPLEMENTED_NOT_PROSPECTIVELY_VALIDATED",
+   "name": "Full FinRisk Assurance",
+   "purpose": "evaluate the complete evidence, fragility, distribution and admission path"
+  }
+ ],
+ "environment_variables": {
+  "FINRISK_SEC_MAX_ARCHIVE_MEMBER_BYTES": "2147483648",
+  "status": "TO_BE_FROZEN_WITH_ENVIRONMENT_MANIFEST"
+ },
+ "estimand_families": {
+  "authorization_quality": {
+   "candidate_measures": [
+    "unsupported_authorized_decision_rate",
+    "erroneous_authorized_decision_rate",
+    "out_of_reference_authorization_rate"
+   ],
+   "primary_measure_status": "TO_BE_FROZEN"
+  },
+  "calibration": {
+   "role": "CONDITIONAL_CONFIRMATORY_OR_DESCRIPTIVE",
+   "status": "BLOCKED_PENDING_VALID_DISJOINT_DESIGN"
+  },
+  "evidence_behavior": {
+   "measures": [
+    "verified_evidence_coverage",
+    "unsupported_claim_admission",
+    "structured_evidence_path_correctness",
+    "deterministic_evidence_fragility"
+   ],
+   "role": "KEY_SECONDARY"
+  },
+  "predictive_discrimination": {
+   "measures": ["AUROC", "PR_AUC"],
+   "role": "KEY_SECONDARY"
+  },
+  "selective_behavior": {
+   "measures": [
+    "coverage",
+    "selective_error_or_risk",
+    "risk_or_error_coverage_curve",
+    "review_rate",
+    "abstention_rate"
+   ],
+   "role": "KEY_SECONDARY"
+  }
+ },
+ "freeze_prerequisites": {
+  "assurance_policy_version": "TO_BE_FROZEN",
+  "authoritative_contract_reconciled": "READY",
+  "calibration_path": "RESOLVED_AS_UNCALIBRATED_FOR_V0.4.1_E5_CHOICE_TO_BE_FROZEN",
+  "certificate_schema_version": "TO_BE_FROZEN",
+  "eligibility_and_timing_logic": "TO_BE_FROZEN",
+  "minimum_effects_and_thresholds": "TO_BE_FROZEN",
+  "multiplicity_family_and_alpha": "TO_BE_FROZEN",
+  "primary_estimands": "TO_BE_FROZEN",
+  "reference_distribution_design": "DEVELOPMENT_REFERENCE_READY_E5_DESIGN_TO_BE_FROZEN",
+  "strong_tabular_reference_design": "READY_HISTORICAL_ARTIFACT_E5_BINDING_TO_BE_FROZEN"
+ },
+ "governance": {
+  "active_harness": "research/e5/harness/e5_harness.py",
+  "config_freeze_path": "research/e5/experiment_config.json",
+  "legacy_verifier": "research/e5/protocol/verify_freeze_chain.py",
+  "protocol_freeze_allowed": false,
+  "protocol_freeze_path": "research/e5/STUDY_PROTOCOL_DRAFT.md",
+  "stage_order": [
+   "protocol",
+   "model-qualification",
+   "cohort-freeze",
+   "feature-packet-freeze",
+   "prediction-freeze",
+   "outcome-unlock",
+   "adjudication-freeze",
+   "statistical-analysis",
+   "final-report"
+  ],
+  "status": "DRAFT"
+ },
+ "historical_anchors": [
+  {
+   "id": "B0",
+   "primary_competitive_reference": false,
+   "role": "HISTORICAL_REFERENCE_AND_INTERPRETABILITY_ANCHOR"
+  },
+  {
+   "id": "B6",
+   "primary_competitive_reference": false,
+   "role": "HISTORICAL_REFERENCE_AND_INTERPRETABILITY_ANCHOR"
+  }
+ ],
+ "narrative_study": {
+  "config": "research/e5/narrative/experiment_config.json",
+  "merge_with_structured_e5": false,
+  "name": "E5-Narrative",
+  "protocol": "research/e5/narrative/NARRATIVE_PROTOCOL.md",
+  "status": "SEPARATE_NOT_FROZEN"
+ },
+ "outcomes": {
+  "accessed": false,
+  "artifacts_exist": false,
+  "status": "NOT_ACCESSED"
+ },
+ "predictions": {
+  "artifacts_exist": false,
+  "status": "NOT_GENERATED"
+ },
+ "primary_family": {
+  "family_wise_alpha": "TO_BE_FROZEN",
+  "hypotheses": [
+   {
+    "comparison": "S4_vs_S1",
+    "estimand": "TO_BE_FROZEN_PRIMARY_AUTHORIZATION_QUALITY_ESTIMAND",
+    "id": "P1",
+    "status": "TO_BE_FROZEN"
+   },
+   {
+    "comparison": "S4_vs_S3",
+    "estimand": "TO_BE_FROZEN_AUTHORIZATION_OR_COMPONENT_INCREMENT_ESTIMAND",
+    "id": "P2",
+    "status": "TO_BE_FROZEN"
+   }
+  ],
+  "minimum_meaningful_effects": "TO_BE_FROZEN",
+  "multiplicity": "HOLM_STEP_DOWN_OVER_P1_P2_AFTER_FREEZE",
+  "statistical_tests": "TO_BE_FROZEN_PER_ESTIMAND",
+  "status": "TO_BE_FROZEN"
+ },
+ "reference_distribution": {
+  "development_fixture_is_eligible": false,
+  "development_profile": "research/strong_tabular_reference/artifacts/empirical_development_reference.json",
+  "development_profile_status": "EMPIRICAL_DEVELOPMENT_REFERENCE_ONLY",
+  "freeze_status": "TO_BE_FROZEN_FOR_E5",
+  "required_scope": "EMPIRICAL_OUTCOME_BLIND_PRE_E5_REFERENCE"
+ },
+ "schema_version": "1",
+ "status": "DRAFT_NOT_FROZEN",
+ "strong_tabular_reference": {
+  "artifact_contract": "research/strong_tabular_reference/artifact_manifest.template.json",
+  "contract_identity": "research/strong_tabular_reference/contract_identity.json",
+  "contract_sha256": "0241687d0787f2f88a5b9a7186cf8d236595677da309e9ae4c75666b3176d333",
+  "config": "research/strong_tabular_reference/experiment_config.json",
+  "contract": "StrongTabularReference-v1",
+  "development_data_contract": "research/strong_tabular_reference/development_data_manifest.template.json",
+  "development_data_manifest": "research/strong_tabular_reference/development_data_manifest.json",
+  "development_data_proposal": "research/strong_tabular_reference/development_data_proposal.json",
+  "development_data_status": "APPROVED_FOR_STRONG_REFERENCE_DEVELOPMENT",
+  "development_data_approval_required_before_fit": true,
+  "exclude_all_approved_development_companies_from_e5": true,
+  "feature_schema": "research/strong_tabular_reference/feature_schema.json",
+  "fitted_artifact": "research/strong_tabular_reference/artifacts/artifact_manifest.json",
+  "fitted_artifact_exists": true,
+  "fitted_artifact_hash": "3e1ebd825f1699bcc88e52a531bf9199aad3e93a671cfe28640f15dd33759a26",
+  "historical_artifact_status": "FITTED_HISTORICAL_NOT_E5_FROZEN",
+  "model_selected": true,
+  "schema_sha256": "90219904d55805c2bd55457bfe2bbe1a92a34765768857e77004322fe7f3a836",
+  "status": "DRAFT_NOT_FROZEN"
+ },
+ "study_id": "E5",
+ "study_title": "Prospective Validation of Assured Selective Financial Decisions"
+}

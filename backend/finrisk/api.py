@@ -55,6 +55,7 @@ from .process_isolation import WorkerTimeoutError, run_spawned_worker
 from .public_pilot import PublicPilotUnavailable, public_pilot_payload
 from .runtime import build_runtime_components, document_limits
 from .secret_files import env_or_file as _env_or_file
+from .upload_boundary import UPLOAD_PRINCIPAL, UploadBoundary
 from .xbrl import parse_companyfacts, values_by_year
 
 
@@ -233,6 +234,9 @@ if FastAPI:
         for origin in os.getenv("FINRISK_CORS_ORIGINS", "http://localhost:3000").split(",")
         if origin.strip()
     ]
+    # Keep the upload boundary inside CORS/correlation handling, but outside
+    # routing (multipart parsing). The callback is resolved when requests arrive.
+    app.add_middleware(UploadBoundary, authenticate=lambda key: authenticate_api_key(key))
     app.add_middleware(
         CORSMiddleware,
         allow_origins=cors_origins,
@@ -364,7 +368,7 @@ if FastAPI:
         )
         return response
 
-    def authenticated_principal(x_api_key: str | None = Header(default=None)) -> Principal:
+    def authenticate_api_key(x_api_key: str | None) -> Principal:
         if not x_api_key:
             raise HTTPException(401, "missing API key")
         try:
@@ -374,6 +378,12 @@ if FastAPI:
         if not api_limiter.allow(f"core:{principal.organization_id}:{principal.user_id}"):
             raise HTTPException(429, "rate limit exceeded")
         return principal
+
+    def authenticated_principal(request: Request, x_api_key: str | None = Header(default=None)) -> Principal:
+        admitted = request.scope.get("state", {}).get(UPLOAD_PRINCIPAL)
+        if isinstance(admitted, Principal):
+            return admitted
+        return authenticate_api_key(x_api_key)
 
     protected = Depends(authenticated_principal)
 

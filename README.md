@@ -6,15 +6,18 @@
 
 # FinRisk
 
-### Assured selective financial intelligence — v0.4.0 review candidate
+### Assured selective financial intelligence — v0.4.1
 
 [![CI](https://github.com/siqiwang0712-commits/financial-risk-agent/actions/workflows/ci.yml/badge.svg)](https://github.com/siqiwang0712-commits/financial-risk-agent/actions/workflows/ci.yml)
-[![Python 3.11+](https://img.shields.io/badge/Python-3.11%2B-3776AB?logo=python&logoColor=white)](https://www.python.org/)
-[![License](https://img.shields.io/badge/license-MIT-d45b3e)](LICENSE)
+[![Python 3.11–3.12](https://img.shields.io/badge/Python-3.11%E2%80%933.12-3776AB?logo=python&logoColor=white)](https://www.python.org/)
+[![License](https://img.shields.io/badge/license-Apache--2.0-d45b3e)](LICENSE)
 
 **A research system that separates financial-risk prediction from decision authorization.**
 
 English | [简体中文](README.zh-CN.md)
+
+Current release: **v0.4.1 — 2026-10-05** ·
+[Release notes](RELEASE_NOTES_v0.4.1.md) · [Engineering audit](docs/RELEASE_AUDIT_v0.4.1.md)
 
 [Quick start](#quick-start) · [How it works](#how-it-works) ·
 [Research results](#research-results) · [Documentation](#documentation)
@@ -46,6 +49,16 @@ This is the v0.3.x → v0.4 shift: v0.3.x provided evidence-grounded financial-r
 analysis; v0.4 makes decision authorization a separate, fail-closed runtime layer.
 Severity, evidence support, fragility, distribution validity, model disagreement and
 calibration remain separate quantities rather than one persuasive confidence score.
+
+### What v0.4.1 adds
+
+v0.4.1 completes research-readiness and release hardening around that architecture:
+a research-only StrongTabularReference-v1, approved historical development data,
+explicit V/O/VO/CC observability diagnostics, an empirical development reference,
+selective-evaluation tooling and stage-aware E5 preflight. Upload admission, numeric
+evidence provenance, malformed Assurance rejection and certificate-bound display were
+also hardened. The software release does not establish prospective or external validity;
+E5 remains blocked and unfrozen.
 
 ## Why FinRisk?
 
@@ -108,7 +121,7 @@ The runtime enforces four responsibility boundaries:
 `AssuranceEngine` is the sole authorization owner. The enforced invariant is:
 
 ```text
-No AssuranceResult → no authorized final decision
+No valid AssuranceResult → no authorized final_decision
 ```
 
 Material claims trace from source document, location, period, XBRL concept, unit and raw
@@ -176,7 +189,9 @@ docker compose up --build
 Open the Workbench at `http://localhost:3000`; the API is at
 `http://localhost:8000`.
 
-Published GHCR images are available through `docker-compose.release.yml`:
+For images published by the maintainer, use `docker-compose.release.yml` and pin the
+digests from the publication run. The audited v0.4.1 container run was a non-publishing
+dry-run, not evidence that v0.4.1 release tags already exist:
 
 ```bash
 cp .env.release.example .env    # edit secrets and first-run bootstrap settings
@@ -224,9 +239,33 @@ the [reproducibility guide](research/EXPERIMENT_REPRODUCIBILITY.md).
 
 ## Research results
 
-The current evidence surface is the locked v0.3.4/E4 study and its explicitly post-hoc
-audits. Earlier pilot and v0.3.1 artifacts remain available as historical audit records,
-but are not the primary result surface.
+### v0.4.1 retrospective development reference
+
+v0.4.1 adds a reproducible research-only `StrongTabularReference-v1`. On the
+**design-exposed**, selectively verified E4-S development subset (675 observations /
+675 companies; 235 events and 440 non-events), the prespecified procedure mechanically selected `VO` + Histogram Gradient
+Boosting. Its out-of-fold **retrospective-development** AUROC is **0.881789** and PR-AUC
+is **0.828968**. These are not independent validation estimates. The score is
+`UNCALIBRATED`, does not authorize decisions, and is not used by the production pipeline.
+
+The corresponding observability diagnostic finds AUROC `0.872060` for values (`V`),
+`0.835933` for observability only (`O`), `0.881789` for their explicit combination
+(`VO`), and `0.676736` on the 154-row complete-case sensitivity subset (`CC`). CC contains
+only 10 events, so its estimate is a small-subset sensitivity result and is not directly
+comparable to the full-cohort estimates. Reporting availability therefore carries
+retrospective predictive information here; it is not a causal finding or financial
+severity. See the
+[canonical results](research/strong_tabular_reference/artifacts/canonical_results.json),
+[diagnostic report](research/strong_tabular_reference/OBSERVABILITY_DIAGNOSTIC.md), and
+[v0.4.1 release notes](RELEASE_NOTES_v0.4.1.md).
+
+All 2,000 E4-S source companies are mandatory future E5 exclusions. E5 remains
+`BLOCKED / DRAFT_NOT_FROZEN`: no future cohort, prediction, outcome, or freeze identity exists.
+
+The original E4 evidence comes from the locked v0.3.4 implementation and its explicitly
+post-hoc audits. Its 674 verified outcomes are a different historical object from the
+675-observation E4-S development subset above. Earlier pilot and v0.3.1 artifacts remain
+available as historical audit records.
 
 | E4 result | Value |
 |---|---:|
@@ -336,11 +375,12 @@ The canonical integrity, selection-bias and source-concordance results remain in
 
 ## Project maturity
 
-The current local target is **v0.4.0 review — Assured Selective Financial
-Intelligence**. The Assurance Runtime, proposal/authorization boundary, deterministic
+**v0.4.1 — Research Readiness & Strong Reference** was released on **2026-10-05**.
+The Assurance Runtime, proposal/authorization boundary, deterministic
 fragility analysis, Decision-Sufficient Evidence, distribution-validity diagnostics and
-Decision Certificate are implemented. This is an engineering release: it does not change
-the frozen E4 results, claim a stronger predictor, or freeze/run E5.
+Decision Certificate are implemented. This is a research-prototype software release:
+it does not change frozen E4 results, establish prospective predictive superiority,
+or freeze/run E5.
 
 - **Validated in a limited research scope:** deterministic fixtures, automated quality
   gates, frozen E4 artifact integrity, and B6 over B0 on 674 verified E4 outcomes.
@@ -349,16 +389,18 @@ the frozen E4 results, claim a stronger predictor, or freeze/run E5.
   replay integration, API contract, Workbench hierarchy, Python 3.11/3.12, installable
   artifacts, and Docker/PostgreSQL restart persistence.
 - **Development reference only:** a hash-bound synthetic profile reproducibly exercises
-  `IN_REFERENCE`, `WARNING` and `OUTSIDE_REFERENCE`; it is not an empirical or external
-  validation reference and unknown real-world inputs still fail closed.
+  `IN_REFERENCE`, `WARNING` and `OUTSIDE_REFERENCE`. v0.4.1 also adds a label-independent
+  `EMPIRICAL_DEVELOPMENT_REFERENCE_ONLY` research profile; neither is external validation,
+  and unknown real-world inputs still fail closed.
 - **Implemented, not externally validated:** XBRL/PDF reconciliation, temporal state,
   constrained provider, Agent critic/verifier, risk-case workflow, RBAC/API keys and storage.
-- **Pending:** prospective E5, an empirical reference distribution, calibrated admission
-  policy, external validation and production/regulatory evaluation.
+- **Pending:** prospective E5, an E5-frozen reference-distribution design, calibrated
+  admission policy, external validation and production/regulatory evaluation.
 
 [Project Status](PROJECT_STATUS.md) is the authoritative maturity inventory. See the
-[v0.4.0 release notes](RELEASE_NOTES_v0.4.0.md) and [Changelog](CHANGELOG.md) for release
-scope and history.
+[v0.4.1 release notes](RELEASE_NOTES_v0.4.1.md) and [Changelog](CHANGELOG.md) for release
+scope and history. The [final engineering audit](docs/RELEASE_AUDIT_v0.4.1.md) records
+the tested runtime SHA, successful CI and container dry-run, and local environment limits.
 
 ## Repository map
 
@@ -430,6 +472,8 @@ before any deployment.
 - [API Reference](docs/API_REFERENCE.md)
 - [Contributing](CONTRIBUTING.md)
 - [Changelog](CHANGELOG.md)
+- [v0.4.1 release notes](RELEASE_NOTES_v0.4.1.md)
+- [v0.4.1 final engineering audit](docs/RELEASE_AUDIT_v0.4.1.md)
 - [v0.4.0 release notes](RELEASE_NOTES_v0.4.0.md)
 - [v0.3.4 release notes](RELEASE_NOTES_v0.3.4.md)
 - [Failure Lab](failure_lab/README.md)
@@ -441,7 +485,8 @@ FinRisk is a research prototype. In particular, it is:
 - `UNCALIBRATED` and not a probability of bankruptcy, default or correctness;
 - governed by a heuristic Assurance policy, not a calibrated selective-risk guarantee;
 - unable to assert externally validated distribution validity; the bundled synthetic
-  development reference is explicitly `DEVELOPMENT_REFERENCE_ONLY`;
+  profile is `DEVELOPMENT_REFERENCE_ONLY` and the historical empirical research profile
+  is `EMPIRICAL_DEVELOPMENT_REFERENCE_ONLY`, not an E5-frozen or production reference;
 - not a credit rating, fraud finding or investment recommendation;
 - not evidence of general population performance beyond the verified study subsets;
 - not a validated replacement for human review of material financial decisions;
@@ -467,7 +512,7 @@ Read [Contributing](CONTRIBUTING.md) for the full rules and verification command
 
 ## License
 
-Released under the [MIT License](LICENSE).
+Released under the [Apache License 2.0](LICENSE).
 
 ---
 

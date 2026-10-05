@@ -6,7 +6,7 @@ v0.4 runtime validation is separate from historical experiment replay. The autho
 release-review entry point is:
 
 ```bash
-python scripts/verify_v040_release.py \
+python scripts/verify_v041_release.py \
   --python311 /path/to/python3.11 \
   --python312 /path/to/python3.12 \
   --docker-bin /path/to/docker

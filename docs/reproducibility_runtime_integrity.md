@@ -46,7 +46,12 @@ The empirical path is designed so that a future run is auditable and fails close
 
 Reproducibility is treated as four linked layers: data hashes and PIT manifests; Git code
 revision; versioned rule/policy/schema configuration; and environment locks.
-`requirements.lock` is a complete constraints set for the Python 3.11/3.12 CI matrix.
+`requirements.lock` is a complete constraints set for the Python 3.11/3.12 CI matrix,
+including version-marked research numeric wheels. The v0.4.1 fitted historical reference
+retains a normalized archival copy of the earlier generation lock under its artifact
+directory; its verifier reconstructs the recorded Windows CRLF byte identity explicitly.
+The active lock is pinned to LF, so completing it does not rewrite generation provenance
+and future lock hashes do not vary by checkout platform.
 CI additionally fixes pip 26.2.0 and the setuptools 83.0.0 build backend, while official
 GitHub Actions are referenced by immutable commit SHA rather than mutable tags.
 The frontend uses npm's lockfile. Both Dockerfiles pin their base image as

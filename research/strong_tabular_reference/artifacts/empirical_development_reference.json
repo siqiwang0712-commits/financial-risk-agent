@@ -1,0 +1,201 @@
+{
+ "construction_config_sha256": "8e049805894850dd90c62c87b5fcb3c306e921c43e21be99ffe1139a6fcba9df",
+ "construction_uses_labels": false,
+ "feature_schema_sha256": "90219904d55805c2bd55457bfe2bbe1a92a34765768857e77004322fe7f3a836",
+ "financial_value_profile": {
+  "cash_growth": {
+   "mean": 8.672915715459066,
+   "missing_count": 40,
+   "observed_count": 1960,
+   "quantiles": {
+    "q01": -0.9794598848724119,
+    "q05": -0.8164213114276156,
+    "q25": -0.36121755302790115,
+    "q50": -0.03064553555278241,
+    "q75": 0.47229054775146845,
+    "q95": 4.81983312289587,
+    "q99": 48.91449678619768
+   },
+   "standard_deviation": 133.51790224290866
+  },
+  "cfo_to_net_income": {
+   "mean": 3.126097113570923,
+   "missing_count": 1094,
+   "observed_count": 906,
+   "quantiles": {
+    "q01": -16.04602405715373,
+    "q05": -3.153893213326195,
+    "q25": 1.0572531941004721,
+    "q50": 1.6107335304677601,
+    "q75": 2.7957044922406507,
+    "q95": 10.560487298367622,
+    "q99": 37.08480105077823
+   },
+   "standard_deviation": 24.9437932341766
+  },
+  "current_ratio": {
+   "mean": 3.5147938899438484,
+   "missing_count": 104,
+   "observed_count": 1896,
+   "quantiles": {
+    "q01": 0.0027305384147186173,
+    "q05": 0.07407234793819013,
+    "q25": 0.9653130287648054,
+    "q50": 1.709759697897013,
+    "q75": 3.3375515761824595,
+    "q95": 11.827208819084628,
+    "q99": 29.07170875380386
+   },
+   "standard_deviation": 8.480432945851634
+  },
+  "debt_to_assets": {
+   "mean": 0.32329439402761184,
+   "missing_count": 1482,
+   "observed_count": 518,
+   "quantiles": {
+    "q01": 9.040916891183139e-05,
+    "q05": 0.03621403154746308,
+    "q25": 0.17506470378295746,
+    "q50": 0.28577718941622765,
+    "q75": 0.42687913348831324,
+    "q95": 0.7107582123566567,
+    "q99": 1.1989490323999559
+   },
+   "standard_deviation": 0.22741567345432814
+  },
+  "fcf_margin": {
+   "mean": -19.807694070888058,
+   "missing_count": 768,
+   "observed_count": 1232,
+   "quantiles": {
+    "q01": -170.67458721458675,
+    "q05": -9.902890233678722,
+    "q25": -0.1371694928928866,
+    "q50": 0.030191066881058146,
+    "q75": 0.11100758377044542,
+    "q95": 0.28174570446315744,
+    "q99": 0.470361674247713
+   },
+   "standard_deviation": 308.5168611025259
+  },
+  "net_margin": {
+   "mean": -91.75098359983286,
+   "missing_count": 480,
+   "observed_count": 1520,
+   "quantiles": {
+    "q01": -1167.9755645714285,
+    "q05": -44.00603329492927,
+    "q25": -0.5028940701637433,
+    "q50": 0.00017090344605652204,
+    "q75": 0.08032229804196651,
+    "q95": 0.2587258601381986,
+    "q99": 0.5891688000976371
+   },
+   "standard_deviation": 1172.5870273120788
+  },
+  "operating_cash_flow_growth": {
+   "mean": -2.542060646713151,
+   "missing_count": 932,
+   "observed_count": 1068,
+   "quantiles": {
+    "q01": -12.40296488993832,
+    "q05": -2.0723555299831022,
+    "q25": -0.3758309089073322,
+    "q50": -0.018689280089349634,
+    "q75": 0.2865562602832489,
+    "q95": 2.2176988311143053,
+    "q99": 9.570705391686618
+   },
+   "standard_deviation": 54.892346806694576
+  },
+  "revenue_growth": {
+   "mean": 0.5391726169369999,
+   "missing_count": 513,
+   "observed_count": 1487,
+   "quantiles": {
+    "q01": -0.9577902464852915,
+    "q05": -0.520845839281125,
+    "q25": -0.06318054412001081,
+    "q50": 0.028166413654453697,
+    "q75": 0.15378240575749366,
+    "q95": 1.05740523664661,
+    "q99": 13.320017159565662
+   },
+   "standard_deviation": 5.690938276685814
+  },
+  "total_debt_growth": {
+   "mean": 0.23600194038120217,
+   "missing_count": 1501,
+   "observed_count": 499,
+   "quantiles": {
+    "q01": -1.0,
+    "q05": -0.37892739727609365,
+    "q25": -0.10019108677096378,
+    "q50": -0.00703699090795865,
+    "q75": 0.1369505112201605,
+    "q95": 1.5113549991654025,
+    "q99": 5.4943358327651195
+   },
+   "standard_deviation": 1.1454841629262402
+  }
+ },
+ "limitations": [
+  "Historical development reference only",
+  "Not E5, external, regulatory, or production validation",
+  "Distribution shift does not prove model error"
+ ],
+ "membership_rule": "All observed registered value features lie within their source-population q01-q99 bounds; missing values are assessed separately through observability and do not alter financial values.",
+ "observation_count": 2000,
+ "population": "ALL_2000_E4S_SOURCE_COHORT_ROWS",
+ "reference_sha256": "ff8693a91b1c9f4e15e12a5426531cce5e5ca5cc6742a5f4379b3413d08da86e",
+ "reporting_observability_profile": {
+  "observed__cash_growth": {
+   "missing_count": 40,
+   "observed_count": 1960,
+   "observed_prevalence": 0.98
+  },
+  "observed__cfo_to_net_income": {
+   "missing_count": 1094,
+   "observed_count": 906,
+   "observed_prevalence": 0.453
+  },
+  "observed__current_ratio": {
+   "missing_count": 104,
+   "observed_count": 1896,
+   "observed_prevalence": 0.948
+  },
+  "observed__debt_to_assets": {
+   "missing_count": 1482,
+   "observed_count": 518,
+   "observed_prevalence": 0.259
+  },
+  "observed__fcf_margin": {
+   "missing_count": 768,
+   "observed_count": 1232,
+   "observed_prevalence": 0.616
+  },
+  "observed__net_margin": {
+   "missing_count": 480,
+   "observed_count": 1520,
+   "observed_prevalence": 0.76
+  },
+  "observed__operating_cash_flow_growth": {
+   "missing_count": 932,
+   "observed_count": 1068,
+   "observed_prevalence": 0.534
+  },
+  "observed__revenue_growth": {
+   "missing_count": 513,
+   "observed_count": 1487,
+   "observed_prevalence": 0.7435
+  },
+  "observed__total_debt_growth": {
+   "missing_count": 1501,
+   "observed_count": 499,
+   "observed_prevalence": 0.2495
+  }
+ },
+ "schema_version": "1",
+ "source_features_sha256": "62e2d3cc1c8fe6152ad6ea1aabd2a4a85863411368effb6aa8769d31ff599801",
+ "status": "EMPIRICAL_DEVELOPMENT_REFERENCE_ONLY"
+}

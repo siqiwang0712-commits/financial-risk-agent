@@ -1,6 +1,35 @@
 # Changelog
 
-## [0.4.0] - Unreleased
+## [0.4.1] - 2026-10-05
+
+### Research readiness and strong reference
+
+- Approved the hash-bound E4-S historical development manifest (675 verified rows) and
+  registered all 2,000 source-cohort companies for future E5 exclusion.
+- Added the prespecified, company-grouped StrongTabularReference-v1 development runner,
+  mechanically selected/fitted historical artifact, trusted hash-before-load path and
+  deterministic replay verifier.
+- Added artifact-backed V/O/VO/CC observability diagnostics, a label-independent empirical
+  development reference, and reusable selective-evaluation metrics plus S0/S1 dry run.
+- Bound v0.4.1 Assurance-policy and Decision Certificate identities and added stage-aware
+  E5 preflight. E5 remains blocked, unexecuted and unfrozen.
+- Promoted current package/frontend/container identity to 0.4.1 without changing production
+  financial-risk or Assurance behavior.
+
+### Release hardening
+
+- Enforced authentication and bounded body admission before multipart parsing.
+- Required numeric provenance for verified contradictions and rejected malformed or
+  policy-inconsistent Assurance payloads; missing authorization never falls back to a proposal.
+- Connected mounted LLM secrets to the configured provider with fail-closed file handling.
+- Strengthened interpreter, dependency-audit and outside-checkout package verification.
+- Verified both Python versions, frontend, PostgreSQL restart persistence and both Compose
+  paths on the final runtime source; retained digest-bound Trivy JSON reports with a
+  regression-tested uploader. The container verification used `publish=false`.
+- Finalized release documentation while preserving uncalibrated, design-exposed research
+  boundaries and blocked/unfrozen E5 status.
+
+## [0.4.0] - 2026-10-02
 
 ### Assurance architecture
 

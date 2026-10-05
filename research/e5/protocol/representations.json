@@ -1,4 +1,7 @@
 {
+ "artifact_role": "LEGACY_DESIGN_MATERIAL_NOT_FREEZE_CANDIDATE",
+ "freeze_eligible": false,
+ "authoritative_protocol": "research/e5/STUDY_PROTOCOL_DRAFT.md",
  "status": "PROSPECTIVE_NOT_FROZEN",
  "protocol_document": "research/e5/protocol/AGENT_REPRESENTATIONS.md",
  "source_of_truth": "backend/finrisk/e4_agent.py::packet",

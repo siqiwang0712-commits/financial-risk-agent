@@ -1,6 +1,11 @@
 # E5 Governance Workflow
 
-Status: **PROSPECTIVE — EXECUTABLE PROCEDURE**
+> **LEGACY DESIGN COMPONENT — NOT A SCIENTIFIC FREEZE CANDIDATE.** The staged,
+> hash-chained governance idea remains reusable. The active stage registry and current
+> protocol/config paths are defined by `research/e5/harness/e5_harness.py` and the
+> authoritative top-level E5 contract.
+
+Status: **LEGACY_DESIGN_MATERIAL — REUSABLE GOVERNANCE MECHANICS**
 
 Purpose: make E5's prospective claim publicly verifiable. A reader must be able to confirm,
 from public git history alone, that the protocol existed before the cohort, the cohort

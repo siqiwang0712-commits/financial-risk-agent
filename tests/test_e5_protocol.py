@@ -20,6 +20,7 @@ from method_calibration import generate_paired
 REPO_ROOT = Path(__file__).resolve().parents[1]
 E5_DIR = REPO_ROOT / "research" / "e5"
 PROTOCOL_DIR = E5_DIR / "protocol"
+CURRENT_CONFIG = E5_DIR / "experiment_config.json"
 
 
 # ----------------------------------------------------------------------------------
@@ -43,39 +44,49 @@ def test_protocol_package_is_present(name: str) -> None:
     assert (PROTOCOL_DIR / name).is_file(), f"missing protocol document: {name}"
 
 
-def test_experiment_config_declares_the_prespecified_design() -> None:
+def test_legacy_experiment_config_is_not_a_freeze_candidate() -> None:
     config = json.loads((PROTOCOL_DIR / "experiment_config.json").read_text(encoding="utf-8"))
-    hypotheses = config["hypotheses"]
-    assert [item["id"] for item in hypotheses["primary_family"]] == ["H1", "H2", "H3"]
-    assert hypotheses["primary_test"] == "paired_delong_1988"
-    assert hypotheses["multiplicity"] == "holm_step_down_over_H1_H2_H3"
-    assert "label_permutation_as_test_of_auc_equality" in hypotheses["forbidden_primary"]
-    assert config["agent_inference_policy"]["one_company_per_semantic_request"] is True
-    assert config["agent_inference_policy"]["cross_company_context_sharing"] is False
-    assert config["agent_qualification"]["selection_may_use_e5_outcomes"] is False
-    assert config["outcome"]["adjudication"]["coercion_of_insufficient_data"] is False
-    assert config["isolation"]["unused_e4_companies_eligible"] is False
+    assert config["artifact_role"] == "LEGACY_DESIGN_MATERIAL_NOT_FREEZE_CANDIDATE"
+    assert config["freeze_eligible"] is False
+    assert config["authoritative_config"] == "research/e5/experiment_config.json"
 
 
 def test_experiment_config_records_the_environment_variable_e4_omitted() -> None:
-    config = json.loads((PROTOCOL_DIR / "experiment_config.json").read_text(encoding="utf-8"))
+    config = json.loads(CURRENT_CONFIG.read_text(encoding="utf-8"))
     variables = config["environment_variables"]
     assert "FINRISK_SEC_MAX_ARCHIVE_MEMBER_BYTES" in variables
     assert int(variables["FINRISK_SEC_MAX_ARCHIVE_MEMBER_BYTES"]) > 256 * 1024 * 1024
 
 
 def test_experiment_config_leaves_design_choices_open_until_freeze() -> None:
-    config = json.loads((PROTOCOL_DIR / "experiment_config.json").read_text(encoding="utf-8"))
-    assert config["status"] == "PROSPECTIVE_NOT_FROZEN"
-    assert config["power"]["minimum_meaningful_delta_auroc"] is None
-    assert config["agent_qualification"]["selected_model"] is None
-    assert config["source_commit_at_freeze"] is None
+    config = json.loads(CURRENT_CONFIG.read_text(encoding="utf-8"))
+    assert config["status"] == "DRAFT_NOT_FROZEN"
+    assert config["authoritative_protocol"]["freeze_allowed"] is False
+    assert config["primary_family"]["minimum_meaningful_effects"] == "TO_BE_FROZEN"
+    assert config["strong_tabular_reference"]["model_selected"] is True
+    assert config["strong_tabular_reference"]["fitted_artifact_exists"] is True
+    assert (
+        config["strong_tabular_reference"]["historical_artifact_status"]
+        == "FITTED_HISTORICAL_NOT_E5_FROZEN"
+    )
+    assert config["strong_tabular_reference"]["status"] == "DRAFT_NOT_FROZEN"
+    assert config["cohort"]["enumerated"] is False
+    assert config["outcomes"]["accessed"] is False
 
 
 def test_governance_declares_nine_stage_commits_in_order() -> None:
-    config = json.loads((PROTOCOL_DIR / "experiment_config.json").read_text(encoding="utf-8"))
-    assert config["governance"]["stage_commits"] == list(verify_freeze_chain.REQUIRED_STAGES)
-    assert config["governance"]["amend_pushed_commits"] is False
+    config = json.loads(CURRENT_CONFIG.read_text(encoding="utf-8"))
+    assert config["governance"]["stage_order"] == [
+        "protocol",
+        "model-qualification",
+        "cohort-freeze",
+        "feature-packet-freeze",
+        "prediction-freeze",
+        "outcome-unlock",
+        "adjudication-freeze",
+        "statistical-analysis",
+        "final-report",
+    ]
 
 
 # ----------------------------------------------------------------------------------

@@ -1,15 +1,19 @@
 # Project Status
 
-## v0.4.0 review candidate — Assured Selective Financial Intelligence
+## v0.4.1 — Research Readiness & Strong Reference
 
-Status: **READY FOR v0.4.0 REVIEW; PROSPECTIVE AND EXTERNAL VALIDATION PENDING**
+Released: **2026-10-05**
+
+Status: **RELEASED; PROSPECTIVE E5 AND EXTERNAL VALIDATION PENDING**
 
 v0.4 separates prediction from authorization. Metrics, rules, models, fusion and Agent
 reasoning emit `proposed_decision`; only `AssuranceEngine` can issue
 `final_decision`. Both live assessment paths enforce a hash-verified
 `AssuranceResult` publication boundary.
 
-Implemented locally:
+### Engineering maturity
+
+Implemented:
 
 - typed Assurance domain model, versioned policy and stable reason codes;
 - verified evidence-path assurance with fail-closed semantics;
@@ -29,7 +33,8 @@ Maturity:
 | Assurance Runtime | IMPLEMENTED |
 | Internal development validation | COMPLETE |
 | Synthetic development reference | IMPLEMENTED — `DEVELOPMENT_REFERENCE_ONLY` |
-| Empirical/external v0.4 reference distribution | NOT ESTABLISHED |
+| Empirical development reference | IMPLEMENTED — `EMPIRICAL_DEVELOPMENT_REFERENCE_ONLY`; research only |
+| External/production reference distribution | NOT ESTABLISHED |
 | Calibrated admission policy | NOT ESTABLISHED |
 | Prospective E5 validation | PENDING — NOT FROZEN |
 | External/production/regulatory validation | NOT ESTABLISHED |
@@ -38,11 +43,33 @@ The default policy is `HEURISTIC_POLICY` and runtime calibration remains
 `UNCALIBRATED`; no probability or finite-sample reliability guarantee is exposed.
 Historical E1–E4-R artifacts remain unchanged.
 
+Final normal CI and the digest-bound Container Release dry-run passed on runtime source
+`00fc338f73be0529a4adc6a1705d518af7bf8030`. Both supported Python versions passed with
+the unchanged 90% coverage gate; package installs, frontend, migrations, readiness,
+Assurance/certificate replay and PostgreSQL restart persistence were verified. Exact
+local/remote totals and retained scan evidence are in the
+[final release audit](docs/RELEASE_AUDIT_v0.4.1.md). The closeout commit changes
+documentation only; container publication and tag creation are maintainer actions.
+
+### Research maturity
+
+v0.4.1 adds a `DESIGN_EXPOSED_HISTORICAL_DEVELOPMENT` StrongTabularReference built from
+675 E4-S verified companies/rows (235 events, 440 non-events), while conservatively registering all 2,000 E4-S
+source companies for future E5 exclusion. Prespecified grouped nested CV selected `VO` +
+Histogram Gradient Boosting (development OOF AUROC 0.881789; PR-AUC 0.828968). These are
+retrospective development metrics, not validation. The score remains `UNCALIBRATED` and
+production risk/Assurance behavior is unchanged.
+
+The empirical reference profile is `EMPIRICAL_DEVELOPMENT_REFERENCE_ONLY`; S0/S1 are a
+development dry run, while S2/S3/S4 are `NOT_ESTIMABLE_IN_V0.4.1`. E5 remains
+`BLOCKED / DRAFT_NOT_FROZEN` and the unpublished 270-company exclusion remains a
+cohort-freeze blocker.
+
 Release hardening verifies Python 3.11 and 3.12, the 90% coverage gate, frontend tests /
 types / production build, wheel and sdist installation outside the source tree, development
 and release Compose paths, PostgreSQL migration and restart persistence, Assurance
 certificate generation/replay, and frozen research integrity. See
-[v0.4.0 release notes](RELEASE_NOTES_v0.4.0.md) and the
+[v0.4.1 release notes](RELEASE_NOTES_v0.4.1.md) and the
 [development validation report](research/v040_development/VALIDATION_REPORT.md).
 
 ## Historical baseline: v0.3.4 — Hardened Boundaries & Verified Release Runtime
@@ -167,22 +194,22 @@ Status date: 2026-09-23. This remains a research prototype. Predictive superiori
 - External or managed PostgreSQL deployment validation. Local and CI PostgreSQL 17 validation exists; no production database was provisioned.
 - Calibrated probability of default. The heuristic score is explicitly not a bankruptcy probability.
 
-## Current Local Verification
+## Current Engineering Verification
 
-- Python 3.11.16 and 3.12.14 each pass the complete backend suite: 643 passed,
-  17 environment-gated skips and 90.90% line coverage against the unchanged 90% gate.
-- Twelve PostgreSQL 17 runtime tests pass after migration; development and release-oriented
-  Compose smoke paths cover readiness/liveness, authentication, v0.4 API serialization,
-  certificate persistence, API restart, post-restart retrieval and deterministic replay.
-- The frontend passes 33 semantic tests, ESLint, TypeScript checking and the Next.js
-  standalone production build.
-- Wheel and source distributions build; a clean Python 3.12 environment outside the
-  source tree imports the wheel, starts the API, runs deterministic assessment and verifies
-  Assurance and the Decision Certificate.
-- Ruff, historical integrity checks, E4-S 44/44, E4-R 136/136, E5 `NOT_FROZEN`, Markdown
-  links, generated fixtures, `git diff --check`, and the authoritative release gate pass.
-- These are local/CI-equivalent engineering checks. They are not evidence of external
-  production operation, predictive validity or calibration.
+Current commands, test totals, coverage, warning classification, packaging and exact
+remote verification links are centralized in the [v0.4.1 release audit](docs/RELEASE_AUDIT_v0.4.1.md).
+Both supported Python interpreters pass the full local suite with the unchanged 90%
+coverage gate; frontend and clean installed-wheel checks also pass. Local tests without
+a running PostgreSQL/HTTP stack retain explicitly environment-gated skips, not blanket
+exceptions. The current local gate stops at Docker because this host's Desktop engine
+does not start. Docker/PostgreSQL checks passed remotely in normal CI run
+[37302574534](https://github.com/siqiwang0712-commits/financial-risk-agent/actions/runs/37302574534)
+and Container Release dry-run
+[37302629899](https://github.com/siqiwang0712-commits/financial-risk-agent/actions/runs/37302629899)
+on the tested runtime SHA above. This does not retroactively make the local Docker gate pass.
+
+Engineering verification is not external production operation, prospective predictive
+validation, probability calibration or regulatory validity. E5 remains unfrozen.
 
 ## Experiments Completed
 
@@ -213,12 +240,12 @@ Status date: 2026-09-23. This remains a research prototype. Predictive superiori
 
 ## Experiments Pending
 
-- E5, the confirmatory study: it needs a genuinely new, untouched time window, a prospective
-  cohort freeze, and a published 270-CIK exclusion set so company-disjointness from the
-  earlier cohort can be proven. Its primary benchmark must be a strong nested-CV tabular
-  baseline on the same feature set rather than B0, with a missingness-only arm alongside it —
-  a model that never sees a financial value already approaches B6 on this cohort. See
-  `research/e5/README.md`.
+- E5, the future confirmatory study, now has one authoritative but deliberately unfrozen
+  S0-S4 contract and a fitted historical-development S0 reference. It still needs the
+  S0 artifact bound into the E5 freeze, a genuinely new untouched time window, a prospective
+  cohort freeze, and a published 270-CIK exclusion
+  set so company-disjointness can be proven. B0/B6 remain historical anchors rather than
+  the competitive reference. See `research/e5/README.md`.
 - Acquire the required official 2025 SEC outcome archives from a permitted network to resolve the 25 right-censored records, and complete human-adjudicated extraction validation; current extraction figures measure machine reconciliation agreement only.
 - Run the real LLM baseline with a frozen model/prompt/pricing configuration.
 - Double annotation, adjudication, more companies/sectors and a locked confirmatory test.

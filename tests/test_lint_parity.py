@@ -8,7 +8,8 @@ bits, which a Windows checkout does not have — so a file can lint clean locall
 That is not hypothetical here: adding ``research`` to the CI lint invocation turned three
 shebang-carrying verifiers into a red pipeline, and the failure was invisible on Windows.
 The Git index stores the mode in a platform-independent form, so it — not the filesystem —
-is what this module checks.
+is what this module checks. Candidate working-tree files are included as well, so the local
+release gate remains useful before the changes have been staged.
 """
 
 from __future__ import annotations
@@ -25,10 +26,11 @@ ROOT = Path(__file__).resolve().parents[1]
 LINTED_TREES = ("backend", "tests", "scripts", "research")
 
 EXECUTABLE = "100755"
+NON_EXECUTABLE = "100644"
 
 
-def _index_modes(trees: Iterable[str]) -> dict[str, str]:
-    """Path -> Git index mode for every Python file in the given trees."""
+def _candidate_modes(trees: Iterable[str]) -> dict[str, str]:
+    """Path -> prospective Git mode for tracked and untracked candidate Python files."""
     completed = subprocess.run(
         ["git", "ls-files", "--stage", "--", *trees],
         cwd=ROOT,
@@ -45,14 +47,28 @@ def _index_modes(trees: Iterable[str]) -> dict[str, str]:
         parts = meta.split()
         if len(parts) < 3 or not path.endswith(".py"):
             continue
-        modes[path] = parts[0]
+        if (ROOT / path).is_file():
+            modes[path] = parts[0]
+
+    untracked = subprocess.run(
+        ["git", "ls-files", "--others", "--exclude-standard", "--", *trees],
+        cwd=ROOT,
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    if untracked.returncode != 0:
+        pytest.skip("git is unavailable, so candidate file modes cannot be checked")
+    for path in untracked.stdout.splitlines():
+        if path.endswith(".py") and (ROOT / path).is_file():
+            modes[path] = NON_EXECUTABLE
     return modes
 
 
 def test_shebanged_python_files_are_executable_in_the_index() -> None:
     """A shebang and the executable bit travel together, or the Linux lint job fails."""
-    modes = _index_modes(LINTED_TREES)
-    assert modes, "no Python files were found in the Git index"
+    modes = _candidate_modes(LINTED_TREES)
+    assert modes, "no Python files were found in the release candidate"
 
     violations = []
     for path, mode in sorted(modes.items()):

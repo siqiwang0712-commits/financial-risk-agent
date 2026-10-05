@@ -1,0 +1,92 @@
+{
+ "schema_version": "1",
+ "dataset_id": "TO_BE_NOMINATED",
+ "status": "DRAFT_NOT_FROZEN",
+ "purpose": "STRONG_TABULAR_REFERENCE_DEVELOPMENT",
+ "creation_source": "TO_BE_NOMINATED",
+ "population": {
+  "company_count": "TO_BE_NOMINATED",
+  "observation_count": "TO_BE_NOMINATED",
+  "company_year_structure": "TO_BE_NOMINATED",
+  "sector_scope": "TO_BE_NOMINATED",
+  "inclusion_criteria": ["TO_BE_NOMINATED"],
+  "exclusion_criteria": ["TO_BE_NOMINATED"],
+  "primary_empirical_source": true,
+  "synthetic_only": false
+ },
+ "temporal_contract": {
+  "feature_start": "TO_BE_NOMINATED",
+  "feature_end": "TO_BE_NOMINATED",
+  "feature_cutoff_rule": "TO_BE_NOMINATED",
+  "outcome_start": "TO_BE_NOMINATED",
+  "outcome_end": "TO_BE_NOMINATED",
+  "outcome_horizon": "TO_BE_NOMINATED",
+  "filing_availability_rule": "TO_BE_NOMINATED",
+  "accepted_or_filing_timestamp_policy": "TO_BE_NOMINATED"
+ },
+ "endpoint": {
+  "name": "TO_BE_NOMINATED",
+  "version": "TO_BE_NOMINATED",
+  "implementation_identity": "TO_BE_NOMINATED",
+  "compatibility_status": "UNRESOLVED",
+  "label_states": ["VERIFIED", "REVIEW", "INSUFFICIENT"]
+ },
+ "feature_contract": {
+  "feature_schema_version": "1",
+  "feature_schema_sha256": "90219904d55805c2bd55457bfe2bbe1a92a34765768857e77004322fe7f3a836",
+  "permitted_feature_blocks": ["V", "VO"],
+  "feature_reconstruction_entry_point": "TO_BE_NOMINATED",
+  "feature_source_identity": "TO_BE_NOMINATED"
+ },
+ "provenance": {
+  "source_files": ["TO_BE_NOMINATED"],
+  "source_artifact_hashes": "TO_BE_VERIFIED",
+  "source_archive_identities": ["TO_BE_NOMINATED"],
+  "accession_cik_identity_policy": "TO_BE_NOMINATED",
+  "acquisition_method": "TO_BE_NOMINATED",
+  "code_commit": "TO_BE_NOMINATED",
+  "hash_verification_status": "UNRESOLVED"
+ },
+ "isolation": {
+  "historical_study_relationships": {
+   "E1": "TO_BE_RECORDED",
+   "E2": "TO_BE_RECORDED",
+   "E3": "TO_BE_RECORDED",
+   "E4": "TO_BE_RECORDED",
+   "E4_S": "TO_BE_RECORDED",
+   "E4_R": "TO_BE_RECORDED"
+  },
+  "historical_research_exposure": "TO_BE_RECORDED",
+  "e5_overlap_status": "E5_NOT_ENUMERATED",
+  "e5_artifacts_referenced": false,
+  "e5_future_exclusion_obligation": true,
+  "e5_exclusion_scope": "EVERY_ADMITTED_DEVELOPMENT_COMPANY",
+  "development_company_manifest": "TO_BE_NOMINATED",
+  "same_company_rows_must_remain_grouped": true,
+  "company_group_key": "company_id"
+ },
+ "label_access": {
+  "historical_development_labels_may_be_used": true,
+  "e5_outcomes_forbidden": true,
+  "e5_outcome_proxies_forbidden": true,
+  "post_prediction_e5_information_forbidden": true,
+  "definition": "Outcome-blind means blind to E5 outcomes, not blind to legitimate historical development labels."
+ },
+ "eligibility_gates": {
+  "provenance": "UNRESOLVED",
+  "temporal": "UNRESOLVED",
+  "endpoint": "UNRESOLVED",
+  "company_identity": "UNRESOLVED",
+  "grouping": "UNRESOLVED",
+  "feature_contract": "UNRESOLVED",
+  "integrity": "UNRESOLVED",
+  "e5_isolation": "UNRESOLVED",
+  "exposure_recording": "UNRESOLVED"
+ },
+ "integrity": {
+  "canonicalization": "UTF-8 JSON, object keys sorted, indent=1, ensure_ascii=false, one trailing newline",
+  "canonical_manifest_sha256": "TO_BE_COMPUTED_ON_APPROVAL",
+  "source_manifest_hashes": "TO_BE_VERIFIED",
+  "validation_status": "DRAFT_UNRESOLVED"
+ }
+}

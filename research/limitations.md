@@ -8,9 +8,11 @@ that authorized decisions are correct or safe for production use.
 - The checked-in admission policy is `HEURISTIC_POLICY` and `UNCALIBRATED`; it provides
   no finite-sample, conformal or probability guarantee.
 - The checked-in synthetic profile is `DEVELOPMENT_REFERENCE_ONLY`, derived from one
-  synthetic fixture and usable only for deterministic demo/test coverage. No frozen
-  empirical or external v0.4 reference profile exists. Unsupported runtime inputs remain
-  `UNKNOWN`, and automation is withheld.
+  synthetic fixture and usable only for deterministic demo/test coverage. v0.4.1 also
+  provides an `EMPIRICAL_DEVELOPMENT_REFERENCE_ONLY` research profile derived without
+  labels from the historical E4-S source population. It is design-exposed, not E5-frozen,
+  external, or wired into production. Unsupported runtime inputs remain `UNKNOWN`, and
+  automation is withheld.
 - Evidence fragility recomputes deterministic downstream fusion from the recorded graph.
   It cannot measure dependence on evidence or reasoning omitted from that graph.
 - Decision-Sufficient Evidence preserves the recorded proposal under the implemented
@@ -21,6 +23,20 @@ that authorized decisions are correct or safe for production use.
   predictive; it did not establish whether that signal is stable, appropriate or causal.
 - No prospective E5, external validation, production operation, regulatory evaluation or
   human-subject study has been completed.
+
+## v0.4.1 StrongTabularReference limitations
+
+StrongTabularReference-v1 is fitted on the same 675 verified E4-S observations already
+heavily analyzed by E4-R. Candidate families and grids were informed by that work, so its
+cross-validation is a design-exposed development selection exercise rather than fresh
+validation. Verification/outcome availability was selective; the labelled 675 are not an
+unbiased sample of the 2,000 source companies. The 2,000-company manifest is an exclusion
+obligation for future E5, not evidence about the future E5 population.
+
+The selected output is an `UNCALIBRATED_RANKING_SCORE`, not a probability. S0/S1 results
+are a retrospective machinery dry run. S2/S3/S4 were not forced onto unequal or
+irreproducible historical inputs. No prospective, external, production, regulatory, or
+generalization claim follows from these artifacts.
 
 Distribution shift means existing assurance claims are not asserted outside the validated
 reference distribution; it does not prove that a model is wrong.

@@ -15,6 +15,10 @@ export function authorizedDecision(payload) {
   const assurance = payload?.assurance;
   const certificate = payload?.decision_certificate;
   if (!assurance || !certificate
+    || !['ABSTAIN', 'REVIEW', 'PASS', 'FLAG'].includes(payload.final_decision)
+    || !['ABSTAIN', 'REVIEW', 'PASS', 'FLAG'].includes(payload.proposed_decision)
+    || typeof assurance.policy_hash !== 'string' || !assurance.policy_hash
+    || typeof certificate.certificate_hash !== 'string' || !certificate.certificate_hash
     || payload.final_decision !== assurance.final_decision
     || payload.proposed_decision !== assurance.proposed_decision
     || certificate.final_decision !== assurance.final_decision

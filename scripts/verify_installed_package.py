@@ -4,6 +4,8 @@ from __future__ import annotations
 
 import json
 import os
+import sys
+from pathlib import Path
 
 os.environ.setdefault("FINRISK_LLM_PROVIDER", "mock")
 
@@ -14,9 +16,14 @@ def main() -> int:
     from finrisk.assurance import verify_decision_certificate
     from finrisk.pipeline import FinRiskPipeline
 
-    if finrisk.__version__ != "0.4.0":
+    if finrisk.__version__ != "0.4.1":
         raise SystemExit(f"unexpected installed version: {finrisk.__version__}")
     pipeline = FinRiskPipeline()
+    prefix = Path(sys.prefix).resolve()
+    if not Path(finrisk.__file__).resolve().is_relative_to(prefix):
+        raise SystemExit("package smoke imported source instead of the installed wheel")
+    if pipeline.root.resolve() != prefix / "finrisk_data":
+        raise SystemExit("package smoke loaded checkout resources instead of wheel resources")
     assessment = pipeline.assess(
         "Installed Package Smoke",
         2025,
@@ -37,7 +44,7 @@ def main() -> int:
         payload["decision_certificate"], pipeline.assurance.policy
     ):
         raise SystemExit("installed package produced an invalid Decision Certificate")
-    if app.version != "0.4.0":
+    if app.version != "0.4.1":
         raise SystemExit(f"unexpected API version: {app.version}")
     print(
         json.dumps(
