@@ -46,6 +46,7 @@ testpaths = ["tests"]
 # lets the tests import them normally instead of mutating `sys.path` after the import
 # block (which ruff flags).
 pythonpath = [
+  ".", # Namespace imports from research/ and scripts/ also work with the pytest executable.
   "backend",
   "research/e4_statistical_audit",
   "research/e5/protocol",
