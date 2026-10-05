@@ -15,6 +15,7 @@ import json
 from pathlib import Path
 
 import pytest
+import yaml
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -101,3 +102,17 @@ def test_main_reports_the_scanned_reference(tmp_path, monkeypatch, capsys):
     )
     verify_trivy_report.main()
     assert REFERENCE in capsys.readouterr().out
+
+
+def test_release_upload_retains_hidden_scan_reports_and_fails_if_missing():
+    workflow = yaml.safe_load((ROOT / ".github/workflows/container-release.yml").read_text())
+    uploads = [
+        step for step in workflow["jobs"]["scan"]["steps"]
+        if step.get("uses", "").startswith("actions/upload-artifact@")
+    ]
+    assert len(uploads) == 1
+    upload = uploads[0]
+    assert upload["if"] == "always()"
+    assert upload["with"]["path"] == ".runtime/trivy-*.json"
+    assert upload["with"]["include-hidden-files"] is True
+    assert upload["with"]["if-no-files-found"] == "error"

@@ -540,10 +540,10 @@ jobs:
         with:
           name: trivy-results
           path: .runtime/trivy-*.json
-          # Kept as `ignore` so the artifact upload still runs, and still succeeds, when
-          # the job has already failed for another reason. The assertion above is what
-          # decides whether a missing report is tolerated, and it does not tolerate it.
-          if-no-files-found: ignore
+          # .runtime is hidden; opt in only for these explicitly scoped JSON reports.
+          # A validated report that is not retained is still a release-gate failure.
+          include-hidden-files: true
+          if-no-files-found: error
 
   # ---------------------------------------------------------------------------
   # Attest and promote. This job never builds: it resolves the digest that the

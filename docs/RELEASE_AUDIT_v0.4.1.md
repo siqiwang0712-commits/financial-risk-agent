@@ -25,13 +25,14 @@ exact HEAD, because OCI source identity changes even for documentation-only comm
 | Local release gate | Interpreter identities, dependency audits and outside-checkout wheel imports were not all enforced. | Verify interpreter versions, audit both stacks, assert installed resources, isolate Compose cleanup, retain the 90% threshold and all checks. |
 | Metadata | Released v0.4.0 was still `Unreleased`; workflow examples used earlier release identifiers. | Record its actual 2026-10-02 release date; use generic workflow labels/current dry-run examples. v0.4.1 remains unreleased. |
 | Verification prose | Old local test/coverage totals were duplicated. | Centralize the current evidence here; distinguish local, normal CI and digest-bound release checks. |
+| Retained scan evidence | The first dry-run validated JSON reports, but the uploader excluded hidden `.runtime/` files and silently retained nothing. | Explicitly include hidden files only for `.runtime/trivy-*.json`; missing upload files are an error. A regression test reproduces the old failure. |
 
 ## Local verification, 2026-10-05
 
 | Check | Actual result |
 |---|---|
-| Python 3.11.16 full pytest | 762 passed, 18 skipped, 84 warnings; 91.09% line coverage; 510.25 seconds |
-| Python 3.12.14 full pytest | 762 passed, 18 skipped, 84 warnings; 91.09% line coverage; 382.22 seconds |
+| Python 3.11.16 full pytest | 763 passed, 18 skipped, 84 warnings; 91.09% line coverage; 497.99 seconds |
+| Python 3.12.14 full pytest | 763 passed, 18 skipped, 84 warnings; 91.09% line coverage; 387.63 seconds |
 | Required coverage | Unchanged: at least 90% |
 | Ruff | Pass: `backend tests scripts research` |
 | Dependency consistency/security | Both `pip check` and locked `pip-audit --strict --no-deps` pass; no known vulnerabilities found |
@@ -79,6 +80,22 @@ Individual stage commands remain visible in `scripts/verify_v041_release.py`.
 `scripts/verify_v041.py` checks research/version/provenance artifacts without retraining;
 it is not the complete deployment/release gate.
 
+After the report-upload regression fix, both full backend suites were rerun with
+independent coverage files. Their final counts above come from
+`.runtime/final-matrix{311,312}-isolated.log`, with XML/JSON outputs in
+`.runtime/v041-final-matrix/`; the earlier aggregate-gate log predates that extra test.
+The commands, repeated for `311` and `312`, are:
+
+```powershell
+$env:COVERAGE_FILE = '.runtime/coverage-final312'
+.runtime/v041-audit-py312/Scripts/python.exe -m pytest --cov=finrisk `
+  --cov-report=term-missing --cov-fail-under=90 `
+  --cov-report=json:.runtime/v041-final-matrix/coverage-312.json `
+  --junitxml=.runtime/v041-final-matrix/tests-312.xml `
+  --basetemp=.runtime/pytest-final-matrix312-isolated `
+  -o cache_dir=.runtime/pytest-cache-final-matrix312-isolated
+```
+
 ## Final remote evidence
 
 Normal CI and the final `Container Release` dry-run must be checked job by job on the
@@ -93,6 +110,11 @@ and [Container Release runs](https://github.com/siqiwang0712-commits/financial-r
 The final audit handoff records their exact run IDs and commit SHA. A successful source
 CI run alone is insufficient: both digest-bound Compose checks and all four API/Web
 vulnerability/secret scans must pass, while the dry-run publication job must be skipped.
+The `trivy-results` artifact must also be downloadable and contain both valid,
+candidate-digest-bound JSON reports. The first audit dry-run, run `37300287238` at
+`21b670ef8fee4615a660a34e8e4ca04038e05edf`, was green but did not retain those files;
+it is therefore **not** sufficient final release evidence. The corrected uploader
+requires a new source-identity-matched dry-run and actual artifact inspection.
 
 ## Research boundary
 
