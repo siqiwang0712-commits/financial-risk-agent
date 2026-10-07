@@ -2,6 +2,8 @@ name: CI
 on:
   push:
   pull_request:
+permissions:
+  contents: read
 jobs:
   backend:
     strategy:
@@ -60,12 +62,12 @@ jobs:
         run: python scripts/run_empirical_validation.py --provenance-v2 --report .runtime/integrity-report.json
       - name: Verify frozen E4 public research artifacts
         run: python scripts/verify_e4_public_artifacts.py
-      - name: Verify v0.4.1 checked-in research artifacts (no retraining)
+      - name: Verify current development and historical research artifacts (no retraining)
         # The fitted research artifact pins Python 3.12 and its numeric stack.
         # Both interpreters still run the full product/research test suite above,
         # including fail-closed tests for an incompatible replay runtime.
         if: matrix.python-version == '3.12'
-        run: python scripts/verify_v041.py --ci
+        run: python -m scripts.verify_v042 --ci
   frontend:
     runs-on: ubuntu-latest
     defaults:

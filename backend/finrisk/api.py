@@ -53,6 +53,7 @@ from .enterprise.security import (
 from .pipeline import FinRiskPipeline
 from .process_isolation import WorkerTimeoutError, run_spawned_worker
 from .public_pilot import PublicPilotUnavailable, public_pilot_payload
+from .request_boundary import RequestBodyBoundary
 from .runtime import build_runtime_components, document_limits
 from .secret_files import env_or_file as _env_or_file
 from .upload_boundary import UPLOAD_PRINCIPAL, UploadBoundary
@@ -237,6 +238,7 @@ if FastAPI:
     # Keep the upload boundary inside CORS/correlation handling, but outside
     # routing (multipart parsing). The callback is resolved when requests arrive.
     app.add_middleware(UploadBoundary, authenticate=lambda key: authenticate_api_key(key))
+    app.add_middleware(RequestBodyBoundary)
     app.add_middleware(
         CORSMiddleware,
         allow_origins=cors_origins,

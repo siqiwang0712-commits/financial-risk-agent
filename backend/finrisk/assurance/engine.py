@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from collections.abc import Mapping
 from dataclasses import dataclass
+from math import isfinite
 from typing import Any
 
 from ..enterprise.decision import canonical_hash
@@ -257,9 +258,9 @@ def verify_assurance_payload(
     if not isinstance(value["automation_allowed"], bool):
         return False
     content = {key: value[key] for key in required - {"certificate_hash"}}
-    if canonical_hash(content) != value["certificate_hash"]:
-        return False
     try:
+        if canonical_hash(content) != value["certificate_hash"]:
+            return False
         proposed = Decision(value["proposed_decision"])
         final = Decision(value["final_decision"])
         status = AssuranceStatus(value["assurance_status"])
@@ -271,6 +272,25 @@ def verify_assurance_payload(
         maturity = PolicyMaturity(value["policy_status"])
         calibration = CalibrationStatus(value["calibration_status"])
         reason_codes = {AssuranceReasonCode(code) for code in value["reason_codes"]}
+        evidence = value["evidence_assurance"]
+        material = evidence["material_path_count"]
+        verified = evidence["verified_path_count"]
+        coverage = evidence["coverage"]
+        if (type(material) is not int or type(verified) is not int
+                or not 0 <= verified <= material
+                or type(coverage) not in {int, float} or not isfinite(coverage)
+                or coverage != round(verified / material if material else 0.0, 6)):
+            return False
+        expected_evidence_state = (
+            EvidenceAssuranceState.UNKNOWN if material == 0 else
+            EvidenceAssuranceState.INSUFFICIENT if verified == 0 else
+            EvidenceAssuranceState.PARTIAL if verified < material or (
+                expected_policy is not None
+                and verified / material < expected_policy.minimum_verified_coverage
+            ) else EvidenceAssuranceState.VERIFIED
+        )
+        if evidence_state is not expected_evidence_state:
+            return False
     except (KeyError, TypeError, ValueError):
         return False
     if expected_policy is not None and (
@@ -280,6 +300,31 @@ def verify_assurance_payload(
     ):
         return False
     if status is AssuranceStatus.PASSED and not value["automation_allowed"]:
+        return False
+    diagnostics = value["diagnostics"]
+    if not isinstance(diagnostics, Mapping):
+        return False
+    blockers = diagnostics.get("authorization_blockers")
+    failures = diagnostics.get("runtime_failures")
+    if not isinstance(blockers, (list, tuple)) or not isinstance(failures, (list, tuple)):
+        return False
+    # A restricted (non-automated) PASS/FLAG is still a final decision. It must
+    # satisfy the same evidence and runtime blockers as the engine's evaluator.
+    if final in {Decision.PASS, Decision.FLAG} and (
+        evidence_state is not EvidenceAssuranceState.VERIFIED
+        or blockers or failures
+        or distribution_state in {
+            DistributionValidityState.WARNING, DistributionValidityState.OUTSIDE_REFERENCE,
+        }
+        or (distribution_state is DistributionValidityState.UNKNOWN
+            and expected_policy is not None
+            and expected_policy.require_distribution_reference
+            and expected_policy.review_on_unknown_distribution)
+    ):
+        return False
+    if verified == 0 and final is not Decision.ABSTAIN and proposed is not Decision.ABSTAIN:
+        return False
+    if proposed is Decision.ABSTAIN and final is not Decision.ABSTAIN:
         return False
     fragility_blocks = fragility_state is EvidenceFragilityState.FRAGILE or (
         fragility_state is EvidenceFragilityState.NOT_ESTIMABLE
@@ -293,9 +338,10 @@ def verify_assurance_payload(
             or final not in {Decision.PASS, Decision.FLAG}
             or status is not AssuranceStatus.PASSED
             or evidence_state is not EvidenceAssuranceState.VERIFIED
-            or distribution_state is not DistributionValidityState.IN_REFERENCE
             or maturity is PolicyMaturity.HEURISTIC_POLICY
-            or calibration is CalibrationStatus.UNCALIBRATED
+            or (calibration is CalibrationStatus.UNCALIBRATED
+                and expected_policy is not None
+                and expected_policy.require_calibration_for_automation)
     ):
         return False
     if final is not proposed and status is not AssuranceStatus.FAILED:
@@ -304,9 +350,14 @@ def verify_assurance_payload(
         final is not proposed or value["automation_allowed"]
     ):
         return False
+    expected_status = (
+        AssuranceStatus.FAILED if final is not proposed else
+        AssuranceStatus.PASSED if value["automation_allowed"] else AssuranceStatus.RESTRICTED
+    )
+    if status is not expected_status or (final is not proposed and final not in {Decision.REVIEW, Decision.ABSTAIN}):
+        return False
     if calibration is CalibrationStatus.UNCALIBRATED:
-        diagnostics = value["diagnostics"]
-        if not isinstance(diagnostics, Mapping) or (
+        if (
             diagnostics.get("probability") is not None
             or diagnostics.get("reliability") is not None
         ):
@@ -315,12 +366,7 @@ def verify_assurance_payload(
             return False
     # Malformed nested states and unknown reason codes fail closed above, even
     # when a caller recomputes the content hash.
-    return not (
-        expected_policy is not None
-        and expected_policy.require_distribution_reference
-        and final in {Decision.PASS, Decision.FLAG}
-        and distribution_state is not DistributionValidityState.IN_REFERENCE
-    )
+    return True
 
 
 def authorized_final_decision(

@@ -1,5 +1,22 @@
 # Changelog
 
+## Unreleased — v0.4.2 development
+
+- Reject credential-bearing provider redirects and move caller-controlled document
+  metadata out of LLM system instructions; keep provider error text out of public errors.
+- Enforce Assurance evidence/state consistency for restricted final decisions, prevent
+  v0.4 certificate downgrade, and bind persisted evidence paths to Assurance coverage.
+- Bound direct JSON/form API bodies and reclaim stalled document workers, including
+  partial result publication and cancellation; reject non-finite time budgets.
+- Update only the vulnerable sharp/libvips and source-map-js transitive dependency
+  families; retain security thresholds and the empty vulnerability ignore policy.
+- Add optional build CA mounts and require a minimum fixed PCRE2 version without the
+  duplicate stale exact-version installation.
+- Preserve v0.4.1 release evidence and all frozen research artifacts, while separately
+  binding current development sources and verifying their historical predecessors.
+  Package versions remain 0.4.1 until a deliberate release versioning step; this work
+  does not create a release, tag, or E5 freeze.
+
 ## [0.4.1] - 2026-10-05
 
 ### Research readiness and strong reference

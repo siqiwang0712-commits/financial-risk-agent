@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import math
 import os
 from collections.abc import Callable
 from dataclasses import dataclass
@@ -41,7 +42,7 @@ def positive_env_number(
         value = cast(raw)
     except (TypeError, ValueError) as exc:
         raise RuntimeError(f"{name} must be a positive number") from exc
-    if value <= 0:
+    if value <= 0 or (isinstance(value, float) and not math.isfinite(value)):
         raise RuntimeError(f"{name} must be a positive number")
     return value
 

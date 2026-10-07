@@ -38,7 +38,9 @@ class DecisionBundle:
     policy_hash: str = "UNSPECIFIED"
     calibration_status: str = "UNCALIBRATED"
     replay: dict[str, Any] = field(default_factory=dict)
-    certificate_version: str = "decision-certificate-v0.4"
+    # Objects loaded from a historical payload without v0.4 fields remain legacy
+    # bundles. They can be integrity-checked, but never authorize a v0.4 decision.
+    certificate_version: str = "decision-bundle-v0.3"
     certificate_hash: str = ""
 
     def to_dict(self) -> dict[str, Any]:
@@ -171,7 +173,20 @@ def build_decision_bundle(
 def verify_decision_bundle(
     bundle: DecisionBundle, assurance_policy: AssurancePolicy | None = None
 ) -> bool:
-    if bundle.certificate_hash:
+    is_certificate = bundle.certificate_version == "decision-certificate-v0.4"
+    if not is_certificate and (
+        bundle.certificate_version != "decision-bundle-v0.3"
+        or bundle.certificate_hash
+        or bundle.assurance
+        or bundle.decision_sufficient_evidence
+        or bundle.policy_version != "UNSPECIFIED"
+        or bundle.policy_hash != "UNSPECIFIED"
+        or bundle.replay
+    ):
+        return False
+    if is_certificate:
+        if not bundle.certificate_hash:
+            return False
         from ..assurance.engine import verify_assurance_payload
 
         if (
@@ -185,6 +200,25 @@ def verify_decision_bundle(
             != bundle.decision_sufficient_evidence
         ):
             return False
+        # The assurance proof cannot outlive the paths it claims to verify.
+        # Recompute provenance coverage/identities rather than trusting persisted
+        # counters, even if the outer bundle hash has been recomputed.
+        from ..assurance.evidence import assess_evidence
+
+        try:
+            actual_evidence = assess_evidence(
+                list(bundle.evidence_paths),
+                assurance_policy.minimum_verified_coverage if assurance_policy else 0.4,
+            ).to_dict()
+            recorded_evidence = bundle.assurance["evidence_assurance"]
+            fields = ("material_path_count", "verified_path_count", "coverage",
+                      "verified_evidence_ids", "supported_claims")
+            if canonical_hash({key: actual_evidence[key] for key in fields}) != canonical_hash(
+                {key: recorded_evidence[key] for key in fields}
+            ):
+                return False
+        except (KeyError, TypeError, ValueError, AttributeError):
+            return False
     content = bundle.to_dict()
     for key in ("bundle_id", "created_at", "bundle_hash", "certificate_hash"):
         content.pop(key)
@@ -193,7 +227,7 @@ def verify_decision_bundle(
         not bundle.certificate_hash or digest == bundle.certificate_hash
     ):
         return True
-    if bundle.certificate_hash:
+    if is_certificate:
         return False
     # A persisted v0.3 DecisionBundle is still verifiable after the dataclass
     # gains v0.4 defaults. Its original digest did not include these fields.

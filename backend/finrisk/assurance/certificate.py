@@ -17,4 +17,10 @@ def verify_decision_certificate(
         certificate = value if isinstance(value, DecisionBundle) else DecisionBundle(**value)
     except (TypeError, ValueError):
         return False
-    return verify_decision_bundle(certificate, policy)
+    try:
+        if (certificate.certificate_version != "decision-certificate-v0.4"
+                or not certificate.certificate_hash):
+            return False
+        return verify_decision_bundle(certificate, policy)
+    except (TypeError, ValueError, AttributeError):
+        return False

@@ -3,18 +3,30 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-from scripts import e5_preflight, generate_v041_runtime_identities
+from scripts import (
+    e5_preflight,
+    generate_v041_runtime_identities,
+    generate_v042_runtime_identities,
+)
 
 ROOT = Path(__file__).resolve().parents[1]
 
 
-def test_runtime_identities_match_current_source() -> None:
+def test_release_runtime_identities_match_immutable_historical_source() -> None:
     checked = json.loads(
         (ROOT / "research/v041_development/runtime_identities.json").read_text()
     )
-    assert checked == generate_v041_runtime_identities.build()
+    generate_v042_runtime_identities.verify_historical()
+    assert checked == generate_v041_runtime_identities.build(generate_v042_runtime_identities.historical_bytes)
     assert checked["assurance_policy"]["maturity"] == "HEURISTIC_POLICY"
     assert checked["assurance_policy"]["calibration_status"] == "UNCALIBRATED"
+    assert checked["decision_certificate"]["e5_freeze_identity"] == "TO_BE_FROZEN"
+
+
+def test_development_runtime_identities_match_current_source() -> None:
+    checked = json.loads((ROOT / "research/v042_development/runtime_identities.json").read_text())
+    assert checked == generate_v042_runtime_identities.build()
+    assert checked["scope"] == "DEVELOPMENT_NOT_RELEASE_NOT_E5_FREEZE"
     assert checked["decision_certificate"]["e5_freeze_identity"] == "TO_BE_FROZEN"
 
 

@@ -21,7 +21,9 @@ ENV NEXT_TELEMETRY_DISABLED=1
 ARG NEXT_PUBLIC_FINRISK_ANALYSIS_TIMEOUT_SECONDS=60
 ENV NEXT_PUBLIC_FINRISK_ANALYSIS_TIMEOUT_SECONDS=${NEXT_PUBLIC_FINRISK_ANALYSIS_TIMEOUT_SECONDS}
 COPY package.json package-lock.json ./
-RUN npm ci
+RUN --mount=type=secret,id=finrisk_ca_bundle \
+    if [ -f /run/secrets/finrisk_ca_bundle ]; then export npm_config_cafile=/run/secrets/finrisk_ca_bundle; fi; \
+    npm ci
 COPY . .
 RUN npm run build
 

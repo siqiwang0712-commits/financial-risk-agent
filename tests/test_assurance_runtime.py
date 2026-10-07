@@ -33,7 +33,11 @@ from finrisk.assurance.fragility import (
 )
 from finrisk.domain import Evidence
 from finrisk.enterprise.decision import canonical_hash, replay_diff
-from finrisk.enterprise.decision_bundle import build_decision_bundle
+from finrisk.enterprise.decision_bundle import (
+    DecisionBundle,
+    build_decision_bundle,
+    verify_decision_bundle,
+)
 from finrisk.enterprise.domain import AnalysisSnapshot
 from finrisk.enterprise.fusion import hierarchical_escalation
 from finrisk.enterprise.integrity import CalibrationStatus
@@ -378,6 +382,126 @@ def test_decision_certificate_hash_covers_assurance_content():
     payload = bundle.to_dict()
     payload["assurance"]["final_decision"] = "PASS"
     assert not verify_decision_certificate(payload, calibrated_engine().policy)
+
+
+@pytest.mark.parametrize("state", ["PARTIAL", "INSUFFICIENT", "UNKNOWN"])
+def test_restricted_final_decision_cannot_bypass_evidence_blockers(state):
+    engine = calibrated_engine()
+    payload = engine.evaluate(input_for(path("a"), path("b"), reference=REFERENCE)).to_dict()
+    payload.update(automation_allowed=False, assurance_status="RESTRICTED")
+    evidence = payload["evidence_assurance"]
+    evidence.update(state=state, verified_path_count=0, coverage=0)
+    payload["certificate_hash"] = canonical_hash({
+        key: value for key, value in payload.items() if key != "certificate_hash"
+    })
+    assert not verify_assurance_payload(payload, engine.policy)
+
+
+@pytest.mark.parametrize("mutation", [
+    {"verified_path_count": 0}, {"material_path_count": -1},
+    {"coverage": 0.5}, {"verified_path_count": True},
+])
+def test_rehashed_evidence_counters_must_match_verified_state(mutation):
+    engine = calibrated_engine()
+    payload = engine.evaluate(input_for(path("a"), path("b"), reference=REFERENCE)).to_dict()
+    payload["evidence_assurance"].update(mutation)
+    payload["certificate_hash"] = canonical_hash({
+        key: value for key, value in payload.items() if key != "certificate_hash"
+    })
+    assert not verify_assurance_payload(payload, engine.policy)
+
+
+@pytest.mark.parametrize("final,status", [("FLAG", "FAILED"), ("PASS", "FAILED")])
+def test_failed_assurance_cannot_authorize_a_pass_or_flag(final, status):
+    engine = calibrated_engine()
+    payload = engine.evaluate(input_for(path("a"), path("b"), reference=REFERENCE)).to_dict()
+    payload.update(final_decision=final, assurance_status=status, automation_allowed=False)
+    payload["certificate_hash"] = canonical_hash({
+        key: value for key, value in payload.items() if key != "certificate_hash"
+    })
+    assert not verify_assurance_payload(payload, engine.policy)
+
+
+def test_valid_restricted_and_optional_reference_policies_remain_verifiable():
+    for maturity, calibration, require_calibration in [
+        (PolicyMaturity.HEURISTIC_POLICY, CalibrationStatus.UNCALIBRATED, True),
+        (PolicyMaturity.CALIBRATED_INTERNAL, CalibrationStatus.CALIBRATED_INTERNAL, True),
+        (PolicyMaturity.CALIBRATED_INTERNAL, CalibrationStatus.UNCALIBRATED, False),
+    ]:
+        engine = AssuranceEngine(AssurancePolicy(
+            maturity=maturity, require_distribution_reference=False,
+            require_calibration_for_automation=require_calibration,
+        ))
+        result = engine.evaluate(input_for(path("a"), path("b"), calibration=calibration))
+        assert result.final_decision == "FLAG"
+        assert verify_assurance_result(result, engine.policy)
+
+
+def test_legacy_bundle_integrity_is_not_v04_authorization():
+    bundle = DecisionBundle(
+        "legacy", "org", "entity", "historical", {}, "i", "o", {}, None,
+        (), {}, (), {}, None, "PASS", {}, (), "",
+    )
+    content = bundle.to_dict()
+    for key in ("bundle_id", "created_at", "bundle_hash", "certificate_hash",
+                "proposed_decision", "assurance", "decision_sufficient_evidence",
+                "policy_version", "policy_hash", "calibration_status", "replay", "certificate_version"):
+        content.pop(key)
+    bundle = replace(bundle, bundle_hash=canonical_hash(content))
+    assert verify_decision_bundle(bundle)
+    assert not verify_decision_certificate(bundle, calibrated_engine().policy)
+    assert not verify_decision_certificate(replace(bundle, certificate_version="decision-certificate-v0.4"))
+
+
+def test_certificate_hash_removal_cannot_downgrade_v04_bundle():
+    state = FinancialRiskAgent(ROOT).run("Certificate downgrade", 2025, {"cash": 10})
+    payload = dict(state.decision_bundle)
+    assert verify_decision_certificate(payload)
+    payload.update(certificate_hash="", assurance={}, final_decision="PASS")
+    from finrisk.enterprise.decision import material_decision_payload
+
+    payload["bundle_hash"] = canonical_hash(material_decision_payload({
+        key: value for key, value in payload.items()
+        if key not in {"bundle_id", "created_at", "bundle_hash", "certificate_hash"}
+    }))
+    assert not verify_decision_bundle(DecisionBundle(**payload))
+    assert not verify_decision_certificate(payload)
+
+
+def test_rehashed_certificate_cannot_lose_its_evidence_paths():
+    engine = calibrated_engine()
+    paths = [path("a"), path("b")]
+    result = engine.evaluate(input_for(*paths, reference=REFERENCE))
+    bundle = build_decision_bundle(
+        "org", "entity", {}, {}, {}, {}, paths, {}, [], {}, result.final_decision,
+        assurance=result.to_dict(), assurance_policy=engine.policy,
+    )
+    assert verify_decision_certificate(bundle, engine.policy)
+    payload = bundle.to_dict()
+    payload["evidence_paths"] = []
+    from finrisk.enterprise.decision import material_decision_payload
+
+    digest = canonical_hash(material_decision_payload({
+        key: value for key, value in payload.items()
+        if key not in {"bundle_id", "created_at", "bundle_hash", "certificate_hash"}
+    }))
+    payload.update(bundle_hash=digest, certificate_hash=digest)
+    assert not verify_decision_certificate(payload, engine.policy)
+
+
+def test_optional_policy_verification_without_policy_is_integrity_only():
+    engine = AssuranceEngine(AssurancePolicy(
+        maturity=PolicyMaturity.CALIBRATED_INTERNAL,
+        require_distribution_reference=False, require_calibration_for_automation=False,
+    ))
+    result = engine.evaluate(input_for(path("a"), path("b"), calibration=CalibrationStatus.UNCALIBRATED))
+    bundle = build_decision_bundle(
+        "org", "entity", {}, {}, {}, {}, [path("a"), path("b")], {}, [], {}, result.final_decision,
+        assurance=result.to_dict(), assurance_policy=engine.policy,
+    )
+    assert verify_decision_bundle(bundle)
+    assert verify_decision_bundle(bundle, engine.policy)
+    assert not verify_decision_bundle(bundle, calibrated_engine().policy)
 
 
 def test_synthetic_end_to_end_certificate_is_replayable_and_deterministic():

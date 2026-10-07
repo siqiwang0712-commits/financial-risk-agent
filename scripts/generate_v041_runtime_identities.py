@@ -13,11 +13,11 @@ ROOT = Path(__file__).resolve().parents[1]
 OUTPUT = ROOT / "research" / "v041_development" / "runtime_identities.json"
 
 
-def _sha(path: Path) -> str:
+def _sha(path: Path, read_bytes=None) -> str:
     # Runtime identities describe source content, not a checkout platform's
     # newline conversion. Git stores these text files with LF, while Windows
     # may materialize CRLF (or legacy mixed endings) in the working tree.
-    canonical = path.read_bytes().replace(b"\r\n", b"\n")
+    canonical = (read_bytes(path) if read_bytes else path.read_bytes()).replace(b"\r\n", b"\n")
     return hashlib.sha256(canonical).hexdigest()
 
 
@@ -25,9 +25,9 @@ def _canonical(value: object) -> bytes:
     return (json.dumps(value, indent=1, sort_keys=True) + "\n").encode()
 
 
-def build() -> dict:
+def build(read_bytes=None) -> dict:
     policy_config_path = ROOT / "config" / "assurance_policy.json"
-    policy_mapping = json.loads(policy_config_path.read_text(encoding="utf-8"))
+    policy_mapping = json.loads(read_bytes(policy_config_path) if read_bytes else policy_config_path.read_bytes())
     policy = AssurancePolicy.from_mapping(policy_mapping)
     bundle_path = ROOT / "backend" / "finrisk" / "enterprise" / "decision_bundle.py"
     reason_path = ROOT / "backend" / "finrisk" / "assurance" / "reason_codes.py"
@@ -42,18 +42,18 @@ def build() -> dict:
             "version": policy.version,
             "policy_hash": policy.policy_hash,
             "config": "config/assurance_policy.json",
-            "config_sha256": _sha(policy_config_path),
+            "config_sha256": _sha(policy_config_path, read_bytes),
             "implementation": "backend/finrisk/assurance/policy.py",
-            "implementation_sha256": _sha(policy_path),
+            "implementation_sha256": _sha(policy_path, read_bytes),
             "reason_codes": "backend/finrisk/assurance/reason_codes.py",
-            "reason_codes_sha256": _sha(reason_path),
+            "reason_codes_sha256": _sha(reason_path, read_bytes),
             "calibration_status": "UNCALIBRATED",
         },
         "decision_certificate": {
             "status": "READY_FOR_V0.4.1",
             "schema_version": "decision-certificate-v0.4",
             "implementation": "backend/finrisk/enterprise/decision_bundle.py",
-            "implementation_sha256": _sha(bundle_path),
+            "implementation_sha256": _sha(bundle_path, read_bytes),
             "serialization_contract": "dataclass_to_dict_then_material_decision_payload_canonical_hash",
             "hash_behavior": "any_material_mutation_invalidates_bundle_and_certificate_hash",
             "replay_requirement": "verified AssuranceResult, policy identity, material inputs and component versions",

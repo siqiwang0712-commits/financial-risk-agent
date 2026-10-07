@@ -103,14 +103,7 @@ def verify_headlines() -> None:
             raise SystemExit(f"stale release-verification headline: {stale}")
 
 
-def main() -> int:
-    parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument(
-        "--ci",
-        action="store_true",
-        help="CI-compatible output; all release-critical historical checks still run",
-    )
-    parser.parse_args()
+def verify_artifacts(runtime_identity_script: str = "scripts/generate_v041_runtime_identities.py") -> None:
     RUNTIME.mkdir(parents=True, exist_ok=True)
     verify_versions()
     run("StrongTabularReference draft contract", [sys.executable, "-m", "research.strong_tabular_reference.contract"])
@@ -119,7 +112,7 @@ def main() -> int:
     # rebuilt from its hash-bound OOF, selection, reference and selective artifacts.
     verify_headlines()
     backend_env = {**os.environ, "PYTHONPATH": str(ROOT / "backend")}
-    run("v0.4.1 runtime identities", [sys.executable, "scripts/generate_v041_runtime_identities.py", "--check"], env=backend_env)
+    run("runtime identities", [sys.executable, "-m", runtime_identity_script.removesuffix(".py").replace("/", "."), "--check"], env=backend_env)
     run("E5 stage-aware preflight", [sys.executable, "scripts/e5_preflight.py", "--check"])
     run("authoritative E5 contract", [sys.executable, "-m", "research.e5.validate_study_contract"])
     run("E5 remains NOT_FROZEN", [sys.executable, "research/e5/protocol/verify_freeze_chain.py", "--report-only"])
@@ -130,6 +123,13 @@ def main() -> int:
     )
     run("E4-R integrity", [sys.executable, "research/e4r_automated_robustness/verify_e4r.py"])
     run("Markdown links", [sys.executable, "scripts/check_markdown_links.py"])
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--ci", action="store_true", help="CI-compatible output; all historical checks still run")
+    parser.parse_args()
+    verify_artifacts()
     print("v0.4.1 checked-in release artifacts: PASS")
     return 0
 

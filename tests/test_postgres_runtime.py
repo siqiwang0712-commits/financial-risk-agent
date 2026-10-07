@@ -1,5 +1,6 @@
 import os
 import time
+from dataclasses import replace
 from pathlib import Path
 
 import pytest
@@ -17,6 +18,45 @@ from finrisk.enterprise.security import PostgresCredentialStore, issue_api_key
 from finrisk.enterprise.temporal import RiskSnapshot
 
 ROOT = Path(__file__).resolve().parents[1]
+
+
+@pytest.mark.skipif(not os.getenv("DATABASE_URL"), reason="PostgreSQL integration requires DATABASE_URL")
+def test_postgres_certificates_reject_downgrade_after_restart():
+    from finrisk.agent import FinancialRiskAgent
+    from finrisk.enterprise.decision import canonical_hash, material_decision_payload
+    from finrisk.enterprise.decision_bundle import DecisionBundle
+    from psycopg.types.json import Jsonb
+
+    repository = PostgresEnterpriseRepository.connect(os.environ["DATABASE_URL"])
+    organization = Organization(new_id("org"), "Certificate persistence")
+    entity = Entity(new_id("ent"), organization.id, "Synthetic issuer")
+    repository.save(organization)
+    repository.save(entity)
+    state = FinancialRiskAgent(ROOT).run("Synthetic issuer", 2025, {"cash": 10})
+    original = DecisionBundle(**state.decision_bundle)
+    rebound = replace(original, organization_id=organization.id, entity_id=entity.id)
+    content = rebound.to_dict()
+    for key in ("bundle_id", "created_at", "bundle_hash", "certificate_hash"):
+        content.pop(key)
+    digest = canonical_hash(material_decision_payload(content))
+    bundle = replace(rebound, bundle_id=f"bundle_{digest[:20]}", bundle_hash=digest, certificate_hash=digest)
+    repository.save_decision_bundle(bundle)
+    repository.close()
+    repository = PostgresEnterpriseRepository.connect(os.environ["DATABASE_URL"])
+    assert repository.get_decision_bundle(organization.id, entity.id, bundle.bundle_id).certificate_hash == digest
+    corrupted = bundle.to_dict()
+    corrupted.update(certificate_hash="", assurance={}, final_decision="PASS")
+    corrupted["bundle_hash"] = canonical_hash(material_decision_payload({
+        key: value for key, value in corrupted.items()
+        if key not in {"bundle_id", "created_at", "bundle_hash", "certificate_hash"}
+    }))
+    with repository.connection_context() as connection:
+        with connection.cursor() as cursor:
+            cursor.execute("UPDATE decision_bundles SET payload=%s WHERE id=%s", (Jsonb(corrupted), bundle.bundle_id))
+        connection.commit()
+    with pytest.raises(ValueError, match="verification failed"):
+        repository.get_decision_bundle(organization.id, entity.id, bundle.bundle_id)
+    repository.close()
 
 
 @pytest.mark.skipif(not os.getenv("DATABASE_URL"), reason="PostgreSQL integration requires DATABASE_URL")
