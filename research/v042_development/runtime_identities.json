@@ -9,7 +9,7 @@
   "policy_hash": "c0ce6ed4752c53e67f3528de1013a4a6ff4d512b1790cde1c6628b354c8b9053",
   "reason_codes": "backend/finrisk/assurance/reason_codes.py",
   "reason_codes_sha256": "7b4cc2c9d6ee5a491b933fcbcaf0827eee0e2c2d2afd9e9d6f6a577eb70adf9f",
-  "status": "DEVELOPMENT_CANDIDATE_NOT_RELEASED",
+  "status": "RELEASE_CANDIDATE_NOT_PUBLISHED",
   "version": "assurance-policy-v0.4.0-development"
  },
  "decision_certificate": {
@@ -20,14 +20,16 @@
   "replay_requirement": "verified AssuranceResult, policy identity, material inputs and component versions",
   "schema_version": "decision-certificate-v0.4",
   "serialization_contract": "dataclass_to_dict_then_material_decision_payload_canonical_hash",
-  "status": "DEVELOPMENT_CANDIDATE_NOT_RELEASED"
+  "status": "RELEASE_CANDIDATE_NOT_PUBLISHED"
  },
  "historical_release_source": "e60abba2976e389ddf80a147227a56cc4cad8e06",
- "identity_sha256": "46d9dd5700db5a22ed7e87071d08011cbe4d5cdabef10ee5fb80c61b57bb518c",
- "release_identity": "v0.4.2-development",
+ "identity_sha256": "9facf25d8c85e7896d7fd1156cf9f714eb2bd76c42d302e9041417c4f836f2da",
+ "release_identity": "v0.4.2",
  "schema_version": "1",
- "scope": "DEVELOPMENT_NOT_RELEASE_NOT_E5_FREEZE",
+ "scope": "RELEASE_CANDIDATE_NOT_PUBLISHED_NOT_E5_FREEZE",
  "security_boundary_sources": {
+  "backend/Dockerfile": "4e9c774ff66fb6506cd6f5a16b5feb6dd362ed6e4313f2de99f2a1752717757f",
+  "backend/finrisk/__init__.py": "31d49515fdc8be6e063f116349e9b8cef34fc7628a3bcf0fb0a1a00a00f89b50",
   "backend/finrisk/api.py": "3bc69435e01989a4f241deb65979ad1732847b482b905bf171588d4785e85e22",
   "backend/finrisk/assurance/certificate.py": "2ad2bf2dd57886b209a4adbc597cd5668305eb09d556ed274091ed227f7e6d80",
   "backend/finrisk/assurance/engine.py": "576d4e8f1558ed463fb458aff8ad70085b20c98d75999eeaab3ad31c2b05d651",
@@ -35,6 +37,10 @@
   "backend/finrisk/process_isolation.py": "5d66d891b5bfd995b74452d41e523fd31eb79e407be78ea5652c2e1ab08d4ea9",
   "backend/finrisk/request_boundary.py": "8bea7ef6240407c5239b750e28bca8b62f944d81f8de3261e39dc99802fc7757",
   "backend/finrisk/runtime.py": "4d751c79bc252234470bc9e5ebf0701035c2dd0daed68809f2427bee7fd93cb6",
-  "backend/finrisk/upload_boundary.py": "e23ccd32edc9cdc0eef30c9e914c4194e2f209ff578e42a5b1a7451dbdb7167d"
+  "backend/finrisk/upload_boundary.py": "e23ccd32edc9cdc0eef30c9e914c4194e2f209ff578e42a5b1a7451dbdb7167d",
+  "frontend/Dockerfile": "c210be01c98d308815274b5a5aab08eb737c99d4e29fac5e208ea33062826262",
+  "frontend/package-lock.json": "d2bda70c7656637e1deadc72c04552045814e3d5ccdd08170b4c4cd9e3c8e942",
+  "frontend/package.json": "f0a733cc37c6d9b861a4daa540d840eb9fb419c498a01734b137043e1415e0e2",
+  "pyproject.toml": "5817e203d0c8468b1d2a8823ac919659e760d4ae720af3b342b84f80452abd67"
  }
 }

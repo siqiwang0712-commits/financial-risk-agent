@@ -13,13 +13,13 @@ export interface DemoFixture {
 }
 
 export const DEMO_FIXTURE: DemoFixture = {
-  "generatedBy": "FinRisk v0.4.1-dev Assurance Runtime (deterministic offline provider)",
+  "generatedBy": "FinRisk v0.4.2 Assurance Runtime (deterministic offline provider)",
   "sourceFixture": "examples/synthetic_company.json",
   "sourceFiling": "research/results/public_v1/summary.json",
   "notice": "Bundled offline sample. The assessment is a real pipeline output for the repository's synthetic fixture - not a real issuer, and not a live run. The Assurance policy is HEURISTIC and UNCALIBRATED; automation is withheld.",
   "pilot": {
     "snapshot": "v0.3.0 frozen public pilot",
-    "runtime": "v0.4.1",
+    "runtime": "v0.4.2",
     "annotation_status": "single-reviewer pilot; not a definitive financial-risk benchmark",
     "benchmark_evidence_coverage": 0.5833,
     "rows": [
@@ -168,7 +168,7 @@ export const DEMO_FIXTURE: DemoFixture = {
           "summary": "Produced 1 structured result(s)",
           "evidence_ids": [],
           "error": null,
-          "latency_ms": 0
+          "latency_ms": 3
         },
         {
           "step_id": "verification",
@@ -2063,7 +2063,7 @@ export const DEMO_FIXTURE: DemoFixture = {
         "bundle_id": "bundle_8428fa48abc03b73cb01",
         "organization_id": "local",
         "entity_id": "Northstar Components (Synthetic)",
-        "created_at": "2026-10-05T10:22:54.731062+00:00",
+        "created_at": "2026-10-08T15:24:39.578860+00:00",
         "document_hashes": {
           "Annual Report": "4b04f86ed1c1757d9f6b5a73a5fd6a12aac55b6d275411faeb032fc4fcba5688"
         },
@@ -3771,7 +3771,7 @@ export const DEMO_FIXTURE: DemoFixture = {
             "summary": "Produced 1 structured result(s)",
             "evidence_ids": [],
             "error": null,
-            "latency_ms": 0
+            "latency_ms": 3
           },
           {
             "step_id": "verification",
@@ -4285,7 +4285,7 @@ export const DEMO_FIXTURE: DemoFixture = {
       "bundle_id": "bundle_8428fa48abc03b73cb01",
       "organization_id": "local",
       "entity_id": "Northstar Components (Synthetic)",
-      "created_at": "2026-10-05T10:22:54.731062+00:00",
+      "created_at": "2026-10-08T15:24:39.578860+00:00",
       "document_hashes": {
         "Annual Report": "4b04f86ed1c1757d9f6b5a73a5fd6a12aac55b6d275411faeb032fc4fcba5688"
       },
@@ -5993,7 +5993,7 @@ export const DEMO_FIXTURE: DemoFixture = {
           "summary": "Produced 1 structured result(s)",
           "evidence_ids": [],
           "error": null,
-          "latency_ms": 0
+          "latency_ms": 3
         },
         {
           "step_id": "verification",

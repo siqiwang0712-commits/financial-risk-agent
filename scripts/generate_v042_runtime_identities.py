@@ -1,4 +1,4 @@
-"""Separate development identities from immutable v0.4.1 release evidence."""
+"""Separate current v0.4.2 candidate identities from immutable historical evidence."""
 
 from __future__ import annotations
 
@@ -31,10 +31,10 @@ def verify_historical() -> None:
 def build() -> dict:
     value = previous.build()
     value.pop("identity_sha256")
-    value.update(release_identity="v0.4.2-development", scope="DEVELOPMENT_NOT_RELEASE_NOT_E5_FREEZE",
+    value.update(release_identity="v0.4.2", scope="RELEASE_CANDIDATE_NOT_PUBLISHED_NOT_E5_FREEZE",
                  historical_release_source=BASE)
     for name in ("assurance_policy", "decision_certificate"):
-        value[name]["status"] = "DEVELOPMENT_CANDIDATE_NOT_RELEASED"
+        value[name]["status"] = "RELEASE_CANDIDATE_NOT_PUBLISHED"
     # The current implementation, including the changed verifier, stays bound.
     value["security_boundary_sources"] = {
         name: previous._sha(ROOT / name)
@@ -43,6 +43,9 @@ def build() -> dict:
             "backend/finrisk/llm.py", "backend/finrisk/process_isolation.py",
             "backend/finrisk/request_boundary.py", "backend/finrisk/upload_boundary.py",
             "backend/finrisk/runtime.py", "backend/finrisk/api.py",
+            "backend/finrisk/__init__.py", "pyproject.toml",
+            "frontend/package.json", "frontend/package-lock.json",
+            "backend/Dockerfile", "frontend/Dockerfile",
         )
     }
     value["identity_sha256"] = hashlib.sha256(previous._canonical(value)).hexdigest()

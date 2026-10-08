@@ -6,7 +6,7 @@
 
 # FinRisk
 
-### Assured selective financial intelligence — v0.4.1
+### Assured selective financial intelligence — v0.4.2
 
 [![CI](https://github.com/siqiwang0712-commits/financial-risk-agent/actions/workflows/ci.yml/badge.svg)](https://github.com/siqiwang0712-commits/financial-risk-agent/actions/workflows/ci.yml)
 [![Python 3.11–3.12](https://img.shields.io/badge/Python-3.11%E2%80%933.12-3776AB?logo=python&logoColor=white)](https://www.python.org/)
@@ -16,8 +16,11 @@
 
 English | [简体中文](README.zh-CN.md)
 
-Current release: **v0.4.1 — 2026-10-05** ·
-[Release notes](RELEASE_NOTES_v0.4.1.md) · [Engineering audit](docs/RELEASE_AUDIT_v0.4.1.md)
+Current release metadata: **v0.4.2 — 2026-10-08** ·
+[Release notes](RELEASE_NOTES_v0.4.2.md) · [Security and validation](docs/SECURITY_HARDENING_v0.4.2.md)
+
+v0.4.2 is a security/reliability patch. Publication is a separate maintainer action;
+v0.4.1 research evidence is preserved, FinRisk remains UNCALIBRATED, and E5 remains blocked/unfrozen.
 
 [Quick start](#quick-start) · [How it works](#how-it-works) ·
 [Research results](#research-results) · [Documentation](#documentation)

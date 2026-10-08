@@ -1,9 +1,10 @@
-# FinRisk v0.4.2 development security pass
+# FinRisk v0.4.2 security and release-preparation evidence
 
-Development changes on `try-v0.4.2`, based on
+Security changes on `try-v0.4.2`, originally based on
 `e60abba2976e389ddf80a147227a56cc4cad8e06`. This is not a release publication,
-external audit, or production readiness certification. Package and OCI default
-versions remain 0.4.1 pending the explicit release versioning step.
+external audit, or production readiness certification. Current package, frontend
+and OCI default versions are 0.4.2. The original security pass below used 0.4.1
+package metadata; its evidence remains a historical execution record.
 
 ## Branch and research integrity
 
@@ -15,10 +16,10 @@ and verified clean and equal to `origin/try-v0.4.2` before source modifications.
 No main commit, tag, release, history rewrite, or research retraining is authorized.
 
 The historical v0.4.1 runtime identity file is retained byte-for-byte and checked
-against its original source at the pinned base. New identities under
-`research/v042_development/` explicitly describe development only and bind current
-security-boundary sources. The old v0.4.1 current-source identity check intentionally
-fails on changed implementation; CI uses the new development verifier which runs
+against its original source at the pinned base. Current candidate identities under
+`research/v042_development/` bind current security-boundary and release metadata
+sources, explicitly excluding publication and E5 freeze. The old v0.4.1 current-source identity check intentionally
+fails on changed implementation; CI uses the new v0.4.2 verifier which runs
 the same historical research gates and both historical/current identity checks.
 It does not rewrite older empirical evidence to make a gate pass.
 
@@ -99,7 +100,8 @@ injection cannot be eliminated, content hashes are not issuer signatures, worker
 processes are not native-code security sandboxes, and resource limits still require
 deployment-level aggregate controls. FinRisk remains UNCALIBRATED; E5 remains
 blocked and unfrozen. No external SEC acquisition, live hosted model evaluation,
-remote CI run, registry publication or release tag is claimed by local validation.
+registry publication or release tag is claimed by local validation. Ordinary remote
+CI is separately verified below; it is distinct from a container release dry-run.
 
 ### Unfixed base-image findings (additional unfiltered scan)
 
@@ -148,7 +150,7 @@ cloud-workspace evidence, not published release artifacts.
 API image ID: `sha256:df7c9a2906f380d205e6b0840d99fa803c077e851ac7b9017b3e69a822e993a8`.
 Web image ID: `sha256:512b40e1ecc5ac26f2822803f8b2ea9aacad08861286d1c5bdc14ccaabf9dc0f`.
 
-## Final local readiness gates
+## Historical security-pass gates (d3d16da)
 
 | Gate | Result | Evidence / command | Notes |
 |---|---|---|---|
@@ -176,8 +178,157 @@ Web image ID: `sha256:512b40e1ecc5ac26f2822803f8b2ea9aacad08861286d1c5bdc14ccaab
 | Documentation/version consistency | PASS | 66-document Markdown link check and full version-metadata tests | Unreleased section; no version promotion or stronger security claims |
 | SQLite integration | NOT APPLICABLE | Persistence architecture inspection | Supported production-like repository is PostgreSQL; no SQLite implementation found |
 | Hosted LLM/SEC acquisition | NOT RUN | No hosted provider credential; offline/mock deterministic paths used | No fabricated credential or live inference claim |
-| Remote CI/GHCR release dry-run/attestations | NOT RUN | Local execution only | Required for actual release promotion; no registry upload, tag or release created |
+| Ordinary remote CI (security commit) | PASS | [run 37583318142](https://github.com/siqiwang0712-commits/financial-risk-agent/actions/runs/37583318142) | Independently verified public Actions page: Success, full d3d16da SHA, backend 3.11/3.12, frontend and docker-smoke succeeded |
+| GHCR release dry-run/attestations (security pass) | NOT RUN | Distinct from ordinary CI | No registry upload, tag or release created by the security pass |
 
 Local security fixes and supported runtime checks are complete for development
 review. This does not declare the unfiltered API image clean, authorize release
 promotion, validate external empirical claims, or resolve the existing E5 blockers.
+
+## v0.4.2 release preparation
+
+Authoritative current metadata is 0.4.2, the changelog uses the normal dated release
+format, and the shipped offline synthetic demo was legitimately regenerated. This
+demo is not frozen research evidence. No E4/E4-S/E4-R/v0.4.1 historical data or E5
+freeze record was changed.
+
+Run the complete local gate with:
+
+```bash
+python -m scripts.verify_v042_release --python311 /path/to/python3.11 --python312 /path/to/python3.12
+```
+
+A real `DATABASE_URL` is required; separate `FINRISK_GATE_DATABASE_URL311` and
+`FINRISK_GATE_DATABASE_URL312` may be supplied for independent matrix databases.
+The gate retains full tests, coverage, audits, clean installs, research verifiers
+and both Compose paths. It builds candidates once and checks exact local image IDs
+for API, web and migration containers; these IDs do not claim registry attestations.
+Optional build-network/host/CA inputs support controlled cloud proxies without
+disabling TLS. `--build-no-cache` refreshes signed package installation layers.
+
+
+Release preparation also fixes a publication-condition defect: the previous
+`inputs.publish || tag-ref` condition could promote a manual `publish=false` run
+on a tag. Publication now requires either a tag **push event**, or an explicit
+`workflow_dispatch` with `publish=true`, plus successful verification and scanning.
+Eight tests evaluate the actual checked-in workflow condition, including a manual
+tag dry-run and failed prerequisites. No workflow with `publish=true` was invoked.
+
+The aggregate gate also exposed historical synthetic reference drift: its stored
+source-fixture hash binds CRLF bytes, while Linux materialized LF. All parsed data
+and reference statistics matched. `.gitattributes` now preserves the original CRLF
+source representation, and a strict raw-byte regression plus ordinary CI verify it.
+The reference file, stored hash, source Git blob and historical results are unchanged.
+
+### Release-preparation findings and environment evidence
+
+| ID / class | Severity | Root cause | Change / regression protection |
+|---|---|---|---|
+| R1 release-control defect | Medium | A manual tag dry-run satisfied the tag publication disjunction | Event-specific publication condition; eight tests evaluate the actual workflow, including `publish=false` on tags and failed prerequisites |
+| R2 historical verifier portability | Low | The approved synthetic reference hashes CRLF bytes, but Linux checked out LF | Preserve original bytes through `.gitattributes`; strict raw-hash test and ordinary artifact verification; no historical artifact/hash regeneration |
+| R3 dependency advisories | Medium (reported severity) | Next.js 15.5.25 contains CVE-2026-94484 / CVE-2026-94543; pinned Node image carries zlib 1.3.2-r0, affected by CVE-2026-85091 | Next.js/ESLint 15.5.27, refreshed pinned Node 22.23.3 base, signed Alpine package upgrade with minimum zlib 1.3.2-r1; clean install, build, HTTP and exact-image scans |
+| R4 gate diagnosability | Low / reliability | Disposable-container cleanup removed the logs needed to investigate a startup failure | Collect logs before cleanup while preserving the original exception; regression asserts collection order and failure propagation |
+
+R3 was identified by the refreshed Trivy DB published on 2026-10-08, after the
+initial source scan. The web pre-fix scan reported three fixable MEDIUM findings,
+not secrets or HIGH/CRITICAL findings. The disclosed Next.js exploit scenarios
+involve root catch-all/Pages Router response caching; the application uses the App
+Router and no such application exploit was established. The zlib advisory requires
+particular native nonblocking gzip-write calls; API reachability was not established.
+These are dependency advisories, not claims of demonstrated application compromise.
+The Alpine `3.24-stable` package recipe independently confirms zlib 1.3.2, revision 1.
+
+The initial Docker aggregate reported an unhealthy first PostgreSQL start. A fresh
+same-configuration instance became healthy; the original logs had already been
+removed by cleanup, so its precise cause is not claimed. A later attempt explicitly
+hit cloud disk exhaustion. Disposable build cache and an unused investigation base
+image were removed; historical reports, image archives and research artifacts were
+retained. No OOM kill was recorded. These failed attempts are not passing evidence.
+
+Initial direct probes returned HTTP 403 for `dl-cdn.alpinelinux.org` and
+`api.github.com`. A network configuration draft adds only those destinations;
+saving it does not apply or publish it. The final Docker build nevertheless
+succeeded through the configured build-proxy route, with uppercase/lowercase proxy
+arguments and the optional trusted CA mount: its actual log records the signed
+zlib upgrade `1.3.2-r0 -> 1.3.2-r1`, and the final image independently reports that
+version and Node 22.23.3. No TLS or APK signature check was bypassed, no alternate
+unsigned package was installed, and the minimum-version assertion remains mandatory.
+The earlier failed probes are not claimed as passing build evidence.
+
+Ordinary CI now runs the same complete container gate on both Compose paths,
+including all prior upload/auth/limits/restart/timeout checks, migration idempotence
+and the PostgreSQL integration suite. It builds once, pins API/web/migrate to local
+image IDs, scans those IDs, verifies report image identities, uploads the reports,
+and publishes counts/advisory IDs in its Actions job summary. This adds verification;
+it does not dispatch the GHCR release pipeline or promote any image. Report collection
+or scanner execution errors fail CI. All external actions remain commit-pinned and
+the default token remains `contents: read`.
+
+For the final source commit, consult the
+[ordinary CI runs for this branch](https://github.com/siqiwang0712-commits/financial-risk-agent/actions/workflows/ci.yml?query=branch%3Atry-v0.4.2)
+and their Docker job summaries/`v042-container-verification` artifact. Match the
+full commit SHA. The historical successful run above is not evidence for a later
+commit. The GHCR `version=v0.4.2, publish=false` dry-run is a separate registry-digest
+verification and must be dispatched independently; actual publication is a third
+operation and was not authorized or performed by release preparation.
+
+### Final local release gates
+
+The final `python -m scripts.verify_v042_release` invocation exited **0** and
+printed `LOCAL v0.4.2 RELEASE GATE: PASS`. Cloud-specific arguments used the actual
+`/usr/local/bin/docker`, host build networking, the proxy mapping, mounted trust
+bundle and `--build-no-cache`; npm/pip caches stayed under writable `/workspace`.
+Disposable BuildKit cache was reclaimed after both builds completed to accommodate
+the cloud's 32 GiB filesystem and VFS storage driver. Both Compose runs continued
+to use the same already-built image IDs; no rebuild, security-policy change or
+historical artifact deletion occurred.
+
+| Gate | Result | Evidence / command | Notes |
+|---|---|---|---|
+| Python 3.11 | PASS | Full `python_gate`; XML and coverage under `.runtime/v042-release-gate` | 839 passed, 0 skipped/failed; 92.09% coverage; 865.73 s; `pip check` and strict locked `pip-audit` passed |
+| Python 3.12 | PASS | Same complete gate | 839 passed, 0 skipped/failed; 92.09% coverage; 738.26 s; `pip check` and strict locked `pip-audit` passed |
+| Frontend | PASS | `npm ci`; production audit; test/lint/typecheck/build | 36 tests; zero production audit findings; Next.js 15.5.27 |
+| Packaging / clean install | PASS | Wheel/sdist and both clean wheel environments; outside-checkout verifier | Package/API 0.4.2 and verified Assurance certificate on both interpreters |
+| Docker / HTTP / upload | PASS | Complete `container_gate`, development and release Compose | Same API/web/migrate IDs, authenticated PDF workflow, 401/413/415/422/429 and 504/retry contracts |
+| PostgreSQL / authorization integrity | PASS | Idempotent migration, 13 integration tests, before/restart/after verifiers on both stacks | Credential/entity/certificate/replay persistence and corrupted-state rejection |
+| Additional current-source runtime | PASS | API on :18000, Next.js 15.5.27 on :3300, isolated real PostgreSQL; original HTTP/state/timeout verifiers | Auth/upload/limits, migration, certificate/replay restart and explicit timeout/retry checks |
+| Research / provenance | PASS | `python -m scripts.verify_v042 --ci`, frozen E4, E4-S, E4-R and E5 report-only checks | 44/44 E4-S and 136/136 E4-R; E5 NOT_FROZEN; protected historical paths unchanged |
+| Source / image scans | PASS | Trivy 0.68.2 with refreshed 2026-10-08 DB; vulnerability and secret scanners | Zero fixable MEDIUM/HIGH/CRITICAL and zero secrets on source and both tested images |
+| Unfiltered image inventory | PASS | Supplemental scans executed without `--ignore-unfixed`; report IDs match candidates | API: 44 HIGH / eight unfixed CVEs, zero CRITICAL; web: zero HIGH/CRITICAL; not a clean unfiltered API claim |
+| Supplemental full npm audit | FAIL | `npm audit --json` including development dependencies | Five HIGH propagated findings from one unfixed development-only braces advisory; assessment below; production audit gate passes |
+| Docs / static / version | PASS | 70-document link verifier; Ruff; `git diff --check`; release metadata verifier | All current versions 0.4.2; historical 0.4.1 references retained |
+| Aggregate local release gate | PASS | `/tmp/finrisk-v042-final-release-gate.log` | Exit 0; failures from earlier attempts remain separate records |
+| Hosted LLM evaluation | NOT RUN | No hosted provider credential | Designed deterministic/mock paths used; no live-model resistance claim |
+
+Final local candidate image IDs (not GHCR manifest digests):
+
+- API: `sha256:26f884aadda84f82870f124ad3b291e15010c1e365f726f9f109cf739ab9834d`.
+- Web: `sha256:8987eda0bc44048660c61660cdd7a60ecddb58da3e1d8cb72fea50812b891f47`.
+
+| Report under `/tmp/finrisk-v042-release-trivy-` | SHA-256 |
+|---|---|
+| source-final.json | `96c7d177b82c119f01fa1f24369dd6cf442a00258ecd56961f697ddad525f563` |
+| api.json | `080f7decab27848581883adeae01d88a46652d427866b459268bb1dfd23181ba` |
+| api-all.json | `2af46dda8631995b7504c446785441dab25921f0f39e20aad1b5b47280ddacb4` |
+| web.json | `78dc97db075466a834322cd7a60cf274bf1048cbaea993e6ffa679fb94cc337d` |
+| web-all.json | `bc7b87638b40b006dfcfdd5e5ee9b3bb4e1b327af22388e9ae9669c9282c09fc` |
+
+### Unfixed development-tool dependency advisory
+
+The supplemental full npm inventory records **GHSA-vfj7-8cjw-p6xm**, HIGH:
+`braces <=3.0.3` can exhaust the stack on deeply nested glob patterns. The five
+reported packages are braces plus its micromatch, fast-glob, Next ESLint plugin
+and ESLint config dependents; these are not five independent vulnerabilities.
+All are `dev: true` in the lockfile, and all five `require.resolve` checks fail
+with MODULE_NOT_FOUND in the final standalone runtime image. User documents and
+HTTP input do not supply ESLint glob patterns. Malicious repository code/config
+is already executable in the build/test trust boundary; the remaining concern is
+build/lint availability, not an established application-request exploit.
+
+The registry still reports braces 3.0.3 as latest. No fixed compatible published
+package was identified. npm's suggested forced downgrade to ESLint/Next 14 is not
+a compatible repair and would undo the current patched framework configuration.
+Existing lint, production audits, scanner thresholds and the empty `.trivyignore`
+remain enabled; no advisory suppression was added. Recheck this exact advisory
+before promotion and when braces publishes a fixed release. The full audit is
+retained as a failing supplemental inventory, not represented as a clean audit.

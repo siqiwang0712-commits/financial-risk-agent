@@ -1,5 +1,23 @@
 # Project Status
 
+## v0.4.2 — Security & Reliability Patch
+
+Current release metadata: **0.4.2 · 2026-10-08**. Release preparation does not
+create a tag, publish images or execute E5. See the
+[release notes](RELEASE_NOTES_v0.4.2.md) and
+[security/validation report](docs/SECURITY_HARDENING_v0.4.2.md) for exact gate evidence
+and residual base-image CVEs. Final remote CI and the non-publishing container
+dry-run must be checked for the final source commit before promotion.
+
+Provider redirects, LLM metadata roles, Assurance/certificate consistency, evidence
+path binding, bounded body admission and worker reclamation are hardened. Default
+Assurance remains HEURISTIC_POLICY / UNCALIBRATED. Certificate hashes provide
+content integrity, not issuer authentication; workers are not native-code sandboxes.
+Prompt injection remains a residual boundary. E5 is BLOCKED / DRAFT_NOT_FROZEN.
+Frozen E4, E4-S, E4-R and v0.4.1 historical evidence is unchanged.
+
+## Historical release record
+
 ## v0.4.1 — Research Readiness & Strong Reference
 
 Released: **2026-10-05**

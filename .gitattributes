@@ -9,6 +9,11 @@ research/strong_tabular_reference/artifacts/generation_requirements.lock text eo
 # Keep that exact representation on Linux too; do not rewrite frozen source hashes.
 research/label_schema.json text eol=crlf
 
+# The historical synthetic development reference binds this fixture's original
+# CRLF bytes. Preserve its recorded source identity across checkout platforms;
+# do not regenerate the historical reference or change its frozen hash.
+examples/synthetic_company.json text eol=crlf
+
 # PDFs are binary. Without this, `text=auto` treats a generated PDF as text: git
 # rewrites its line endings on checkout, which shifts the byte offsets the xref
 # table points at, and the `git diff --check HEAD^ HEAD` CI gate reports the

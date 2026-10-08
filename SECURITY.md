@@ -15,7 +15,7 @@ and API trust boundaries, but they do not constitute an external security audit 
 compliance claim. Deployers remain responsible for infrastructure hardening, secrets,
 network controls, monitoring, backups, and independent review.
 
-## v0.4.2 development boundaries
+## v0.4.2 security boundaries
 
 Credential-bearing LLM requests reject redirects, including same-origin redirects;
 configure the final HTTPS endpoint (loopback HTTP remains available for local providers).
@@ -48,5 +48,5 @@ Optional build trust configuration uses the `finrisk_ca_bundle` BuildKit secret 
 It adds the organization's trusted CA bundle for dependency installation without disabling
 TLS checks or retaining that bundle in the runtime image. Do not pass application
 credentials as build arguments. Historical v0.4.1 identities and empirical artifacts
-remain unchanged; v0.4.2 identities are explicitly development outputs, not release or
-E5 freeze evidence. See [development audit](docs/SECURITY_HARDENING_v0.4.2.md).
+remain unchanged; v0.4.2 identities bind the current release candidate and are not
+publication or E5 freeze evidence. See [security audit](docs/SECURITY_HARDENING_v0.4.2.md).

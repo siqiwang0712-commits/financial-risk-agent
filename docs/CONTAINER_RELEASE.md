@@ -366,7 +366,7 @@ Workflow default is `contents: read`. Per job:
 
 ```bash
 # dry run — builds, verifies and scans, but creates no release tag
-gh workflow run container-release.yml --ref try-v0.4.1 -f version=v0.4.1 -f publish=false
+gh workflow run container-release.yml --ref try-v0.4.2 -f version=v0.4.2 -f publish=false
 
 # Human-authorized publication only after all gates; use the exact intended release ref.
 gh workflow run container-release.yml --ref <release-ref> -f version=vX.Y.Z -f publish=true

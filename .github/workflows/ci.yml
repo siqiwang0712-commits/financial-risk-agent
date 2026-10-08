@@ -90,35 +90,121 @@ jobs:
       POSTGRES_PASSWORD: ci-only-strong-password-v041
       FINRISK_LLM_PROVIDER: mock
       FINRISK_BOOTSTRAP_TOKEN: ci-only-bootstrap-token-v041
-      # Smoke clients reuse the repository's bounded HTTP helpers without
-      # installing the application package on the GitHub runner.
+      # Runtime verifiers reuse bounded HTTP helpers and the full PostgreSQL suite.
       PYTHONPATH: backend
+      TRIVY_IMAGE_SRC: docker
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
-      - name: Build frontend production image
-        run: docker build -f frontend/Dockerfile -t finrisk-frontend:ci frontend
-      - name: Build and start production PostgreSQL/API stack
-        run: docker compose -f docker-compose.yml -f docker-compose.prod.yml up --build -d postgres migrate api web
-      - name: Verify deployed HTTP contracts (auth, limits, correlation id)
-        run: python scripts/verify_docker_health.py
-      # The step above used to be named "... and PostgreSQL repository selection",
-      # but it never touched a database: a wrong DATABASE_URL degraded the API to the
-      # in-memory repository and every check still passed. These two steps assert the
-      # datastore the process actually selected, then restart the API and prove the
-      # tenant, credential and entity survived.
-      - name: Assert the API selected PostgreSQL
-        run: python scripts/verify_postgres_state.py --phase before --state-file .runtime/pg-state.json
-      - name: Restart the API and assert persistence
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7
+        with: {python-version: "3.12"}
+      - name: Install locked runtime verification dependencies
+        run: python -m pip install -c requirements.lock -e ".[dev,postgres]"
+      - name: Verify both Compose stacks against the same built candidates
+        # Reuses every previous HTTP/upload/restart/timeout check and also exercises
+        # release Compose, migration idempotence and PostgreSQL corruption rejection.
+        # No registry write, tag, attestation or publication is performed here.
         run: |
-          docker compose -f docker-compose.yml -f docker-compose.prod.yml restart api
-          python scripts/verify_postgres_state.py --phase after --state-file .runtime/pg-state.json
-      - name: Verify production timeout and explicit retry contract
+          python - <<'PYCODE'
+          import json, os, sys
+          from scripts import verify_v041_release as gate
+          gate.STAGE = gate.ROOT / ".runtime/v042-container-ci"
+          gate.PROJECT_NAME = "finrisk-v042-container-ci"
+          gate.STAGE.mkdir(parents=True, exist_ok=True)
+          gate.container_gate("docker", sys.executable, "0.4.2", [
+              "--build-arg", f"OCI_REVISION={os.environ['GITHUB_SHA']}",
+              "--build-arg", "OCI_VERSION=0.4.2",
+          ])
+          identities = json.loads((gate.STAGE / "candidate-image-ids.json").read_text())
+          with open(os.environ["GITHUB_ENV"], "a") as output:
+              for service, identity in identities.items():
+                  output.write(f"VERIFIED_{service.upper()}_IMAGE_ID={identity}\n")
+          PYCODE
+      - name: Scan the exact tested API candidate (fixable vulnerabilities and secrets)
+        uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0
+        with:
+          image-ref: ${{ env.VERIFIED_API_IMAGE_ID }}
+          format: json
+          output: .runtime/v042-container-ci/trivy-api-fixable.json
+          scanners: vuln,secret
+          severity: CRITICAL,HIGH,MEDIUM
+          ignore-unfixed: true
+          trivyignores: .trivyignore
+          exit-code: "1"
+      - name: Scan the exact tested web candidate (fixable vulnerabilities and secrets)
+        uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0
+        with:
+          image-ref: ${{ env.VERIFIED_WEB_IMAGE_ID }}
+          format: json
+          output: .runtime/v042-container-ci/trivy-web-fixable.json
+          scanners: vuln,secret
+          severity: CRITICAL,HIGH,MEDIUM
+          ignore-unfixed: true
+          trivyignores: .trivyignore
+          exit-code: "1"
+      - name: Record unfiltered API and web vulnerability inventories
+        uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0
+        with:
+          image-ref: ${{ env.VERIFIED_API_IMAGE_ID }}
+          scanners: vuln
+          severity: CRITICAL,HIGH
+          format: json
+          output: .runtime/v042-container-ci/trivy-api-unfiltered.json
+          exit-code: "0"
+      - name: Record unfiltered web vulnerability inventory
+        uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0
+        with:
+          image-ref: ${{ env.VERIFIED_WEB_IMAGE_ID }}
+          scanners: vuln
+          severity: CRITICAL,HIGH
+          format: json
+          output: .runtime/v042-container-ci/trivy-web-unfiltered.json
+          exit-code: "0"
+      - name: Verify reports bind the tested image identities
         run: |
-          FINRISK_ANALYSIS_TIMEOUT_SECONDS=0.001 docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d --force-recreate api web
-          python scripts/verify_docker_timeout.py
-      - name: Show container logs on failure
-        if: failure()
-        run: docker compose -f docker-compose.yml -f docker-compose.prod.yml logs postgres migrate api web
-      - name: Stop smoke-test stack
+          python - <<'PYCODE'
+          import json, os
+          from pathlib import Path
+          from scripts.verify_trivy_report import assert_report_shape
+          for service in ("api", "web"):
+              expected = os.environ[f"VERIFIED_{service.upper()}_IMAGE_ID"]
+              for kind in ("fixable", "unfiltered"):
+                  path = Path(f".runtime/v042-container-ci/trivy-{service}-{kind}.json")
+                  report = json.loads(path.read_text())
+                  assert_report_shape(report)
+                  if report["Metadata"]["ImageID"] != expected:
+                      raise SystemExit(f"{path} does not describe the tested image")
+                  findings = [v for r in report.get("Results", []) for v in r.get("Vulnerabilities", [])]
+                  secrets = [v for r in report.get("Results", []) for v in r.get("Secrets", [])]
+                  ids = sorted({v["VulnerabilityID"] for v in findings})
+                  print(f"{service} {kind}: tested={expected}, findings={len(findings)}, secrets={len(secrets)}")
+                  with open(os.environ["GITHUB_STEP_SUMMARY"], "a") as output:
+                      output.write(f"### {service} {kind} scan\n\n")
+                      output.write(f"Tested local image ID: `{expected}` (not a registry digest).\n\n")
+                      output.write(f"Vulnerabilities: **{len(findings)}**; secrets: **{len(secrets)}**.\n\n")
+                      output.write("Advisories: " + (", ".join(ids) or "none") + "\n\n")
+          PYCODE
+      - name: Retain runtime and vulnerability evidence
         if: always()
-        run: docker compose -f docker-compose.yml -f docker-compose.prod.yml down -v
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+        with:
+          name: v042-container-verification
+          path: .runtime/v042-container-ci
+          include-hidden-files: true
+          if-no-files-found: error
+      - name: Stop disposable verification stacks
+        if: always()
+        env:
+          CANDIDATE_API_IMAGE: finrisk-v0.4.2-gate-api:candidate
+          CANDIDATE_WEB_IMAGE: finrisk-v0.4.2-gate-web:candidate
+        run: |
+          python - <<'PYCODE'
+          import subprocess
+          from scripts import verify_v041_release as gate
+          gate.PROJECT_NAME = "finrisk-v042-container-ci"
+          status = 0
+          for files in (["docker-compose.release.yml"], [
+              "docker-compose.yml", "docker-compose.prod.yml", "docker-compose.candidate.yml",
+          ]):
+              status |= subprocess.run(gate.compose("docker", files, "down", "-v"), check=False).returncode
+          raise SystemExit(status)
+          PYCODE

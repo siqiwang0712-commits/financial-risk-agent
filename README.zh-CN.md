@@ -6,7 +6,7 @@
 
 # FinRisk
 
-### 受保证的选择性金融智能——v0.4.1
+### 受保证的选择性金融智能——v0.4.2
 
 [![CI](https://github.com/siqiwang0712-commits/financial-risk-agent/actions/workflows/ci.yml/badge.svg)](https://github.com/siqiwang0712-commits/financial-risk-agent/actions/workflows/ci.yml)
 [![Python 3.11–3.12](https://img.shields.io/badge/Python-3.11%E2%80%933.12-3776AB?logo=python&logoColor=white)](https://www.python.org/)
@@ -16,8 +16,11 @@
 
 [English](README.md) | 简体中文
 
-当前版本：**v0.4.1 · 2026-10-05 发布** ·
-[发布说明](RELEASE_NOTES_v0.4.1.md) · [工程审计](docs/RELEASE_AUDIT_v0.4.1.md)
+当前发布元数据：**v0.4.2 · 2026-10-08** ·
+[发布说明](RELEASE_NOTES_v0.4.2.md) · [安全与验证记录](docs/SECURITY_HARDENING_v0.4.2.md)
+
+v0.4.2 是安全与可靠性补丁。实际发布是独立的维护者操作；v0.4.1 历史研究证据
+保持不变，FinRisk 仍为 UNCALIBRATED，E5 仍被阻塞且未冻结。
 
 [快速开始](#快速开始) · [工作原理](#工作原理) ·
 [研究概览](#研究概览) · [文档导航](#文档导航)

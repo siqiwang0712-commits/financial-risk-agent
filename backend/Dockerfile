@@ -39,7 +39,7 @@ RUN --mount=type=secret,id=finrisk_ca_bundle \
 # *constraint* file here, so the dev extra is never installed).
 # ---------------------------------------------------------------------------
 FROM ${PYTHON_BASE} AS runtime
-ARG OCI_VERSION=0.4.1
+ARG OCI_VERSION=0.4.2
 ARG OCI_REVISION=unknown
 ARG OCI_CREATED=1970-01-01T00:00:00Z
 LABEL org.opencontainers.image.title="FinRisk API" \

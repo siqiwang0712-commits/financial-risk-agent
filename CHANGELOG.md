@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased — v0.4.2 development
+## [0.4.2] - 2026-10-08
 
 - Reject credential-bearing provider redirects and move caller-controlled document
   metadata out of LLM system instructions; keep provider error text out of public errors.
@@ -8,14 +8,26 @@
   v0.4 certificate downgrade, and bind persisted evidence paths to Assurance coverage.
 - Bound direct JSON/form API bodies and reclaim stalled document workers, including
   partial result publication and cancellation; reject non-finite time budgets.
-- Update only the vulnerable sharp/libvips and source-map-js transitive dependency
+- Update the vulnerable sharp/libvips and source-map-js transitive dependency
   families; retain security thresholds and the empty vulnerability ignore policy.
+- Update Next.js and its ESLint configuration to 15.5.27 for the newly reported
+  response-cache advisories; refresh the pinned Node 22 base and require Alpine's
+  signed zlib fix for CVE-2026-85091.
 - Add optional build CA mounts and require a minimum fixed PCRE2 version without the
   duplicate stale exact-version installation.
+- Separate explicit manual publication from tag-push publication so every manual
+  `publish=false` run skips promotion, including runs on tag refs.
+- Add a complete v0.4.2 local release gate with candidate image identity checks,
+  current release metadata checks and preserved historical research verification.
+- Run both Compose paths and image vulnerability/secret scans in ordinary CI,
+  retain reports bound to the tested image IDs, and preserve failure diagnostics
+  before removing disposable containers.
+- Preserve the historical synthetic reference's CRLF source identity on every
+  checkout platform and verify it in ordinary CI without rewriting research data.
 - Preserve v0.4.1 release evidence and all frozen research artifacts, while separately
   binding current development sources and verifying their historical predecessors.
-  Package versions remain 0.4.1 until a deliberate release versioning step; this work
-  does not create a release, tag, or E5 freeze.
+  Current package/frontend/container metadata is 0.4.2; no tag, publication or E5
+  freeze is performed by release preparation.
 
 ## [0.4.1] - 2026-10-05
 

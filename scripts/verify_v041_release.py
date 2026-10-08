@@ -9,6 +9,7 @@ from __future__ import annotations
 import argparse
 import json
 import os
+import re
 import shutil
 import subprocess
 import sys
@@ -20,6 +21,7 @@ from urllib.request import ProxyHandler, build_opener
 
 ROOT = Path(__file__).resolve().parents[1]
 STAGE = ROOT / ".runtime" / "v041-release-gate"
+PROJECT_NAME = "finrisk-v041-release-gate"
 
 
 def run(
@@ -53,13 +55,27 @@ def wait_http(url: str, timeout: float = 180) -> None:
 def compose(docker: str, files: list[str], *args: str) -> list[str]:
     # All volumes removed by this gate belong to this disposable test project,
     # never the operator's default Compose project.
-    command = [docker, "compose", "--project-name", "finrisk-v041-release-gate"]
+    command = [docker, "compose", "--project-name", PROJECT_NAME]
     for filename in files:
         command.extend(("-f", filename))
     return [*command, *args]
 
 
-def python_gate(python: str, label: str) -> None:
+def verify_container_identities(
+    docker: str, files: list[str], env: dict[str, str], identities: dict[str, str],
+) -> None:
+    for service in ("api", "web", "migrate"):
+        container = subprocess.check_output(
+            compose(docker, files, "ps", "-q", "-a", service), env=env, text=True,
+        ).strip()
+        actual = subprocess.check_output(
+            [docker, "inspect", "--format", "{{.Image}}", container], env=env, text=True,
+        ).strip()
+        if actual != identities["api" if service == "migrate" else service]:
+            raise SystemExit(f"{service} does not run the verified candidate artifact")
+
+
+def python_gate(python: str, label: str, env: dict[str, str] | None = None) -> None:
     expected = [3, int(label.rsplit(".", 1)[1])]
     actual = json.loads(subprocess.check_output(
         [python, "-c", "import json,sys; print(json.dumps(list(sys.version_info[:2])))"],
@@ -67,10 +83,12 @@ def python_gate(python: str, label: str) -> None:
     ))
     if actual != expected:
         raise SystemExit(f"{label} requires {expected}, supplied interpreter is {actual}")
-    run(f"{label} dependency consistency", [python, "-m", "pip", "check"])
+    options = {"env": env} if env is not None else {}
+    run(f"{label} dependency consistency", [python, "-m", "pip", "check"], **options)
     run(
         f"{label} locked dependency security audit",
         [python, "-m", "pip_audit", "--strict", "--no-deps", "-r", "requirements.lock"],
+        **options,
     )
     run(
         f"{label} backend tests and coverage",
@@ -87,20 +105,20 @@ def python_gate(python: str, label: str) -> None:
             f"--junitxml={STAGE / ('tests-' + label[-4:].replace('.', '') + '.xml')}",
             "--basetemp",
             str(STAGE / f"pytest-{label.lower().replace(' ', '-') }"),
-        ],
+        ], **options,
     )
 
 
-def package_gate(python311: str, python312: str) -> None:
+def package_gate(python311: str, python312: str, version: str = "0.4.1") -> None:
     dist = STAGE / "dist"
     dist.mkdir(parents=True, exist_ok=True)
     for artifact in (*dist.glob("finrisk_agent-*.whl"), *dist.glob("finrisk_agent-*.tar.gz")):
         artifact.unlink()
     run("build wheel and sdist", [python311, "-m", "build", "--outdir", str(dist)])
-    wheels = list(dist.glob("finrisk_agent-0.4.1-*.whl"))
-    archives = list(dist.glob("finrisk_agent-0.4.1.tar.gz"))
+    wheels = list(dist.glob(f"finrisk_agent-{version}-*.whl"))
+    archives = list(dist.glob(f"finrisk_agent-{version}.tar.gz"))
     if len(wheels) != 1 or len(archives) != 1:
-        raise SystemExit("package build did not produce exactly one v0.4.1 wheel and sdist")
+        raise SystemExit(f"package build did not produce exactly one v{version} wheel and sdist")
     for label, python in (("Python 3.11", python311), ("Python 3.12", python312)):
         venv = STAGE / f"wheel-venv-{label[-4:].replace('.', '')}"
         if venv.exists():
@@ -129,8 +147,8 @@ def package_gate(python311: str, python312: str) -> None:
             )
 
 
-def research_and_docs_gate(python: str) -> None:
-    run("v0.4.1 checked-in artifact gate", [python, "scripts/verify_v041.py"])
+def research_and_docs_gate(python: str, module: str = "scripts.verify_v041") -> None:
+    run("checked-in artifact gate", [python, "-m", module, "--ci"])
     run("frozen E4 public artifacts", [python, "scripts/verify_e4_public_artifacts.py"])
     run(
         "E4-S independent audit",
@@ -162,7 +180,10 @@ def frontend_gate(npm: str) -> None:
         run(f"frontend {task}", [npm, "--prefix", "frontend", "run", task])
 
 
-def container_gate(docker: str, python: str) -> None:
+def container_gate(
+    docker: str, python: str, version: str = "0.4.1",
+    build_options: list[str] | None = None,
+) -> None:
     common = {
         **os.environ,
         "FINRISK_LLM_PROVIDER": "mock",
@@ -170,34 +191,52 @@ def container_gate(docker: str, python: str) -> None:
         "no_proxy": "localhost,127.0.0.1,::1",
         "PYTHONPATH": "backend",
     }
-    development = ["docker-compose.yml", "docker-compose.prod.yml"]
+    development = ["docker-compose.yml", "docker-compose.prod.yml", "docker-compose.candidate.yml"]
     release = ["docker-compose.release.yml"]
     dev_env = {
         **common,
-        "POSTGRES_PASSWORD": "v041-gate-development-password",
-        "FINRISK_BOOTSTRAP_TOKEN": "v041-gate-development-bootstrap",
+        "POSTGRES_PASSWORD": "local-gate-development-password",
+        "FINRISK_BOOTSTRAP_TOKEN": "local-gate-development-bootstrap",
+        "CANDIDATE_API_IMAGE": f"finrisk-v{version}-gate-api:candidate",
+        "CANDIDATE_WEB_IMAGE": f"finrisk-v{version}-gate-web:candidate",
     }
     release_env = {
         **common,
-        "POSTGRES_PASSWORD": "v041-gate-release-password",
-        "FINRISK_BOOTSTRAP_TOKEN": "v041-gate-release-bootstrap",
-        "FINRISK_API_IMAGE": "finrisk-v041-gate-api:candidate",
-        "FINRISK_WEB_IMAGE": "finrisk-v041-gate-web:candidate",
+        "POSTGRES_PASSWORD": "local-gate-release-password",
+        "FINRISK_BOOTSTRAP_TOKEN": "local-gate-release-bootstrap",
+        "FINRISK_API_IMAGE": f"finrisk-v{version}-gate-api:candidate",
+        "FINRISK_WEB_IMAGE": f"finrisk-v{version}-gate-web:candidate",
     }
     subprocess.run(compose(docker, release, "down", "-v"), cwd=ROOT, env=release_env, check=False)
     subprocess.run(compose(docker, development, "down", "-v"), cwd=ROOT, env=dev_env, check=False)
     try:
         run(
             "build release API candidate",
-            [docker, "build", "-f", "backend/Dockerfile", "-t", release_env["FINRISK_API_IMAGE"], "."],
+            [docker, "build", *(build_options or []), "-f", "backend/Dockerfile", "-t", release_env["FINRISK_API_IMAGE"], "."],
             env=release_env,
         )
         run(
             "build release web candidate",
-            [docker, "build", "-f", "frontend/Dockerfile", "-t", release_env["FINRISK_WEB_IMAGE"], "frontend"],
+            [docker, "build", *(build_options or []), "-f", "frontend/Dockerfile", "-t", release_env["FINRISK_WEB_IMAGE"], "frontend"],
             env=release_env,
         )
-        run("development Compose build/start", compose(docker, development, "up", "--build", "-d", "postgres", "migrate", "api", "web"), env=dev_env)
+        # Local image IDs pin the exact built artifact. They are not registry
+        # manifest digests and must never be reported as remote attestations.
+        ids = {
+            service: subprocess.check_output(
+                [docker, "image", "inspect", release_env[f"FINRISK_{service.upper()}_IMAGE"],
+                 "--format", "{{.Id}}"], text=True,
+            ).strip()
+            for service in ("api", "web")
+        }
+        for service, identity in ids.items():
+            if not re.fullmatch(r"sha256:[0-9a-f]{64}", identity):
+                raise SystemExit(f"invalid local candidate image identity: {service}")
+            dev_env[f"CANDIDATE_{service.upper()}_IMAGE"] = identity
+            release_env[f"FINRISK_{service.upper()}_IMAGE"] = identity
+        (STAGE / "candidate-image-ids.json").write_text(json.dumps(ids, sort_keys=True) + "\n")
+        run("development Compose candidate start", compose(docker, development, "up", "--no-build", "-d", "postgres", "migrate", "api", "web"), env=dev_env)
+        verify_container_identities(docker, development, dev_env, ids)
         wait_http("http://127.0.0.1:8000/health/ready")
         wait_http("http://127.0.0.1:8000/health/live")
         run("development container HTTP contracts", [python, "scripts/verify_docker_health.py"], env=dev_env)
@@ -210,12 +249,13 @@ def container_gate(docker: str, python: str) -> None:
 
         run("release Compose configuration", compose(docker, release, "config", "--quiet"), env=release_env)
         run("release Compose start", compose(docker, release, "up", "-d", "postgres", "migrate", "api", "web"), env=release_env)
+        verify_container_identities(docker, release, release_env, ids)
         wait_http("http://127.0.0.1:8000/health/ready")
         wait_http("http://127.0.0.1:8000/health/live")
         run("release container HTTP contracts", [python, "scripts/verify_docker_health.py"], env=release_env)
         postgres_env = {
             **release_env,
-            "DATABASE_URL": "postgresql://finrisk:v041-gate-release-password@127.0.0.1:55432/finrisk",
+            "DATABASE_URL": "postgresql://finrisk:local-gate-release-password@127.0.0.1:55432/finrisk",
         }
         run("PostgreSQL migration idempotence", [python, "scripts/validate_postgres_migration.py"], env=postgres_env)
         run("PostgreSQL integration tests", [python, "-m", "pytest", "tests/test_postgres_runtime.py", "-q", "--basetemp", str(STAGE / "pytest-postgres")], env=postgres_env)
@@ -228,6 +268,18 @@ def container_gate(docker: str, python: str) -> None:
         run("recreate timeout path", compose(docker, release, "up", "-d", "--force-recreate", "api", "web"), env=timeout_env)
         wait_http("http://127.0.0.1:8000/health/ready")
         run("production timeout/retry contract", [python, "scripts/verify_docker_timeout.py"], env=timeout_env)
+    except (Exception, SystemExit):
+        # Retain startup/runtime diagnostics before the disposable containers are
+        # removed. Collection must not replace the original gate failure.
+        for files, env in ((development, dev_env), (release, release_env)):
+            try:
+                subprocess.run(
+                    compose(docker, files, "logs", "--no-color", "postgres", "migrate", "api", "web"),
+                    cwd=ROOT, env=env, check=False,
+                )
+            except OSError as exc:
+                print(f"Could not collect container diagnostics: {type(exc).__name__}", flush=True)
+        raise
     finally:
         subprocess.run(compose(docker, release, "down", "-v"), cwd=ROOT, env=release_env, check=False)
         subprocess.run(compose(docker, development, "down", "-v"), cwd=ROOT, env=dev_env, check=False)

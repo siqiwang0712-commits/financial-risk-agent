@@ -25,10 +25,9 @@ def _json(relative: str) -> dict:
     return json.loads((ROOT / relative).read_text(encoding="utf-8"))
 
 
-def verify_versions() -> None:
+def verify_versions(expected: str = "0.4.1") -> None:
     import finrisk
 
-    expected = "0.4.1"
     if finrisk.__version__ != expected:
         raise SystemExit("Python runtime version drift")
     pyproject = (ROOT / "pyproject.toml").read_text(encoding="utf-8")
@@ -103,9 +102,12 @@ def verify_headlines() -> None:
             raise SystemExit(f"stale release-verification headline: {stale}")
 
 
-def verify_artifacts(runtime_identity_script: str = "scripts/generate_v041_runtime_identities.py") -> None:
+def verify_artifacts(
+    runtime_identity_script: str = "scripts/generate_v041_runtime_identities.py",
+    expected_version: str = "0.4.1",
+) -> None:
     RUNTIME.mkdir(parents=True, exist_ok=True)
-    verify_versions()
+    verify_versions(expected_version)
     run("StrongTabularReference draft contract", [sys.executable, "-m", "research.strong_tabular_reference.contract"])
     run("fitted artifact and replay", [sys.executable, "-m", "research.strong_tabular_reference.verify_artifact"])
     # Headline prose is checked only after the canonical result has been independently
