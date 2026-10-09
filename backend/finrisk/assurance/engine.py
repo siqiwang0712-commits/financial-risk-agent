@@ -22,6 +22,7 @@ from .evidence import assess_evidence, dependencies_from_paths
 from .fragility import analyze_fragility, decision_sufficient_evidence
 from .policy import AssurancePolicy
 from .reason_codes import AssuranceReasonCode
+from .semantics import verify_structures, verify_transition
 from .shift import ReferenceProfile, assess_distribution_validity
 
 
@@ -253,12 +254,18 @@ def verify_assurance_payload(
         "certificate_hash",
         "diagnostics",
     }
-    if not required.issubset(value):
+    if set(value) != required:
+        return False
+    if (not isinstance(value["policy_version"], str) or not value["policy_version"]
+            or not isinstance(value["policy_hash"], str) or len(value["policy_hash"]) != 64
+            or any(c not in "0123456789abcdef" for c in value["policy_hash"])):
         return False
     if not isinstance(value["automation_allowed"], bool):
         return False
     content = {key: value[key] for key in required - {"certificate_hash"}}
     try:
+        if not verify_structures(value, expected_policy):
+            return False
         if canonical_hash(content) != value["certificate_hash"]:
             return False
         proposed = Decision(value["proposed_decision"])
@@ -291,7 +298,7 @@ def verify_assurance_payload(
         )
         if evidence_state is not expected_evidence_state:
             return False
-    except (KeyError, TypeError, ValueError):
+    except (KeyError, TypeError, ValueError, OverflowError, RecursionError):
         return False
     if expected_policy is not None and (
         value["policy_version"] != expected_policy.version
@@ -364,9 +371,7 @@ def verify_assurance_payload(
             return False
         if AssuranceReasonCode.ASSURANCE_POLICY_UNCALIBRATED not in reason_codes:
             return False
-    # Malformed nested states and unknown reason codes fail closed above, even
-    # when a caller recomputes the content hash.
-    return True
+    return verify_transition(value, expected_policy)
 
 
 def authorized_final_decision(

@@ -21,6 +21,8 @@ def main() -> int:
     parser.add_argument("--build-host", action="append", default=[])
     parser.add_argument("--build-ca-bundle", type=Path)
     parser.add_argument("--build-no-cache", action="store_true")
+    parser.add_argument("--prune-build-cache", action="store_true",
+                        help="reclaim completed build caches between images on small Docker VFS hosts")
     args = parser.parse_args()
     gate.STAGE = gate.ROOT / ".runtime/v042-release-gate"
     gate.PROJECT_NAME = "finrisk-v042-release-gate"
@@ -54,7 +56,8 @@ def main() -> int:
             build_options.extend(("--build-arg", name))
             os.environ.setdefault(name.lower(), os.environ[name])
             build_options.extend(("--build-arg", name.lower()))
-    gate.container_gate(args.docker_bin, args.python312, "0.4.2", build_options)
+    gate.container_gate(args.docker_bin, args.python312, "0.4.2", build_options,
+                        prune_build_cache=args.prune_build_cache)
     gate.run("whitespace", ["git", "diff", "HEAD", "--check"])
     print("LOCAL v0.4.2 RELEASE GATE: PASS")
     print("Remote ordinary CI and publish=false container dry-run must be verified separately.")

@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import asyncio
+import math
 import multiprocessing
 import os
 import pickle
@@ -18,6 +19,16 @@ class WorkerTimeoutError(TimeoutError):
 
 
 MAX_WORKER_RESULT_BYTES = 128 * 1024 * 1024
+
+
+class _BoundedResultWriter:
+    def __init__(self, handle):
+        self.handle = handle
+
+    def write(self, data):
+        if self.handle.tell() + memoryview(data).nbytes > MAX_WORKER_RESULT_BYTES:
+            raise ValueError("document worker result exceeds size limit")
+        return self.handle.write(data)
 
 
 class _AtomicResult:
@@ -36,7 +47,7 @@ class _AtomicResult:
         with partial.open("xb") as handle:
             # Same trusted Python-object contract as multiprocessing.Queue. This
             # is not a decoder for uploaded documents or persisted user artifacts.
-            pickle.dump(value, handle, protocol=pickle.HIGHEST_PROTOCOL)
+            pickle.dump(value, _BoundedResultWriter(handle), protocol=pickle.HIGHEST_PROTOCOL)
             if handle.tell() > MAX_WORKER_RESULT_BYTES:
                 raise ValueError("document worker result exceeds size limit")
         os.replace(partial, self.path)
@@ -73,6 +84,9 @@ async def run_spawned_worker(
     Workers retain their ``(queue, *args)`` / ``queue.put`` contract and publish
     exactly one ``(status, payload)`` tuple in a private, atomically published file.
     """
+    if any(type(value) not in {int, float} or not math.isfinite(value) or value <= 0
+           for value in (timeout, join_timeout)):
+        raise ValueError("worker time budgets must be finite positive numbers")
     context = multiprocessing.get_context("spawn")
     temporary = TemporaryDirectory(prefix="finrisk-worker-")
     result_path = Path(temporary.name) / "result"
@@ -109,7 +123,22 @@ async def run_spawned_worker(
             await _terminate(process, join_timeout)
         return result
     finally:
-        if process.is_alive():
-            await _terminate(process, join_timeout)
-        process.close()
-        temporary.cleanup()
+        async def reclaim():
+            if process.is_alive():
+                await _terminate(process, join_timeout)
+            process.close()
+            temporary.cleanup()
+
+        # A second cancellation during SIGTERM/join must not strand a child or
+        # its private result files. Shield a strongly referenced cleanup task,
+        # await it to completion, then preserve the caller's cancellation.
+        cleanup = asyncio.create_task(reclaim())
+        cancelled = False
+        while not cleanup.done():
+            try:
+                await asyncio.shield(cleanup)
+            except asyncio.CancelledError:
+                cancelled = True
+        cleanup.result()
+        if cancelled:
+            raise asyncio.CancelledError

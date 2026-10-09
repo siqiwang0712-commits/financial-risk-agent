@@ -688,8 +688,8 @@ if FastAPI:
 
     @app.post("/api/v1/documents/analyze")
     async def analyze_document(
-        company: Annotated[str, Form()],
-        fiscal_year: Annotated[int, Form()],
+        company: Annotated[str, Form(min_length=1, max_length=300)],
+        fiscal_year: Annotated[int, Form(ge=1900, le=2100)],
         file: Annotated[UploadFile, File()],
         entity_id: Annotated[str | None, Form()] = None,
         actor: Principal = protected,
@@ -700,6 +700,8 @@ if FastAPI:
         except RuntimeError as exc:
             structured_event(api_logger, "document.configuration_invalid")
             raise HTTPException(503, "document analysis is not configured safely") from exc
+        if file.filename and len(file.filename) > 500:
+            raise HTTPException(422, "document name exceeds length limit")
         data = await file.read(max_bytes + 1)
         if len(data) > max_bytes:
             raise HTTPException(413, "PDF upload-size limit exceeded")

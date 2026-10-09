@@ -99,3 +99,62 @@ def test_document_time_budget_must_be_finite(monkeypatch, timeout):
     monkeypatch.setenv("FINRISK_ANALYSIS_TIMEOUT_SECONDS", timeout)
     with pytest.raises(RuntimeError, match="positive"):
         document_limits()
+
+
+@pytest.mark.skipif(os.name != "posix", reason="SIGTERM-ignore control is POSIX-specific")
+def test_repeated_cancellation_cannot_interrupt_reclamation(tmp_path, monkeypatch):
+    from finrisk import process_isolation
+    pid_file = tmp_path / 'worker.pid'
+    original = process_isolation._terminate
+    entered = asyncio.Event()
+
+    async def slow_cleanup(process, timeout):
+        entered.set()
+        await asyncio.sleep(0.05)
+        await original(process, timeout)
+
+    monkeypatch.setattr(process_isolation, '_terminate', slow_cleanup)
+
+    async def cancel_twice():
+        task = asyncio.create_task(run_spawned_worker(
+            stubborn_worker, (str(pid_file),), timeout=30, join_timeout=0.1,
+        ))
+        for _ in range(200):
+            if pid_file.exists():
+                break
+            await asyncio.sleep(0.01)
+        task.cancel()
+        await entered.wait()
+        task.cancel()
+        try:
+            with pytest.raises(asyncio.CancelledError):
+                await task
+            assert_reclaimed(pid_file)
+        finally:
+            # Keep the regression itself from leaking the vulnerable worker.
+            if pid_file.exists():
+                try:
+                    os.kill(int(pid_file.read_text()), signal.SIGKILL)
+                except ProcessLookupError:
+                    pass
+
+    asyncio.run(cancel_twice())
+
+
+@pytest.mark.parametrize('budget', [float('nan'), float('inf'), 0, -1, True])
+@pytest.mark.parametrize('name', ['timeout', 'join_timeout'])
+def test_worker_rejects_invalid_budgets_before_spawning(budget, name):
+    arguments = {'timeout': 5, 'join_timeout': 0.1, name: budget}
+    with pytest.raises(ValueError, match='finite positive'):
+        asyncio.run(run_spawned_worker(successful_worker, (), **arguments))
+
+
+def test_result_size_limit_precedes_disk_write(tmp_path, monkeypatch):
+    from finrisk import process_isolation
+    monkeypatch.setattr(process_isolation, 'MAX_WORKER_RESULT_BYTES', 64)
+    result = tmp_path / 'result'
+    writer = process_isolation._AtomicResult(str(result))
+    with pytest.raises(ValueError, match='size limit'):
+        writer.put(('ok', b'x'*1000))
+    assert not result.exists()
+    assert result.with_suffix('.partial').stat().st_size <= 64

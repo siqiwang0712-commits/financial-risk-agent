@@ -103,6 +103,16 @@ COPY migrations ./migrations
 COPY scripts/validate_postgres_migration.py ./scripts/validate_postgres_migration.py
 RUN addgroup --system finrisk && adduser --system --ingroup finrisk finrisk \
     && chown -R finrisk:finrisk /app
+# Document analysis never mounts filesystems or changes Unix identities. Remove
+# the optional mount package without autoremove/essential-package overrides,
+# then remove every inherited SUID/SGID bit from the application runtime image.
+# Shared/essential base packages remain recorded and scanned, even if their CVE
+# is reported against a source package whose vulnerable utility is absent.
+RUN apt-get purge -y mount \
+    && find / -xdev -type f -perm /6000 -exec chmod a-s {} + \
+    && test ! -e /usr/bin/mount && test ! -e /usr/bin/umount \
+    && find / -xdev -type f -perm /6000 -print -quit > /tmp/finrisk-privilege-check \
+    && test ! -s /tmp/finrisk-privilege-check && rm /tmp/finrisk-privilege-check
 USER finrisk
 EXPOSE 8000
 CMD ["uvicorn", "finrisk.api:app", "--host", "0.0.0.0", "--port", "8000"]

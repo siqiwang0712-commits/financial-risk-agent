@@ -223,6 +223,8 @@ def verify_decision_bundle(
     for key in ("bundle_id", "created_at", "bundle_hash", "certificate_hash"):
         content.pop(key)
     digest = canonical_hash(material_decision_payload(content))
+    if is_certificate and bundle.bundle_id != f"bundle_{digest[:20]}":
+        return False
     if digest == bundle.bundle_hash and (
         not bundle.certificate_hash or digest == bundle.certificate_hash
     ):

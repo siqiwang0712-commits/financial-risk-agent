@@ -2,6 +2,13 @@
 
 ## [0.4.2] - 2026-10-08
 
+- Reject rehashed but impossible Assurance states, bind certificate IDs and stored
+  ledger identities, and require full successful CI for the exact release source.
+- Preserve worker reclamation through repeated cancellation; validate upload metadata
+  before PDF workers and enforce serialized-result quotas before writing partial files.
+- Remove unnecessary API mount utilities and privilege bits; verify candidate OCI
+  source/version metadata and exact scan-report digests.
+
 - Reject credential-bearing provider redirects and move caller-controlled document
   metadata out of LLM system instructions; keep provider error text out of public errors.
 - Enforce Assurance evidence/state consistency for restricted final decisions, prevent

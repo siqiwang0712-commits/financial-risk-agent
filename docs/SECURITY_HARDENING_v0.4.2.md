@@ -332,3 +332,103 @@ Existing lint, production audits, scanner thresholds and the empty `.trivyignore
 remain enabled; no advisory suppression was added. Recheck this exact advisory
 before promotion and when braces publishes a fixed release. The full audit is
 retained as a failing supplemental inventory, not represented as a clean audit.
+
+
+## Adversarial follow-up — 2026-10-09
+
+Starting source: `6a6c6b38411fb8d72c8c3a62cf319e67aeda223e`. Earlier
+measurements above remain evidence for that candidate, not subsequent changes.
+
+| Severity / class | Failure and root cause | Fix and regression protection |
+|---|---|---|
+| Medium / integrity | Rehashed Assurance accepted malformed sufficient evidence, contradictory ablation/distribution statistics, fabricated calibrated probability/reasons, automated FLAG despite fragile evidence, and REVIEW after parser failure. Hash checks did not fully verify semantics. | Exact nested fields/types, finite measurements, identities/aggregates, sufficient-evidence search representation, diagnostic/reason/blocker and final/automation transitions are checked. Even self-consistent ablations must ABSTAIN with no score delta when the last source is removed. Rehashed negative tests failed before fixes; certificate wrapping, JSON round trips and evaluator positives are tested. |
+| Medium / persistence integrity | Valid certificates could be relabelled, and a valid sibling payload or corrupted column hash could replace a requested ledger record. | Enforce content-addressed v0.4 IDs; bind reads to requested ID/tenant/entity and stored column hash. In-memory writes/reads also verify integrity. Real PostgreSQL reconnection and in-memory swap tests failed before fixes and reject corruption afterward; legacy v0.3 remains separate. |
+| Medium / availability | A second cancellation interrupted cleanup and left a live worker. | Shield and await a strongly referenced reclamation task through repeated cancellation; reject invalid budgets before spawning. A SIGTERM-ignoring regression proves the old leak and PID reclamation after the fix. |
+| Medium / release verification | Publication did not require full ordinary CI for the exact source. | The newest matching push CI and all four required jobs must succeed before builds. Other sources/workflows/forks, stale success, failed/cancelled/skipped/missing/duplicate jobs are rejected; the script was exercised against real CI. Only prepare receives actions:read. |
+| Low / resource hardening | Oversized multipart metadata reached PDF workers; result limits were checked after oversized partial files were written. | Match JSON company/year limits, bound document names before workers, and enforce quota before every pickle byte write. Metadata/partial-file regressions failed before fixes; valid uploads and large IPC results remain tested. |
+| Low / verification | Trivy report identity used substring membership. | Require complete lowercase SHA-256 and exact @digest equality. Tag text, trailing suffixes and truncated digests are rejected; valid empty scan results remain accepted. |
+| Low / verification hardening | Digest checks did not independently check OCI source/version. | Both remote Compose paths and the local gate check expected metadata and non-root user. Wrong/missing metadata is rejected; artifact ID/digest and migration/scan binding are retained. |
+| Low / container hardening | API inherited unnecessary mount utilities and privilege bits. | Purge only the independently removable mount package, clear SUID/SGID, and inspect the exact candidate. No essential-package override, autoremove, ignore or scan threshold change. Runtime/PDF/PostgreSQL/migration checks protect compatibility. |
+
+The verifier checks observable serialized invariants, not issuer authenticity. It
+cannot reconstruct omitted financial inputs, disagreement scalars, reference bounds
+or the entire subset search. New publication requires a trusted supplied policy
+and authenticated storage. Legacy v0.3 verification remains separate; default
+maturity/calibration remain HEURISTIC_POLICY / UNCALIBRATED.
+
+Publication conditions, digest subjects for SBOM/attestations, migration reuse of
+API and scanner execution/report binding were reviewed. Candidate tags are registry
+locators; verification and promotion use recorded digests. Manual publish=false,
+including dispatch from a tag, cannot publish. No release publication or Git tag
+creation is part of this follow-up.
+
+Request measurement, authentication before multipart parsing, read budgets,
+admission capacity, partial publication, redirects and untrusted document-role
+handling retain existing negative tests. Workers are not a native-code sandbox;
+prompt injection remains a residual risk. No external audit/certification is claimed.
+
+Only current v0.4.2 source identities were updated. Frozen E4/E4-S/E4-R/v0.4.1
+identities/results were not regenerated. E5 remains BLOCKED / DRAFT_NOT_FROZEN.
+
+On small Docker VFS hosts the local gate supports `--prune-build-cache`: it
+reclaims only completed build caches between images, preserving the candidates
+and all runtime/security checks. Space-exhausted runs are failures, not passing
+validation. Prior local development/candidate images were archived with verified
+config identities before removing recoverable copies; database volumes and
+historical research/scan evidence were retained.
+
+### Final-source local verification
+
+`python -m scripts.verify_v042_release --python311 <3.11 interpreter>
+--python312 <3.12 interpreter> --prune-build-cache` completed successfully on
+2026-10-09. Cloud builds additionally used the existing optional host network,
+proxy host and CA bundle mount; TLS/signature validation remained enabled.
+The full log is `/tmp/finrisk-adversarial-release-gate-validated.log`.
+
+| Gate | Result | Executed evidence |
+|---|---|---|
+| Backend 3.11 / 3.12 | PASS | Full pytest with real PostgreSQL: 927 tests per interpreter, 92.18% coverage each; required minimum remains 90% |
+| Python/static | PASS | Both `pip check` and `pip-audit --strict --no-deps -r requirements.lock`; Ruff; `git diff --check` |
+| Assurance/certificates/persistence | PASS | Rehashed semantic negatives, content-addressed IDs, in-memory swap and PostgreSQL payload/column corruption rejection in full suite; 16 container PostgreSQL tests |
+| Research/provenance | PASS | `python -m scripts.verify_v042 --ci`; frozen E4; E4-S 44/44, E4-R 136/136; prospective E5 preflight and NOT_FROZEN checks |
+| Frontend | PASS | `npm ci`, 36 tests, lint, typecheck, production build; `npm audit --omit=dev --audit-level=high` reports zero |
+| Complete npm inventory | FAIL / residual | Full `npm audit --json`: five HIGH development package entries for the single unfixed GHSA-vfj7-8cjw-p6xm; no suppression or compatible fixed package identified |
+| Packaging | PASS | Wheel and sdist; clean 3.11/3.12 installs; `pip check` and outside-checkout API/Assurance/certificate smoke report 0.4.2 |
+| Container/runtime | PASS | API/web builds; OCI source/version and privilege checks; both Compose stacks use the same image IDs; API/web/migrate identity, migration idempotence, persistence/restart and certificate/replay checks |
+| HTTP/request/process | PASS | Authenticated document workflow; 401/413/415/422/429 negative contracts; production timeout/retry 504 twice; repeated-cancellation worker reclamation and pre-write quotas |
+| Source/image policy scans | PASS | Trivy 0.68.2: source and exact tested API/web images; MEDIUM/HIGH/CRITICAL fixable vulnerability and secret scans report zero |
+| Unfiltered image scans | FAIL / residual API | Scanner execution/identity PASS; API 40 HIGH package findings, eight unfixed CVEs, zero CRITICAL; web zero HIGH/CRITICAL |
+| Release/documentation | PASS | Aggregate local release gate; all current versions remain 0.4.2; 70-document Markdown link check |
+
+Ordinary GitHub CI and the registry `publish=false` workflow are separate
+post-push checks for the new commit. Their exact run IDs and outcomes belong to
+the completion report and Actions evidence; earlier runs above cannot validate
+this follow-up. No production promotion, tag or release creation is authorized.
+
+The new unfiltered API result has four fewer package findings because `mount`
+was removed. All remaining findings lack `FixedVersion` in the fresh official
+Trivy database. The same eight advisories remain: CVE-2025-69720,
+CVE-2026-16742, CVE-2026-54369, CVE-2026-76642, CVE-2026-78408,
+CVE-2026-78409, CVE-2026-78410 and CVE-2026-9538. Necessary Debian
+libraries remain installed; SUID/SGID utilities are disabled. No application
+request exploit was established, but absence of reachability proof is not a
+clean scan or a guarantee. Review the residual-risk table above and rescan
+before promotion; no vulnerability ignore or threshold was changed.
+
+Local image IDs (configuration identities, not registry digests):
+
+- api: `sha256:8473d0d7aab37d4f02737c73dc025644c0d6095e41840b702362c88ce8cbbdeb`
+
+- web: `sha256:1f0b58dfd5eec899e4611ec59c4b1b5e46ce182e46ef30438145cb8d790dc871`
+
+Validated Trivy report SHA-256 identities:
+
+- `finrisk-adversarial-source-validated.json`: `70dda23d5eae9581c76dffefb266c74672b07fa3cfa51eb414f72413e5ccfc6c`
+
+- `finrisk-adversarial-api-policy-validated.json`: `969b5f859490cafeacf59dbb614b7e8b01bf27f62db8935a2ff23bcd053336b4`
+
+- `finrisk-adversarial-web-policy-validated.json`: `d4be5f095613c99c2231a952ef2f56df1a8e2ab21de4ae1fd87bef6045bb7041`
+
+- `finrisk-adversarial-api-unfiltered-validated.json`: `e568caf01c02a309b1233a5b6dff8dcfed7e2c7c368e9e289b421c4229c916da`
+
+- `finrisk-adversarial-web-unfiltered-validated.json`: `8f703dddfdcaeb8aed72328ee402139763cae47844d3bcf7e69106baba9278ba`

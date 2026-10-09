@@ -183,6 +183,7 @@ def frontend_gate(npm: str) -> None:
 def container_gate(
     docker: str, python: str, version: str = "0.4.1",
     build_options: list[str] | None = None,
+    prune_build_cache: bool = False,
 ) -> None:
     common = {
         **os.environ,
@@ -209,17 +210,25 @@ def container_gate(
     }
     subprocess.run(compose(docker, release, "down", "-v"), cwd=ROOT, env=release_env, check=False)
     subprocess.run(compose(docker, development, "down", "-v"), cwd=ROOT, env=dev_env, check=False)
+    revision = os.getenv("GITHUB_SHA") or subprocess.check_output(
+        ["git", "rev-parse", "HEAD"], cwd=ROOT, text=True,
+    ).strip()
+    source_options = ["--build-arg", f"OCI_VERSION={version}", "--build-arg", f"OCI_REVISION={revision}"]
     try:
         run(
             "build release API candidate",
-            [docker, "build", *(build_options or []), "-f", "backend/Dockerfile", "-t", release_env["FINRISK_API_IMAGE"], "."],
+            [docker, "build", *(build_options or []), *source_options, "-f", "backend/Dockerfile", "-t", release_env["FINRISK_API_IMAGE"], "."],
             env=release_env,
         )
+        if prune_build_cache:
+            run("reclaim completed API build cache", [docker, "builder", "prune", "--all", "--force"], env=release_env)
         run(
             "build release web candidate",
-            [docker, "build", *(build_options or []), "-f", "frontend/Dockerfile", "-t", release_env["FINRISK_WEB_IMAGE"], "frontend"],
+            [docker, "build", *(build_options or []), *source_options, "-f", "frontend/Dockerfile", "-t", release_env["FINRISK_WEB_IMAGE"], "frontend"],
             env=release_env,
         )
+        if prune_build_cache:
+            run("reclaim completed web build cache", [docker, "builder", "prune", "--all", "--force"], env=release_env)
         # Local image IDs pin the exact built artifact. They are not registry
         # manifest digests and must never be reported as remote attestations.
         ids = {
@@ -230,6 +239,9 @@ def container_gate(
             for service in ("api", "web")
         }
         for service, identity in ids.items():
+            run(f"{service} candidate source/privilege identity", [python, "scripts/verify_candidate_image.py",
+                "--docker-bin", docker, "--image", identity, "--version", version, "--revision", revision,
+                *(["--api"] if service == "api" else [])])
             if not re.fullmatch(r"sha256:[0-9a-f]{64}", identity):
                 raise SystemExit(f"invalid local candidate image identity: {service}")
             dev_env[f"CANDIDATE_{service.upper()}_IMAGE"] = identity
@@ -258,7 +270,7 @@ def container_gate(
             "DATABASE_URL": "postgresql://finrisk:local-gate-release-password@127.0.0.1:55432/finrisk",
         }
         run("PostgreSQL migration idempotence", [python, "scripts/validate_postgres_migration.py"], env=postgres_env)
-        run("PostgreSQL integration tests", [python, "-m", "pytest", "tests/test_postgres_runtime.py", "-q", "--basetemp", str(STAGE / "pytest-postgres")], env=postgres_env)
+        run("PostgreSQL integration tests", [python, "-m", "pytest", "tests/test_postgres_runtime.py", "tests/test_certificate_persistence_binding.py", "-q", "--basetemp", str(STAGE / "pytest-postgres")], env=postgres_env)
         release_state = STAGE / "release-postgres.json"
         run("release PostgreSQL before restart", [python, "scripts/verify_postgres_state.py", "--phase", "before", "--state-file", str(release_state)], env=release_env)
         run("release API restart", compose(docker, release, "restart", "api"), env=release_env)

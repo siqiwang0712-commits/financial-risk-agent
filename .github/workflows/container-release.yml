@@ -56,6 +56,9 @@ jobs:
   # ---------------------------------------------------------------------------
   prepare:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      actions: read
     outputs:
       version: ${{ steps.resolve.outputs.version }}
       version_core: ${{ steps.resolve.outputs.version_core }}
@@ -109,6 +112,11 @@ jobs:
           echo "commit=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
           echo "short_sha=$(git rev-parse --short=7 HEAD)" >> "$GITHUB_OUTPUT"
           echo "created=$(git show -s --format=%cI HEAD)" >> "$GITHUB_OUTPUT"
+
+      - name: Require successful ordinary CI for the exact source commit
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: python3 scripts/verify_release_ci.py --commit "$(git rev-parse HEAD)"
 
   # ---------------------------------------------------------------------------
   # Build once. Both images are pushed under an immutable *candidate* tag only —
@@ -259,6 +267,10 @@ jobs:
             printf '%s\n' "$id" > ".runtime/${svc}-image-id.txt"
             echo "$svc image ref=$ref id=$id"
           done
+      - name: Verify candidate source identity and runtime privilege surface
+        run: |
+          python3 scripts/verify_candidate_image.py --image "$CANDIDATE_API_IMAGE" --version "${{ needs.prepare.outputs.version_core }}" --revision "${{ needs.prepare.outputs.commit }}" --api
+          python3 scripts/verify_candidate_image.py --image "$CANDIDATE_WEB_IMAGE" --version "${{ needs.prepare.outputs.version_core }}" --revision "${{ needs.prepare.outputs.commit }}"
       - name: Start the candidate stack (migrate -> api -> web)
         run: docker compose $COMPOSE_FILES up -d postgres migrate api web
       - name: Assert the running containers are the pulled candidate digests
@@ -369,6 +381,10 @@ jobs:
             printf '%s\n' "$id" > ".runtime/${svc}-image-id.txt"
             echo "$svc image ref=$ref id=$id"
           done
+      - name: Verify candidate source identity and runtime privilege surface
+        run: |
+          python3 scripts/verify_candidate_image.py --image "$FINRISK_API_IMAGE" --version "${{ needs.prepare.outputs.version_core }}" --revision "${{ needs.prepare.outputs.commit }}" --api
+          python3 scripts/verify_candidate_image.py --image "$FINRISK_WEB_IMAGE" --version "${{ needs.prepare.outputs.version_core }}" --revision "${{ needs.prepare.outputs.commit }}"
       - name: Start the release stack (migrate -> api -> web)
         run: docker compose -f docker-compose.release.yml up -d postgres migrate api web
       - name: Assert the release stack runs the candidate digests

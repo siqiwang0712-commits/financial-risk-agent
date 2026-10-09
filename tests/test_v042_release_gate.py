@@ -66,6 +66,7 @@ def test_local_gate_rejects_substituted_candidate_image(monkeypatch, service):
 def test_local_gate_preserves_failure_diagnostics_before_cleanup(monkeypatch):
     commands = []
     monkeypatch.setattr(gate.subprocess, "run", lambda command, **_: commands.append(command))
+    monkeypatch.setattr(gate.subprocess, "check_output", lambda *_, **__: "a" * 40)
 
     def fail(*_, **__):
         raise SystemExit("candidate build failed")
@@ -78,3 +79,23 @@ def test_local_gate_preserves_failure_diagnostics_before_cleanup(monkeypatch):
     assert all("postgres" in commands[i] and "api" in commands[i] for i in diagnostic_indexes)
     cleanup_indexes = [i for i, command in enumerate(commands) if "down" in command]
     assert max(diagnostic_indexes) < min(cleanup_indexes[-2:])
+
+
+def test_opt_in_cache_reclamation_preserves_candidates_and_build_order(monkeypatch):
+    commands = []
+    monkeypatch.setattr(gate.subprocess, 'run', lambda *_, **__: None)
+    monkeypatch.setattr(gate.subprocess, 'check_output', lambda *_, **__: 'sha256:' + 'a'*64)
+
+    def record(label, command, **_):
+        commands.append(command)
+        if 'scripts/verify_candidate_image.py' in command:
+            raise SystemExit('stop after successful builds')
+
+    monkeypatch.setattr(gate, 'run', record)
+    with pytest.raises(SystemExit, match='stop after successful builds'):
+        gate.container_gate('docker', 'python', '0.4.2', prune_build_cache=True)
+    builds = [i for i,c in enumerate(commands) if c[:2] == ['docker', 'build']]
+    prunes = [i for i,c in enumerate(commands) if c == ['docker', 'builder', 'prune', '--all', '--force']]
+    assert len(builds) == len(prunes) == 2
+    assert builds[0] < prunes[0] < builds[1] < prunes[1]
+    assert not any(c[:3] in (['docker', 'image', 'rm'], ['docker', 'system', 'prune']) for c in commands)

@@ -451,7 +451,7 @@ class PostgresEnterpriseRepository:
 
     def get_decision_bundle(self, organization_id: str, entity_id: str, bundle_id: str) -> DecisionBundle:
         row = self._one(
-            "SELECT payload FROM decision_bundles WHERE organization_id=%s AND entity_id=%s AND id=%s",
+            "SELECT bundle_hash,payload FROM decision_bundles WHERE organization_id=%s AND entity_id=%s AND id=%s",
             (organization_id, entity_id, bundle_id),
         )
         payload = row["payload"]
@@ -459,6 +459,8 @@ class PostgresEnterpriseRepository:
         payload["agent_trace"] = tuple(payload["agent_trace"])
         payload["component_telemetry"] = tuple(payload["component_telemetry"])
         bundle = DecisionBundle(**payload)
-        if not verify_decision_bundle(bundle):
-            raise ValueError("persisted decision bundle hash verification failed")
+        if (bundle.bundle_id != bundle_id or bundle.organization_id != organization_id
+                or bundle.entity_id != entity_id or bundle.bundle_hash != row["bundle_hash"]
+                or not verify_decision_bundle(bundle)):
+            raise ValueError("persisted decision bundle identity/hash verification failed")
         return bundle
