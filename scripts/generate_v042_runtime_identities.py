@@ -40,7 +40,7 @@ def build() -> dict:
         name: previous._sha(ROOT / name)
         for name in (
             "backend/finrisk/assurance/engine.py", "backend/finrisk/assurance/semantics.py",
-            "backend/finrisk/assurance/certificate.py",
+            "backend/finrisk/assurance/certificate.py", "backend/finrisk/assurance/evidence.py",
             "backend/finrisk/enterprise/postgres.py", "backend/finrisk/enterprise/repository.py",
             "backend/finrisk/llm.py", "backend/finrisk/process_isolation.py",
             "backend/finrisk/request_boundary.py", "backend/finrisk/upload_boundary.py",
@@ -50,7 +50,7 @@ def build() -> dict:
             "backend/Dockerfile", "frontend/Dockerfile",
             "scripts/verify_candidate_image.py", "scripts/verify_release_ci.py",
             "scripts/verify_trivy_report.py", "scripts/verify_v041_release.py",
-            "scripts/verify_v042_release.py",
+            "scripts/verify_v042_release.py", "scripts/verify_v042.py",
             ".github/workflows/container-release.yml",
         )
     }

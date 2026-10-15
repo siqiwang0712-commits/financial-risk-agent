@@ -1,0 +1,52 @@
+{
+  "candidate": "histogram_gradient_boosting__VO",
+  "cohort_sha256": "75dc947040908c82018436107a74960b05eaf3978c014c60d4ddd8e4b8ec3706",
+  "compute_budget": "CPU only, <=5 minutes; no refitting; 675 OOF rows, five existing folds, six mock Agent calls",
+  "dataset_id": "e4s-replication-verified-development-v1",
+  "experiment_version": "v0.4.2-development-experiments",
+  "input_hash_canonicalization": "UTF-8 bytes with CRLF normalized to LF; original files never rewritten",
+  "inputs": {
+    "examples/synthetic_company.json": "abc71e315f5e95b4d840296f97e9156276aac1c152cb86b3583ff083019518da",
+    "research/strong_tabular_reference/artifacts/artifact_manifest.json": "df6ddd6403599391b681971d1a9241e98ea9dda6b3f9c0a65fee7b4dbc9d9e6d",
+    "research/strong_tabular_reference/artifacts/development_companies_675.json": "75dc947040908c82018436107a74960b05eaf3978c014c60d4ddd8e4b8ec3706",
+    "research/strong_tabular_reference/artifacts/fold_assignments.json": "fc981b826e33af08c08d00666aa8d5c9e3828d0a75e76f0e8de552491be9fa22",
+    "research/strong_tabular_reference/artifacts/oof_predictions.json": "e055985e62819743a7b69c25e087e01e5c00cddce09385b5bc83552ec3f9758c",
+    "research/strong_tabular_reference/development_data_manifest.json": "0d040512a7f351eef4a3db83fda2254c19a200b8cb76556c7e2dbbde78fe3efc"
+  },
+  "metric_definitions": {
+    "abstain_rate": "0 by diagnostic construction, not an empirical Assurance result",
+    "budget": "floor(N*budget) highest scores, ties broken by observation_id; does not exceed budget",
+    "consistency": "fraction of equal unordered run pairs; evidence mean pairwise Jaccard, empty union NOT_ESTIMABLE",
+    "coverage": "issued / all observations; all equal confidence ties included at threshold",
+    "fold_error": "fixed-threshold OOF misclassification on each existing outer test fold, no seed sensitivity/refit claim",
+    "issued": "Diagnostic PASS/FLAG predictions at fixed 0.5; not Assurance authorization",
+    "precision": "events in reviewed rows / reviewed rows",
+    "recall": "events in reviewed rows / all historical events",
+    "review_rate": "1-coverage, a descriptive hypothetical review band",
+    "selective_error": "wrong issued predictions / issued; zero issued is NOT_ESTIMABLE, never correct abstention"
+  },
+  "minimum_n": 30,
+  "review_budgets": [
+    0.05,
+    0.1,
+    0.2
+  ],
+  "source_blob_sha256": {
+    "examples/synthetic_company.json": "abc71e315f5e95b4d840296f97e9156276aac1c152cb86b3583ff083019518da",
+    "research/strong_tabular_reference/artifacts/artifact_manifest.json": "df6ddd6403599391b681971d1a9241e98ea9dda6b3f9c0a65fee7b4dbc9d9e6d",
+    "research/strong_tabular_reference/artifacts/development_companies_675.json": "75dc947040908c82018436107a74960b05eaf3978c014c60d4ddd8e4b8ec3706",
+    "research/strong_tabular_reference/artifacts/fold_assignments.json": "fc981b826e33af08c08d00666aa8d5c9e3828d0a75e76f0e8de552491be9fa22",
+    "research/strong_tabular_reference/artifacts/oof_predictions.json": "e055985e62819743a7b69c25e087e01e5c00cddce09385b5bc83552ec3f9758c",
+    "research/strong_tabular_reference/development_data_manifest.json": "0d040512a7f351eef4a3db83fda2254c19a200b8cb76556c7e2dbbde78fe3efc"
+  },
+  "source_commit": "7e9bd827a638c2aa992de9e193e39b82e451616c",
+  "thresholds": [
+    0,
+    0.1,
+    0.2,
+    0.3,
+    0.4,
+    0.5
+  ],
+  "timestamp_utc": "2026-10-15T15:22:55.902215+00:00"
+}

@@ -2,6 +2,10 @@
 
 ## v0.4.2 — Security & Reliability Patch
 
+The [closeout audit](docs/RELEASE_AUDIT_v0.4.2.md) separates product validation from
+[new retrospective development diagnostics](research/v042_experiments/EXPERIMENT_SUMMARY.md).
+These experiments do not change production policy or execute E5.
+
 Current release metadata: **0.4.2 · 2026-10-08**. Release preparation does not
 create a tag, publish images or execute E5. See the
 [release notes](RELEASE_NOTES_v0.4.2.md) and

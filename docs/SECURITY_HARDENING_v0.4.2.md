@@ -432,3 +432,21 @@ Validated Trivy report SHA-256 identities:
 - `finrisk-adversarial-api-unfiltered-validated.json`: `e568caf01c02a309b1233a5b6dff8dcfed7e2c7c368e9e289b421c4229c916da`
 
 - `finrisk-adversarial-web-unfiltered-validated.json`: `8f703dddfdcaeb8aed72328ee402139763cae47844d3bcf7e69106baba9278ba`
+
+## Closeout follow-up — 2026-10-15
+
+The [v0.4.2 closeout audit](RELEASE_AUDIT_v0.4.2.md) records the next source and
+validation measurements. Ordinary rule paths now require nonempty source evidence
+before counting as verified. Identical material paths are counted once in evidence
+coverage and fragility dependencies; distinct rule/claim paths sharing a source
+remain distinct. Four initial negative tests failed before these fixes. Source and
+current runtime identities are separate from frozen historical identities. New
+experiments are post-hoc development diagnostics, not authorization or validation.
+
+The independent payload verifier also requires source IDs whenever verified path
+count is positive. A self-consistent, rehashed automated FLAG with zero IDs was
+reproduced before the check; certificate path rebinding already rejected it.
+Final-source local validation was rerun after the fix: 948 tests per interpreter,
+92.20% coverage, complete release gate PASS. Fresh exact-image policy scans pass;
+the unfiltered API inventory remains 40 HIGH/eight unfixed CVEs. See the closeout
+audit for commands, evidence identities and the distinct post-push remote checks.

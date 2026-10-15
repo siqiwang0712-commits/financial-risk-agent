@@ -62,3 +62,6 @@ research/strong_tabular_reference/** text eol=lf
 research/strong_tabular_reference/artifacts/*.pkl binary
 research/e5_readiness/** text eol=lf
 research/v041_development/** text eol=lf
+
+# New derived experiment manifests hash exact code/config/result bytes.
+research/v042_experiments/** text eol=lf

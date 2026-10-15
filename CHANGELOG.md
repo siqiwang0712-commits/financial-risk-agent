@@ -2,6 +2,11 @@
 
 ## [0.4.2] - 2026-10-08
 
+- Reject empty-source Assurance paths, require source identities in verified proofs,
+  and deduplicate identical material dependencies.
+- Add bounded, separately identified retrospective OOF diagnostics and a mock Agent
+  repeatability harness without changing policy, fitted models or frozen evidence.
+
 - Reject rehashed but impossible Assurance states, bind certificate IDs and stored
   ledger identities, and require full successful CI for the exact release source.
 - Preserve worker reclamation through repeated cancellation; validate upload metadata

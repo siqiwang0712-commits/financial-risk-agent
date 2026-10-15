@@ -2,7 +2,11 @@ from __future__ import annotations
 
 from typing import Any
 
-from ..enterprise.decision import canonical_hash, verified_material_path
+from ..enterprise.decision import (
+    canonical_hash,
+    material_decision_payload,
+    verified_material_path,
+)
 from .domain import (
     EvidenceAssurance,
     EvidenceAssuranceState,
@@ -34,9 +38,20 @@ def evidence_identifier(value: dict[str, Any]) -> str:
 
 
 def _verified_path(path: dict[str, Any]) -> bool:
-    if path.get("rule_or_model") == "narrative_numeric_consistency":
-        return verified_material_path(path)
-    return path.get("evidence_path_status") == "VERIFIED"
+    return verified_material_path(path) and all(path["source_evidence"])
+
+
+def unique_material_paths(paths: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    """An identical material dependency contributes once, independent of telemetry.
+
+    Distinct rules/claims sharing a source remain distinct dependencies; their
+    common evidence identity is still deduplicated by the fragility analysis.
+    """
+    unique = {}
+    for path in paths:
+        identity = canonical_hash(material_decision_payload(path))
+        unique.setdefault(identity, path)
+    return list(unique.values())
 
 
 def _path_evidence(path: dict[str, Any]) -> list[dict[str, Any]]:
@@ -55,7 +70,7 @@ def _path_evidence(path: dict[str, Any]) -> list[dict[str, Any]]:
 
 def dependencies_from_paths(paths: list[dict[str, Any]]) -> list[EvidenceDependency]:
     dependencies: list[EvidenceDependency] = []
-    for index, path in enumerate(paths):
+    for index, path in enumerate(unique_material_paths(paths)):
         evidence_ids = tuple(
             sorted(evidence_identifier(item) for item in _path_evidence(path))
         )
@@ -90,6 +105,7 @@ def assess_evidence(
     minimum_verified_coverage: float,
     removed_evidence_ids: set[str] | None = None,
 ) -> EvidenceAssurance:
+    paths = unique_material_paths(paths)
     material = len(paths)
     removed_evidence_ids = removed_evidence_ids or set()
     verified_paths = [

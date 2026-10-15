@@ -23,7 +23,7 @@
   "status": "RELEASE_CANDIDATE_NOT_PUBLISHED"
  },
  "historical_release_source": "e60abba2976e389ddf80a147227a56cc4cad8e06",
- "identity_sha256": "a4906dc3c72e874e7610b2f6c9cc1f0ab1bc9be005bc25c8eda6a1de20557aa0",
+ "identity_sha256": "9ed696b30459b358a3734aaddada9c1ca5cc4719864564cb4dffdcb5669010c4",
  "release_identity": "v0.4.2",
  "schema_version": "1",
  "scope": "RELEASE_CANDIDATE_NOT_PUBLISHED_NOT_E5_FREEZE",
@@ -34,7 +34,8 @@
   "backend/finrisk/api.py": "78d531d82e59942bb1e43792f2bf824c447296ac02337ba0d08075841c6cfeab",
   "backend/finrisk/assurance/certificate.py": "2ad2bf2dd57886b209a4adbc597cd5668305eb09d556ed274091ed227f7e6d80",
   "backend/finrisk/assurance/engine.py": "9e3ec2525a71df317b0adc87f7460894aa4781a1263109d9e1126f3ef35a0e88",
-  "backend/finrisk/assurance/semantics.py": "a5e5c58fc2a4276d390aab4480b4b2252437870e3a612ab863ebbd2392ca4838",
+  "backend/finrisk/assurance/evidence.py": "3048a7bbd2c22ced6b269ee9e0a38218704a78bfea905fb4f11e09fc756c3277",
+  "backend/finrisk/assurance/semantics.py": "9784ddfe7de33370dbc2bfed947fdb88a7c164061d229b461bdcd09f609ca765",
   "backend/finrisk/enterprise/postgres.py": "501154d6c20f90d2eecb39e8c18a7d60e019b78e48d15b238d01daf840fde0e6",
   "backend/finrisk/enterprise/repository.py": "ed725fc1205a8a877d278793466aa45c9c64d550513d08585094d499a68edade",
   "backend/finrisk/llm.py": "6020d378c4c88d04b01e28c7cc1007645502417eb46d5a637d8c98748b3b4962",
@@ -50,6 +51,7 @@
   "scripts/verify_release_ci.py": "5e2487166e1a849ac9255d0a16659a5802a6767754b3a05d575bee813e920727",
   "scripts/verify_trivy_report.py": "031a2f731f7c2d075d14f88c64ccd4b8268573c2ad2d3ca47137f052c0af9da4",
   "scripts/verify_v041_release.py": "6fbb3abc4afc97335baac9dbfbe1d3f662cbdcde76578ff79eab5d732b121f51",
+  "scripts/verify_v042.py": "d969bcba622884868c253d481a3f990570c635c879a9bf11ebcfbe7512145359",
   "scripts/verify_v042_release.py": "1a1b5b24b30a0c122d73fdde67d226580a394c4224fb357e6b1a6aa8bc16e92f"
  }
 }

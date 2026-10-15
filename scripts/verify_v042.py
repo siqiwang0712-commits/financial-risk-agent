@@ -27,6 +27,7 @@ def main() -> int:
     verify_release_metadata()
     run("historical synthetic source byte identity", [sys.executable, "scripts/generate_v040_development_reference.py", "--check"])
     verify_artifacts("scripts/generate_v042_runtime_identities.py", expected_version="0.4.2")
+    run("bounded derived development experiments", [sys.executable, "-m", "research.v042_experiments.run_diagnostics", "--check"])
     print("v0.4.2 release metadata and historical artifacts: PASS (not a release publication)")
     return 0
 

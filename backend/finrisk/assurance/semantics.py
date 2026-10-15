@@ -59,6 +59,8 @@ def verify_structures(value, policy):
         return False
     if evidence['verified_path_count'] == 0 and (evidence['verified_evidence_ids'] or evidence['supported_claims']):
         return False
+    if evidence['verified_path_count'] and not evidence['verified_evidence_ids']:
+        return False
     nodes = list(evidence['verified_evidence_ids'])
     ablations = fragility['ablations']
     if not isinstance(ablations, (list, tuple)) or len(ablations) != len(nodes):
