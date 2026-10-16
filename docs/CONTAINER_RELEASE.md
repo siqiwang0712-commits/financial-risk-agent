@@ -8,6 +8,15 @@ Workflow: `.github/workflows/container-release.yml`
 Stack for end users: `docker-compose.release.yml`
 Stack used by the pipeline: `docker-compose.yml` + `docker-compose.prod.yml` + `docker-compose.candidate.yml`
 
+Current source: **v0.4.2 Security & Reliability Patch — READY FOR RELEASE / PROMOTION**.
+This guide describes publication mechanics, not proof that publication occurred. The
+[closeout audit](RELEASE_AUDIT_v0.4.2.md) records successful ordinary CI and a separate
+`publish=false` candidate dry-run on `e41638d8`; publishing was skipped. Historical
+release/dry-run records below retain their original versions and identities. A later
+commit needs its own applicable verification; old image evidence does not attest a
+new frontend build. Known dev-only `braces` and unfixed API base-image advisories
+remain residuals; the unfiltered API image is not clean.
+
 ## Images
 
 | image | contents |

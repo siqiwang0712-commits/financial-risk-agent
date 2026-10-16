@@ -1,4 +1,4 @@
-# FinRisk v0.4 Assurance Architecture
+# FinRisk v0.4.2 Assurance Architecture
 
 Status: **IMPLEMENTED — INTERNAL DEVELOPMENT VALIDATION — NOT EXTERNALLY VALIDATED**
 
@@ -23,8 +23,10 @@ No valid AssuranceResult
 → no authorized final decision
 ```
 
-`authorized_final_decision()` verifies the type and content hash of the
-`AssuranceResult`. Both the deterministic API path and Agent path use this publication
+`authorized_final_decision()` verifies the type, content hash and semantic consistency
+of the `AssuranceResult`, including policy identity, evidence aggregates, nested
+structures and proposal/final/automation transitions. Rehashing a contradictory payload
+does not make it valid. Both the deterministic API path and Agent path use this publication
 boundary.
 
 ## Runtime architecture
@@ -40,7 +42,8 @@ filing
        ├─ evidence fragility
        ├─ distribution validity
        └─ admission policy
-  → final_decision
+  → AssuranceResult
+  → authorized final_decision
   → Decision Certificate
 ```
 
@@ -54,6 +57,7 @@ The implementation lives in `backend/finrisk/assurance/`:
 |---|---|
 | `domain.py` | typed states and outputs |
 | `engine.py` | sole authorization boundary |
+| `semantics.py` | strict payload semantics and policy/transition consistency |
 | `policy.py` | versioned, content-hashed admission policy |
 | `evidence.py` | verified path accounting and deterministic dependency extraction |
 | `fragility.py` | evidence ablation and sufficient-evidence search |
@@ -66,7 +70,10 @@ The implementation lives in `backend/finrisk/assurance/`:
 Rules, models, fusion and Agent review may propose `PASS`, `FLAG`, `REVIEW` or
 `ABSTAIN`. A v0.3 compatibility field named `decision` remains on fusion and selective
 policy outputs, but it is explicitly marked as a proposal alias. Those objects contain no
-authorized `final_decision`.
+authorized `final_decision`. The Agent state retains a different legacy `decision`
+field: it is assigned the authorized result only after Assurance. Its
+`decision_trace.decision` is a proposal alias; use `assessment.final_decision` and the
+verified certificate for final authority, not the alias name alone.
 
 `AssuranceEngine.evaluate()` returns an `AssuranceResult` containing:
 
@@ -79,16 +86,26 @@ authorized `final_decision`.
 - an authorization-record hash.
 
 If assurance data is absent or invalid, publication fails. Missing verified evidence can
-force `ABSTAIN`; fragility, distribution or runtime concerns can force `REVIEW`. A proposal
-that is already `ABSTAIN` remains withheld.
+force `ABSTAIN`; fragility or distribution concerns can force `REVIEW`; runtime
+authorization blockers can force `ABSTAIN`. A proposal that is already `ABSTAIN` remains withheld.
 
 ## Assurance states
 
 ### Evidence assurance
 
 Material paths are evaluated as `VERIFIED`, `PARTIAL`, `INSUFFICIENT` or `UNKNOWN`.
-A verified path requires complete verified provenance for its declared inputs. Removing a
-verified evidence item invalidates every dependent path while preserving the original
+A verified path requires complete verified provenance for its declared inputs and
+nonempty material source evidence. v0.4.2 enforces:
+
+- **EV-01:** an empty source-evidence path cannot count as `VERIFIED`.
+- **EV-02:** exact material duplicates count once for coverage and dependency
+  extraction, ignoring operational telemetry. Distinct claims/rules sharing a source
+  remain distinct dependencies; source IDs are deduplicated separately.
+- **EV-03:** any nonzero verified-path count requires corresponding source IDs.
+  Certificates bind those identities and coverage back to the recorded paths.
+
+A hash confirms content integrity, not the validity of unsupported evidence claims.
+Removing a verified evidence item invalidates every dependent path while preserving the original
 material-path denominator; evidence removal therefore cannot improve assurance.
 
 The path representation can carry:
@@ -193,7 +210,11 @@ v0.4 extends the existing `DecisionBundle` instead of replacing it. A certificat
 `bundle_hash` remains as a compatibility alias for `certificate_hash`. Verification
 canonicalizes all hashed content. Changing a nested assurance field, decision, policy,
 component version or evidence path invalidates the hash. Persisted v0.3 bundles retain a
-legacy verification path so historical records remain readable.
+legacy verification path so historical records remain readable. They cannot satisfy the
+v0.4 authorization verifier or be downgraded into an authorized legacy record.
+Certificate IDs and persisted reads are bound to the content hash and tenant/entity
+identity. Hash integrity is **not issuer authentication**: these records are not digital
+signatures, regulator certificates or proof that an issuer is trusted.
 
 ## API and UI contract
 

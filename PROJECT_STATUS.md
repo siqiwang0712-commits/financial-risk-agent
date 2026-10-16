@@ -2,6 +2,17 @@
 
 ## v0.4.2 — Security & Reliability Patch
 
+Status: **READY FOR v0.4.2 RELEASE / PROMOTION** — prepared source, not a claim
+of completed tag, GitHub Release or production container publication.
+
+FinRisk is an evidence-grounded corporate-filing financial-risk analysis and
+decision-assurance research system. Its authority path is:
+
+```text
+Analysis / Models / Rules / Agent → proposed_decision
+→ AssuranceEngine → AssuranceResult → authorized final_decision → Decision Certificate
+```
+
 The [closeout audit](docs/RELEASE_AUDIT_v0.4.2.md) separates product validation from
 [new retrospective development diagnostics](research/v042_experiments/EXPERIMENT_SUMMARY.md).
 These experiments do not change production policy or execute E5.
@@ -14,15 +25,24 @@ and residual base-image CVEs. Final remote CI and the non-publishing container
 dry-run must be checked for the final source commit before promotion.
 
 Provider redirects, LLM metadata roles, Assurance/certificate consistency, evidence
-path binding, bounded body admission and worker reclamation are hardened. Default
+path binding, bounded body admission and worker reclamation are hardened. Verified
+material paths require source evidence and source IDs (EV-01/EV-03); exact duplicate
+paths cannot inflate coverage or dependency multiplicity (EV-02). Default
 Assurance remains HEURISTIC_POLICY / UNCALIBRATED. Certificate hashes provide
 content integrity, not issuer authentication; workers are not native-code sandboxes.
 Prompt injection remains a residual boundary. E5 is BLOCKED / DRAFT_NOT_FROZEN.
 Frozen E4, E4-S, E4-R and v0.4.1 historical evidence is unchanged.
 
+The 2026-10-15 engineering record for `e41638d8` includes Python 3.11/3.12, frontend,
+packaging, Docker, both Compose paths and PostgreSQL checks. Exact remote CI/dry-run
+links are in the closeout audit. This documentation pass does not rerun those gates
+or any research experiment. The dev-only `braces` advisory and eight unfixed API
+base-image CVEs remain residuals; neither external validation nor a clean unfiltered
+API image is established.
+
 ## Historical release record
 
-## v0.4.1 — Research Readiness & Strong Reference
+### Historical v0.4.1 — Research Readiness & Strong Reference
 
 Released: **2026-10-05**
 

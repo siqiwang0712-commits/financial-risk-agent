@@ -16,7 +16,7 @@ function EvidenceCard({ item }: { item: Evidence }) {
       </header>
       <p>{item.quote || item.source_text || "(no quoted span)"}</p>
       <footer>
-        <span>evidence confidence (uncalibrated) {item.confidence.toFixed(2)}</span>
+        <span>evidence-quality index (not a probability) {item.confidence.toFixed(2)}</span>
         {item.value !== null && item.value !== undefined ? <span>value {item.value}</span> : null}
         {item.unit ? <span>{item.unit}</span> : null}
       </footer>
@@ -59,11 +59,11 @@ export function EvidenceTrail({ conclusions }: Props) {
             <small>Tool / rationale</small>
             <b>{conclusion.tool}</b>
             <p>{conclusion.rationale}</p>
-            <span className="confidenceChip">claim confidence (uncalibrated) {conclusion.confidence}</span>
+            <span className="confidenceChip">claim support index (not a probability) {conclusion.confidence}</span>
           </div>
 
           <div className="trailEvidence">
-            <small>Verified evidence</small>
+            <small>Source evidence and verification status</small>
             {conclusion.evidence.length ? (
               conclusion.evidence.map((item, itemIndex) => (
                 <EvidenceCard key={`${item.document}-${item.page}-${itemIndex}`} item={item} />

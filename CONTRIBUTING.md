@@ -6,6 +6,12 @@ Never commit filings without redistribution permission, personal data, `.env` fi
 
 ## Verification before review
 
+For a documentation/presentation-only task that explicitly forbids experiments, use
+the static checks in the [reproducibility guide](research/EXPERIMENT_REPRODUCIBILITY.md)
+and frontend checks if copy changes. Do not run research generators, refits or the
+aggregate v0.4.2 verifier: even `--check` recomputes development diagnostics. This
+focused review does not replace full release-candidate gates below.
+
 With `DATABASE_URL` set, apply and validate migrations before running the suite. Tests
 assume the schema already exists; on a fresh unmigrated database `rate_limit_events` is
 absent, the limiter fails closed, and authenticated routes return `503`.
@@ -22,6 +28,7 @@ Verify the frontend from its own directory:
 cd frontend
 npm audit --omit=dev --audit-level=high --registry=https://registry.npmjs.org
 npm test
+npm run lint
 npm run typecheck
 npm run build
 ```

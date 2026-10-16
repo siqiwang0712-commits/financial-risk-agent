@@ -29,7 +29,10 @@ Certificate hashes detect changes; they are content hashes, **not signatures or 
 of issuer authenticity**. Policy-bound publication and authenticated, tenant-scoped
 storage are required. Verification without a supplied trusted policy checks integrity,
 not whether that policy is approved for a new deployment. Persisted certificate evidence
-identities and coverage must match the actual recorded paths.
+identities and coverage must match the actual recorded paths. Empty material source
+paths cannot count as verified (EV-01), exact duplicate material paths cannot inflate
+coverage or dependencies (EV-02), and verified-path counts require source IDs (EV-03).
+Strict Assurance semantic checks reject contradictory states even after rehashing.
 
 Direct non-PDF API request bodies have a measured 50 MiB default ceiling
 (`FINRISK_MAX_REQUEST_BYTES`), a 30-second body-read budget, and two concurrent body

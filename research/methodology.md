@@ -1,5 +1,11 @@
 # Methodology
 
+Current v0.4.2 authority: tools, rules, models and Agent reasoning propose;
+AssuranceEngine checks evidence and policy before issuing an authorized final
+disposition and content-addressed certificate. Default HEURISTIC_POLICY / UNCALIBRATED
+remains unchanged. Earlier comparison designs below are methodological context,
+not proof of prospective or external validation; see the [research overview](EXPERIMENT_OVERVIEW.md).
+
 ## Agent-oriented comparison
 
 The three-layer runtime enables a future controlled comparison among `LLM-only`, `Code-only`, `LLM+Tools`, and `Full Agent`. The Full Agent condition adds explicit planning, typed tool selection, evidence sufficiency gates, cross-checking, reflection, and abstention; it does not receive different gold labels or hidden test-set tuning. Existing five-baseline pilot results remain frozen and unchanged. New Agent comparisons must use the same company-disjoint splits, annotations and bootstrap protocol before any claim of improvement is made.

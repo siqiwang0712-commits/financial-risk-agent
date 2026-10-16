@@ -2,6 +2,8 @@
 
 Release metadata date: 2026-10-08. These notes describe the prepared source;
 they do not claim that a Git tag, GitHub Release or production image was published.
+Status: **READY FOR v0.4.2 RELEASE / PROMOTION**; current engineering evidence and
+exact tested source identities are in the [closeout audit](docs/RELEASE_AUDIT_v0.4.2.md).
 
 Changes:
 
@@ -10,6 +12,11 @@ Changes:
 - Enforce Assurance evidence/state and proposal/final consistency; separate
   historical bundle integrity from v0.4 authorization; reject certificate downgrade
   and evidence-path disappearance, including persisted PostgreSQL records.
+- Reject empty-source verified paths (EV-01), deduplicate identical material paths
+  in coverage/dependency accounting (EV-02), and require source IDs for verified
+  paths (EV-03). Rehashed contradictory Assurance payloads still fail semantic checks.
+- Bind certificate IDs and persisted tenant/entity reads to content; verify candidate
+  version, source revision and digest/image identity before release promotion.
 - Bound direct request bodies before parsing and reclaim document workers on
   timeout/cancellation, including incomplete result publication. Reject nonfinite budgets.
 - Update the affected source-map-js and sharp/libvips dependency families; preserve
@@ -26,7 +33,10 @@ Changes:
 
 Historical v0.4.1, E4, E4-S and E4-R research artifacts remain unchanged. Current
 v0.4.2 source identities are separately bound; no model is retrained and E5 remains
-BLOCKED / DRAFT_NOT_FROZEN. FinRisk remains HEURISTIC_POLICY / UNCALIBRATED.
+BLOCKED / DRAFT_NOT_FROZEN. FinRisk remains HEURISTIC_POLICY / UNCALIBRATED. Existing v0.4.2
+OOF risk/coverage, review-budget and fold diagnostics are design-exposed retrospective
+development; repeated Agent runs use a synthetic mock harness. Neither establishes
+external validation, calibration or real-provider stability.
 
 Prompt injection cannot be eliminated. Certificate hashes provide integrity rather
 than issuer authentication; worker isolation is not a native-code security sandbox.

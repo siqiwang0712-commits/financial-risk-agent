@@ -24,7 +24,8 @@ The material path is explicit:
 
 ```text
 document → page/section/span → extracted fact or claim → metric/rule/model
-         → fusion contribution → proposed decision → Assurance → final decision
+         → fusion contribution → proposed decision → AssuranceResult → authorized final
+         → content-addressed Decision Certificate
 ```
 
 A trace records the reason code, document hash, accession, source page or XBRL concept,
@@ -37,7 +38,10 @@ Evidence states are not collapsed into a generic confidence score:
 - `REJECTED` — verification failed; the claim cannot influence the result.
 
 Conflicting top-ranked facts are not silently selected, and missing values are never
-replaced with zero. A broken material evidence path triggers review or abstention. The
+replaced with zero. A broken material evidence path triggers review or abstention. In v0.4.2,
+verified material paths need nonempty source evidence and source IDs, and
+identical material paths count once. A self-consistent hash cannot replace these
+semantic checks. Source binding supports provenance, not proof that a source is true. The
 Agent records plan steps, tool names, statuses, summaries, admitted evidence, rationale
 and confidence; it does not retain or expose hidden chain-of-thought.
 

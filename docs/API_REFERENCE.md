@@ -6,7 +6,7 @@ interactive OpenAPI UI is available at `http://localhost:8000/docs`.
 This page describes the stable route surface and its operational contracts. Request and
 response schemas in the generated OpenAPI document remain the field-level source of truth.
 
-## v0.4 decision contract
+## v0.4.2 decision contract
 
 Every assessment keeps calculation and authorization separate:
 
@@ -21,6 +21,13 @@ Every assessment keeps calculation and authorization separate:
 
 `confidence` is a legacy evidence-quality index. `reliability` is `null` while
 `UNCALIBRATED`, and no field is a probability of bankruptcy, default or correctness.
+The default admission policy is `HEURISTIC_POLICY`; automation remains withheld.
+`RESTRICTED`, `REVIEW` and `ABSTAIN` are not positive automated approvals.
+A valid content hash is necessary but not sufficient: strict Assurance semantics
+reject contradictory evidence counts/states, policy identities and decision transitions.
+Empty source paths do not count as verified, exact material duplicates count once,
+and verified paths require source IDs. Certificates bind evidence paths and key
+decision state; their hashes provide integrity, **not issuer authentication**.
 Stable Assurance reason codes include `INSUFFICIENT_VERIFIED_EVIDENCE`,
 `EVIDENCE_FRAGILITY_HIGH`, `OUTSIDE_VALIDATED_DISTRIBUTION`,
 `ASSURANCE_POLICY_UNCALIBRATED`, `REPORTING_OBSERVABILITY_ANOMALY` and
@@ -70,6 +77,44 @@ schema-constrained hosted provider, copy `.env.example`, set
 `FINRISK_LLM_PROVIDER=openai`, configure `OPENAI_API_KEY` (preferably through
 `OPENAI_API_KEY_FILE` for a deployment), and set explicit model pricing when cost
 estimates are required. Tests do not require a live provider.
+
+### Current request examples and response locations
+
+Use a locally issued development key in `FINRISK_API_KEY`; no real credential belongs
+in the example. This deliberately incomplete synthetic input exercises missing-data
+handling, not a verified real-company opinion:
+
+```bash
+curl --fail-with-body http://localhost:8000/api/v1/assess \
+  -H "X-API-Key: ${FINRISK_API_KEY}" -H "Content-Type: application/json" \
+  --data '{"company":"Synthetic example","fiscal_year":2025,"current":{"cash":100},"pages":{}}'
+```
+
+| Route | Proposal / Assurance / final / certificate locations |
+|---|---|
+| `/api/v1/assess` | Top-level `proposed_decision`, `assurance`, `final_decision`, `decision_certificate` |
+| `/api/v1/agent/assess` | Agent state: `proposed_decision`, `assurance`, `assessment.final_decision`, `decision_certificate`; legacy top-level `decision` mirrors the authorized result after Assurance |
+| `/api/v1/documents/analyze` | Assessment fields at top level, plus `agent` execution metadata |
+
+Within Agent `decision_trace`, legacy `decision`, `initial_fusion_decision` and
+`failure_aware_decision` describe proposals, not final authority. Fusion, temporal and
+selective-policy `decision` aliases are also proposals. Do not infer authorization
+from a legacy field name, a high score, a quoted source or HTTP 200 alone. Consumers
+must retain the complete Assurance/certificate state, policy version/hash, evidence
+IDs/state/coverage, fragility, calibration status and automation eligibility. Partial
+example snippets are not independently verifiable certificates.
+
+For an actual PDF with an existing tenant-owned entity:
+
+```bash
+curl --fail-with-body http://localhost:8000/api/v1/documents/analyze \
+  -H "X-API-Key: ${FINRISK_API_KEY}" \
+  -F "company=Synthetic upload" -F "fiscal_year=2025" \
+  -F "entity_id=${FINRISK_ENTITY_ID}" -F "file=@/path/to/report.pdf;type=application/pdf"
+```
+
+Do not manually set multipart `Content-Type`; curl must generate its framing boundary.
+Rejected or incomplete analysis remains an error; a sample response must not replace it.
 
 ### PDF upload and process boundary
 
@@ -163,6 +208,14 @@ assessment's verified `AssuranceResult` and Decision Certificate.
 profile uses the first value and must not be interpreted as external validation.
 
 ## Errors and correlation
+
+Direct non-PDF requests also have a measured 50 MiB default ceiling
+(`FINRISK_MAX_REQUEST_BYTES`), a 30-second read budget and two concurrent admission
+slots per API process. These are separate from the PDF limits above. Time budgets
+must be finite and positive. Worker cancellation/timeout triggers TERM/KILL and join;
+incomplete or oversized worker results are rejected. These processes are **not**
+native-code security sandboxes. Reverse-proxy and aggregate deployment quotas remain
+necessary.
 
 Failures use a JSON `detail` body and include `X-Correlation-Id`. Middleware-generated
 `500` and `503` responses also include a `correlation_id` field in the body. A datastore

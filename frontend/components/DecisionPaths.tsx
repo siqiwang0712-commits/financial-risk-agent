@@ -41,8 +41,9 @@ export function DecisionPaths({ trace }: Props) {
             fully verified. Proof coverage <b>{trace.proof_coverage}</b>.
           </p>
           <p className="muted">
-            Initial fusion decision <code>{trace.initial_fusion_decision}</code> → failure-aware{" "}
-            <code>{trace.failure_aware_decision}</code> → final <code>{trace.decision}</code>.
+            Initial fusion proposal <code>{trace.initial_fusion_decision}</code> → failure-aware proposal{" "}
+            <code>{trace.failure_aware_decision}</code> → reviewed proposal <code>{trace.decision}</code>.
+            These trace aliases are proposals; final authorization is shown in the Assurance summary.
           </p>
         </div>
 
@@ -112,7 +113,7 @@ function PathRow({ path }: { path: DecisionPath }) {
               <code>{path.rule_version ? `${path.rule_version.slice(0, 16)}…` : "—"}</code>
             </p>
             <p>
-              <span>Legacy confidence index · coverage · disagreement</span>
+              <span>Uncalibrated evidence-quality index · coverage · disagreement</span>
               <code>
                 {path.confidence ?? "N/A"} · {path.coverage} · {path.disagreement}
               </code>

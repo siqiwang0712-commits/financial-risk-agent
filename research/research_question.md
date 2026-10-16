@@ -1,5 +1,10 @@
 # Research Question
 
+Current v0.4.2 framing adds a separate authorization question: when must Assurance
+withhold a proposal despite an analytical risk signal? The hypothesis below is the
+historical project motivation, not an established Agent-improvement result. See the
+[research overview](EXPERIMENT_OVERVIEW.md) for existing evidence and its limits.
+
 Can deterministic financial reasoning, expert rules, and evidence-grounded LLM analysis produce more reliable and explainable corporate risk assessments than an LLM alone?
 
 The falsifiable hypothesis is that the hybrid system lowers unsupported-claim and numeric-error rates while retaining or improving risk-classification and contradiction-detection performance. The overall score is not a bankruptcy probability. No empirical result is claimed until a versioned benchmark has been executed.

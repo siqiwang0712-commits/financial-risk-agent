@@ -1,5 +1,9 @@
 # Temporal Risk Intelligence
 
+Current v0.4.2 temporal snapshots are **proposals**, not Assurance-authorized
+final decisions. The storage-compatible `decision` aliases `proposed_decision` and
+`final_decision` is null; final authority requires a verified assessment and certificate.
+
 Status: **IMPLEMENTED, TESTED, AND EXECUTED ON THE 30-COMPANY NUMERIC E3 CORPUS; DOCUMENT/EVIDENCE ATTRIBUTION USEFULNESS NOT VALIDATED**.
 
 ## State transition
@@ -16,6 +20,8 @@ R(t-1) + filing(t) → R(t)
 ```
 
 ## Temporal evidence graph
+
+This is a library/schema capability, not a populated public runtime graph.
 
 The graph supports `SUPPORTS`, `CONTRADICTS`, `SUPERSEDES`, `DERIVED_FROM`, `CONFIRMS`, `WEAKENS`, and `INVALIDATES`. Both nodes must exist and each relationship requires an explicit reason. Graph traversal exposes complete source-to-decision paths and cross-period relationships.
 

@@ -6,7 +6,7 @@
 
 # FinRisk
 
-### 受保证的选择性金融智能——v0.4.2
+### 证据驱动的金融风险分析与决策保证——v0.4.2
 
 [![CI](https://github.com/siqiwang0712-commits/financial-risk-agent/actions/workflows/ci.yml/badge.svg)](https://github.com/siqiwang0712-commits/financial-risk-agent/actions/workflows/ci.yml)
 [![Python 3.11–3.12](https://img.shields.io/badge/Python-3.11%E2%80%933.12-3776AB?logo=python&logoColor=white)](https://www.python.org/)
@@ -19,8 +19,9 @@
 当前发布元数据：**v0.4.2 · 2026-10-08** ·
 [发布说明](RELEASE_NOTES_v0.4.2.md) · [安全与验证记录](docs/SECURITY_HARDENING_v0.4.2.md)
 
-v0.4.2 是安全与可靠性补丁。实际发布是独立的维护者操作；v0.4.1 历史研究证据
-保持不变，FinRisk 仍为 UNCALIBRATED，E5 仍被阻塞且未冻结。
+**Security & Reliability Patch · READY FOR v0.4.2 RELEASE / PROMOTION。**
+这里描述已准备好的源码，不代表已正式发布。实际发布是独立的维护者操作；v0.4.1 历史研究证据
+保持不变。默认 Assurance 仍为 `HEURISTIC_POLICY / UNCALIBRATED`，E5 仍被阻塞且未冻结。
 
 [快速开始](#快速开始) · [工作原理](#工作原理) ·
 [研究概览](#研究概览) · [文档导航](#文档导航)
@@ -35,8 +36,8 @@ v0.4.2 是安全与可靠性补丁。实际发布是独立的维护者操作；v
 
 ## 什么是 FinRisk？
 
-FinRisk 是一个开放的金融风险研究系统，用于分析财务恶化信号，并判断一个候选结论是否获得
-了足够支持、可以正式输出。
+FinRisk 是面向企业申报文件的、以证据为基础的金融风险分析与决策保证研究系统，
+检查候选风险评估是否具备版本化策略要求的支持、可以获得正式授权。
 它把结构化 SEC/XBRL 数据和年报 PDF，与确定性财务指标、传统筛查模型、版本化专家规则，
 以及用于解读叙述性披露的受约束大语言模型结合起来。
 
@@ -49,12 +50,15 @@ FinRisk 是一个开放的金融风险研究系统，用于分析财务恶化信
 独立且失败关闭的运行时层。风险严重度、证据支持度、脆弱性、分布有效性、模型分歧和校准
 状态保持分离。
 
-### v0.4.1 新增了什么？
+### v0.4.2 改进了什么？
 
-v0.4.1 围绕上述架构完成研究准备与发布加固：新增仅用于研究的 StrongTabularReference-v1、
-已批准的历史开发数据、明确区分 V/O/VO/CC 的可观测性诊断、经验开发参考分布、选择性评估
-工具和分阶段 E5 预检。同时加固上传准入、数值证据来源、非法 Assurance 状态拒绝，以及
-受证书约束的授权展示。软件发布不等于前瞻或外部验证；E5 仍受阻，尚未冻结。
+本补丁加固 provider 凭据与重定向处理、不可信文档元数据隔离、有界请求准入和 worker 回收，
+拒绝语义矛盾的 Assurance 状态、证书降级和持久化证据损坏。已验证的有效路径必须具有 material source
+evidence 与 source IDs；完全重复的路径不能虚增覆盖率或依赖数量。前端在授权缺失时失败关闭，
+发布验证将测试、扫描与晋升绑定到同一候选镜像。
+
+v0.4.1 历史研究参考保持不变。现有 v0.4.2 诊断属于回顾性开发或合成工程证据，不是外部验证。
+详见[收尾审计](docs/RELEASE_AUDIT_v0.4.2.md)。
 
 ## 为什么需要 FinRisk？
 
@@ -90,10 +94,10 @@ v0.4.1 围绕上述架构完成研究准备与发布加固：新增仅用于研�
     ↓
 风险融合 → 候选决策
     ↓
-Decision Assurance Runtime
+AssuranceEngine → AssuranceResult
   证据 · 脆弱性 · 分布有效性 · 准入策略
     ↓
-PASS / FLAG / REVIEW / ABSTAIN
+已授权 final_decision：PASS / FLAG / REVIEW / ABSTAIN
     ↓
 Decision Certificate
 ```
@@ -109,7 +113,7 @@ Decision Certificate
 `FinRiskPipeline` 仍是 API、Agent 与工具注册表共享的计算所有者；`AssuranceEngine` 是唯一的
 授权所有者。系统强制执行：`没有有效的 AssuranceResult，就没有已授权的 final_decision`。
 
-详见[v0.4 Assurance 架构](docs/assurance_architecture.md)、
+详见[v0.4.2 Assurance 架构](docs/assurance_architecture.md)、
 [完整架构与平台边界](docs/enterprise_platform.md)、
 [三层迁移图](docs/three_layer_migration.md)和
 [决策级控制](docs/decision_grade_controls.md)。
@@ -120,10 +124,12 @@ Decision Certificate
   与重述来源。
 - 对年报 PDF 进行页级分析，并通过有界、可终止的进程执行昂贵任务。
 - 进行跨来源核对，不静默取平均，也不把缺失值替换为零。
-- 计算流动性、杠杆、盈利、现金流、营运资金和多期趋势。
+- 计算流动性、杠杆、盈利、现金流、营运资金和多期趋势，并提供显式的确定性情景冲击与时序轨迹比较。
 - 运行 Altman Z、Beneish M、Piotroski-style F 与 Ohlson O，并执行适用性检查。
-- 评估 68 条版本化专家规则，包括可检查的单因素和交叉因素信号。
-- 通过类型化 Agent 完成规划、工具调用、交叉核验和候选决策，但 Agent 无授权权。
+- 保留 68 条版本化规则定义：43 条启用，25 条因缺少合法 producer 明确禁用，
+  单因素和交叉因素信号均可检查。
+- 通过类型化 Agent 完成规划、工具调用、结构化状态、证据检索、矛盾检测、反思与综合，
+  形成候选决策，但 Agent 无授权权。
 - 验证引文、跟踪证据状态，并构建从来源到决策的来源图。
 - 对证据进行确定性消融，报告分数影响、决策翻转及受影响结论。
 - 生成精确或明确标注为近似的 Decision-Sufficient Evidence Set。
@@ -143,7 +149,8 @@ Decision Certificate
 `X-API-Key`；组织和角色由服务端保存的哈希凭据解析，不信任调用方自报的角色头。
 
 评估响应明确区分 `risk_score`、`risk_severity`、`proposed_decision`、`assurance`、
-`final_decision` 与 `decision_certificate`。验证、限流、数据存储和文档处理均采用失败关闭策略，错误会保留关联 ID。全部端点、上传限制、
+`final_decision` 与 `decision_certificate`。旧 `decision` 是依上下文区分的兼容别名；最终权威
+来自已核验的 Assurance 与证书状态。验证、限流、数据存储和文档处理均采用失败关闭策略，错误会保留关联 ID。全部端点、上传限制、
 错误契约和首次引导规则见[完整 API 参考](docs/API_REFERENCE.md)。后端运行后，可在
 `http://localhost:8000/docs` 查看交互式 OpenAPI 文档。
 
@@ -162,7 +169,8 @@ docker compose up --build
 Workbench 位于 `http://localhost:3000`，API 位于 `http://localhost:8000`。
 
 使用维护者发布的镜像时，可通过 `docker-compose.release.yml` 启动，并固定到实际发布运行的
-镜像摘要。已审计的 v0.4.1 容器运行是未发布的 dry-run，不代表 v0.4.1 镜像发布标签已经存在：
+镜像摘要。v0.4.2 候选镜像 dry-run 未执行发布；以下命令需要实际已发布的镜像，
+或显式配置的候选镜像摘要：
 
 ```bash
 cp .env.release.example .env    # 编辑密钥和首次引导设置
@@ -205,6 +213,13 @@ python scripts/run_demo.py
 
 附带的公司样本被明确标记为 `synthetic`。它只验证运行机制，不代表真实世界表现。研究核验与
 SEC 源数据获取见[可复现性指南](research/EXPERIMENT_REPRODUCIBILITY.md)。
+
+## 如何验证
+
+不重跑实验的文档检查，请使用[可复现性指南](research/EXPERIMENT_REPRODUCIBILITY.md)中的
+静态子集。前端文案改动还需执行 `npm ci`、测试、lint、typecheck 与 build。完整发布候选门槛
+是独立流程，其中包含开发诊断重算；禁止实验的任务不应运行它们。带日期的工程验证结果见
+[收尾审计](docs/RELEASE_AUDIT_v0.4.2.md)。
 
 ## 研究概览
 
@@ -264,9 +279,10 @@ E4-S 源队列的全部 2,000 家公司必须从未来 E5 中排除。E5 仍为
 
 ## 项目状态与成熟度
 
-**v0.4.1——Research Readiness & Strong Reference** 于 **2026-10-05 发布**。
+**v0.4.2——Security & Reliability Patch** 已完成源码准备，可供发布／晋升。
+这是软件就绪状态，不代表已正式发布或获得外部金融验证。
 Assurance 权威边界、确定性证据脆弱性、决策充分证据、分布有效性诊断和 Decision Certificate
-已经实现。这是研究原型的软件发布：它没有修改冻结的 E4 结果，没有证明前瞻预测优势，也没有冻结或运行 E5。
+已经实现。系统仍是研究原型：没有修改冻结的 E4 结果，没有证明前瞻预测优势，也没有冻结或运行 E5。
 
 - **在有限研究范围内已验证：** 确定性样例、自动质量门槛、冻结 E4 产物完整性，以及 B6 相对
   B0 在 674 个可核验 E4 结果上的改进。
@@ -282,9 +298,8 @@ Assurance 权威边界、确定性证据脆弱性、决策充分证据、分布�
 - **待完成：** 前瞻性 E5、E5 冻结的参考分布设计、校准准入策略、外部验证及生产/监管评估。
 
 [项目状态](PROJECT_STATUS.md)是成熟度的权威清单。发布范围与历史见
-[v0.4.1 发布说明](RELEASE_NOTES_v0.4.1.md)和[变更日志](CHANGELOG.md)。
-[最终工程审计](docs/RELEASE_AUDIT_v0.4.1.md)记录了已测试的运行时代码 SHA、通过的 CI 与
-容器 dry-run，以及本地环境限制。
+[v0.4.2 发布说明](RELEASE_NOTES_v0.4.2.md)和[变更日志](CHANGELOG.md)。
+[v0.4.2 收尾审计](docs/RELEASE_AUDIT_v0.4.2.md)区分工程验证、回顾性诊断与残余风险。
 
 ## 仓库结构
 
@@ -351,6 +366,9 @@ failure_lab/  注入故障目录及预期的失败关闭行为
 ### 开发
 
 - [API 参考](docs/API_REFERENCE.md)
+- [示例与报告语义](examples/README.md)
+- [v0.4.2 发布说明](RELEASE_NOTES_v0.4.2.md)
+- [v0.4.2 收尾审计](docs/RELEASE_AUDIT_v0.4.2.md)
 - [贡献指南](CONTRIBUTING.md)
 - [变更日志](CHANGELOG.md)
 - [v0.4.1 发布说明](RELEASE_NOTES_v0.4.1.md)
@@ -360,6 +378,11 @@ failure_lab/  注入故障目录及预期的失败关闭行为
 - [Failure Lab](failure_lab/README.md)
 
 ## 限制
+
+Prompt injection 仍可能发生。证书哈希提供内容完整性，不提供签发者身份认证。worker 进程不是
+原生代码安全沙箱，资源控制也依赖部署限额。仅开发依赖的 `braces` advisory 与 API 基础镜像
+未修复的 HIGH advisories 仍记录在[收尾审计](docs/RELEASE_AUDIT_v0.4.2.md)中，
+不能声称未过滤的镜像扫描是干净的。
 
 FinRisk 是研究原型。它：
 

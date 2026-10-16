@@ -78,6 +78,7 @@ export function AssurancePanel({ assurance, certificate }: Props) {
 
       <details>
         <summary>Decision Certificate</summary>
+        <p>Content-addressed authorization integrity record. Hash integrity is not issuer authentication or a digital signature.</p>
         <dl className="certificateGrid">
           <dt>Certificate</dt><dd>{certificate.certificate_version}</dd>
           <dt>Certificate hash</dt><dd><code>{certificate.certificate_hash}</code></dd>

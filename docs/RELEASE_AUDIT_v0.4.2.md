@@ -3,11 +3,17 @@
 Audit date: 2026-10-15. Target: `origin/try-v0.4.2`, version **0.4.2**.
 Starting commit: `7e9bd827a638c2aa992de9e193e39b82e451616c`.
 
-Final commit identity: the commit containing this report on `origin/try-v0.4.2`.
-Resolve its exact SHA with `git rev-parse origin/try-v0.4.2`; the completion report
-and GitHub Actions identify that exact final SHA. A document cannot embed its own
-containing Git commit hash without changing that hash. Source/content identities
-and historical input commits below are separate from this final commit identity.
+Audited source commit: `e41638d8d02636127dc6f3fa6d4c2a72e07baca6`.
+This dated engineering record is preserved across later documentation/presentation
+commits; it does not attest new image bytes built from a later commit. Current
+branch identity and new-commit CI must be checked separately. Status at closeout:
+**READY FOR v0.4.2 RELEASE / PROMOTION**, not formally published.
+
+Remote results rechecked during the narrative pass:
+
+- [Ordinary CI 38769888323](https://github.com/siqiwang0712-commits/financial-risk-agent/actions/runs/38769888323): SUCCESS on the audited source.
+- [Container dry-run 38769950209](https://github.com/siqiwang0712-commits/financial-risk-agent/actions/runs/38769950209): SUCCESS on the same source; prepare, both builds, scans, both runtime verifications and dry-run succeeded; publish SKIPPED.
+- Neither result establishes tag creation, GitHub Release creation or production image publication. No research experiment was rerun for the narrative pass.
 
 ## Release-critical review and fixes
 
@@ -113,10 +119,9 @@ images were preserved separately; none is substituted for this final-source run.
 Transient execution-connection interruptions recovered without losing the tests.
 
 Local candidate image IDs below identify configuration objects, not registry digests.
-Remote exact-commit CI and `version=v0.4.2, publish=false` are separate checks after
-push. Their actual run IDs/statuses are reported in the completion message and in
-Actions on this report's containing commit; this file does not pre-attest a future
-remote result. Verify `gh run list --workflow ci.yml --commit "$(git rev-parse HEAD)"`
+Remote exact-commit CI and `version=v0.4.2, publish=false` were separate checks after
+the audited source push; verified run links are at the top of this report. These
+results attest that source only; this file does not pre-attest later commits. Verify `gh run list --workflow ci.yml --commit "$(git rev-parse HEAD)"`
 and the container workflow's actual job inventory before PR. Publishing must be skipped.
 
 - api: `sha256:3b7f90e1598c38a1c6475b4eeb179a12d75f17f50977f7a084f4483d6ee8b00e`

@@ -54,7 +54,7 @@ export function DecisionSummary({ payload }: Props) {
         </div>
 
         <div className="heroDecision">
-          <small>Final decision</small>
+          <small>Final authorization outcome</small>
           <b className={`decisionTag ${String(decision).toLowerCase()}`}>{decision}</b>
           <p className="heroCompany">
             {payload.company} · FY{payload.reporting_period}
