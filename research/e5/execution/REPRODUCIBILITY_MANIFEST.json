@@ -58,5 +58,7 @@
     "research/e5/execution/qualification.py": "7b3628d19b73ce15b127151b3ce69056a007cf374a91dcb12a222a99dab9a9d0",
     "research/e5/run_e5.py": "8f54809bdd58874da97d7153676ad661ba1fdfdc2dafb66b512838e23cfa7ccb"
   },
-  "scope": "Reproduction of the actual development/engineering checkpoint only. Missing scientific identities are absent, not fabricated."
+  "scope": "Reproduction of the actual development/engineering checkpoint only. Missing scientific identities are absent, not fabricated.",
+  "coverage_null_v2_source_sha256": "fd21316e1221c5a8c82179d88a0fab0247b92eba258b04614b0e4f5574910c0e",
+  "v2_absolute_qualification_sha256": "930faf411aba9b5042d70d8a5e731f7ee1ad934bf1cf7bd7eab8b5b3a733aeaf"
 }

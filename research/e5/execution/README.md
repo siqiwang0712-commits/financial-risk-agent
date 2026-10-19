@@ -36,3 +36,15 @@ Filesystem path checks are engineering guards, not proof of OS-level isolation,
 independent review, source authenticity or reviewer blinding. The report explicitly
 lists incomplete capabilities. No real E5 feature packets, proposals, predictions,
 certificates, labels or primary results were generated.
+
+The original `null-qualify` grid completed with **FAILED_ANTI_CONSERVATISM** and
+retains a BLOCKED checkpoint. Its command completing is not a qualification pass.
+The separately identified correction is exercised with:
+
+```bash
+python -m research.e5.coverage_null_v2
+```
+
+That command qualifies only the corrected absolute-coverage component, not the
+complete joint inference engine or a scientific E5 protocol. The original failed
+grid and all original implementation bytes remain available for audit.

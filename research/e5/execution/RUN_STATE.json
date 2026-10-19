@@ -2,6 +2,24 @@
   "outcomes_accessed": false,
   "schema_version": 1,
   "stages": {
+    "absolute_coverage_null_correction_v2": {
+      "checkpoint": "57a9a121f03f49364df11eaf7417469744aa4ae7fea35afd45508e36c1f2c00d",
+      "code_commit": "9944d9d77c6ab96c60d36c55367b1ed0df6ab4a8",
+      "completed_at": "2026-10-19T15:27:38.132701+00:00",
+      "failure_reason": null,
+      "input_hashes": {
+        "research/e5/coverage_null_v2.py": "fd21316e1221c5a8c82179d88a0fab0247b92eba258b04614b0e4f5574910c0e",
+        "research/e5/execution/inference.py": "c3b010d5da0ea4756b26502516fe0aee08ef33a0b1f79093f509294804ad14c8"
+      },
+      "output_hashes": {
+        "research/e5/qualification/v2/AMENDMENT.json": "cb67db4892e5e87e3789ee0153265d13d2dfc82f5433eeec19efcd2e50fb9c3e",
+        "research/e5/qualification/v2/absolute_coverage_null_report.json": "930faf411aba9b5042d70d8a5e731f7ee1ad934bf1cf7bd7eab8b5b3a733aeaf"
+      },
+      "stage": "absolute_coverage_null_correction_v2",
+      "started_at": "2026-10-19T15:27:38.132695+00:00",
+      "state": "COMPLETE",
+      "validation_result": "PASS"
+    },
     "baseline_scoped_audit": {
       "checkpoint": "4a66eb673bf1dc75dfffbcb6fec3d29f6432cf2e1a34cfe282efbbad72ef5f79",
       "code_commit": "2bafadce8aef275b697b0dd0388f507c2e923c7e",
@@ -168,11 +186,27 @@
       "started_at": "2026-10-19T15:18:49.463168+00:00",
       "state": "BLOCKED",
       "validation_result": "BLOCKED"
+    },
+    "v2_committed_source_reverification": {
+      "checkpoint": "79c13aba7d3b29bc5d640b456a0df2380ff7d8f02652c775de235a2f205f5d9a",
+      "code_commit": "12ec21b29cc3b22cc4013c6f2afa51e102ce6845",
+      "completed_at": "2026-10-19T15:28:22.863227+00:00",
+      "failure_reason": null,
+      "input_hashes": {
+        "research/e5/coverage_null_v2.py": "fd21316e1221c5a8c82179d88a0fab0247b92eba258b04614b0e4f5574910c0e"
+      },
+      "output_hashes": {
+        "research/e5/qualification/v2/source_trace.json": "a4aa71667491ed6401e9be89dea48f6a14ff11b5a81823d2135ebddfd5c08e0d"
+      },
+      "stage": "v2_committed_source_reverification",
+      "started_at": "2026-10-19T15:28:22.863222+00:00",
+      "state": "COMPLETE",
+      "validation_result": "PASS"
     }
   },
   "studies": {
     "E5-P": "DRAFT",
     "E5-R": "DRAFT"
   },
-  "updated_at": "2026-10-19T15:24:14.738592+00:00"
+  "updated_at": "2026-10-19T15:28:22.865606+00:00"
 }

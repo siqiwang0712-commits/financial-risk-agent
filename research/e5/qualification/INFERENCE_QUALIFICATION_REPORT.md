@@ -28,3 +28,20 @@ joint IUT+Holm power study, final N and the complete required operating-characte
 grid remain unfinished. No E5 protocol/inference freeze or confirmatory p-values
 are authorized by this limited study. The source hash identifies the engine that
 was actually tested, without claiming that it is a complete qualified analysis.
+
+## Recorded failure and pre-outcome V2 correction
+
+The complete V1 grid returned **FAILED_ANTI_CONSERVATISM**. In the mixed-boundary
+configuration, the absolute component rejected in 296/5,000 trials (0.0592), with
+one-sided 99% exact-binomial lower bound 0.0516873. V1 is not qualified.
+
+`v2/AMENDMENT.json` preserves that failed identity and introduces a separately
+identified boundary-Bernoulli absolute-coverage null. The unchanged paired empirical
+bootstrap still supplies BCa intervals and the error/NI components. For absolute
+coverage, the boundary distribution is fully specified by c; binomial compression
+of the extreme-replicate count preserves the 20,000-draw plus-one Monte Carlo test.
+
+The V2 absolute component passed its stated screen in 21 configurations and
+105,000 synthetic trials. See `v2/absolute_coverage_null_report.json`. This does not
+qualify the whole V2 IUT+Holm pipeline, its full dependence grid or joint power.
+No E5 outcome was accessed; no scientific protocol identity was inherited.

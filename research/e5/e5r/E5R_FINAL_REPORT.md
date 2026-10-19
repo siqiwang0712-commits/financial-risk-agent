@@ -129,17 +129,42 @@ maximum of all three component p-values, followed by Holm.
 | coverage_boundary | 500 | 25% | 0.9998 / 0.0478 / 1.0000 | 0.0478 | 0.0212 |
 | absolute_boundary | 500 | 25% | 1.0000 / 0.4860 / 0.0516 | 0.0506 | 0.0242 |
 
-Simulation status: **FAILED_ANTI_CONSERVATISM**. Component rates under alternatives are
+Original V1 simulation status: **FAILED_ANTI_CONSERVATISM**. Component rates under alternatives are
 power diagnostics, not type-I error. The absolute-coverage boundary at N=200 had
 an observed component rejection rate of 0.0572; its one-sided 99% exact-binomial
 lower bound was approximately 0.04981. All rates, including unfavorable ones, are
-retained. Passing the prespecified obvious-anti-conservatism screen does not prove
-exact finite-sample level control.
+retained. The mixed-boundary configuration failed the screen: its absolute component
+rejected at 0.0592 with one-sided 99% lower bound 0.0516873. The V1 engine is
+not qualified and must not produce confirmatory E5 p-values.
 
 This grid duplicates comparator configurations and lacks the complete required
 P1/P2 dependence, prevalence and informative-observability grid. Full mandate
 qualification and joint power are unfinished. No confirmatory inference freeze
 or E5 p-values are authorized by these simulations.
+
+## Pre-outcome correction under a new identity
+
+The failed V1 grid is retained unchanged. Amendment E5-INFERENCE-V2-PRE-OUTCOME
+records the old/new hashes and absence of any E5 cohort, predictions or outcome
+exposure. For absolute automated coverage, the boundary null is fully specified:
+company issuance is Bernoulli(c). V2 samples from that null rather than centering
+an empirical binary distribution whose variance was estimated under the observed
+alternative. It keeps the plus-one count formula. Generating the count of extreme
+null replicates as Binomial(B, exact Bernoulli-count tail) is an exact computational
+compression of those B replicate indicators, not a smaller resample count.
+
+The V2 absolute component passed 21 configurations (N=50/100/200/500/1000/1500/5000;
+floors .5, the frozen c, and .75), each with 5,000 trials and 20,000 null draws:
+105,000 additional synthetic trials. Observed rejection rates ranged from .0312
+to .0528; none met the predeclared anti-conservatism screen. At the frozen floor,
+N=200 gave .0470 and N=500 gave .0474. No E5 result was used to select this repair.
+Paired empirical BCa intervals, the error/NI tests, IUT maximum and Holm are
+unchanged. Exact-binomial agreement and fixed-seed reproduction are tested.
+
+This correction passes its **absolute-component** grid only. Full V2 joint
+IUT+Holm operating characteristics, comparator-dependence scenarios and power
+remain unfinished. The V1 failed report cannot be promoted to full V2 qualification.
+No complete analysis engine, scientific protocol or cohort is frozen.
 
 ## Primary results
 
@@ -162,7 +187,7 @@ Development and synthetic results cannot replace these missing results.
 - Outcomes: NOT ACCESSED. Prediction/outcome ordering was not falsely attested.
 - Proposal mismatches, PIT violations, overlap violations and certificate failures:
   NOT ASSESSED on real cases; no zero-failure empirical claim is made.
-- Relevant final tests: **306 passed, 0 failed, 0 skipped**, including 44 new
+- Relevant final tests: **308 passed, 0 failed, 0 skipped**, including 46 new
   execution-boundary tests. Initial baseline: 261 passed/1 failed; restoring the
   exact Git-attribute CRLF fixture bytes gave 262 passed. Historical bytes were
   not regenerated or changed in Git.
@@ -197,7 +222,8 @@ scientific qualification identities.
 | study_policy | NOT FROZEN / absent |
 | production_assurance_source | `9e3ec2525a71df317b0adc87f7460894aa4781a1263109d9e1126f3ef35a0e88` |
 | endpoint_source | `b627dcf081ef449778587de210c3e0779698f28b6ec7d517cf3d22b9148b6966` |
-| tested_inference_code | `c3b010d5da0ea4756b26502516fe0aee08ef33a0b1f79093f509294804ad14c8` |
+| tested_inference_code_v1_failed | `c3b010d5da0ea4756b26502516fe0aee08ef33a0b1f79093f509294804ad14c8` |
+| absolute_coverage_correction_code_v2 | `fd21316e1221c5a8c82179d88a0fab0247b92eba258b04614b0e4f5574910c0e` |
 | utility_artifact | `1e2b6db8e9908505e7b227a38cf4423c33ca77afab6c7c247e389fa9210684fb` |
 | mandate | `c1f5882cd1fe2d11b90194f4e6517b9ef132f2eb9c7e221380a65e8d9dc750f4` |
 | s0_fitted_artifact | `3e1ebd825f1699bcc88e52a531bf9199aad3e93a671cfe28640f15dd33759a26` |
