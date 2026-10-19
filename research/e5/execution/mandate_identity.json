@@ -1,0 +1,32 @@
+{
+  "allowed_lifecycle_ceilings": {
+    "E5-P": "WAITING_FOR_OUTCOMES",
+    "E5-R": "E5R_COMPLETE"
+  },
+  "authorization": "SPONSOR_AUTHORIZED",
+  "creation_timestamp": "2026-10-19T15:05:05.877153+00:00",
+  "forbidden_actions": [
+    "Fabrication of data, reviews, executions or outcomes",
+    "Post-outcome design selection",
+    "Mock predictions represented as real",
+    "Approximate historical exclusion represented as exact"
+  ],
+  "hash_semantics": "EXACT_UPLOADED_BYTES_INCLUDING_CRLF",
+  "independent_approval": false,
+  "intended_studies": [
+    "E5-R",
+    "E5-P"
+  ],
+  "mandate_sha256": "c1f5882cd1fe2d11b90194f4e6517b9ef132f2eb9c7e221380a65e8d9dc750f4",
+  "repository": "https://github.com/siqiwang0712-commits/financial-risk-agent.git",
+  "schema_version": 1,
+  "scientific_invariants": [
+    "No evaluation outcome access before prediction freeze",
+    "S2=S3=S4 canonical proposal",
+    "No historical artifact mutation",
+    "No probability semantics without qualification",
+    "Separate retrospective and prospective identities"
+  ],
+  "starting_commit": "7060e6a9f1c71f05aac86926ac0dc548b781d73d",
+  "supersedes": "Prior readiness-task ceiling only; no scientific safeguard relaxed."
+}
