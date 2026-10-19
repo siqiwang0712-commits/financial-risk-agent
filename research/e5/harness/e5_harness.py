@@ -74,6 +74,8 @@ REPRESENTATIONS_DOCUMENT: Path | None = None
 PACKAGES_LOCK = REPO_ROOT / "requirements.lock"
 DEFAULT_STAGE_DIR = E5_DIR / "freeze"
 
+SCIENTIFIC_SOURCES = ("research/e5/autonomy/governance.py", "research/e5/autonomy/INFERENCE_DESIGN.md", "research/e5/autonomy/power_design.py", "backend/finrisk/assurance/engine.py", "backend/finrisk/assurance/certificate.py", "config/assurance_policy.json")
+
 OUTCOME_ROLES = frozenset({"outcome", "label", "adjudication"})
 OUTCOME_BEARING_FROM_SEQUENCE = 5
 
@@ -115,7 +117,7 @@ class HarnessError(RuntimeError):
 
 
 def canonical_bytes(value: object) -> bytes:
-    return (json.dumps(value, sort_keys=True, separators=(",", ":"), ensure_ascii=False) + "\n").encode("utf-8")
+    return (json.dumps(value, sort_keys=True, separators=(",", ":"), ensure_ascii=False, allow_nan=False) + "\n").encode("utf-8")
 
 
 def sha256_bytes(payload: bytes) -> str:
@@ -289,6 +291,8 @@ def manifest_sha256(manifest: dict) -> str:
 
 def write_manifest(stage_dir: Path, manifest: dict) -> Path:
     """Write a stage manifest. Refuses to overwrite, so a stage cannot be silently redone."""
+    if stage_dir.resolve().is_relative_to(E5_DIR.resolve()):
+        raise HarnessError("this mandate prohibits writing an actual E5 freeze manifest")
     stage_dir.mkdir(parents=True, exist_ok=True)
     stage = STAGE_BY_NAME[manifest["stage"]]
     path = stage_dir / f"{stage.directory_name}.json"
@@ -297,8 +301,11 @@ def write_manifest(stage_dir: Path, manifest: dict) -> Path:
     # Mutate the caller's dict so it can be handed straight to the next stage as
     # ``previous``; the hash covers everything except itself, so it stays stable.
     manifest["manifest_sha256"] = manifest_sha256(manifest)
-    with path.open("w", encoding="utf-8", newline="") as handle:
-        handle.write(json.dumps(manifest, indent=1, sort_keys=True) + "\n")
+    try:
+        with path.open("x", encoding="utf-8", newline="") as handle:
+            handle.write(json.dumps(manifest, indent=1, sort_keys=True, allow_nan=False) + "\n")
+    except FileExistsError as exc:
+        raise HarnessError(f"refusing to overwrite frozen stage manifest: {path}") from exc
     return path
 
 
@@ -330,6 +337,7 @@ def build_manifest(
         "model_identity_sha256": model_identity_sha256,
         "artifacts": _normalise_artifacts(artifacts, REPO_ROOT),
         "counts": counts or {},
+        "scientific_sources": {name: sha256_file(REPO_ROOT / name) for name in SCIENTIFIC_SOURCES},
         "immutable": True,
     }
     if outcome_inaccessible is not None:
@@ -339,10 +347,19 @@ def build_manifest(
     return manifest
 
 
+def _artifact_path(repo_root: Path, relative: str) -> Path:
+    if not isinstance(relative, str) or not relative or Path(relative).is_absolute():
+        raise HarnessError("artifact path must be repository-relative")
+    path = repo_root / relative
+    if not path.resolve().is_relative_to(repo_root.resolve()):
+        raise HarnessError("artifact path escapes repository")
+    return path
+
+
 def _normalise_artifacts(artifacts: list[dict], repo_root: Path) -> list[dict]:
     normalised = []
     for artifact in artifacts:
-        path = repo_root / artifact["path"]
+        path = _artifact_path(repo_root, artifact["path"])
         entry = {
             "path": artifact["path"],
             "role": artifact.get("role", "artifact"),
@@ -374,17 +391,32 @@ class Report:
         return not self.failures
 
 
+def _manifest_object(pairs):
+    value = {}
+    for key, item in pairs:
+        if key in value:
+            raise HarnessError(f"duplicate manifest field: {key}")
+        value[key] = item
+    return value
+
+
 def load_manifests(stage_dir: Path) -> dict[str, dict]:
     if not stage_dir.is_dir():
         return {}
     manifests: dict[str, dict] = {}
     for path in sorted(stage_dir.glob("*.json")):
         try:
-            payload = json.loads(path.read_text(encoding="utf-8"))
-        except json.JSONDecodeError:
-            continue
-        if "stage" in payload:
-            manifests[str(payload["stage"])] = payload
+            payload = json.loads(path.read_text(encoding="utf-8"), object_pairs_hook=_manifest_object)
+        except (OSError, ValueError) as exc:
+            raise HarnessError(f"invalid stage manifest: {path}") from exc
+        if not isinstance(payload, dict) or payload.get("stage") not in STAGE_BY_NAME:
+            raise HarnessError(f"unknown or missing stage in {path}")
+        stage = payload["stage"]
+        if stage in manifests:
+            raise HarnessError(f"duplicate stage: {stage}")
+        if path.name != f"{STAGE_BY_NAME[stage].directory_name}.json":
+            raise HarnessError(f"noncanonical stage manifest filename: {path}")
+        manifests[stage] = payload
     return manifests
 
 
@@ -434,6 +466,19 @@ def verify(stage_dir: Path = DEFAULT_STAGE_DIR, repo_root: Path = REPO_ROOT) -> 
     for name in present:
         manifest = manifests[name]
         definition = STAGE_BY_NAME[name]
+        report.add(f"{name}: sequence identity", type(manifest.get("sequence")) is int and manifest["sequence"] == definition.sequence)
+        report.add(f"{name}: immutable stage", manifest.get("immutable") is True)
+        previous_name = STAGES[definition.sequence - 1].name if definition.sequence else None
+        report.add(f"{name}: previous stage identity", manifest.get("previous_stage") == previous_name)
+        if definition.sequence == 0:
+            report.add("protocol: root has no previous manifest", manifest.get("previous_manifest_sha256") is None)
+        timestamp = manifest.get("created_at_utc")
+        try:
+            valid_time = isinstance(timestamp, str) and timestamp.endswith("Z") and datetime.fromisoformat(timestamp).utcoffset().total_seconds() == 0
+        except (ValueError, AttributeError):
+            valid_time = False
+        report.add(f"{name}: UTC timestamp required", valid_time)
+
         _verify_artifacts(report, name, manifest, repo_root)
         _verify_outcome_roles(report, name, definition, manifest)
         _verify_frozen_documents(report, name, manifest)
@@ -442,7 +487,15 @@ def verify(stage_dir: Path = DEFAULT_STAGE_DIR, repo_root: Path = REPO_ROOT) -> 
             _renamed(check, name) for check in check_environment(manifest.get("environment") or {})
         )
         _verify_disjointness(report, name, manifest)
-        _verify_outcome_inaccessible(report, name, manifest)
+        _verify_outcome_inaccessible(report, name, manifest, outcomes_unlocked="outcome-unlock" in manifests)
+        if definition.sequence >= 4:
+            identities = manifest.get("scientific_sources")
+            report.add(f"{name}: required analysis/model/policy identities", isinstance(identities, dict) and set(identities) == set(SCIENTIFIC_SOURCES))
+            report.add(f"{name}: protocol scientific identity linkage", identities == manifests.get("protocol", {}).get("scientific_sources"))
+            if isinstance(identities, dict):
+                for relative, recorded in identities.items():
+                    path = repo_root / relative
+                    report.add(f"{name}: scientific source {relative}", path.resolve().is_relative_to(repo_root.resolve()) and path.is_file() and sha256_file(path) == recorded)
 
     # self-hash integrity
     for name in present:
@@ -461,7 +514,7 @@ def _renamed(check: dict, stage: str) -> dict:
 
 def _verify_artifacts(report: Report, stage: str, manifest: dict, repo_root: Path) -> None:
     for artifact in manifest.get("artifacts") or []:
-        path = repo_root / artifact["path"]
+        path = _artifact_path(repo_root, artifact["path"])
         if not path.is_file():
             report.add(f"{stage}: artifact {artifact['path']}", False, "missing")
             continue
@@ -490,8 +543,9 @@ def _verify_frozen_documents(report: Report, stage: str, manifest: dict) -> None
         ("representations", REPRESENTATIONS_DOCUMENT),
     ):
         recorded = manifest.get(f"{label}_sha256")
-        if recorded is None:
+        if path is None:
             continue
+        report.add(f"{stage}: required {label} identity", isinstance(recorded, str) and len(recorded) == 64)
         current = sha256_document(path)
         report.add(
             f"{stage}: frozen {label} unchanged",
@@ -502,6 +556,8 @@ def _verify_frozen_documents(report: Report, stage: str, manifest: dict) -> None
 
 def _verify_model_identity(report: Report, stage: str, manifest: dict) -> None:
     recorded = manifest.get("model_identity_sha256")
+    if STAGE_BY_NAME[stage].sequence >= 1:
+        report.add(f"{stage}: qualified model identity required", isinstance(recorded, str) and len(recorded) == 64)
     if recorded is None:
         return
     current = model_identity_sha256()
@@ -514,6 +570,8 @@ def _verify_model_identity(report: Report, stage: str, manifest: dict) -> None:
 
 def _verify_disjointness(report: Report, stage: str, manifest: dict) -> None:
     disjointness = manifest.get("cohort_disjointness")
+    if STAGE_BY_NAME[stage].sequence >= 2:
+        report.add(f"{stage}: required disjointness assertion", bool(disjointness))
     if not disjointness:
         return
     status = disjointness.get("historical_disjointness")
@@ -522,13 +580,21 @@ def _verify_disjointness(report: Report, stage: str, manifest: dict) -> None:
         status == "PROVEN",
         f"status {status}; E5 cohort freeze must fail closed until previous_270.json exists",
     )
+    previous = REPO_ROOT / "research/e4/_cache/previous_270.json"
+    report.add(f"{stage}: exact previous_270 exclusion input",
+               previous.is_file() and sha256_file(previous) == "d73b371ccb026f556387cf6ff8ba204a4fde0664dcd780f099f12aa005e36603")
 
 
-def _verify_outcome_inaccessible(report: Report, stage: str, manifest: dict) -> None:
+def _verify_outcome_inaccessible(report: Report, stage: str, manifest: dict, *, outcomes_unlocked: bool = False) -> None:
     assertion = manifest.get("outcome_inaccessible_assertion")
+    if STAGE_BY_NAME[stage].sequence == 4:
+        report.add(f"{stage}: required outcome isolation assertion", bool(assertion))
     if not assertion:
         return
-    still_absent = [str(path) for path in assertion.get("checked_paths") or [] if Path(path).exists()]
+    report.add(f"{stage}: outcome isolation positively asserted", assertion.get("outcome_inaccessible") is True and bool(assertion.get("checked_paths")))
+    # After an independently authorized unlock the mounted files may exist; the
+    # immutable pre-unlock assertion still must be true and hash-bound.
+    still_absent = [] if outcomes_unlocked else [str(path) for path in assertion.get("checked_paths") or [] if Path(path).exists()]
     report.add(
         f"{stage}: recorded outcome paths still absent",
         not still_absent,

@@ -1,22 +1,1458 @@
 {
-  "status": "DRAFT_NOT_FROZEN",
-  "primary_goal": "At least 100 paired positive events after endpoint and Agent attrition",
-  "planning_inputs_from_e4": {
-    "verified_rate": 0.337,
-    "event_rate_among_verified": 0.3486646884,
-    "a2_schema_success_rate": 0.9
+ "alpha_per_first_holm_step": 0.025,
+ "assumptions": "one independent company per pair; normal approximation to paired bounded error differences; q is discordance not score correlation",
+ "final_sample_size": null,
+ "legacy_1200_1500": "Evaluate each grid row rather than retaining an AUROC-derived N. Historical event/verification rates are planning assumptions, not E5 observations.",
+ "limitations": "Safety-only optimistic sensitivity, not joint IUT power or a selected effect. Coverage margins, pairing and utility remain blocked. No S4 automatic admission under the adopted policy; no positive-coverage design is currently feasible.",
+ "rows": [
+  {
+   "error_discordance": 0.05,
+   "evaluable_fraction": 0.337,
+   "event_prevalence": 0.2,
+   "hypothetical_effect": 0.005,
+   "joint_design_lower_bound_n": 51731,
+   "n_for_100_expected_paired_events": 1649,
+   "paired_schema_success": 0.9,
+   "safety_only_approximate_n": 51731
   },
-  "recommended_selected_agent_cohort": 1200,
-  "projected_at_e4_rates": {
-    "verified": 404.4,
-    "events_before_schema_loss": 141.0,
-    "paired_events_after_90pct_schema_success": 126.9
+  {
+   "error_discordance": 0.05,
+   "evaluable_fraction": 0.337,
+   "event_prevalence": 0.2,
+   "hypothetical_effect": 0.01,
+   "joint_design_lower_bound_n": 12915,
+   "n_for_100_expected_paired_events": 1649,
+   "paired_schema_success": 0.9,
+   "safety_only_approximate_n": 12915
   },
-  "minimum_unlock_gate": {
-    "projected_paired_events": 100,
-    "qualified_schema_success_rate": 0.99,
-    "notes": "Recalculate prospectively from outcome-blind operational rates and a prespecified paired-effect model. Do not tune to E4 test labels."
+  {
+   "error_discordance": 0.05,
+   "evaluable_fraction": 0.337,
+   "event_prevalence": 0.2,
+   "hypothetical_effect": 0.02,
+   "joint_design_lower_bound_n": 3212,
+   "n_for_100_expected_paired_events": 1649,
+   "paired_schema_success": 0.9,
+   "safety_only_approximate_n": 3212
   },
-  "multiplicity": "At most three primary comparisons with a frozen Holm or hierarchical procedure",
-  "not_a_power_claim": "These projections do not prove 80% power for an unknown Agent effect; final simulation/analytic power must be frozen before E5 outcomes exist."
+  {
+   "error_discordance": 0.05,
+   "evaluable_fraction": 0.337,
+   "event_prevalence": 0.2,
+   "hypothetical_effect": 0.05,
+   "joint_design_lower_bound_n": 1649,
+   "n_for_100_expected_paired_events": 1649,
+   "paired_schema_success": 0.9,
+   "safety_only_approximate_n": 495
+  },
+  {
+   "error_discordance": 0.1,
+   "evaluable_fraction": 0.337,
+   "event_prevalence": 0.2,
+   "hypothetical_effect": 0.005,
+   "joint_design_lower_bound_n": 103489,
+   "n_for_100_expected_paired_events": 1649,
+   "paired_schema_success": 0.9,
+   "safety_only_approximate_n": 103489
+  },
+  {
+   "error_discordance": 0.1,
+   "evaluable_fraction": 0.337,
+   "event_prevalence": 0.2,
+   "hypothetical_effect": 0.01,
+   "joint_design_lower_bound_n": 25856,
+   "n_for_100_expected_paired_events": 1649,
+   "paired_schema_success": 0.9,
+   "safety_only_approximate_n": 25856
+  },
+  {
+   "error_discordance": 0.1,
+   "evaluable_fraction": 0.337,
+   "event_prevalence": 0.2,
+   "hypothetical_effect": 0.02,
+   "joint_design_lower_bound_n": 6446,
+   "n_for_100_expected_paired_events": 1649,
+   "paired_schema_success": 0.9,
+   "safety_only_approximate_n": 6446
+  },
+  {
+   "error_discordance": 0.1,
+   "evaluable_fraction": 0.337,
+   "event_prevalence": 0.2,
+   "hypothetical_effect": 0.05,
+   "joint_design_lower_bound_n": 1649,
+   "n_for_100_expected_paired_events": 1649,
+   "paired_schema_success": 0.9,
+   "safety_only_approximate_n": 1013
+  },
+  {
+   "error_discordance": 0.2,
+   "evaluable_fraction": 0.337,
+   "event_prevalence": 0.2,
+   "hypothetical_effect": 0.005,
+   "joint_design_lower_bound_n": 207003,
+   "n_for_100_expected_paired_events": 1649,
+   "paired_schema_success": 0.9,
+   "safety_only_approximate_n": 207003
+  },
+  {
+   "error_discordance": 0.2,
+   "evaluable_fraction": 0.337,
+   "event_prevalence": 0.2,
+   "hypothetical_effect": 0.01,
+   "joint_design_lower_bound_n": 51731,
+   "n_for_100_expected_paired_events": 1649,
+   "paired_schema_success": 0.9,
+   "safety_only_approximate_n": 51731
+  },
+  {
+   "error_discordance": 0.2,
+   "evaluable_fraction": 0.337,
+   "event_prevalence": 0.2,
+   "hypothetical_effect": 0.02,
+   "joint_design_lower_bound_n": 12915,
+   "n_for_100_expected_paired_events": 1649,
+   "paired_schema_success": 0.9,
+   "safety_only_approximate_n": 12915
+  },
+  {
+   "error_discordance": 0.2,
+   "evaluable_fraction": 0.337,
+   "event_prevalence": 0.2,
+   "hypothetical_effect": 0.05,
+   "joint_design_lower_bound_n": 2048,
+   "n_for_100_expected_paired_events": 1649,
+   "paired_schema_success": 0.9,
+   "safety_only_approximate_n": 2048
+  },
+  {
+   "error_discordance": 0.05,
+   "evaluable_fraction": 0.337,
+   "event_prevalence": 0.2,
+   "hypothetical_effect": 0.005,
+   "joint_design_lower_bound_n": 47029,
+   "n_for_100_expected_paired_events": 1499,
+   "paired_schema_success": 0.99,
+   "safety_only_approximate_n": 47029
+  },
+  {
+   "error_discordance": 0.05,
+   "evaluable_fraction": 0.337,
+   "event_prevalence": 0.2,
+   "hypothetical_effect": 0.01,
+   "joint_design_lower_bound_n": 11741,
+   "n_for_100_expected_paired_events": 1499,
+   "paired_schema_success": 0.99,
+   "safety_only_approximate_n": 11741
+  },
+  {
+   "error_discordance": 0.05,
+   "evaluable_fraction": 0.337,
+   "event_prevalence": 0.2,
+   "hypothetical_effect": 0.02,
+   "joint_design_lower_bound_n": 2920,
+   "n_for_100_expected_paired_events": 1499,
+   "paired_schema_success": 0.99,
+   "safety_only_approximate_n": 2920
+  },
+  {
+   "error_discordance": 0.05,
+   "evaluable_fraction": 0.337,
+   "event_prevalence": 0.2,
+   "hypothetical_effect": 0.05,
+   "joint_design_lower_bound_n": 1499,
+   "n_for_100_expected_paired_events": 1499,
+   "paired_schema_success": 0.99,
+   "safety_only_approximate_n": 450
+  },
+  {
+   "error_discordance": 0.1,
+   "evaluable_fraction": 0.337,
+   "event_prevalence": 0.2,
+   "hypothetical_effect": 0.005,
+   "joint_design_lower_bound_n": 94081,
+   "n_for_100_expected_paired_events": 1499,
+   "paired_schema_success": 0.99,
+   "safety_only_approximate_n": 94081
+  },
+  {
+   "error_discordance": 0.1,
+   "evaluable_fraction": 0.337,
+   "event_prevalence": 0.2,
+   "hypothetical_effect": 0.01,
+   "joint_design_lower_bound_n": 23506,
+   "n_for_100_expected_paired_events": 1499,
+   "paired_schema_success": 0.99,
+   "safety_only_approximate_n": 23506
+  },
+  {
+   "error_discordance": 0.1,
+   "evaluable_fraction": 0.337,
+   "event_prevalence": 0.2,
+   "hypothetical_effect": 0.02,
+   "joint_design_lower_bound_n": 5860,
+   "n_for_100_expected_paired_events": 1499,
+   "paired_schema_success": 0.99,
+   "safety_only_approximate_n": 5860
+  },
+  {
+   "error_discordance": 0.1,
+   "evaluable_fraction": 0.337,
+   "event_prevalence": 0.2,
+   "hypothetical_effect": 0.05,
+   "joint_design_lower_bound_n": 1499,
+   "n_for_100_expected_paired_events": 1499,
+   "paired_schema_success": 0.99,
+   "safety_only_approximate_n": 921
+  },
+  {
+   "error_discordance": 0.2,
+   "evaluable_fraction": 0.337,
+   "event_prevalence": 0.2,
+   "hypothetical_effect": 0.005,
+   "joint_design_lower_bound_n": 188185,
+   "n_for_100_expected_paired_events": 1499,
+   "paired_schema_success": 0.99,
+   "safety_only_approximate_n": 188185
+  },
+  {
+   "error_discordance": 0.2,
+   "evaluable_fraction": 0.337,
+   "event_prevalence": 0.2,
+   "hypothetical_effect": 0.01,
+   "joint_design_lower_bound_n": 47029,
+   "n_for_100_expected_paired_events": 1499,
+   "paired_schema_success": 0.99,
+   "safety_only_approximate_n": 47029
+  },
+  {
+   "error_discordance": 0.2,
+   "evaluable_fraction": 0.337,
+   "event_prevalence": 0.2,
+   "hypothetical_effect": 0.02,
+   "joint_design_lower_bound_n": 11741,
+   "n_for_100_expected_paired_events": 1499,
+   "paired_schema_success": 0.99,
+   "safety_only_approximate_n": 11741
+  },
+  {
+   "error_discordance": 0.2,
+   "evaluable_fraction": 0.337,
+   "event_prevalence": 0.2,
+   "hypothetical_effect": 0.05,
+   "joint_design_lower_bound_n": 1862,
+   "n_for_100_expected_paired_events": 1499,
+   "paired_schema_success": 0.99,
+   "safety_only_approximate_n": 1862
+  },
+  {
+   "error_discordance": 0.05,
+   "evaluable_fraction": 0.6,
+   "event_prevalence": 0.2,
+   "hypothetical_effect": 0.005,
+   "joint_design_lower_bound_n": 29056,
+   "n_for_100_expected_paired_events": 926,
+   "paired_schema_success": 0.9,
+   "safety_only_approximate_n": 29056
+  },
+  {
+   "error_discordance": 0.05,
+   "evaluable_fraction": 0.6,
+   "event_prevalence": 0.2,
+   "hypothetical_effect": 0.01,
+   "joint_design_lower_bound_n": 7254,
+   "n_for_100_expected_paired_events": 926,
+   "paired_schema_success": 0.9,
+   "safety_only_approximate_n": 7254
+  },
+  {
+   "error_discordance": 0.05,
+   "evaluable_fraction": 0.6,
+   "event_prevalence": 0.2,
+   "hypothetical_effect": 0.02,
+   "joint_design_lower_bound_n": 1804,
+   "n_for_100_expected_paired_events": 926,
+   "paired_schema_success": 0.9,
+   "safety_only_approximate_n": 1804
+  },
+  {
+   "error_discordance": 0.05,
+   "evaluable_fraction": 0.6,
+   "event_prevalence": 0.2,
+   "hypothetical_effect": 0.05,
+   "joint_design_lower_bound_n": 926,
+   "n_for_100_expected_paired_events": 926,
+   "paired_schema_success": 0.9,
+   "safety_only_approximate_n": 278
+  },
+  {
+   "error_discordance": 0.1,
+   "evaluable_fraction": 0.6,
+   "event_prevalence": 0.2,
+   "hypothetical_effect": 0.005,
+   "joint_design_lower_bound_n": 58126,
+   "n_for_100_expected_paired_events": 926,
+   "paired_schema_success": 0.9,
+   "safety_only_approximate_n": 58126
+  },
+  {
+   "error_discordance": 0.1,
+   "evaluable_fraction": 0.6,
+   "event_prevalence": 0.2,
+   "hypothetical_effect": 0.01,
+   "joint_design_lower_bound_n": 14523,
+   "n_for_100_expected_paired_events": 926,
+   "paired_schema_success": 0.9,
+   "safety_only_approximate_n": 14523
+  },
+  {
+   "error_discordance": 0.1,
+   "evaluable_fraction": 0.6,
+   "event_prevalence": 0.2,
+   "hypothetical_effect": 0.02,
+   "joint_design_lower_bound_n": 3621,
+   "n_for_100_expected_paired_events": 926,
+   "paired_schema_success": 0.9,
+   "safety_only_approximate_n": 3621
+  },
+  {
+   "error_discordance": 0.1,
+   "evaluable_fraction": 0.6,
+   "event_prevalence": 0.2,
+   "hypothetical_effect": 0.05,
+   "joint_design_lower_bound_n": 926,
+   "n_for_100_expected_paired_events": 926,
+   "paired_schema_success": 0.9,
+   "safety_only_approximate_n": 569
+  },
+  {
+   "error_discordance": 0.2,
+   "evaluable_fraction": 0.6,
+   "event_prevalence": 0.2,
+   "hypothetical_effect": 0.005,
+   "joint_design_lower_bound_n": 116267,
+   "n_for_100_expected_paired_events": 926,
+   "paired_schema_success": 0.9,
+   "safety_only_approximate_n": 116267
+  },
+  {
+   "error_discordance": 0.2,
+   "evaluable_fraction": 0.6,
+   "event_prevalence": 0.2,
+   "hypothetical_effect": 0.01,
+   "joint_design_lower_bound_n": 29056,
+   "n_for_100_expected_paired_events": 926,
+   "paired_schema_success": 0.9,
+   "safety_only_approximate_n": 29056
+  },
+  {
+   "error_discordance": 0.2,
+   "evaluable_fraction": 0.6,
+   "event_prevalence": 0.2,
+   "hypothetical_effect": 0.02,
+   "joint_design_lower_bound_n": 7254,
+   "n_for_100_expected_paired_events": 926,
+   "paired_schema_success": 0.9,
+   "safety_only_approximate_n": 7254
+  },
+  {
+   "error_discordance": 0.2,
+   "evaluable_fraction": 0.6,
+   "event_prevalence": 0.2,
+   "hypothetical_effect": 0.05,
+   "joint_design_lower_bound_n": 1150,
+   "n_for_100_expected_paired_events": 926,
+   "paired_schema_success": 0.9,
+   "safety_only_approximate_n": 1150
+  },
+  {
+   "error_discordance": 0.05,
+   "evaluable_fraction": 0.6,
+   "event_prevalence": 0.2,
+   "hypothetical_effect": 0.005,
+   "joint_design_lower_bound_n": 26415,
+   "n_for_100_expected_paired_events": 842,
+   "paired_schema_success": 0.99,
+   "safety_only_approximate_n": 26415
+  },
+  {
+   "error_discordance": 0.05,
+   "evaluable_fraction": 0.6,
+   "event_prevalence": 0.2,
+   "hypothetical_effect": 0.01,
+   "joint_design_lower_bound_n": 6595,
+   "n_for_100_expected_paired_events": 842,
+   "paired_schema_success": 0.99,
+   "safety_only_approximate_n": 6595
+  },
+  {
+   "error_discordance": 0.05,
+   "evaluable_fraction": 0.6,
+   "event_prevalence": 0.2,
+   "hypothetical_effect": 0.02,
+   "joint_design_lower_bound_n": 1640,
+   "n_for_100_expected_paired_events": 842,
+   "paired_schema_success": 0.99,
+   "safety_only_approximate_n": 1640
+  },
+  {
+   "error_discordance": 0.05,
+   "evaluable_fraction": 0.6,
+   "event_prevalence": 0.2,
+   "hypothetical_effect": 0.05,
+   "joint_design_lower_bound_n": 842,
+   "n_for_100_expected_paired_events": 842,
+   "paired_schema_success": 0.99,
+   "safety_only_approximate_n": 253
+  },
+  {
+   "error_discordance": 0.1,
+   "evaluable_fraction": 0.6,
+   "event_prevalence": 0.2,
+   "hypothetical_effect": 0.005,
+   "joint_design_lower_bound_n": 52842,
+   "n_for_100_expected_paired_events": 842,
+   "paired_schema_success": 0.99,
+   "safety_only_approximate_n": 52842
+  },
+  {
+   "error_discordance": 0.1,
+   "evaluable_fraction": 0.6,
+   "event_prevalence": 0.2,
+   "hypothetical_effect": 0.01,
+   "joint_design_lower_bound_n": 13203,
+   "n_for_100_expected_paired_events": 842,
+   "paired_schema_success": 0.99,
+   "safety_only_approximate_n": 13203
+  },
+  {
+   "error_discordance": 0.1,
+   "evaluable_fraction": 0.6,
+   "event_prevalence": 0.2,
+   "hypothetical_effect": 0.02,
+   "joint_design_lower_bound_n": 3292,
+   "n_for_100_expected_paired_events": 842,
+   "paired_schema_success": 0.99,
+   "safety_only_approximate_n": 3292
+  },
+  {
+   "error_discordance": 0.1,
+   "evaluable_fraction": 0.6,
+   "event_prevalence": 0.2,
+   "hypothetical_effect": 0.05,
+   "joint_design_lower_bound_n": 842,
+   "n_for_100_expected_paired_events": 842,
+   "paired_schema_success": 0.99,
+   "safety_only_approximate_n": 517
+  },
+  {
+   "error_discordance": 0.2,
+   "evaluable_fraction": 0.6,
+   "event_prevalence": 0.2,
+   "hypothetical_effect": 0.005,
+   "joint_design_lower_bound_n": 105697,
+   "n_for_100_expected_paired_events": 842,
+   "paired_schema_success": 0.99,
+   "safety_only_approximate_n": 105697
+  },
+  {
+   "error_discordance": 0.2,
+   "evaluable_fraction": 0.6,
+   "event_prevalence": 0.2,
+   "hypothetical_effect": 0.01,
+   "joint_design_lower_bound_n": 26415,
+   "n_for_100_expected_paired_events": 842,
+   "paired_schema_success": 0.99,
+   "safety_only_approximate_n": 26415
+  },
+  {
+   "error_discordance": 0.2,
+   "evaluable_fraction": 0.6,
+   "event_prevalence": 0.2,
+   "hypothetical_effect": 0.02,
+   "joint_design_lower_bound_n": 6595,
+   "n_for_100_expected_paired_events": 842,
+   "paired_schema_success": 0.99,
+   "safety_only_approximate_n": 6595
+  },
+  {
+   "error_discordance": 0.2,
+   "evaluable_fraction": 0.6,
+   "event_prevalence": 0.2,
+   "hypothetical_effect": 0.05,
+   "joint_design_lower_bound_n": 1046,
+   "n_for_100_expected_paired_events": 842,
+   "paired_schema_success": 0.99,
+   "safety_only_approximate_n": 1046
+  },
+  {
+   "error_discordance": 0.05,
+   "evaluable_fraction": 0.9,
+   "event_prevalence": 0.2,
+   "hypothetical_effect": 0.005,
+   "joint_design_lower_bound_n": 19371,
+   "n_for_100_expected_paired_events": 618,
+   "paired_schema_success": 0.9,
+   "safety_only_approximate_n": 19371
+  },
+  {
+   "error_discordance": 0.05,
+   "evaluable_fraction": 0.9,
+   "event_prevalence": 0.2,
+   "hypothetical_effect": 0.01,
+   "joint_design_lower_bound_n": 4836,
+   "n_for_100_expected_paired_events": 618,
+   "paired_schema_success": 0.9,
+   "safety_only_approximate_n": 4836
+  },
+  {
+   "error_discordance": 0.05,
+   "evaluable_fraction": 0.9,
+   "event_prevalence": 0.2,
+   "hypothetical_effect": 0.02,
+   "joint_design_lower_bound_n": 1203,
+   "n_for_100_expected_paired_events": 618,
+   "paired_schema_success": 0.9,
+   "safety_only_approximate_n": 1203
+  },
+  {
+   "error_discordance": 0.05,
+   "evaluable_fraction": 0.9,
+   "event_prevalence": 0.2,
+   "hypothetical_effect": 0.05,
+   "joint_design_lower_bound_n": 618,
+   "n_for_100_expected_paired_events": 618,
+   "paired_schema_success": 0.9,
+   "safety_only_approximate_n": 186
+  },
+  {
+   "error_discordance": 0.1,
+   "evaluable_fraction": 0.9,
+   "event_prevalence": 0.2,
+   "hypothetical_effect": 0.005,
+   "joint_design_lower_bound_n": 38751,
+   "n_for_100_expected_paired_events": 618,
+   "paired_schema_success": 0.9,
+   "safety_only_approximate_n": 38751
+  },
+  {
+   "error_discordance": 0.1,
+   "evaluable_fraction": 0.9,
+   "event_prevalence": 0.2,
+   "hypothetical_effect": 0.01,
+   "joint_design_lower_bound_n": 9682,
+   "n_for_100_expected_paired_events": 618,
+   "paired_schema_success": 0.9,
+   "safety_only_approximate_n": 9682
+  },
+  {
+   "error_discordance": 0.1,
+   "evaluable_fraction": 0.9,
+   "event_prevalence": 0.2,
+   "hypothetical_effect": 0.02,
+   "joint_design_lower_bound_n": 2414,
+   "n_for_100_expected_paired_events": 618,
+   "paired_schema_success": 0.9,
+   "safety_only_approximate_n": 2414
+  },
+  {
+   "error_discordance": 0.1,
+   "evaluable_fraction": 0.9,
+   "event_prevalence": 0.2,
+   "hypothetical_effect": 0.05,
+   "joint_design_lower_bound_n": 618,
+   "n_for_100_expected_paired_events": 618,
+   "paired_schema_success": 0.9,
+   "safety_only_approximate_n": 380
+  },
+  {
+   "error_discordance": 0.2,
+   "evaluable_fraction": 0.9,
+   "event_prevalence": 0.2,
+   "hypothetical_effect": 0.005,
+   "joint_design_lower_bound_n": 77512,
+   "n_for_100_expected_paired_events": 618,
+   "paired_schema_success": 0.9,
+   "safety_only_approximate_n": 77512
+  },
+  {
+   "error_discordance": 0.2,
+   "evaluable_fraction": 0.9,
+   "event_prevalence": 0.2,
+   "hypothetical_effect": 0.01,
+   "joint_design_lower_bound_n": 19371,
+   "n_for_100_expected_paired_events": 618,
+   "paired_schema_success": 0.9,
+   "safety_only_approximate_n": 19371
+  },
+  {
+   "error_discordance": 0.2,
+   "evaluable_fraction": 0.9,
+   "event_prevalence": 0.2,
+   "hypothetical_effect": 0.02,
+   "joint_design_lower_bound_n": 4836,
+   "n_for_100_expected_paired_events": 618,
+   "paired_schema_success": 0.9,
+   "safety_only_approximate_n": 4836
+  },
+  {
+   "error_discordance": 0.2,
+   "evaluable_fraction": 0.9,
+   "event_prevalence": 0.2,
+   "hypothetical_effect": 0.05,
+   "joint_design_lower_bound_n": 767,
+   "n_for_100_expected_paired_events": 618,
+   "paired_schema_success": 0.9,
+   "safety_only_approximate_n": 767
+  },
+  {
+   "error_discordance": 0.05,
+   "evaluable_fraction": 0.9,
+   "event_prevalence": 0.2,
+   "hypothetical_effect": 0.005,
+   "joint_design_lower_bound_n": 17610,
+   "n_for_100_expected_paired_events": 562,
+   "paired_schema_success": 0.99,
+   "safety_only_approximate_n": 17610
+  },
+  {
+   "error_discordance": 0.05,
+   "evaluable_fraction": 0.9,
+   "event_prevalence": 0.2,
+   "hypothetical_effect": 0.01,
+   "joint_design_lower_bound_n": 4397,
+   "n_for_100_expected_paired_events": 562,
+   "paired_schema_success": 0.99,
+   "safety_only_approximate_n": 4397
+  },
+  {
+   "error_discordance": 0.05,
+   "evaluable_fraction": 0.9,
+   "event_prevalence": 0.2,
+   "hypothetical_effect": 0.02,
+   "joint_design_lower_bound_n": 1094,
+   "n_for_100_expected_paired_events": 562,
+   "paired_schema_success": 0.99,
+   "safety_only_approximate_n": 1094
+  },
+  {
+   "error_discordance": 0.05,
+   "evaluable_fraction": 0.9,
+   "event_prevalence": 0.2,
+   "hypothetical_effect": 0.05,
+   "joint_design_lower_bound_n": 562,
+   "n_for_100_expected_paired_events": 562,
+   "paired_schema_success": 0.99,
+   "safety_only_approximate_n": 169
+  },
+  {
+   "error_discordance": 0.1,
+   "evaluable_fraction": 0.9,
+   "event_prevalence": 0.2,
+   "hypothetical_effect": 0.005,
+   "joint_design_lower_bound_n": 35228,
+   "n_for_100_expected_paired_events": 562,
+   "paired_schema_success": 0.99,
+   "safety_only_approximate_n": 35228
+  },
+  {
+   "error_discordance": 0.1,
+   "evaluable_fraction": 0.9,
+   "event_prevalence": 0.2,
+   "hypothetical_effect": 0.01,
+   "joint_design_lower_bound_n": 8802,
+   "n_for_100_expected_paired_events": 562,
+   "paired_schema_success": 0.99,
+   "safety_only_approximate_n": 8802
+  },
+  {
+   "error_discordance": 0.1,
+   "evaluable_fraction": 0.9,
+   "event_prevalence": 0.2,
+   "hypothetical_effect": 0.02,
+   "joint_design_lower_bound_n": 2195,
+   "n_for_100_expected_paired_events": 562,
+   "paired_schema_success": 0.99,
+   "safety_only_approximate_n": 2195
+  },
+  {
+   "error_discordance": 0.1,
+   "evaluable_fraction": 0.9,
+   "event_prevalence": 0.2,
+   "hypothetical_effect": 0.05,
+   "joint_design_lower_bound_n": 562,
+   "n_for_100_expected_paired_events": 562,
+   "paired_schema_success": 0.99,
+   "safety_only_approximate_n": 345
+  },
+  {
+   "error_discordance": 0.2,
+   "evaluable_fraction": 0.9,
+   "event_prevalence": 0.2,
+   "hypothetical_effect": 0.005,
+   "joint_design_lower_bound_n": 70465,
+   "n_for_100_expected_paired_events": 562,
+   "paired_schema_success": 0.99,
+   "safety_only_approximate_n": 70465
+  },
+  {
+   "error_discordance": 0.2,
+   "evaluable_fraction": 0.9,
+   "event_prevalence": 0.2,
+   "hypothetical_effect": 0.01,
+   "joint_design_lower_bound_n": 17610,
+   "n_for_100_expected_paired_events": 562,
+   "paired_schema_success": 0.99,
+   "safety_only_approximate_n": 17610
+  },
+  {
+   "error_discordance": 0.2,
+   "evaluable_fraction": 0.9,
+   "event_prevalence": 0.2,
+   "hypothetical_effect": 0.02,
+   "joint_design_lower_bound_n": 4397,
+   "n_for_100_expected_paired_events": 562,
+   "paired_schema_success": 0.99,
+   "safety_only_approximate_n": 4397
+  },
+  {
+   "error_discordance": 0.2,
+   "evaluable_fraction": 0.9,
+   "event_prevalence": 0.2,
+   "hypothetical_effect": 0.05,
+   "joint_design_lower_bound_n": 697,
+   "n_for_100_expected_paired_events": 562,
+   "paired_schema_success": 0.99,
+   "safety_only_approximate_n": 697
+  },
+  {
+   "error_discordance": 0.05,
+   "evaluable_fraction": 0.337,
+   "event_prevalence": 0.35,
+   "hypothetical_effect": 0.005,
+   "joint_design_lower_bound_n": 51731,
+   "n_for_100_expected_paired_events": 943,
+   "paired_schema_success": 0.9,
+   "safety_only_approximate_n": 51731
+  },
+  {
+   "error_discordance": 0.05,
+   "evaluable_fraction": 0.337,
+   "event_prevalence": 0.35,
+   "hypothetical_effect": 0.01,
+   "joint_design_lower_bound_n": 12915,
+   "n_for_100_expected_paired_events": 943,
+   "paired_schema_success": 0.9,
+   "safety_only_approximate_n": 12915
+  },
+  {
+   "error_discordance": 0.05,
+   "evaluable_fraction": 0.337,
+   "event_prevalence": 0.35,
+   "hypothetical_effect": 0.02,
+   "joint_design_lower_bound_n": 3212,
+   "n_for_100_expected_paired_events": 943,
+   "paired_schema_success": 0.9,
+   "safety_only_approximate_n": 3212
+  },
+  {
+   "error_discordance": 0.05,
+   "evaluable_fraction": 0.337,
+   "event_prevalence": 0.35,
+   "hypothetical_effect": 0.05,
+   "joint_design_lower_bound_n": 943,
+   "n_for_100_expected_paired_events": 943,
+   "paired_schema_success": 0.9,
+   "safety_only_approximate_n": 495
+  },
+  {
+   "error_discordance": 0.1,
+   "evaluable_fraction": 0.337,
+   "event_prevalence": 0.35,
+   "hypothetical_effect": 0.005,
+   "joint_design_lower_bound_n": 103489,
+   "n_for_100_expected_paired_events": 943,
+   "paired_schema_success": 0.9,
+   "safety_only_approximate_n": 103489
+  },
+  {
+   "error_discordance": 0.1,
+   "evaluable_fraction": 0.337,
+   "event_prevalence": 0.35,
+   "hypothetical_effect": 0.01,
+   "joint_design_lower_bound_n": 25856,
+   "n_for_100_expected_paired_events": 943,
+   "paired_schema_success": 0.9,
+   "safety_only_approximate_n": 25856
+  },
+  {
+   "error_discordance": 0.1,
+   "evaluable_fraction": 0.337,
+   "event_prevalence": 0.35,
+   "hypothetical_effect": 0.02,
+   "joint_design_lower_bound_n": 6446,
+   "n_for_100_expected_paired_events": 943,
+   "paired_schema_success": 0.9,
+   "safety_only_approximate_n": 6446
+  },
+  {
+   "error_discordance": 0.1,
+   "evaluable_fraction": 0.337,
+   "event_prevalence": 0.35,
+   "hypothetical_effect": 0.05,
+   "joint_design_lower_bound_n": 1013,
+   "n_for_100_expected_paired_events": 943,
+   "paired_schema_success": 0.9,
+   "safety_only_approximate_n": 1013
+  },
+  {
+   "error_discordance": 0.2,
+   "evaluable_fraction": 0.337,
+   "event_prevalence": 0.35,
+   "hypothetical_effect": 0.005,
+   "joint_design_lower_bound_n": 207003,
+   "n_for_100_expected_paired_events": 943,
+   "paired_schema_success": 0.9,
+   "safety_only_approximate_n": 207003
+  },
+  {
+   "error_discordance": 0.2,
+   "evaluable_fraction": 0.337,
+   "event_prevalence": 0.35,
+   "hypothetical_effect": 0.01,
+   "joint_design_lower_bound_n": 51731,
+   "n_for_100_expected_paired_events": 943,
+   "paired_schema_success": 0.9,
+   "safety_only_approximate_n": 51731
+  },
+  {
+   "error_discordance": 0.2,
+   "evaluable_fraction": 0.337,
+   "event_prevalence": 0.35,
+   "hypothetical_effect": 0.02,
+   "joint_design_lower_bound_n": 12915,
+   "n_for_100_expected_paired_events": 943,
+   "paired_schema_success": 0.9,
+   "safety_only_approximate_n": 12915
+  },
+  {
+   "error_discordance": 0.2,
+   "evaluable_fraction": 0.337,
+   "event_prevalence": 0.35,
+   "hypothetical_effect": 0.05,
+   "joint_design_lower_bound_n": 2048,
+   "n_for_100_expected_paired_events": 943,
+   "paired_schema_success": 0.9,
+   "safety_only_approximate_n": 2048
+  },
+  {
+   "error_discordance": 0.05,
+   "evaluable_fraction": 0.337,
+   "event_prevalence": 0.35,
+   "hypothetical_effect": 0.005,
+   "joint_design_lower_bound_n": 47029,
+   "n_for_100_expected_paired_events": 857,
+   "paired_schema_success": 0.99,
+   "safety_only_approximate_n": 47029
+  },
+  {
+   "error_discordance": 0.05,
+   "evaluable_fraction": 0.337,
+   "event_prevalence": 0.35,
+   "hypothetical_effect": 0.01,
+   "joint_design_lower_bound_n": 11741,
+   "n_for_100_expected_paired_events": 857,
+   "paired_schema_success": 0.99,
+   "safety_only_approximate_n": 11741
+  },
+  {
+   "error_discordance": 0.05,
+   "evaluable_fraction": 0.337,
+   "event_prevalence": 0.35,
+   "hypothetical_effect": 0.02,
+   "joint_design_lower_bound_n": 2920,
+   "n_for_100_expected_paired_events": 857,
+   "paired_schema_success": 0.99,
+   "safety_only_approximate_n": 2920
+  },
+  {
+   "error_discordance": 0.05,
+   "evaluable_fraction": 0.337,
+   "event_prevalence": 0.35,
+   "hypothetical_effect": 0.05,
+   "joint_design_lower_bound_n": 857,
+   "n_for_100_expected_paired_events": 857,
+   "paired_schema_success": 0.99,
+   "safety_only_approximate_n": 450
+  },
+  {
+   "error_discordance": 0.1,
+   "evaluable_fraction": 0.337,
+   "event_prevalence": 0.35,
+   "hypothetical_effect": 0.005,
+   "joint_design_lower_bound_n": 94081,
+   "n_for_100_expected_paired_events": 857,
+   "paired_schema_success": 0.99,
+   "safety_only_approximate_n": 94081
+  },
+  {
+   "error_discordance": 0.1,
+   "evaluable_fraction": 0.337,
+   "event_prevalence": 0.35,
+   "hypothetical_effect": 0.01,
+   "joint_design_lower_bound_n": 23506,
+   "n_for_100_expected_paired_events": 857,
+   "paired_schema_success": 0.99,
+   "safety_only_approximate_n": 23506
+  },
+  {
+   "error_discordance": 0.1,
+   "evaluable_fraction": 0.337,
+   "event_prevalence": 0.35,
+   "hypothetical_effect": 0.02,
+   "joint_design_lower_bound_n": 5860,
+   "n_for_100_expected_paired_events": 857,
+   "paired_schema_success": 0.99,
+   "safety_only_approximate_n": 5860
+  },
+  {
+   "error_discordance": 0.1,
+   "evaluable_fraction": 0.337,
+   "event_prevalence": 0.35,
+   "hypothetical_effect": 0.05,
+   "joint_design_lower_bound_n": 921,
+   "n_for_100_expected_paired_events": 857,
+   "paired_schema_success": 0.99,
+   "safety_only_approximate_n": 921
+  },
+  {
+   "error_discordance": 0.2,
+   "evaluable_fraction": 0.337,
+   "event_prevalence": 0.35,
+   "hypothetical_effect": 0.005,
+   "joint_design_lower_bound_n": 188185,
+   "n_for_100_expected_paired_events": 857,
+   "paired_schema_success": 0.99,
+   "safety_only_approximate_n": 188185
+  },
+  {
+   "error_discordance": 0.2,
+   "evaluable_fraction": 0.337,
+   "event_prevalence": 0.35,
+   "hypothetical_effect": 0.01,
+   "joint_design_lower_bound_n": 47029,
+   "n_for_100_expected_paired_events": 857,
+   "paired_schema_success": 0.99,
+   "safety_only_approximate_n": 47029
+  },
+  {
+   "error_discordance": 0.2,
+   "evaluable_fraction": 0.337,
+   "event_prevalence": 0.35,
+   "hypothetical_effect": 0.02,
+   "joint_design_lower_bound_n": 11741,
+   "n_for_100_expected_paired_events": 857,
+   "paired_schema_success": 0.99,
+   "safety_only_approximate_n": 11741
+  },
+  {
+   "error_discordance": 0.2,
+   "evaluable_fraction": 0.337,
+   "event_prevalence": 0.35,
+   "hypothetical_effect": 0.05,
+   "joint_design_lower_bound_n": 1862,
+   "n_for_100_expected_paired_events": 857,
+   "paired_schema_success": 0.99,
+   "safety_only_approximate_n": 1862
+  },
+  {
+   "error_discordance": 0.05,
+   "evaluable_fraction": 0.6,
+   "event_prevalence": 0.35,
+   "hypothetical_effect": 0.005,
+   "joint_design_lower_bound_n": 29056,
+   "n_for_100_expected_paired_events": 530,
+   "paired_schema_success": 0.9,
+   "safety_only_approximate_n": 29056
+  },
+  {
+   "error_discordance": 0.05,
+   "evaluable_fraction": 0.6,
+   "event_prevalence": 0.35,
+   "hypothetical_effect": 0.01,
+   "joint_design_lower_bound_n": 7254,
+   "n_for_100_expected_paired_events": 530,
+   "paired_schema_success": 0.9,
+   "safety_only_approximate_n": 7254
+  },
+  {
+   "error_discordance": 0.05,
+   "evaluable_fraction": 0.6,
+   "event_prevalence": 0.35,
+   "hypothetical_effect": 0.02,
+   "joint_design_lower_bound_n": 1804,
+   "n_for_100_expected_paired_events": 530,
+   "paired_schema_success": 0.9,
+   "safety_only_approximate_n": 1804
+  },
+  {
+   "error_discordance": 0.05,
+   "evaluable_fraction": 0.6,
+   "event_prevalence": 0.35,
+   "hypothetical_effect": 0.05,
+   "joint_design_lower_bound_n": 530,
+   "n_for_100_expected_paired_events": 530,
+   "paired_schema_success": 0.9,
+   "safety_only_approximate_n": 278
+  },
+  {
+   "error_discordance": 0.1,
+   "evaluable_fraction": 0.6,
+   "event_prevalence": 0.35,
+   "hypothetical_effect": 0.005,
+   "joint_design_lower_bound_n": 58126,
+   "n_for_100_expected_paired_events": 530,
+   "paired_schema_success": 0.9,
+   "safety_only_approximate_n": 58126
+  },
+  {
+   "error_discordance": 0.1,
+   "evaluable_fraction": 0.6,
+   "event_prevalence": 0.35,
+   "hypothetical_effect": 0.01,
+   "joint_design_lower_bound_n": 14523,
+   "n_for_100_expected_paired_events": 530,
+   "paired_schema_success": 0.9,
+   "safety_only_approximate_n": 14523
+  },
+  {
+   "error_discordance": 0.1,
+   "evaluable_fraction": 0.6,
+   "event_prevalence": 0.35,
+   "hypothetical_effect": 0.02,
+   "joint_design_lower_bound_n": 3621,
+   "n_for_100_expected_paired_events": 530,
+   "paired_schema_success": 0.9,
+   "safety_only_approximate_n": 3621
+  },
+  {
+   "error_discordance": 0.1,
+   "evaluable_fraction": 0.6,
+   "event_prevalence": 0.35,
+   "hypothetical_effect": 0.05,
+   "joint_design_lower_bound_n": 569,
+   "n_for_100_expected_paired_events": 530,
+   "paired_schema_success": 0.9,
+   "safety_only_approximate_n": 569
+  },
+  {
+   "error_discordance": 0.2,
+   "evaluable_fraction": 0.6,
+   "event_prevalence": 0.35,
+   "hypothetical_effect": 0.005,
+   "joint_design_lower_bound_n": 116267,
+   "n_for_100_expected_paired_events": 530,
+   "paired_schema_success": 0.9,
+   "safety_only_approximate_n": 116267
+  },
+  {
+   "error_discordance": 0.2,
+   "evaluable_fraction": 0.6,
+   "event_prevalence": 0.35,
+   "hypothetical_effect": 0.01,
+   "joint_design_lower_bound_n": 29056,
+   "n_for_100_expected_paired_events": 530,
+   "paired_schema_success": 0.9,
+   "safety_only_approximate_n": 29056
+  },
+  {
+   "error_discordance": 0.2,
+   "evaluable_fraction": 0.6,
+   "event_prevalence": 0.35,
+   "hypothetical_effect": 0.02,
+   "joint_design_lower_bound_n": 7254,
+   "n_for_100_expected_paired_events": 530,
+   "paired_schema_success": 0.9,
+   "safety_only_approximate_n": 7254
+  },
+  {
+   "error_discordance": 0.2,
+   "evaluable_fraction": 0.6,
+   "event_prevalence": 0.35,
+   "hypothetical_effect": 0.05,
+   "joint_design_lower_bound_n": 1150,
+   "n_for_100_expected_paired_events": 530,
+   "paired_schema_success": 0.9,
+   "safety_only_approximate_n": 1150
+  },
+  {
+   "error_discordance": 0.05,
+   "evaluable_fraction": 0.6,
+   "event_prevalence": 0.35,
+   "hypothetical_effect": 0.005,
+   "joint_design_lower_bound_n": 26415,
+   "n_for_100_expected_paired_events": 482,
+   "paired_schema_success": 0.99,
+   "safety_only_approximate_n": 26415
+  },
+  {
+   "error_discordance": 0.05,
+   "evaluable_fraction": 0.6,
+   "event_prevalence": 0.35,
+   "hypothetical_effect": 0.01,
+   "joint_design_lower_bound_n": 6595,
+   "n_for_100_expected_paired_events": 482,
+   "paired_schema_success": 0.99,
+   "safety_only_approximate_n": 6595
+  },
+  {
+   "error_discordance": 0.05,
+   "evaluable_fraction": 0.6,
+   "event_prevalence": 0.35,
+   "hypothetical_effect": 0.02,
+   "joint_design_lower_bound_n": 1640,
+   "n_for_100_expected_paired_events": 482,
+   "paired_schema_success": 0.99,
+   "safety_only_approximate_n": 1640
+  },
+  {
+   "error_discordance": 0.05,
+   "evaluable_fraction": 0.6,
+   "event_prevalence": 0.35,
+   "hypothetical_effect": 0.05,
+   "joint_design_lower_bound_n": 482,
+   "n_for_100_expected_paired_events": 482,
+   "paired_schema_success": 0.99,
+   "safety_only_approximate_n": 253
+  },
+  {
+   "error_discordance": 0.1,
+   "evaluable_fraction": 0.6,
+   "event_prevalence": 0.35,
+   "hypothetical_effect": 0.005,
+   "joint_design_lower_bound_n": 52842,
+   "n_for_100_expected_paired_events": 482,
+   "paired_schema_success": 0.99,
+   "safety_only_approximate_n": 52842
+  },
+  {
+   "error_discordance": 0.1,
+   "evaluable_fraction": 0.6,
+   "event_prevalence": 0.35,
+   "hypothetical_effect": 0.01,
+   "joint_design_lower_bound_n": 13203,
+   "n_for_100_expected_paired_events": 482,
+   "paired_schema_success": 0.99,
+   "safety_only_approximate_n": 13203
+  },
+  {
+   "error_discordance": 0.1,
+   "evaluable_fraction": 0.6,
+   "event_prevalence": 0.35,
+   "hypothetical_effect": 0.02,
+   "joint_design_lower_bound_n": 3292,
+   "n_for_100_expected_paired_events": 482,
+   "paired_schema_success": 0.99,
+   "safety_only_approximate_n": 3292
+  },
+  {
+   "error_discordance": 0.1,
+   "evaluable_fraction": 0.6,
+   "event_prevalence": 0.35,
+   "hypothetical_effect": 0.05,
+   "joint_design_lower_bound_n": 517,
+   "n_for_100_expected_paired_events": 482,
+   "paired_schema_success": 0.99,
+   "safety_only_approximate_n": 517
+  },
+  {
+   "error_discordance": 0.2,
+   "evaluable_fraction": 0.6,
+   "event_prevalence": 0.35,
+   "hypothetical_effect": 0.005,
+   "joint_design_lower_bound_n": 105697,
+   "n_for_100_expected_paired_events": 482,
+   "paired_schema_success": 0.99,
+   "safety_only_approximate_n": 105697
+  },
+  {
+   "error_discordance": 0.2,
+   "evaluable_fraction": 0.6,
+   "event_prevalence": 0.35,
+   "hypothetical_effect": 0.01,
+   "joint_design_lower_bound_n": 26415,
+   "n_for_100_expected_paired_events": 482,
+   "paired_schema_success": 0.99,
+   "safety_only_approximate_n": 26415
+  },
+  {
+   "error_discordance": 0.2,
+   "evaluable_fraction": 0.6,
+   "event_prevalence": 0.35,
+   "hypothetical_effect": 0.02,
+   "joint_design_lower_bound_n": 6595,
+   "n_for_100_expected_paired_events": 482,
+   "paired_schema_success": 0.99,
+   "safety_only_approximate_n": 6595
+  },
+  {
+   "error_discordance": 0.2,
+   "evaluable_fraction": 0.6,
+   "event_prevalence": 0.35,
+   "hypothetical_effect": 0.05,
+   "joint_design_lower_bound_n": 1046,
+   "n_for_100_expected_paired_events": 482,
+   "paired_schema_success": 0.99,
+   "safety_only_approximate_n": 1046
+  },
+  {
+   "error_discordance": 0.05,
+   "evaluable_fraction": 0.9,
+   "event_prevalence": 0.35,
+   "hypothetical_effect": 0.005,
+   "joint_design_lower_bound_n": 19371,
+   "n_for_100_expected_paired_events": 353,
+   "paired_schema_success": 0.9,
+   "safety_only_approximate_n": 19371
+  },
+  {
+   "error_discordance": 0.05,
+   "evaluable_fraction": 0.9,
+   "event_prevalence": 0.35,
+   "hypothetical_effect": 0.01,
+   "joint_design_lower_bound_n": 4836,
+   "n_for_100_expected_paired_events": 353,
+   "paired_schema_success": 0.9,
+   "safety_only_approximate_n": 4836
+  },
+  {
+   "error_discordance": 0.05,
+   "evaluable_fraction": 0.9,
+   "event_prevalence": 0.35,
+   "hypothetical_effect": 0.02,
+   "joint_design_lower_bound_n": 1203,
+   "n_for_100_expected_paired_events": 353,
+   "paired_schema_success": 0.9,
+   "safety_only_approximate_n": 1203
+  },
+  {
+   "error_discordance": 0.05,
+   "evaluable_fraction": 0.9,
+   "event_prevalence": 0.35,
+   "hypothetical_effect": 0.05,
+   "joint_design_lower_bound_n": 353,
+   "n_for_100_expected_paired_events": 353,
+   "paired_schema_success": 0.9,
+   "safety_only_approximate_n": 186
+  },
+  {
+   "error_discordance": 0.1,
+   "evaluable_fraction": 0.9,
+   "event_prevalence": 0.35,
+   "hypothetical_effect": 0.005,
+   "joint_design_lower_bound_n": 38751,
+   "n_for_100_expected_paired_events": 353,
+   "paired_schema_success": 0.9,
+   "safety_only_approximate_n": 38751
+  },
+  {
+   "error_discordance": 0.1,
+   "evaluable_fraction": 0.9,
+   "event_prevalence": 0.35,
+   "hypothetical_effect": 0.01,
+   "joint_design_lower_bound_n": 9682,
+   "n_for_100_expected_paired_events": 353,
+   "paired_schema_success": 0.9,
+   "safety_only_approximate_n": 9682
+  },
+  {
+   "error_discordance": 0.1,
+   "evaluable_fraction": 0.9,
+   "event_prevalence": 0.35,
+   "hypothetical_effect": 0.02,
+   "joint_design_lower_bound_n": 2414,
+   "n_for_100_expected_paired_events": 353,
+   "paired_schema_success": 0.9,
+   "safety_only_approximate_n": 2414
+  },
+  {
+   "error_discordance": 0.1,
+   "evaluable_fraction": 0.9,
+   "event_prevalence": 0.35,
+   "hypothetical_effect": 0.05,
+   "joint_design_lower_bound_n": 380,
+   "n_for_100_expected_paired_events": 353,
+   "paired_schema_success": 0.9,
+   "safety_only_approximate_n": 380
+  },
+  {
+   "error_discordance": 0.2,
+   "evaluable_fraction": 0.9,
+   "event_prevalence": 0.35,
+   "hypothetical_effect": 0.005,
+   "joint_design_lower_bound_n": 77512,
+   "n_for_100_expected_paired_events": 353,
+   "paired_schema_success": 0.9,
+   "safety_only_approximate_n": 77512
+  },
+  {
+   "error_discordance": 0.2,
+   "evaluable_fraction": 0.9,
+   "event_prevalence": 0.35,
+   "hypothetical_effect": 0.01,
+   "joint_design_lower_bound_n": 19371,
+   "n_for_100_expected_paired_events": 353,
+   "paired_schema_success": 0.9,
+   "safety_only_approximate_n": 19371
+  },
+  {
+   "error_discordance": 0.2,
+   "evaluable_fraction": 0.9,
+   "event_prevalence": 0.35,
+   "hypothetical_effect": 0.02,
+   "joint_design_lower_bound_n": 4836,
+   "n_for_100_expected_paired_events": 353,
+   "paired_schema_success": 0.9,
+   "safety_only_approximate_n": 4836
+  },
+  {
+   "error_discordance": 0.2,
+   "evaluable_fraction": 0.9,
+   "event_prevalence": 0.35,
+   "hypothetical_effect": 0.05,
+   "joint_design_lower_bound_n": 767,
+   "n_for_100_expected_paired_events": 353,
+   "paired_schema_success": 0.9,
+   "safety_only_approximate_n": 767
+  },
+  {
+   "error_discordance": 0.05,
+   "evaluable_fraction": 0.9,
+   "event_prevalence": 0.35,
+   "hypothetical_effect": 0.005,
+   "joint_design_lower_bound_n": 17610,
+   "n_for_100_expected_paired_events": 321,
+   "paired_schema_success": 0.99,
+   "safety_only_approximate_n": 17610
+  },
+  {
+   "error_discordance": 0.05,
+   "evaluable_fraction": 0.9,
+   "event_prevalence": 0.35,
+   "hypothetical_effect": 0.01,
+   "joint_design_lower_bound_n": 4397,
+   "n_for_100_expected_paired_events": 321,
+   "paired_schema_success": 0.99,
+   "safety_only_approximate_n": 4397
+  },
+  {
+   "error_discordance": 0.05,
+   "evaluable_fraction": 0.9,
+   "event_prevalence": 0.35,
+   "hypothetical_effect": 0.02,
+   "joint_design_lower_bound_n": 1094,
+   "n_for_100_expected_paired_events": 321,
+   "paired_schema_success": 0.99,
+   "safety_only_approximate_n": 1094
+  },
+  {
+   "error_discordance": 0.05,
+   "evaluable_fraction": 0.9,
+   "event_prevalence": 0.35,
+   "hypothetical_effect": 0.05,
+   "joint_design_lower_bound_n": 321,
+   "n_for_100_expected_paired_events": 321,
+   "paired_schema_success": 0.99,
+   "safety_only_approximate_n": 169
+  },
+  {
+   "error_discordance": 0.1,
+   "evaluable_fraction": 0.9,
+   "event_prevalence": 0.35,
+   "hypothetical_effect": 0.005,
+   "joint_design_lower_bound_n": 35228,
+   "n_for_100_expected_paired_events": 321,
+   "paired_schema_success": 0.99,
+   "safety_only_approximate_n": 35228
+  },
+  {
+   "error_discordance": 0.1,
+   "evaluable_fraction": 0.9,
+   "event_prevalence": 0.35,
+   "hypothetical_effect": 0.01,
+   "joint_design_lower_bound_n": 8802,
+   "n_for_100_expected_paired_events": 321,
+   "paired_schema_success": 0.99,
+   "safety_only_approximate_n": 8802
+  },
+  {
+   "error_discordance": 0.1,
+   "evaluable_fraction": 0.9,
+   "event_prevalence": 0.35,
+   "hypothetical_effect": 0.02,
+   "joint_design_lower_bound_n": 2195,
+   "n_for_100_expected_paired_events": 321,
+   "paired_schema_success": 0.99,
+   "safety_only_approximate_n": 2195
+  },
+  {
+   "error_discordance": 0.1,
+   "evaluable_fraction": 0.9,
+   "event_prevalence": 0.35,
+   "hypothetical_effect": 0.05,
+   "joint_design_lower_bound_n": 345,
+   "n_for_100_expected_paired_events": 321,
+   "paired_schema_success": 0.99,
+   "safety_only_approximate_n": 345
+  },
+  {
+   "error_discordance": 0.2,
+   "evaluable_fraction": 0.9,
+   "event_prevalence": 0.35,
+   "hypothetical_effect": 0.005,
+   "joint_design_lower_bound_n": 70465,
+   "n_for_100_expected_paired_events": 321,
+   "paired_schema_success": 0.99,
+   "safety_only_approximate_n": 70465
+  },
+  {
+   "error_discordance": 0.2,
+   "evaluable_fraction": 0.9,
+   "event_prevalence": 0.35,
+   "hypothetical_effect": 0.01,
+   "joint_design_lower_bound_n": 17610,
+   "n_for_100_expected_paired_events": 321,
+   "paired_schema_success": 0.99,
+   "safety_only_approximate_n": 17610
+  },
+  {
+   "error_discordance": 0.2,
+   "evaluable_fraction": 0.9,
+   "event_prevalence": 0.35,
+   "hypothetical_effect": 0.02,
+   "joint_design_lower_bound_n": 4397,
+   "n_for_100_expected_paired_events": 321,
+   "paired_schema_success": 0.99,
+   "safety_only_approximate_n": 4397
+  },
+  {
+   "error_discordance": 0.2,
+   "evaluable_fraction": 0.9,
+   "event_prevalence": 0.35,
+   "hypothetical_effect": 0.05,
+   "joint_design_lower_bound_n": 697,
+   "n_for_100_expected_paired_events": 321,
+   "paired_schema_success": 0.99,
+   "safety_only_approximate_n": 697
+  }
+ ],
+ "source_sha256": "697abc3ced9d316fd3bc517d6ed5a619b1bdc28a82c89863a9b502086e465d5a",
+ "status": "ANALYTIC_PLANNING_NOT_E5_EVIDENCE",
+ "target_power": 0.8,
+ "unlock_gates": [
+  "approved utility/effect/coverage constraints",
+  "qualified shared proposal and reference",
+  "joint safety-and-coverage power",
+  "at least 100 actually paired VERIFIED positive events before primary inference, without outcome-driven recruitment"
+ ]
 }

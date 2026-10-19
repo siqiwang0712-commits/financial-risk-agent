@@ -1,0 +1,112 @@
+{
+  "edges": [
+    [
+      "DRAFT",
+      "READY_TO_FREEZE"
+    ],
+    [
+      "READY_TO_FREEZE",
+      "PROTOCOL_FROZEN"
+    ],
+    [
+      "PROTOCOL_FROZEN",
+      "MODEL_QUALIFIED"
+    ],
+    [
+      "MODEL_QUALIFIED",
+      "COHORT_FROZEN"
+    ],
+    [
+      "COHORT_FROZEN",
+      "FEATURE_PACKETS_FROZEN"
+    ],
+    [
+      "FEATURE_PACKETS_FROZEN",
+      "PREDICTIONS_FROZEN"
+    ],
+    [
+      "PREDICTIONS_FROZEN",
+      "WAITING_FOR_OUTCOMES"
+    ],
+    [
+      "WAITING_FOR_OUTCOMES",
+      "OUTCOMES_UNLOCKED"
+    ],
+    [
+      "OUTCOMES_UNLOCKED",
+      "ADJUDICATION_FROZEN"
+    ],
+    [
+      "ADJUDICATION_FROZEN",
+      "ANALYSIS_COMPLETE"
+    ],
+    [
+      "ANALYSIS_COMPLETE",
+      "AUDIT_COMPLETE"
+    ],
+    [
+      "AUDIT_COMPLETE",
+      "E5_COMPLETE"
+    ]
+  ],
+  "future_stage_gates": {
+    "ADJUDICATION_FROZEN": [
+      "blinded_adjudication"
+    ],
+    "ANALYSIS_COMPLETE": [
+      "prespecified_inference"
+    ],
+    "AUDIT_COMPLETE": [
+      "independent_audit"
+    ],
+    "COHORT_FROZEN": [
+      "exact_historical_exclusions",
+      "company_disjointness"
+    ],
+    "E5_COMPLETE": [
+      "bounded_claims"
+    ],
+    "FEATURE_PACKETS_FROZEN": [
+      "schema",
+      "point_in_time"
+    ],
+    "MODEL_QUALIFIED": [
+      "stable_model_identity",
+      "outcome_blind_qualification"
+    ],
+    "OUTCOMES_UNLOCKED": [
+      "independent_unlock_approval",
+      "analysis_identity_unchanged"
+    ],
+    "PREDICTIONS_FROZEN": [
+      "all_arms_complete",
+      "same_proposal",
+      "outcome_mount_inaccessible"
+    ],
+    "PROTOCOL_FROZEN": [
+      "independent_protocol_approval",
+      "zero_freeze_critical_unresolved",
+      "immutable_identity"
+    ],
+    "WAITING_FOR_OUTCOMES": [
+      "prediction_chain_verified"
+    ]
+  },
+  "lifecycle": [
+    "DRAFT",
+    "READY_TO_FREEZE",
+    "PROTOCOL_FROZEN",
+    "MODEL_QUALIFIED",
+    "COHORT_FROZEN",
+    "FEATURE_PACKETS_FROZEN",
+    "PREDICTIONS_FROZEN",
+    "WAITING_FOR_OUTCOMES",
+    "OUTCOMES_UNLOCKED",
+    "ADJUDICATION_FROZEN",
+    "ANALYSIS_COMPLETE",
+    "AUDIT_COMPLETE",
+    "E5_COMPLETE"
+  ],
+  "schema_version": 1,
+  "task_ceiling": "READY_TO_FREEZE"
+}

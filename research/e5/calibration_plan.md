@@ -1,17 +1,11 @@
-# E5 Calibration Plan
+# Structured E5 calibration decision
 
-Calibration is optional and must be isolated from final validation.
+Current design: **UNCALIBRATED**, with no probability interpretation or confirmatory
+calibration claim. No valid company/time-disjoint calibration study is established.
+Do not create a weak split, weaken Assurance maturity or rename heuristic scores as
+probabilities to reach freeze readiness. Ranking and authorization stay separate.
 
-- Reserve company- and time-disjoint development, calibration, and validation
-  partitions before labels are opened.
-- Fit a single prespecified calibration family on the calibration partition;
-  candidate selection cannot inspect final-validation labels.
-- Freeze clipping, regularization, binning, missing-score treatment, and
-  abstention policy before validation.
-- Report calibration-in-the-large, slope, Brier score, ECE with frozen bins,
-  reliability diagram, coverage, and uncertainty on untouched validation data.
-- Preserve ranking metrics separately from calibration metrics.
-- If sample size or event count is inadequate, do not fit calibration and keep
-  the score `UNCALIBRATED`.
-- Never describe an unvalidated heuristic or Agent score as probability of
-  default, bankruptcy, insolvency, or credit loss.
+A genuinely disjoint calibration design belongs to a separately approved later
+study/amendment before any prospective evidence exposure. It must predeclare data
+partitions, family, clipping, bins, missingness and evaluation; it cannot consume
+E5 validation labels or silently migrate this confirmatory identity.

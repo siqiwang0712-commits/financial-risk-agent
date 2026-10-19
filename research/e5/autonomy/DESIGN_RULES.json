@@ -1,0 +1,28 @@
+{
+  "allowed_evidence": [
+    "RELEASED_IMPLEMENTATION",
+    "APPROVED_HISTORICAL_DEVELOPMENT",
+    "OUTCOME_BLIND_DESIGN",
+    "SYNTHETIC_ENGINEERING",
+    "ANALYTIC_PLANNING"
+  ],
+  "autopilot_is_scientific_authority": false,
+  "calibration": "UNCALIBRATED",
+  "forbidden_selection_evidence": [
+    "E5_OUTCOMES",
+    "E5_PREDICTIONS",
+    "E5_COHORT"
+  ],
+  "harness": "research/e5/harness/e5_harness.py",
+  "historical_base": "6a6f2053dd168d74aa97533ad901af47a7a5023a",
+  "legacy_freeze_authority": false,
+  "max_task_state": "READY_TO_FREEZE",
+  "narrative_claim_transfer": false,
+  "probability_interpretation": false,
+  "schema_version": 1,
+  "scientific_authority": [
+    "research/e5/STUDY_PROTOCOL_DRAFT.md",
+    "research/e5/experiment_config.json"
+  ],
+  "success": "CORRECT_EXECUTION_NOT_COMPARATOR_VICTORY"
+}

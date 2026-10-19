@@ -1,0 +1,11 @@
+{
+  "calibration": "UNCALIBRATED",
+  "cohort": "NOT_ENUMERATED",
+  "external_validation": "NOT_ESTABLISHED",
+  "outcomes": "NOT_ACCESSED",
+  "predictions": "NOT_GENERATED",
+  "protocol_freeze": "NOT_EXECUTED",
+  "readiness": "BLOCKED",
+  "schema_version": 1,
+  "state": "DRAFT"
+}

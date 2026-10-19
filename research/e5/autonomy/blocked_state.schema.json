@@ -1,0 +1,87 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "blockers": {
+      "items": {
+        "additionalProperties": false,
+        "properties": {
+          "allowed_next_actions": {
+            "items": {
+              "type": "string"
+            },
+            "minItems": 1,
+            "type": "array"
+          },
+          "config_paths": {
+            "items": {
+              "type": "string"
+            },
+            "minItems": 0,
+            "type": "array"
+          },
+          "confirmatory_risk": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "evidence_insufficient_because": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "id": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "missing_information": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "prohibited_shortcuts": {
+            "items": {
+              "type": "string"
+            },
+            "minItems": 1,
+            "type": "array"
+          },
+          "scope": {
+            "enum": [
+              "PROTOCOL_FREEZE",
+              "COHORT_FREEZE",
+              "FUTURE_DATA"
+            ]
+          },
+          "status": {
+            "const": "OPEN"
+          },
+          "unresolved_decision": {
+            "minLength": 1,
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "scope",
+          "status",
+          "unresolved_decision",
+          "evidence_insufficient_because",
+          "missing_information",
+          "confirmatory_risk",
+          "allowed_next_actions",
+          "prohibited_shortcuts",
+          "config_paths"
+        ],
+        "type": "object"
+      },
+      "minItems": 1,
+      "type": "array"
+    },
+    "schema_version": {
+      "const": 1
+    }
+  },
+  "required": [
+    "schema_version",
+    "blockers"
+  ],
+  "type": "object"
+}

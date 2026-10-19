@@ -1,21 +1,26 @@
-# E5 Agent Selection Protocol
+# E5 outcome-blind model qualification contract — NOT EXECUTED
 
-Select exactly one confirmatory model before E5 outcomes are accessible.
+The current S2 producer design is blocked (E5-P02). This contract does not nominate
+an unavailable model or reinterpret a mock as the confirmatory Agent.
 
-1. Enumerate locally or privately hostable instruct models and record exact ID,
-   weights digest, tokenizer, quantization, context, runtime, and license.
-2. Reject candidates that cannot run on frozen hardware or cannot satisfy the
-   isolation boundary.
-3. Use outcome-free synthetic and historical development packets to measure
-   schema success, ID fidelity, context fit, latency, and reproducibility.
-4. Choose by a frozen lexicographic rule: schema reliability, context fit,
-   reproducibility, hardware feasibility, then latency. Do not use E4/E5 labels.
-5. Freeze one prompt per representation, inference parameters, retry/bisect
-   behavior, batch size, and the exact response schema.
-6. Require masked invalid-response retention and deterministic error codes.
-7. Run batch sizes 1, operational-small, and target before outcome unlock and
-   apply prespecified score/rank sensitivity gates.
+Use a separately registered non-E5 qualification corpus: approved historical or
+explicitly synthetic engineering cases, with every source/company/hash registered
+as a later E5 exclusion. No E5 cohort IDs, predictions or outcomes may be inspected.
+Candidates must be recorded before testing: weights/model revision, tokenizer,
+quantization, prompt hash, schema hash, runtime/lock/container, hardware and license.
+A hosted mutable alias without stable revision and replay assurance is ineligible.
 
-Cloud GPT-5 may be an explicitly named comparator only if its exact provider
-model ID is stable and frozen. It may never silently replace the confirmatory
-model or gain web/tool/outcome access.
+Hard gates: >=99% schema-valid responses under the existing historical planning
+requirement; 100% exact case-ID integrity; no silent missing/duplicate outputs;
+finite in-range scores; one company per semantic context; deterministic documented
+recovery (one identical retry at most, otherwise FAILED); no web/outcome tools;
+context fits fixed hardware; a replay-qualified immutable identity. Retain invalid
+responses securely with bounded redacted diagnostics. Every candidate uses exactly
+the same packets and retry budget. No label-dependent metric enters selection.
+
+Among gate-passing candidates, lexicographic order: schema-valid response rate,
+replay agreement, context fit, hardware feasibility, then measured latency and cost;
+final ties use lexical immutable identity hash. If no candidate passes, BLOCKED.
+Candidate registry/corpus provenance and prompt identity must be independently
+approved before tests. No arbitrary winning model is installed by this document.
+Qualification outcomes are engineering evidence, not prospective E5 validation.

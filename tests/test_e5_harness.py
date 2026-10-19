@@ -89,7 +89,9 @@ def test_manifest_records_git_environment_and_frozen_document_hashes() -> None:
 # --------------------------------------------------------------------------------------
 
 
-def test_a_well_formed_two_stage_chain_verifies(tmp_path: Path) -> None:
+def test_a_well_formed_two_stage_chain_verifies(tmp_path: Path, monkeypatch) -> None:
+    # A qualified model must have an identity; this is a temporary synthetic fixture.
+    monkeypatch.setattr(e5_harness, "model_identity_sha256", lambda: "a" * 64)
     first = _freeze_protocol(tmp_path)
     second = e5_harness.build_manifest(
         "model-qualification",
@@ -210,7 +212,7 @@ def test_outcome_inaccessible_assertion_passes_when_absent(tmp_path: Path) -> No
 
 
 def test_recorded_outcome_paths_reappearing_later_fails(tmp_path: Path) -> None:
-    leaking = tmp_path / "outcomes.json"
+    leaking = tmp_path.parent / f"{tmp_path.name}-outcomes.json"
     leaking.write_text("{}", encoding="utf-8")
     manifest = e5_harness.build_manifest(
         "prediction-freeze",

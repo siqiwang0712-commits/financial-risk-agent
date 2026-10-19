@@ -1,0 +1,126 @@
+{
+  "blockers": [
+    {
+      "allowed_next_actions": [
+        "Keep released policy unchanged",
+        "Design and independently approve a different study before exposure"
+      ],
+      "config_paths": [
+        "freeze_prerequisites.reference_distribution_design"
+      ],
+      "confirmatory_risk": "Choosing or relabelling a scientific rule to obtain readiness would invalidate attribution or utility claims.",
+      "evidence_insufficient_because": "The adopted HEURISTIC_POLICY / UNCALIBRATED engine sets automation_allowed=false. Increasing N cannot change this. Restricted PASS/FLAG cannot be counted as automated authorizations.",
+      "id": "E5-P01",
+      "missing_information": "A scientifically justified admission/calibration study or an explicitly approved redesign of the scientific question, before E5 exposure.",
+      "prohibited_shortcuts": [
+        "Set require_calibration_for_automation=false",
+        "Relabel restricted outputs as automated",
+        "Weaken maturity checks"
+      ],
+      "scope": "PROTOCOL_FREEZE",
+      "status": "OPEN",
+      "unresolved_decision": "Reconcile useful automated coverage with the adopted released S4 policy."
+    },
+    {
+      "allowed_next_actions": [
+        "Specify and qualify a study-only producer without changing product authority",
+        "Use shared immutable proposal packets only after producer qualification"
+      ],
+      "config_paths": [
+        "conceptual_arms.2.implementation_status",
+        "conceptual_arms.3.implementation_status"
+      ],
+      "confirmatory_risk": "Choosing or relabelling a scientific rule to obtain readiness would invalidate attribution or utility claims.",
+      "evidence_insufficient_because": "The released Agent verifies claims before assessment/fusion and applies failure review before Assurance; copying its post-verification proposal is not a raw no-verification ablation. A shared serialization guard alone does not prove scientific component isolation.",
+      "id": "E5-P02",
+      "missing_information": "An approved structured prediction representation, stable model/prompt identity, and an extraction boundary validated to leave proposal generation identical across S2/S3/S4.",
+      "prohibited_shortcuts": [
+        "Treat copied already-verified proposals as proof of an evidence-only ablation",
+        "Restore legacy A2/Hybrid"
+      ],
+      "scope": "PROTOCOL_FREEZE",
+      "status": "OPEN",
+      "unresolved_decision": "Define a qualified S2 prediction layer and separable evidence-only S3 intervention."
+    },
+    {
+      "allowed_next_actions": [
+        "Obtain independent loss and capacity constraints before E5 exposure",
+        "Apply a prespecified rule to approved historical data only"
+      ],
+      "config_paths": [
+        "primary_family.minimum_meaningful_effects",
+        "primary_family.coverage_condition"
+      ],
+      "confirmatory_risk": "Choosing or relabelling a scientific rule to obtain readiness would invalidate attribution or utility claims.",
+      "evidence_insufficient_because": "Historical OOF rankings lack same-cohort S4 authorized outcomes or an independently justified review/error utility. Maximizing historical significance or choosing an arbitrary coverage target is not a scientific utility justification.",
+      "id": "E5-P03",
+      "missing_information": "Outcome-blind stakeholder loss/review-capacity requirements or an approved mechanical historical-development utility-selection rule.",
+      "prohibited_shortcuts": [
+        "Select thresholds using E5 outcomes",
+        "Choose zero coverage to claim perfect safety",
+        "Pick margins to guarantee significance"
+      ],
+      "scope": "PROTOCOL_FREEZE",
+      "status": "OPEN",
+      "unresolved_decision": "Select minimum meaningful authorization-error effect, coverage noninferiority margin and useful coverage floor."
+    },
+    {
+      "allowed_next_actions": [
+        "Design and qualify a historical-only reference adapter",
+        "Retain UNKNOWN and withhold automation until supported"
+      ],
+      "config_paths": [
+        "reference_distribution.freeze_status",
+        "freeze_prerequisites.eligibility_and_timing_logic"
+      ],
+      "confirmatory_risk": "Choosing or relabelling a scientific rule to obtain readiness would invalidate attribution or utility claims.",
+      "evidence_insufficient_because": "The historical empirical profile is not in the runtime reference format or an externally validated reference; E5 packets and endpoint wrappers have not been qualification-tested prospectively. The synthetic runtime profile is ineligible. A twelve-month filing collection window also needs a qualified prediction deadline/outcome-isolation design; early companies must not acquire observable outcomes before their predictions are frozen.",
+      "id": "E5-P04",
+      "missing_information": "An outcome-blind schema mapping and applicability/reference specification with approved scope and extraction conformance tests. Explicit per-company prediction deadlines and cohort/global-freeze ordering qualification, without enumerating future cases.",
+      "prohibited_shortcuts": [
+        "Rename development reference VALIDATED_EXTERNAL",
+        "Use E5 outcomes to fit the reference"
+      ],
+      "scope": "PROTOCOL_FREEZE",
+      "status": "OPEN",
+      "unresolved_decision": "Complete E5-compatible reference, extraction and prospective timing contracts."
+    },
+    {
+      "allowed_next_actions": [
+        "Recover exact input",
+        "Supply independently verifiable containment proof",
+        "Otherwise block cohort freeze"
+      ],
+      "config_paths": [],
+      "confirmatory_risk": "Choosing or relabelling a scientific rule to obtain readiness would invalidate attribution or utility claims.",
+      "evidence_insufficient_because": "The exact previous_270 input is absent. The 2000-company development exclusion is available but no proof shows it contains the missing 270.",
+      "id": "E5-C01",
+      "missing_information": "Exact original list with pinned hash/provenance, or a proved immutable containing superset; complete qualification/validation exclusions.",
+      "prohibited_shortcuts": [
+        "Invent previous_270.json",
+        "Approximate historical CIKs and call them exact"
+      ],
+      "scope": "COHORT_FREEZE",
+      "status": "OPEN",
+      "unresolved_decision": "Prove prior-company exclusion including previous_270."
+    },
+    {
+      "allowed_next_actions": [
+        "Wait until required governance approvals and data windows exist"
+      ],
+      "config_paths": [],
+      "confirmatory_risk": "Choosing or relabelling a scientific rule to obtain readiness would invalidate attribution or utility claims.",
+      "evidence_insufficient_because": "These artifacts must not exist during this task. Their absence is intentional.",
+      "id": "E5-F01",
+      "missing_information": "Later approved stage execution and independently controlled outcome mounts.",
+      "prohibited_shortcuts": [
+        "Enumerate a future cohort now",
+        "Manufacture prospective outcomes"
+      ],
+      "scope": "FUTURE_DATA",
+      "status": "OPEN",
+      "unresolved_decision": "Obtain future cohort, immutable prediction chain and later blinded outcomes through governed stages."
+    }
+  ],
+  "schema_version": 1
+}

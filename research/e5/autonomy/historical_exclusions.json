@@ -1,0 +1,42 @@
+{
+  "candidate_enumeration_permitted": false,
+  "historical_sources": {
+    "E1_E2_E3": {
+      "path": "research/empirical_v1/corpus_manifest.json",
+      "sha256": "f048b7daedb7a990ed71cf5ed4c7c12109ef5c4782a258a9e5c8b2e755f52dfd"
+    },
+    "E4": {
+      "path": "research/e4/public/VALIDATION_REPORT.md",
+      "sha256": "a3ebe389aa98fb24478f6a48934e3ff654b9237eda7363688995e40bf8e16500"
+    },
+    "E4_R": {
+      "path": "research/e4r_automated_robustness/manifest.json",
+      "sha256": "db2460c63243a0430ec5880620827d59bfec3a3d821f31c7133ef8bacf70682a"
+    },
+    "E4_S": {
+      "path": "research/e4_statistical_audit/replication/cohort.json",
+      "sha256": "3270f108518fad9599e8902c1143d2b36842480579b82a315c0633b0a3803be1"
+    },
+    "PUBLIC_PILOT": {
+      "path": "research/benchmark/public_company_observations.json",
+      "sha256": "f5c3f656be30ca7666958675fc4ab1e615cb11389c926eb26ba2c84b66db85c9"
+    },
+    "STRONG_REFERENCE": {
+      "path": "research/strong_tabular_reference/development_data_manifest.json",
+      "sha256": "0d040512a7f351eef4a3db83fda2254c19a200b8cb76556c7e2dbbde78fe3efc"
+    }
+  },
+  "later_qualification_and_prior_validation": "REQUIRE_COMPLETE_COMPANY_IDENTITIES_AND_HASHED_MANIFESTS_BEFORE_ENUMERATION",
+  "previous_270": {
+    "path": "research/e4/_cache/previous_270.json",
+    "sha256": "d73b371ccb026f556387cf6ff8ba204a4fde0664dcd780f099f12aa005e36603",
+    "status": "MISSING_COHORT_FREEZE_BLOCKER_ONLY",
+    "superset_containment_proven": false
+  },
+  "schema_version": 1,
+  "status": "SOURCE_REGISTRY_NOT_COMPLETE_COHORT_FREEZE_PROOF",
+  "strong_reference_2000": {
+    "path": "research/strong_tabular_reference/artifacts/e5_exclusion_companies_2000.json",
+    "sha256": "be7982e8c4079a583cfdd3697bd47659c378f17205fa37a37f2f6e10084be081"
+  }
+}

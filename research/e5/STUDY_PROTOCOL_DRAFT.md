@@ -4,332 +4,219 @@ Status: **DRAFT_NOT_FROZEN — AUTHORITATIVE E5 STUDY CONTRACT**
 
 `E5_PROTOCOL_FREEZE_ALLOWED = false`
 
-This file is the single human-readable authority for a future structured E5 freeze. Its
-machine-readable companion is [`experiment_config.json`](experiment_config.json). Neither
-file is a preregistration or frozen protocol: no cohort has been enumerated, no prediction
-has been generated, no future outcome has been accessed, and no final hash exists.
+Design readiness: **BLOCKED**, not PROTOCOL_FROZEN. This is the human authority;
+[`experiment_config.json`](experiment_config.json) is its machine companion and
+[`harness/e5_harness.py`](harness/e5_harness.py) is the active stage implementation.
+The [Constitution](autonomy/E5_CONSTITUTION.md) constrains all design changes.
+Legacy [`protocol/`](protocol/) mechanics apply only when explicitly re-adopted
+below. Their B6/A2/fixed-Hybrid hypotheses cannot acquire freeze authority.
 
-The older documents under [`protocol/`](protocol/) are preserved as legacy design material.
-Their statistical, adjudication, isolation and hash-chain mechanisms may be reused only
-where this contract or a future approved amendment explicitly adopts them. Their former
-B6/A2/Hybrid hypotheses and fixed-Hybrid design are superseded and cannot control a future
-freeze.
+## 1. Scientific question and success
 
-## 1. Purpose and evidence boundary
+Does Full Assurance improve selective **authorization quality**, while retaining
+useful decision coverage, beyond a strong simple selective predictor and beyond
+evidence verification alone? Success means correct execution, not a favorable
+result. Null and negative conclusions must remain possible without protocol change.
+Ranking, calibration, selective behavior, source support and authorization are
+separate constructs. This study concerns forward financial deterioration, not
+bankruptcy/default/credit loss, fraud, investment advice or production safety.
 
-E5 is intended to prospectively evaluate whether Assurance improves the safety and utility
-of selective financial decisions on a future, company-disjoint cohort while retaining a
-competitive predictive reference.
+All scores remain **UNCALIBRATED**. No probability interpretation or confirmatory
+calibration claim is permitted. Historical performance is design-exposed development,
+not E5 evidence; missingness signal must not become financial severity.
 
-“Safety” is not assumed or universally established. Where this draft uses authorization-
-quality or unsafe-authorization language, it refers only to operational metrics defined in
-this protocol and later frozen for this experiment. It does not imply regulatory safety,
-production fitness or external validation.
-
-E5 separates five questions that must not be collapsed:
-
-1. **Predictive discrimination:** how well a score ranks a prespecified future endpoint.
-2. **Calibration:** whether a score has an empirically supported probabilistic meaning.
-3. **Selective behavior:** which cases are issued, reviewed or withheld at what error and
-   coverage.
-4. **Evidence support:** whether material claims and decisions have verified evidence paths.
-5. **Authorization:** whether a proposal is permitted to become a final decision.
-
-A higher AUROC does not validate evidence support, admission policy or Assurance. Assurance
-does not improve prediction merely because it withholds decisions; any predictive change
-must be measured separately on an appropriate common evaluable cohort.
-
-The endpoint remains a versioned forward financial-deterioration endpoint. It is not a
-bankruptcy, default, credit-loss or insolvency probability, credit rating, fraud finding or
-investment recommendation.
-
-## 2. Prospective isolation
-
-- Feature and outcome periods must be later than E4 and unavailable when their respective
-  freeze stages occur.
-- Companies must be disjoint from E1–E4, public-pilot, historical-development and prior
-  validation cohorts. An unused E4 company is not prospective.
-- Prediction processes receive only prediction-time inputs. Outcome storage remains
-  inaccessible until the content-addressed prediction/certificate freeze verifies.
-- The unpublished `research/e4/_cache/previous_270.json` is a cohort-freeze blocker, not a
-  reason to invent an exclusion set and not, by itself, a protocol-design blocker.
-- Eligibility windows, sampling logic, salt and point-in-time rules remain `TO_BE_FROZEN`.
-  No candidate enumeration is permitted while they remain open.
-
-## 3. Required comparison arms
-
-Exactly these five conceptual arms must be represented. Exact implementations are future
-freeze items and may not be selected using E5 outcomes.
+## 2. Exact arm responsibilities
 
 ### S0 — Strong Tabular Predictor
 
-The competitive predictive reference selected prospectively under
-[`StrongTabularReference-v1`](../strong_tabular_reference/README.md). S0 produces a risk
-score/proposal but has no Assurance authorization layer.
-
-The reference contract remains `DRAFT_NOT_FROZEN` for E5, while v0.4.1 now provides a
-mechanically selected, fitted **historical development** artifact. That artifact is
-`DESIGN_EXPOSED` and does not itself freeze S0 for E5. E4-R motivated the candidate design;
-historical AUROC may not be used for unrestricted winner shopping. Before E5 predictions,
-the selected schema, preprocessing, model/config, software environment and artifact hashes
-must become part of E5's frozen identity.
-
-The outcome-blind artifact design is specified by
-[`strong_tabular_reference/artifact_manifest.template.json`](../strong_tabular_reference/artifact_manifest.template.json)
-and its draft [`contract_identity.json`](../strong_tabular_reference/contract_identity.json).
-The contract hash identifies the design only. The historical fitted-artifact hash is bound
-in `artifacts/artifact_manifest.json`, while the later E5 freeze identity remains
-`TO_BE_FROZEN`; none is interchangeable with another.
-
-Historical S0 fitting or selection required an
-`APPROVED_FOR_STRONG_REFERENCE_DEVELOPMENT` manifest conforming to
-[`development_data_manifest.template.json`](../strong_tabular_reference/development_data_manifest.template.json).
-The approved manifest binds 675 labelled development companies and a conservative
-2,000-company source-cohort exclusion. Every one of those 2,000 companies must become an
-input exclusion for the future E5 cohort builder; E5 cohort enumeration must not begin by
-consulting outcomes.
-
-### S1 — Strong Tabular Predictor + Selective Policy
-
-S1 applies a simple, prespecified selective-admission policy to S0. Its purpose is to
-isolate the value of selective admission from Agent reasoning and Full Assurance. The
-thresholds, review/abstain rules, calibration assumptions and policy identity are
-`TO_BE_FROZEN`; this draft invents none of them.
-
-S1 is deliberately stronger than an unconditional-prediction comparator but does not gain
-Agent reasoning, claim verification, evidence fragility or the complete Assurance Runtime.
-
-### S2 — Raw Agent Proposal
-
-S2 is the outcome-blindly selected Agent configuration operating on a frozen representation
-and prompt. It may emit a score and `proposed_decision`; it never owns final authorization.
-The exact model, representation, prompt, runtime and retry policy remain `TO_BE_FROZEN`.
-Legacy A0–A3 work may inform this choice but does not choose it here.
-
-### S3 — Agent + Evidence Verification
-
-S3 adds claim/evidence admission to the same frozen S2 proposal path. It may verify source
-identity, citation/path existence and material-claim support, then withhold or route an
-unsupported proposal according to a frozen evidence-only policy.
-
-S3 must not include deterministic evidence-ablation fragility, distribution/reference
-validity, the complete admission policy or certificate-bound Full Assurance authorization.
-Those controls belong to S4. This boundary isolates the incremental effect of evidence
-verification rather than quietly reproducing Full Assurance.
-
-### S4 — Full FinRisk Assurance
-
-S4 is the complete v0.4 path: evidence assurance, deterministic fragility analysis,
-distribution/reference validity, versioned admission policy and certificate-bound
-authorization. Only S4 represents Full FinRisk Assurance. It may issue a final decision
-only through a valid `AssuranceResult` and Decision Certificate.
-
-S4 is implemented and internally engineering-validated. It is not prospectively or
-externally validated, and this protocol does not presume that it will outperform another
-arm.
-
-## 4. Historical anchors
-
-B0 and B6 are historical reference and interpretability anchors. They may be reported for
-continuity with E4, but they are not the strongest current competitive reference, are not
-S0, and do not enter the confirmatory primary family. Their historical results and caveats
-remain unchanged.
-
-The legacy fixed Hybrid and A2-versus-B6 questions are also excluded from the current
-primary family. They may support secondary historical diagnostics only if prospectively
-declared.
-
-## 5. Comparison map
-
-The design avoids an uncontrolled all-pairs comparison surface:
-
-| Comparison | Question | Planned role |
-|---|---|---|
-| `S1 vs S0` | Does simple selective admission improve the error/coverage trade-off relative to unconditional S0? | key secondary |
-| `S3 vs S2` | Does evidence verification reduce unsupported or erroneous issued decisions relative to the same raw Agent proposal path? | key secondary |
-| `S4 vs S3` | What do fragility, distribution validity, full admission policy and certificate-bound authorization add beyond evidence verification? | confirmatory candidate `P2` |
-| `S4 vs S1` | Does Full Assurance improve authorization quality beyond a strong predictor with a simpler selective policy? | confirmatory candidate `P1` |
-
-Other pairwise comparisons are secondary, sensitivity-only or descriptive unless a future
-protocol amendment justifies and freezes them before the cohort is enumerated.
-
-## 6. Estimand families
-
-### A. Predictive discrimination
-
-- AUROC on a common evaluable cohort;
-- PR-AUC with event prevalence reported;
-- paired differences only when both arms define comparable scores on identical cases.
-
-Paired DeLong and company-cluster bootstrap infrastructure from E4-S/E4-R may be reused
-when its assumptions match the estimand. Discrimination is not the primary evidence for
-Assurance authorization quality.
-
-### B. Selective behavior
-
-- decision coverage;
-- selective error/risk at reported coverage;
-- risk–coverage or error–coverage curves;
-- REVIEW and ABSTAIN rates;
-- coverage conditional on prespecified data-availability and subgroup strata.
-
-The exact loss, coverage targets, thresholds and aggregation rule are `TO_BE_FROZEN`.
-Withheld cases are not silently counted as correct predictions.
-
-### C. Authorization quality
-
-Candidate operational measures are:
-
-- **unsupported authorized decision rate:** authorized decisions lacking the frozen minimum
-  verified-evidence support, divided by authorized decisions with assessable support;
-- **erroneous authorized decision rate:** authorized decisions inconsistent with the
-  frozen endpoint/adjudicated outcome, divided by authorized decisions with evaluable
-  outcomes;
-- **out-of-reference authorization rate:** decisions authorized when the frozen reference-
-  validity rule classifies the case outside its asserted scope.
-
-The future protocol must nominate one primary authorization-quality estimand, its
-denominator, missingness treatment and direction before freeze. No composite “safety
-score,” minimum effect or decision threshold is chosen here.
-
-### D. Evidence behavior
-
-- verified evidence coverage for structured material paths;
-- unsupported-claim admission within the structured decision packet;
-- correctness of machine-checkable structured evidence paths;
-- deterministic fragility state and decision-flip behavior.
-
-These measures are limited to evidence represented in structured E5 packets and dependency
-graphs. They do not establish that the Agent can read or cite full filing text; that is the
-separate E5-Narrative study.
-
-### E. Calibration
-
-Calibration metrics are confirmatory only if a valid company- and time-disjoint
-development/calibration/final-validation design is frozen before E5 evaluation. Otherwise
-every score remains `UNCALIBRATED`, Brier/ECE/reliability displays are descriptive only,
-and no probability interpretation is permitted. The calibration blocker is not solved by
-this contract.
-
-## 7. Hypothesis and multiplicity hierarchy
-
-### Confirmatory primary family
-
-The intended small family is:
-
-- `P1`: `S4 vs S1` on the single frozen primary authorization-quality estimand.
-- `P2`: `S4 vs S3` on that estimand, or a separately justified component-increment
-  estimand if frozen before cohort construction.
-
-Both hypotheses currently have status `TO_BE_FROZEN`. The exact nulls, estimators,
-minimum meaningful effects, family-wise alpha and decision thresholds are unresolved.
-Holm step-down is the nominated multiplicity method over `P1` and `P2`, but it becomes
-binding only when the estimands and family-wise alpha freeze. Statistical tests must follow
-the data/estimand; the old AUROC test is not reused merely because code exists.
-
-### Key secondary family
-
-- `S1 vs S0` selective error/coverage;
-- `S3 vs S2` evidence and authorization behavior;
-- AUROC and PR-AUC on common evaluable cohorts;
-- evidence coverage/path behavior;
-- REVIEW/ABSTAIN characteristics and prespecified component ablations.
-
-Multiplicity handling for any promoted secondary family is `TO_BE_FROZEN`. Analyses not
-promoted before freeze remain secondary and cannot support a primary claim.
-
-### Sensitivity and descriptive analyses
-
-Threshold sweeps, alternative missing-outcome treatments, subgroup views, historical
-B0/B6 comparisons and reweighting are sensitivity or descriptive analyses. Reweighting
-cannot replace missing outcomes. Post-hoc analyses must be labelled `POST_HOC` and cannot
-upgrade a failed primary result.
-
-## 8. Structured E5 and E5-Narrative
-
-Structured E5 asks:
-
-> When should a financial-risk decision be authorized, reviewed or withheld?
-
-[`E5-Narrative`](narrative/NARRATIVE_PROTOCOL.md) asks:
-
-> Can the Agent correctly extract, ground, cite and verify claims from financial-report
-> text?
-
-They keep separate protocols, configs, datasets, freeze identities, metrics, claims and
-results. Structured evidence-path metrics do not substitute for claim-level narrative
-grounding, and narrative accuracy does not validate structured authorization behavior.
-
-## 9. Outcome and coverage
-
-The endpoint implementation, timing, deterministic verification rules and blinded review
-protocol must freeze before outcome access. REVIEW cases require blinded adjudication;
-INSUFFICIENT cases are never coerced to binary labels. VERIFIED/REVIEW/INSUFFICIENT
-coverage, attrition and prediction-time availability covariates must be reported.
-
-Legacy [`OUTCOME_ADJUDICATION_PROTOCOL.md`](protocol/OUTCOME_ADJUDICATION_PROTOCOL.md)
-contains reusable blinded-review mechanics, but its exact version and any required changes
-remain `TO_BE_FROZEN` under this authority.
-
-## 10. Governance and freeze chain
-
-The active harness is [`harness/e5_harness.py`](harness/e5_harness.py). Its nine stages are:
-
-1. protocol;
-2. model qualification;
-3. cohort freeze;
-4. feature-packet freeze;
-5. prediction freeze;
-6. outcome unlock;
-7. adjudication freeze;
-8. statistical analysis;
-9. final report.
-
-Each stage is content-addressed and chained to the previous manifest. Outcome-bearing
-artifacts are forbidden before outcome unlock. A protocol-stage manifest must hash this
-file and `research/e5/experiment_config.json`, not the legacy B6/A2/Hybrid documents.
-
-The legacy governance workflow and verifier under `protocol/` remain useful design
-history, but the active harness defines current stage names and freeze behavior.
-
-## 11. Protocol-freeze prerequisites
-
-`E5_PROTOCOL_FREEZE_ALLOWED` may become `true` only after every item below is resolved in
-both this document and the machine config:
-
-- [x] one authoritative human protocol and one current machine config are reconciled;
-- [ ] StrongTabularReference-v1 design, candidate grid, development-data identity,
-  selection rule and artifact format finalized;
-- [ ] calibration resolved as either a valid disjoint design or explicitly
-  `UNCALIBRATED` for E5;
-- [ ] empirical reference-distribution design and scope finalized;
-- [ ] exact Assurance policy version and hash nominated;
-- [ ] exact Decision Certificate schema/version and migration rule nominated;
-- [ ] primary authorization estimand, nulls and denominators finalized;
-- [ ] multiplicity family, method and family-wise alpha finalized;
-- [ ] minimum meaningful effects and decision/selective thresholds finalized where needed;
-- [ ] eligibility, timing and point-in-time logic sufficiently specified for later cohort
-  construction;
-- [ ] Agent model/representation/prompt qualification rules reconciled with S2/S3;
-- [ ] no ambiguous `TO_BE_FROZEN` design field remains in a freeze-critical position.
-
-The prior 270-company exclusion list is required before **cohort freeze**, not necessarily
-before protocol freeze. It must remain fail-closed at the cohort stage.
-
-## 12. Current status and permissible claims
-
-Current machine state:
+Adopt the existing fitted StrongTabularReference-v1 artifact, rather than refitting
+or reselecting it. Its fitted identity is
+`3e1ebd825f1699bcc88e52a531bf9199aad3e93a671cfe28640f15dd33759a26`.
+The [candidate identity record](autonomy/design_identities.json) binds schema,
+ordered VO features, fitted preprocessing/model, exact hyperparameters, environment,
+source config and historical manifests. This is
+`DESIGN_EXPOSED_HISTORICAL_DEVELOPMENT`, not an E5 freeze or prospective evidence.
+All 2,000 development source companies remain future exclusions. Artifact loading
+requires trusted hash verification and qualification replay in the recorded runtime.
+S0's score is in [0,1], with the historical 0.5 classification threshold, no Assurance
+and no system final-authorization authority.
+
+### S1 — S0 + Simple Selective Policy
+
+Use exactly S0's score and the already-prespecified historical
+`s1-fixed-review-band-v1`: score >=0.65 issues FLAG, score <0.35 issues PASS,
+otherwise REVIEW. Adopt the existing development rule without threshold search,
+new fitting, E5 data or favorable-result selection. Selection procedure: retain this
+predeclared rule verbatim, verified against
+`strong_tabular_reference/development_run_config.json`. This serious comparator
+issued decisions on 562/675 historical rows; that recorded rate is descriptive,
+not a target or E5 performance prediction. S1 study issuance is not product Assurance.
+
+### S2 — Frozen Full Prediction-Layer Proposal
+
+S2 must produce one score and proposal from the intended deterministic metrics,
+rules, models, fusion and a qualified Agent if justified. It has no final authority.
+**E5-P02 remains open:** the released Agent verifies claims *before* fusion and
+failure review; its output cannot honestly be relabelled a raw no-verification arm.
+Exact structured producer/model/prompt and evidence-independent extraction boundary
+remain unresolved. No legacy A2/Hybrid is substituted.
+
+### S3 — Same Proposal + Evidence Verification Only
+
+Consume the exact immutable S2 proposal, adding source/path verification and a
+separate evidence-only routing record. No fragility, reference validity, full policy
+or certificate-bound final authorization may enter this intervention. It is not
+allowed to recompute or replace S2's score/proposal. Its producer and routing
+qualification remain blocked with E5-P02.
+
+### S4 — Same Proposal + Full Assurance
+
+Consume the same S2 proposal and apply released v0.4.2 evidence assurance,
+deterministic fragility, reference/distribution checks, admission policy and content-
+addressed Decision Certificate. Bind the released policy
+`assurance-policy-v0.4.0-development`, HEURISTIC_POLICY, certificate schema
+`decision-certificate-v0.4` and verifiers through candidate source hashes.
+Legacy bundles never gain v0.4 authority; changed material inputs invalidate replay.
+
+**E5-P01:** the adopted heuristic, uncalibrated policy cannot allow automation.
+RESTRICTED PASS/FLAG are not automated authorized decisions. Do not remove the
+policy maturity/calibration gates, or count such outputs as automated to obtain
+coverage. This blocks a useful-automated-coverage confirmatory design as stated.
+
+### Shared proposal contract
+
+`Proposal_S2 == Proposal_S3 == Proposal_S4` means byte-identical canonical JSON of
+case ID, input identity, producer identity, score and proposed disposition. Unknown
+fields, nonfinite values and bool-as-number are rejected. The shared-packet guard
+is mechanically tested. It **does not** qualify a producer or prove scientific
+ablation isolation; the actual three-arm runtime invariant is NOT_ESTABLISHED.
+The nearest clean equivalent is one approved producer executed once, followed by
+immutable packet fan-out and separately recorded interventions. No such producer
+is silently installed or claimed qualified here.
+
+## 3. Primary estimand and inference
+
+P1 = S4 vs S1; P2 = S4 vs S3. Both use comparator-minus-S4 erroneous automated
+issuance incidence on the **same common VERIFIED-endpoint cases**, including
+withheld cases in the denominator. Numerator: an automated PASS with event=1 or
+automated FLAG with event=0. Withholding has no issuance incident; it is **not a
+correct prediction**. Primary coverage is automated issued decisions divided by
+all eligible feature-complete paired cases, including cases without outcomes.
+Report both denominators and attrition explicitly.
+
+Missing/review/insufficient outcomes never become negative labels. Exclude them
+from the primary incident denominator; report missingness, reasons and prespecified
+worst-case incidence bounds (each missing label adverse vs nonadverse) over the
+full paired population. This does not remove verification-selection bias.
+
+Use paired company mean differences, one independent case per company, 20,000
+company-paired bootstrap replicates, seed 20261019, BCa intervals. For one-sided
+primary tests use null-centered paired bootstrap with plus-one p-values. Covariate
+or arm-specific resampling is forbidden. Each primary requires BOTH error benefit
+and coverage noninferiority/useful coverage. The intersection-union p-value is the
+maximum of its safety and coverage p-values. Holm step-down across P1/P2 controls
+family-wise alpha=0.05. Zero variance, empty denominators, undefined BCa acceleration
+or insufficient paired support means NOT_ESTIMABLE, never significance or success.
+Minimum error benefit, coverage margin and useful absolute coverage remain **E5-P03**;
+without independent utility/capacity evidence no arbitrary defaults are inserted.
+The exact inferential null boundaries therefore cannot yet be executed or frozen.
+See [inference design](autonomy/INFERENCE_DESIGN.md).
+
+AUROC/PR-AUC and prevalence are secondary, paired DeLong only on common cases with
+both classes and comparable scores. Also report selective error, review/abstain,
+risk/error–coverage, fixed-review-budget event capture, evidence paths, unsupported
+issuance and out-of-reference authorization. All-abstain selective error is
+NOT_ESTIMABLE. Secondary/POST_HOC results cannot rescue failed primaries.
+B0/B6 are historical anchors only; no all-pairs primary family is restored.
+
+## 4. Power and eligibility
+
+The [analytic planning artifact](power_plan.json) replaces the AUROC-centric basis.
+It covers prevalence, evaluable coverage, schema attrition, paired error discordance
+and effect grids; it contains no simulated E5 outcomes. Its normal-approximation
+paired safety bounds are **not joint primary power**, selected effects or a final N.
+Compare the existing 1200–1500 intention with each grid row; do not preserve it
+blindly. Final N is blocked pending joint safety/coverage feasibility and E5-P03.
+At least 100 actually paired VERIFIED positives is a future inference gate, not
+permission to recruit additional companies after seeing outcomes.
+
+Candidate eligibility design (timing qualification is E5-P04): original 10-K filings, first per CIK; exclude SIC 6000–6999
+because the adopted feature/model scope is nonfinancial. Prediction cutoff is the
+filing's UTC acceptance timestamp. Window: the first 12 calendar months starting at
+the next UTC quarter after protocol freeze. The deterministic sampling order is
+SHA256(salt, CIK, accession), one case per company, no discretionary strata. Salt
+is derived from the frozen protocol hash, released-source identity and literal
+`E5-company-order-v1`; it is determined before enumeration. N remains blocked.
+CIK/accession, fixed schema, source hashes, units/periods and availability-by-cutoff
+are required. Latest/restated-after-cutoff values cannot backfill features.
+These rules do not qualify a prospective extractor or timing feasibility. The
+twelve-month collection window needs explicit per-company prediction deadlines and
+verified ordering so early cases cannot expose outcomes before prediction freeze.
+No rolling/global-freeze equivalence is assumed; E5-P04 remains open.
+
+## 5. Endpoint, reference and exclusions
+
+Adopt `sec_bulk.build_deterioration_labels`,
+`deterministic_forward_outcome_rule_v1`, calendar-12-month horizon via
+`add_twelve_months`, anchored to filing acceptance. Positive: at least two verified
+adverse conditions; a negative needs sufficient known conditions to rule out two.
+The historical E4 fixed-archive/date wrapper is not adopted. Raw
+REQUIRES_HUMAN_REVIEW maps explicitly to REQUIRES_REVIEW; INSUFFICIENT_DATA stays
+unknown. Later adjudication uses two independent blinded reviewers and a third
+adjudicator (the legacy adjudication *mechanics* are re-adopted, not its study arms).
+No actual reviewer, annotation or outcome is created now.
+
+The historical empirical profile is label-independent but development-only. It is
+not in the runtime profile representation or externally validated. Do not relabel it
+VALIDATED_EXTERNAL or install the synthetic fixture as an E5 reference. Exact
+reference/extraction conformance and applicability scope remain E5-P04.
+
+[Historical exclusion registry](autonomy/historical_exclusions.json) binds sources,
+not a future cohort. The missing exact `previous_270.json` is **E5-C01, cohort-freeze
+only**, never a protocol-readiness blocker by itself. Resolution: exact original
+with pinned provenance/hash, or a proven immutable containing superset; otherwise
+cohort freeze fails closed. No containing-superset proof is currently available.
+Qualification/prior-validation exclusions must also be complete before enumeration.
+
+## 6. Isolation, qualification, TEVV and amendments
+
+Protocol/prediction/outcome processes require separately controlled storage and
+mounts. File-absence guards cannot prove container isolation; future execution also
+requires independently reviewed mount/network isolation and no web/outcome tools.
+Stable weights/tokenizer/prompt/runtime identities, single-company context, schema
+and ID integrity, deterministic retry/recovery, hardware feasibility and replay
+must pass the [qualification contract](agent_selection_protocol.md) before model
+qualification. A mutable provider alias is not a stable identity.
+
+The separate [TEVV contract](autonomy/TEVV_CONTRACT.md) is prepared, not executed.
+E5-Narrative retains separate protocol/config/corpus/metrics/claims and blinded
+annotation with planted-defect evaluator validation; neither study validates the other.
+
+The Constitution defines explicit exposure-classified content-addressed amendments.
+Scientific change after prediction freeze invalidates affected confirmatory identity.
+A negative result never authorizes retuning or primary-family promotion.
+
+## 7. Governance and present decision
+
+The nine existing harness stages remain unchanged. The autonomy lifecycle adds
+WAITING_FOR_OUTCOMES and independent AUDIT_COMPLETE gates as future governance
+requirements; it does not fabricate corresponding manifests or change old sequence
+numbers. Every future stage must be ordered, chained and immutable. Damaged or
+unknown manifests are errors, not absence. The current mandate cannot write an
+actual freeze or advance beyond READY_TO_FREEZE.
+
+Resolved: authority; historical S0 binding; existing S1 rule; E5 UNCALIBRATED;
+released policy/certificate bindings; P1/P2 estimand/denominator, alpha and method;
+endpoint adoption; deterministic eligibility/sampling design; planning sensitivity;
+amendment and future qualification/TEVV contracts. Unresolved: E5-P01/P02/P03/P04.
+Readiness is **BLOCKED**, honestly; no effect, reference or model is invented.
 
 ```text
-STUDY CONTRACT: AUTHORITATIVE DRAFT
-PROTOCOL FREEZE: BLOCKED / NOT_FROZEN
+STUDY CONTRACT: BLOCKED / DRAFT_NOT_FROZEN
+PROTOCOL FREEZE: NOT_EXECUTED
 COHORT: NOT_ENUMERATED
 PREDICTIONS: NOT_GENERATED
 OUTCOMES: NOT_ACCESSED
-STRONG REFERENCE: DRAFT_NOT_FROZEN / NO FITTED ARTIFACT
-CALIBRATION: UNCALIBRATED / DESIGN UNRESOLVED
-EXTERNAL VALIDATION: NOT_ESTABLISHED
+CALIBRATION: UNCALIBRATED
+E5 VALIDATION: NOT_ESTABLISHED
 ```
-
-Negative or mixed findings would be valid future outcomes. Even a correctly completed E5
-cannot by itself establish universal, production, regulatory or safety validity.

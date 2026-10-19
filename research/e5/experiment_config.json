@@ -1,9 +1,11 @@
 {
  "assurance": {
-  "certificate_schema_status": "TO_BE_FROZEN",
+  "certificate_schema": "decision-certificate-v0.4",
+  "certificate_schema_status": "BOUND_TO_DECISION_CERTIFICATE_V04_NOT_E5_FROZEN",
   "full_assurance_arm": "S4",
   "policy_maturity": "HEURISTIC_POLICY",
-  "policy_version_status": "TO_BE_FROZEN",
+  "policy_version": "assurance-policy-v0.4.0-development",
+  "policy_version_status": "BOUND_TO_RELEASED_V042_NOT_E5_FROZEN",
   "runtime_status": "IMPLEMENTED_INTERNAL_DEVELOPMENT_VALIDATION_ONLY"
  },
  "authoritative_protocol": {
@@ -15,6 +17,7 @@
   "probability_interpretation_allowed": false,
   "resolution_status": "RESOLVED_AS_UNCALIBRATED_FOR_V0.4.1",
   "score_status": "UNCALIBRATED",
+  "study_resolution": "E5_UNCALIBRATED_NO_PROBABILITY_INTERPRETATION",
   "valid_future_options": [
    "FREEZE_COMPANY_AND_TIME_DISJOINT_CALIBRATION_DESIGN",
    "FREEZE_E5_AS_UNCALIBRATED"
@@ -40,51 +43,111 @@
   {
    "comparison": "S4_vs_S3",
    "question": "What do the additional Assurance controls contribute beyond evidence verification?",
-   "role": "PRIMARY_CANDIDATE_P2"
+   "role": "PRIMARY_P2"
   },
   {
    "comparison": "S4_vs_S1",
    "question": "Does Full Assurance improve authorization quality beyond a strong predictor with simple selection?",
-   "role": "PRIMARY_CANDIDATE_P1"
+   "role": "PRIMARY_P1"
   }
  ],
  "conceptual_arms": [
   {
    "authorization_authority": "NONE",
    "id": "S0",
-   "implementation_status": "HISTORICAL_ARTIFACT_FITTED_E5_IDENTITY_TO_BE_FROZEN",
+   "implementation_status": "HISTORICAL_FITTED_IDENTITY_BOUND_NOT_E5_FROZEN",
    "name": "Strong Tabular Predictor",
    "purpose": "competitive unconditional predictive reference"
   },
   {
    "authorization_authority": "SIMPLE_SELECTIVE_POLICY_ONLY",
+   "evidence": "research/strong_tabular_reference/development_run_config.json",
+   "flag_at_or_above": 0.65,
    "id": "S1",
-   "implementation_status": "TO_BE_FROZEN",
+   "implementation_status": "HISTORICAL_PRESPECIFIED_POLICY_ADOPTED_NOT_E5_FROZEN",
    "name": "Strong Tabular Predictor + Selective Policy",
-   "purpose": "isolate simple selective admission from Agent reasoning and Full Assurance"
+   "otherwise": "REVIEW",
+   "pass_below": 0.35,
+   "policy_id": "s1-fixed-review-band-v1",
+   "purpose": "isolate simple selective admission from Agent reasoning and Full Assurance",
+   "score": "EXACT_S0_REFERENCE_SCORE",
+   "selection_rule": "RETAIN_EXISTING_PRESPECIFIED_DEVELOPMENT_POLICY_WITHOUT_THRESHOLD_SEARCH"
   },
   {
    "authorization_authority": "NONE_PROPOSAL_ONLY",
    "id": "S2",
-   "implementation_status": "TO_BE_FROZEN",
-   "name": "Raw Agent Proposal",
+   "implementation_status": "TO_BE_FROZEN_PENDING_E5_P02",
+   "name": "Frozen Full Prediction-Layer Proposal",
+   "no_final_authorization": true,
    "purpose": "measure a frozen Agent proposal path without final-decision authority"
   },
   {
    "authorization_authority": "EVIDENCE_ONLY_ROUTING_NOT_FULL_ASSURANCE",
+   "excluded": [
+    "FRAGILITY",
+    "DISTRIBUTION_VALIDITY",
+    "FULL_ADMISSION_POLICY",
+    "CERTIFICATE_AUTHORIZATION"
+   ],
    "id": "S3",
-   "implementation_status": "TO_BE_FROZEN",
-   "name": "Agent + Evidence Verification",
+   "implementation_status": "TO_BE_FROZEN_PENDING_E5_P02",
+   "name": "Same Proposal + Evidence Verification Only",
    "purpose": "isolate evidence admission from the remaining Assurance controls"
   },
   {
    "authorization_authority": "ASSURANCE_RESULT_AND_CERTIFICATE_REQUIRED",
+   "automation_current_policy": "ALWAYS_WITHHELD_HEURISTIC_UNCALIBRATED",
    "id": "S4",
-   "implementation_status": "IMPLEMENTED_NOT_PROSPECTIVELY_VALIDATED",
+   "implementation_status": "RELEASED_V042_IDENTITY_BOUND_NOT_PROSPECTIVELY_VALIDATED",
    "name": "Full FinRisk Assurance",
-   "purpose": "evaluate the complete evidence, fragility, distribution and admission path"
+   "purpose": "evaluate the complete evidence, fragility, distribution and admission path",
+   "same_proposal_as": [
+    "S2",
+    "S3"
+   ]
   }
  ],
+ "design_governance": {
+  "blockers": "research/e5/autonomy/blockers.json",
+  "constitution": "research/e5/autonomy/E5_CONSTITUTION.md",
+  "freeze_executed": false,
+  "identities": "research/e5/autonomy/design_identities.json",
+  "readiness": "BLOCKED",
+  "scientific_authority_is_autopilot": false,
+  "state": "DRAFT"
+ },
+ "eligibility_design": {
+  "accession": "TEN_DIGITS-TWO_DIGITS-SIX_DIGITS",
+  "amendments": "FIRST_ORIGINAL_ANNUAL_FILING_PER_COMPANY_ONLY",
+  "cik": "TEN_DECIMAL_DIGITS",
+  "cutoff": "FILING_ACCEPTANCE_TIMESTAMP_UTC",
+  "enumeration_allowed": false,
+  "filing_type": "10-K",
+  "packet_required": "HASH_BOUND_SCHEMA_AND_SOURCE_AVAILABILITY_AT_OR_BEFORE_CUTOFF",
+  "salt": "SHA256_FROZEN_PROTOCOL_HASH_RELEASE_SOURCE_E5_COMPANY_ORDER_V1",
+  "sample_size": "BLOCKED_PENDING_PRIMARY_POWER_AND_UTILITY_CONSTRAINTS",
+  "sampling": "LOWEST_SHA256_SALT_CIK_ACCESSION_ONE_CASE_PER_COMPANY",
+  "sector": "EXCLUDE_SIC_6000_TO_6999_DUE_NONFINANCIAL_FEATURE_APPLICABILITY",
+  "status": "CANDIDATE_RULES_NOT_TIMING_QUALIFIED",
+  "stratification": "NONE",
+  "window": "FIRST_12_CALENDAR_MONTHS_STARTING_NEXT_UTC_QUARTER_AFTER_PROTOCOL_FREEZE"
+ },
+ "endpoint_contract": {
+  "anchor": "FILING_ACCEPTANCE_TIMESTAMP_UTC",
+  "e4_fixed_archive_wrapper_not_adopted": true,
+  "e5_adapter_status": "BLOCKED_PENDING_EXTRACTION_QUALIFICATION",
+  "event": "AT_LEAST_TWO_VERIFIED_ADVERSE_CONDITIONS",
+  "horizon": "CALENDAR_12_MONTHS_USING_ADD_TWELVE_MONTHS",
+  "implementation": "backend/finrisk/sec_bulk.py::build_deterioration_labels",
+  "name": "deterministic_forward_outcome_rule_v1",
+  "nonverified_label": null,
+  "raw_status_mapping": {
+   "INSUFFICIENT_DATA": "INSUFFICIENT_DATA",
+   "REQUIRES_HUMAN_REVIEW": "REQUIRES_REVIEW",
+   "VERIFIED": "VERIFIED"
+  },
+  "review_rule": "BLINDED_TWO_INDEPENDENT_REVIEWERS_THIRD_ADJUDICATOR_LATER_STAGE_ONLY"
+ },
  "environment_variables": {
   "FINRISK_SEC_MAX_ARCHIVE_MEMBER_BYTES": "2147483648",
   "status": "TO_BE_FROZEN_WITH_ENVIRONMENT_MANIFEST"
@@ -96,11 +159,15 @@
     "erroneous_authorized_decision_rate",
     "out_of_reference_authorization_rate"
    ],
-   "primary_measure_status": "TO_BE_FROZEN"
+   "denominator": "COMMON_VERIFIED_ENDPOINT_CASES_IN_ALL_FIVE_ARMS",
+   "missing_outcome": "EXCLUDE_FROM_PRIMARY_ERROR_DENOMINATOR_REPORT_ATTRITION_AND_WORST_CASE_BOUNDS_NO_NEGATIVE_IMPUTATION",
+   "primary_measure": "ERRONEOUS_AUTOMATED_AUTHORIZATIONS_PER_COMMON_VERIFIED_CASE",
+   "primary_measure_status": "DEFINED_NOT_FROZEN",
+   "withheld_treatment": "NO_AUTOMATED_AUTHORIZATION_INCIDENT_NOT_A_CORRECT_PREDICTION"
   },
   "calibration": {
-   "role": "CONDITIONAL_CONFIRMATORY_OR_DESCRIPTIVE",
-   "status": "BLOCKED_PENDING_VALID_DISJOINT_DESIGN"
+   "role": "NO_CONFIRMATORY_CALIBRATION_CLAIM",
+   "status": "UNCALIBRATED"
   },
   "evidence_behavior": {
    "measures": [
@@ -112,7 +179,10 @@
    "role": "KEY_SECONDARY"
   },
   "predictive_discrimination": {
-   "measures": ["AUROC", "PR_AUC"],
+   "measures": [
+    "AUROC",
+    "PR_AUC"
+   ],
    "role": "KEY_SECONDARY"
   },
   "selective_behavior": {
@@ -127,16 +197,16 @@
   }
  },
  "freeze_prerequisites": {
-  "assurance_policy_version": "TO_BE_FROZEN",
+  "assurance_policy_version": "BOUND_RELEASED_V042",
   "authoritative_contract_reconciled": "READY",
-  "calibration_path": "RESOLVED_AS_UNCALIBRATED_FOR_V0.4.1_E5_CHOICE_TO_BE_FROZEN",
-  "certificate_schema_version": "TO_BE_FROZEN",
-  "eligibility_and_timing_logic": "TO_BE_FROZEN",
-  "minimum_effects_and_thresholds": "TO_BE_FROZEN",
-  "multiplicity_family_and_alpha": "TO_BE_FROZEN",
-  "primary_estimands": "TO_BE_FROZEN",
-  "reference_distribution_design": "DEVELOPMENT_REFERENCE_READY_E5_DESIGN_TO_BE_FROZEN",
-  "strong_tabular_reference_design": "READY_HISTORICAL_ARTIFACT_E5_BINDING_TO_BE_FROZEN"
+  "calibration_path": "RESOLVED_E5_UNCALIBRATED",
+  "certificate_schema_version": "BOUND_DECISION_CERTIFICATE_V04",
+  "eligibility_and_timing_logic": "BLOCKED_PENDING_TIMING_AND_PACKET_QUALIFICATION",
+  "minimum_effects_and_thresholds": "BLOCKED",
+  "multiplicity_family_and_alpha": "DEFINED_HOLM_P1_P2_ALPHA_0_05",
+  "primary_estimands": "DEFINED_DENOMINATORS_AND_INFERENCE_NOT_FROZEN",
+  "reference_distribution_design": "BLOCKED",
+  "strong_tabular_reference_design": "BOUND_HISTORICAL_ARTIFACT_NOT_E5_FROZEN"
  },
  "governance": {
   "active_harness": "research/e5/harness/e5_harness.py",
@@ -186,25 +256,34 @@
   "status": "NOT_GENERATED"
  },
  "primary_family": {
-  "family_wise_alpha": "TO_BE_FROZEN",
+  "bootstrap_seed": 20261019,
+  "confidence_interval": "BCA_COMPANY_PAIRED_20000_REPLICATES",
+  "coverage_condition": null,
+  "degenerate_inference": "NOT_ESTIMABLE_NO_PRIMARY_SUCCESS",
+  "estimator": "PAIRED_MEAN_ERROR_INDICATOR_DIFFERENCE",
+  "family_wise_alpha": 0.05,
   "hypotheses": [
    {
     "comparison": "S4_vs_S1",
-    "estimand": "TO_BE_FROZEN_PRIMARY_AUTHORIZATION_QUALITY_ESTIMAND",
+    "estimand": "COMPARATOR_MINUS_S4_ERRONEOUS_AUTOMATED_AUTHORIZATION_RATE",
     "id": "P1",
-    "status": "TO_BE_FROZEN"
+    "status": "DEFINED_NOT_FROZEN"
    },
    {
     "comparison": "S4_vs_S3",
-    "estimand": "TO_BE_FROZEN_AUTHORIZATION_OR_COMPONENT_INCREMENT_ESTIMAND",
+    "estimand": "COMPARATOR_MINUS_S4_ERRONEOUS_AUTOMATED_AUTHORIZATION_RATE",
     "id": "P2",
-    "status": "TO_BE_FROZEN"
+    "status": "DEFINED_NOT_FROZEN"
    }
   ],
+  "inference_contract": "research/e5/autonomy/INFERENCE_DESIGN.md",
   "minimum_meaningful_effects": "TO_BE_FROZEN",
-  "multiplicity": "HOLM_STEP_DOWN_OVER_P1_P2_AFTER_FREEZE",
-  "statistical_tests": "TO_BE_FROZEN_PER_ESTIMAND",
-  "status": "TO_BE_FROZEN"
+  "multiplicity": "HOLM_STEP_DOWN_P1_P2",
+  "primary_pair_pvalue": "MAX_SAFETY_AND_COVERAGE_PVALUES_INTERSECTION_UNION",
+  "primary_success": "BOTH_HOLM_REJECTION_AND_MINIMUM_EFFECT_AND_COVERAGE_REQUIREMENTS",
+  "pvalue_method": "ONE_SIDED_NULL_CENTERED_PAIRED_BOOTSTRAP_PLUS_ONE",
+  "statistical_tests": "PAIRED_COMPANY_BOOTSTRAP_IUT_SAFETY_SUPERIORITY_AND_COVERAGE_NONINFERIORITY",
+  "status": "BLOCKED_PENDING_EFFECT_AND_COVERAGE_CONSTRAINTS"
  },
  "reference_distribution": {
   "development_fixture_is_eligible": false,
@@ -217,15 +296,15 @@
  "status": "DRAFT_NOT_FROZEN",
  "strong_tabular_reference": {
   "artifact_contract": "research/strong_tabular_reference/artifact_manifest.template.json",
-  "contract_identity": "research/strong_tabular_reference/contract_identity.json",
-  "contract_sha256": "0241687d0787f2f88a5b9a7186cf8d236595677da309e9ae4c75666b3176d333",
   "config": "research/strong_tabular_reference/experiment_config.json",
   "contract": "StrongTabularReference-v1",
+  "contract_identity": "research/strong_tabular_reference/contract_identity.json",
+  "contract_sha256": "0241687d0787f2f88a5b9a7186cf8d236595677da309e9ae4c75666b3176d333",
+  "development_data_approval_required_before_fit": true,
   "development_data_contract": "research/strong_tabular_reference/development_data_manifest.template.json",
   "development_data_manifest": "research/strong_tabular_reference/development_data_manifest.json",
   "development_data_proposal": "research/strong_tabular_reference/development_data_proposal.json",
   "development_data_status": "APPROVED_FOR_STRONG_REFERENCE_DEVELOPMENT",
-  "development_data_approval_required_before_fit": true,
   "exclude_all_approved_development_companies_from_e5": true,
   "feature_schema": "research/strong_tabular_reference/feature_schema.json",
   "fitted_artifact": "research/strong_tabular_reference/artifacts/artifact_manifest.json",

@@ -14,6 +14,8 @@ from typing import Any
 E5_DIR = Path(__file__).resolve().parent
 REPO_ROOT = E5_DIR.parents[1]
 HARNESS_DIR = E5_DIR / "harness"
+if str(REPO_ROOT) not in sys.path:
+    sys.path.insert(0, str(REPO_ROOT))
 if str(HARNESS_DIR) not in sys.path:
     sys.path.insert(0, str(HARNESS_DIR))
 
@@ -168,6 +170,16 @@ def validate(config: dict[str, Any] | None = None) -> list[str]:
     prerequisites = config.get("freeze_prerequisites") or {}
     require(prerequisites.get("authoritative_contract_reconciled") == "READY", "contract reconciliation is ready")
     require(any(value in {"BLOCKED", "TO_BE_FROZEN"} for value in prerequisites.values()), "freeze prerequisites remain unresolved")
+    if "design_governance" in config:
+        # The autonomy layer constrains current design; it never grants scientific
+        # authority to the orchestrator or executes a freeze.
+        from research.e5.autonomy.governance import GovernanceError, resolve
+        try:
+            resolution = resolve(REPO_ROOT, config=config)
+        except GovernanceError as exc:
+            raise ContractValidationError(str(exc)) from exc
+        require(resolution["status"] == config["design_governance"]["readiness"],
+                "scientific readiness agrees with independent gates")
     return checks
 
 
