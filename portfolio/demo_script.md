@@ -1,7 +1,7 @@
 # Demo Script
 
-FinRisk v0.4.2 is prepared for release/promotion. Use existing synthetic outputs;
-this walkthrough neither runs research nor claims formal publication.
+FinRisk v0.4.2 has a source release date of 2026-10-19. Use existing synthetic
+outputs; this walkthrough neither runs research nor claims GitHub/container publication.
 
 1. State that the included Northstar company and all values are synthetic.
 2. Open the report page and show the 2025/2024 structured inputs.

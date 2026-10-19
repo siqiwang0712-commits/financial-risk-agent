@@ -1,6 +1,6 @@
 # Capability Maturity Matrix
 
-Current surface: v0.4.2 Security & Reliability Patch, prepared for release/promotion.
+Current surface: v0.4.2 Security & Reliability Patch, source release **2026-10-19**.
 Engineering evidence is recorded in the [closeout audit](RELEASE_AUDIT_v0.4.2.md). `Production` means externally operated and
 validated, not software release status; no row currently meets that standard.
 

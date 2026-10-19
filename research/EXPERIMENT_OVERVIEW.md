@@ -2,7 +2,7 @@
 
 ## Current v0.4.2 boundary
 
-FinRisk v0.4.2 is a prepared Security & Reliability Patch. Its
+FinRisk v0.4.2 is the **2026-10-19 Security & Reliability Patch** source release. Its
 [engineering audit](../docs/RELEASE_AUDIT_v0.4.2.md) is separate from research validity.
 Existing [v0.4.2 diagnostics](v042_experiments/EXPERIMENT_SUMMARY.md) reuse historical
 OOF predictions for exploratory risk/coverage, review-budget and fold analysis; the

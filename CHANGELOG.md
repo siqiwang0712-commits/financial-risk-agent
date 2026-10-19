@@ -1,6 +1,6 @@
 # Changelog
 
-## [0.4.2] - 2026-10-08
+## [0.4.2] - 2026-10-19
 
 - Reject empty-source Assurance paths, require source identities in verified proofs,
   and deduplicate identical material dependencies.

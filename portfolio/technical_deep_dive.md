@@ -1,6 +1,6 @@
 # Technical Deep Dive
 
-Current scope: FinRisk v0.4.2 Security & Reliability Patch, prepared for release/promotion.
+Current scope: FinRisk v0.4.2 Security & Reliability Patch, source release 2026-10-19.
 Analysis → proposal → evidence verification → AssuranceResult → authorized final →
 Decision Certificate. Neither models, rules nor the Agent has final authority.
 

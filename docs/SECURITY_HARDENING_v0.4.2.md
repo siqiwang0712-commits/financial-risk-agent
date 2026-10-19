@@ -1,7 +1,8 @@
 # FinRisk v0.4.2 security and release-preparation evidence
 
-Current prepared version: **v0.4.2 Security & Reliability Patch — READY FOR RELEASE /
-PROMOTION**. This report retains dated evidence from earlier hardening stages. For
+Current release: **v0.4.2 Security & Reliability Patch — 2026-10-19 (source version)**.
+This date does not retimestamp the security checks below or imply GitHub/container
+publication. This report retains dated evidence from earlier hardening stages. For
 the final EV-01/02/03 source-binding closeout and verified `e41638d8` CI/dry-run links,
 see the [closeout audit](RELEASE_AUDIT_v0.4.2.md). Earlier NOT RUN/BLOCKED entries below
 remain historical observations, not current aggregate status. No publication, external

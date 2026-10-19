@@ -16,11 +16,12 @@
 
 [English](README.md) | 简体中文
 
-当前发布元数据：**v0.4.2 · 2026-10-08** ·
+发布日期：**v0.4.2 · 2026-10-19** ·
 [发布说明](RELEASE_NOTES_v0.4.2.md) · [安全与验证记录](docs/SECURITY_HARDENING_v0.4.2.md)
 
-**Security & Reliability Patch · READY FOR v0.4.2 RELEASE / PROMOTION。**
-这里描述已准备好的源码，不代表已正式发布。实际发布是独立的维护者操作；v0.4.1 历史研究证据
+**Security & Reliability Patch · 2026-10-19 发布。**
+这里记录源码版本的发布状态；创建 GitHub Release、tag 和发布容器镜像是独立操作，本次文档更新
+不执行这些操作。v0.4.1 历史研究证据
 保持不变。默认 Assurance 仍为 `HEURISTIC_POLICY / UNCALIBRATED`，E5 仍被阻塞且未冻结。
 
 [快速开始](#快速开始) · [工作原理](#工作原理) ·
@@ -279,8 +280,8 @@ E4-S 源队列的全部 2,000 家公司必须从未来 E5 中排除。E5 仍为
 
 ## 项目状态与成熟度
 
-**v0.4.2——Security & Reliability Patch** 已完成源码准备，可供发布／晋升。
-这是软件就绪状态，不代表已正式发布或获得外部金融验证。
+**v0.4.2——Security & Reliability Patch** 的源码版本发布日期为 **2026-10-19**。
+这是软件版本状态，不代表外部金融验证，也不证明已创建 GitHub Release、tag 或发布生产镜像。
 Assurance 权威边界、确定性证据脆弱性、决策充分证据、分布有效性诊断和 Decision Certificate
 已经实现。系统仍是研究原型：没有修改冻结的 E4 结果，没有证明前瞻预测优势，也没有冻结或运行 E5。
 

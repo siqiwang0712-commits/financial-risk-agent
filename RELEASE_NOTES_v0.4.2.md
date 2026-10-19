@@ -1,8 +1,8 @@
 # FinRisk v0.4.2 — Security & Reliability Patch
 
-Release metadata date: 2026-10-08. These notes describe the prepared source;
-they do not claim that a Git tag, GitHub Release or production image was published.
-Status: **READY FOR v0.4.2 RELEASE / PROMOTION**; current engineering evidence and
+Release date: **2026-10-19**. Status: **RELEASED — SOURCE VERSION**.
+These notes record the source-version release; they do not claim that a Git tag,
+GitHub Release or production image was published. Current engineering evidence and
 exact tested source identities are in the [closeout audit](docs/RELEASE_AUDIT_v0.4.2.md).
 
 Changes:

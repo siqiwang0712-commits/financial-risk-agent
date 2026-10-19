@@ -1,5 +1,10 @@
 # FinRisk v0.4.2 closeout audit
 
+Current source release date: **2026-10-19**. This audit preserves the original
+2026-10-15 measurements and closeout status below. The release date does not imply
+that those checks were rerun on October 19, or that a tag, GitHub Release or
+production image was published. See [release notes](../RELEASE_NOTES_v0.4.2.md).
+
 Audit date: 2026-10-15. Target: `origin/try-v0.4.2`, version **0.4.2**.
 Starting commit: `7e9bd827a638c2aa992de9e193e39b82e451616c`.
 

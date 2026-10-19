@@ -16,11 +16,12 @@
 
 English | [简体中文](README.zh-CN.md)
 
-Current release metadata: **v0.4.2 — 2026-10-08** ·
+Release date: **v0.4.2 — 2026-10-19** ·
 [Release notes](RELEASE_NOTES_v0.4.2.md) · [Security and validation](docs/SECURITY_HARDENING_v0.4.2.md)
 
-**Security & Reliability Patch · READY FOR v0.4.2 RELEASE / PROMOTION.**
-This describes prepared source, not a completed publication. Publication is a separate maintainer action;
+**Security & Reliability Patch · Released 2026-10-19.**
+This records the source-version release. GitHub Release creation, tagging and container
+publication are separate actions; this documentation update does not perform them.
 v0.4.1 research evidence is preserved. Default Assurance remains
 `HEURISTIC_POLICY / UNCALIBRATED`; E5 remains blocked/unfrozen.
 
@@ -397,8 +398,9 @@ The canonical integrity, selection-bias and source-concordance results remain in
 
 ## Project maturity
 
-**v0.4.2 — Security & Reliability Patch** is prepared and release/promotion-ready.
-This is software readiness, not external financial validation or completed publication.
+**v0.4.2 — Security & Reliability Patch** has a source release date of **2026-10-19**.
+This is software release status, not external financial validation or proof of a
+GitHub Release, tag or production image publication.
 The Assurance Runtime, proposal/authorization boundary, deterministic
 fragility analysis, Decision-Sufficient Evidence, distribution-validity diagnostics and
 Decision Certificate are implemented. This remains a research prototype:

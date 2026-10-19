@@ -12,5 +12,5 @@
 10. **What failure is most dangerous?** A correctly quoted but contextually misleading claim; provenance proves origin, not truth.
 11. **Who authorizes a final decision?** AssuranceEngine, after semantic, evidence and policy checks. Models, rules and the Agent only propose; legacy aliases do not bypass that boundary.
 12. **What does the certificate prove?** Content integrity and replay linkage, not issuer authentication, regulatory certification or financial truth.
-13. **What is the current status?** v0.4.2 Security & Reliability Patch is prepared for release/promotion. Default HEURISTIC_POLICY / UNCALIBRATED, E5 BLOCKED / DRAFT_NOT_FROZEN; no external validation.
+13. **What is the current status?** v0.4.2 Security & Reliability Patch has a source release date of 2026-10-19; GitHub/container publication is separate. Default HEURISTIC_POLICY / UNCALIBRATED, E5 BLOCKED / DRAFT_NOT_FROZEN; no external validation.
 

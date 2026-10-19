@@ -2,8 +2,10 @@
 
 ## v0.4.2 — Security & Reliability Patch
 
-Status: **READY FOR v0.4.2 RELEASE / PROMOTION** — prepared source, not a claim
-of completed tag, GitHub Release or production container publication.
+Released: **2026-10-19**
+
+Status: **RELEASED — SOURCE VERSION**. This records the source-version release, not
+Git tag creation, GitHub Release creation or production container publication.
 
 FinRisk is an evidence-grounded corporate-filing financial-risk analysis and
 decision-assurance research system. Its authority path is:
@@ -17,8 +19,8 @@ The [closeout audit](docs/RELEASE_AUDIT_v0.4.2.md) separates product validation 
 [new retrospective development diagnostics](research/v042_experiments/EXPERIMENT_SUMMARY.md).
 These experiments do not change production policy or execute E5.
 
-Current release metadata: **0.4.2 · 2026-10-08**. Release preparation does not
-create a tag, publish images or execute E5. See the
+Current release: **0.4.2 · 2026-10-19**. This documentation update does not
+create a GitHub Release or tag, publish images or execute E5. See the
 [release notes](RELEASE_NOTES_v0.4.2.md) and
 [security/validation report](docs/SECURITY_HARDENING_v0.4.2.md) for exact gate evidence
 and residual base-image CVEs. Final remote CI and the non-publishing container
