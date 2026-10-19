@@ -2,6 +2,35 @@
   "outcomes_accessed": false,
   "schema_version": 1,
   "stages": {
+    "baseline_scoped_audit": {
+      "checkpoint": "4a66eb673bf1dc75dfffbcb6fec3d29f6432cf2e1a34cfe282efbbad72ef5f79",
+      "code_commit": "2bafadce8aef275b697b0dd0388f507c2e923c7e",
+      "completed_at": "2026-10-19T15:22:56.041928+00:00",
+      "failure_reason": null,
+      "input_hashes": {},
+      "output_hashes": {
+        "research/e5/execution/BASELINE_AUDIT.json": "0a90bb46e2999cdfaf7f389ae310f64cab629fbbd5f08bd7717a4cb64c46ca0e"
+      },
+      "stage": "baseline_scoped_audit",
+      "started_at": "2026-10-19T15:22:56.041922+00:00",
+      "state": "COMPLETE",
+      "validation_result": "PASS"
+    },
+    "execution_mandate": {
+      "checkpoint": "891a7746cb1d4928f1d4149fc5950146f8d6a7dee8e98275ff6a8f8dce78efec",
+      "code_commit": "2bafadce8aef275b697b0dd0388f507c2e923c7e",
+      "completed_at": "2026-10-19T15:22:56.037624+00:00",
+      "failure_reason": null,
+      "input_hashes": {},
+      "output_hashes": {
+        "research/e5/execution/E5_EXECUTION_MANDATE.md": "c1f5882cd1fe2d11b90194f4e6517b9ef132f2eb9c7e221380a65e8d9dc750f4",
+        "research/e5/execution/mandate_identity.json": "c0690e2067ade6fb5eaa7434e9c9f6fc30c6849e8336c6dcb910526b74d09dd9"
+      },
+      "stage": "execution_mandate",
+      "started_at": "2026-10-19T15:22:56.037608+00:00",
+      "state": "COMPLETE",
+      "validation_result": "PASS"
+    },
     "freeze-e5p": {
       "checkpoint": "3755b057ddb1bd576d0642b0ca7c4625087c37a8af403b48a1e1f15f1910a135",
       "code_commit": "017984b8ec5955e8db69b2fa0196a89798025b38",
@@ -42,6 +71,54 @@
       "state": "COMPLETE",
       "validation_result": "PASS"
     },
+    "historical_exclusion_recovery": {
+      "checkpoint": "0d2afea4b9c6c1caf0bde2790880078a66b009178822b43ee3d51b3c30b6826c",
+      "code_commit": "2bafadce8aef275b697b0dd0388f507c2e923c7e",
+      "completed_at": "2026-10-19T15:22:56.044760+00:00",
+      "failure_reason": "Exact previous_270 and independently proven containment not recovered.",
+      "input_hashes": {},
+      "output_hashes": {
+        "research/e5/execution/C01_RECOVERY.json": "1d91f0f02f6628280505f9359b8a9558cc88352ac9f3f1cb44f8aac01eb95eb9"
+      },
+      "stage": "historical_exclusion_recovery",
+      "started_at": "2026-10-19T15:22:56.044754+00:00",
+      "state": "BLOCKED",
+      "validation_result": "BLOCKED"
+    },
+    "null_grid": {
+      "checkpoint": "7b4154ac2e5eb7e123a1d77f4f98fc4c9c612ac81eeefac649e8bd0c92fde0c5",
+      "code_commit": "2bafadce8aef275b697b0dd0388f507c2e923c7e",
+      "completed_at": "2026-10-19T15:24:14.735264+00:00",
+      "failure_reason": "FAILED_ANTI_CONSERVATISM",
+      "input_hashes": {
+        "research/e5/execution/core.py": "e93634de80845a202155adc5779aea72d40357c9dfc04d56d0f272481c0fa951",
+        "research/e5/execution/development.py": "6de4efa50ca097f5eee35c626d51169b8dc7ce2050f5a24f4eaa953c29d3f513",
+        "research/e5/execution/inference.py": "c3b010d5da0ea4756b26502516fe0aee08ef33a0b1f79093f509294804ad14c8",
+        "research/e5/execution/qualification.py": "7b3628d19b73ce15b127151b3ce69056a007cf374a91dcb12a222a99dab9a9d0",
+        "research/e5/run_e5.py": "8f54809bdd58874da97d7153676ad661ba1fdfdc2dafb66b512838e23cfa7ccb"
+      },
+      "output_hashes": {
+        "research/e5/qualification/type1_simulation_report.json": "4acfb45221888f43707b66a414355671bf4a510c6af1f678da60469f6c87beaa"
+      },
+      "stage": "null_grid",
+      "started_at": "2026-10-19T15:24:14.726778+00:00",
+      "state": "BLOCKED",
+      "validation_result": "BLOCKED"
+    },
+    "producer_and_study_policy_qualification": {
+      "checkpoint": "755a1e09c4d01ef39a956ed0b131598a44c2d37e47f4fd4333b48683076c5634",
+      "code_commit": "2bafadce8aef275b697b0dd0388f507c2e923c7e",
+      "completed_at": "2026-10-19T15:22:56.050781+00:00",
+      "failure_reason": "Actual producer, matched development qualification and calibrated study policy remain unfinished.",
+      "input_hashes": {},
+      "output_hashes": {
+        "research/e5/qualification/CALIBRATION_REPORT.md": "801413e5632f271780a46b38e762142e10d3ca5f65a73d928547905a3489c0e7"
+      },
+      "stage": "producer_and_study_policy_qualification",
+      "started_at": "2026-10-19T15:22:56.050775+00:00",
+      "state": "BLOCKED",
+      "validation_result": "BLOCKED"
+    },
     "run-e5r": {
       "checkpoint": "d884525ac95572eccb9788883d6212002511af715cb6a4e1f7abbc76be182e6a",
       "code_commit": "017984b8ec5955e8db69b2fa0196a89798025b38",
@@ -57,6 +134,20 @@
       "output_hashes": {},
       "stage": "run-e5r",
       "started_at": "2026-10-19T15:18:47.770939+00:00",
+      "state": "BLOCKED",
+      "validation_result": "BLOCKED"
+    },
+    "source_acquisition": {
+      "checkpoint": "b3cac85e416b298ba5845e4c06ab8c91129323fa7e39548d68aadd37be80cf17",
+      "code_commit": "2bafadce8aef275b697b0dd0388f507c2e923c7e",
+      "completed_at": "2026-10-19T15:22:56.047866+00:00",
+      "failure_reason": "No new authoritative point-in-time feature cohort obtained.",
+      "input_hashes": {},
+      "output_hashes": {
+        "research/e5/execution/SOURCE_ACCESS_REPORT.json": "44db28853afa94041da98774a0814c79b108b58c434535559081ab597796f297"
+      },
+      "stage": "source_acquisition",
+      "started_at": "2026-10-19T15:22:56.047860+00:00",
       "state": "BLOCKED",
       "validation_result": "BLOCKED"
     },
@@ -83,5 +174,5 @@
     "E5-P": "DRAFT",
     "E5-R": "DRAFT"
   },
-  "updated_at": "2026-10-19T15:18:49.466485+00:00"
+  "updated_at": "2026-10-19T15:24:14.738592+00:00"
 }

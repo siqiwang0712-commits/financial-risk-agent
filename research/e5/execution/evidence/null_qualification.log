@@ -1,0 +1,488 @@
+null 1/8 global_null: 500/5000
+null 1/8 global_null: 1000/5000
+null 1/8 global_null: 1500/5000
+null 1/8 global_null: 2000/5000
+null 1/8 global_null: 2500/5000
+null 1/8 global_null: 3000/5000
+null 1/8 global_null: 3500/5000
+null 1/8 global_null: 4000/5000
+null 1/8 global_null: 4500/5000
+null 1/8 global_null: 5000/5000
+finished null configuration global_null
+null 2/8 error_boundary: 500/5000
+null 2/8 error_boundary: 1000/5000
+null 2/8 error_boundary: 1500/5000
+null 2/8 error_boundary: 2000/5000
+null 2/8 error_boundary: 2500/5000
+null 2/8 error_boundary: 3000/5000
+null 2/8 error_boundary: 3500/5000
+null 2/8 error_boundary: 4000/5000
+null 2/8 error_boundary: 4500/5000
+null 2/8 error_boundary: 5000/5000
+finished null configuration error_boundary
+null 3/8 coverage_boundary: 500/5000
+null 3/8 coverage_boundary: 1000/5000
+null 3/8 coverage_boundary: 1500/5000
+null 3/8 coverage_boundary: 2000/5000
+null 3/8 coverage_boundary: 2500/5000
+null 3/8 coverage_boundary: 3000/5000
+null 3/8 coverage_boundary: 3500/5000
+null 3/8 coverage_boundary: 4000/5000
+null 3/8 coverage_boundary: 4500/5000
+null 3/8 coverage_boundary: 5000/5000
+finished null configuration coverage_boundary
+null 4/8 absolute_boundary: 500/5000
+null 4/8 absolute_boundary: 1000/5000
+null 4/8 absolute_boundary: 1500/5000
+null 4/8 absolute_boundary: 2000/5000
+null 4/8 absolute_boundary: 2500/5000
+null 4/8 absolute_boundary: 3000/5000
+null 4/8 absolute_boundary: 3500/5000
+null 4/8 absolute_boundary: 4000/5000
+null 4/8 absolute_boundary: 4500/5000
+null 4/8 absolute_boundary: 5000/5000
+finished null configuration absolute_boundary
+null 5/8 mixed_boundary: 500/5000
+null 5/8 mixed_boundary: 1000/5000
+null 5/8 mixed_boundary: 1500/5000
+null 5/8 mixed_boundary: 2000/5000
+null 5/8 mixed_boundary: 2500/5000
+null 5/8 mixed_boundary: 3000/5000
+null 5/8 mixed_boundary: 3500/5000
+null 5/8 mixed_boundary: 4000/5000
+null 5/8 mixed_boundary: 4500/5000
+null 5/8 mixed_boundary: 5000/5000
+finished null configuration mixed_boundary
+null 6/8 error_boundary: 500/5000
+null 6/8 error_boundary: 1000/5000
+null 6/8 error_boundary: 1500/5000
+null 6/8 error_boundary: 2000/5000
+null 6/8 error_boundary: 2500/5000
+null 6/8 error_boundary: 3000/5000
+null 6/8 error_boundary: 3500/5000
+null 6/8 error_boundary: 4000/5000
+null 6/8 error_boundary: 4500/5000
+null 6/8 error_boundary: 5000/5000
+finished null configuration error_boundary
+null 7/8 coverage_boundary: 500/5000
+null 7/8 coverage_boundary: 1000/5000
+null 7/8 coverage_boundary: 1500/5000
+null 7/8 coverage_boundary: 2000/5000
+null 7/8 coverage_boundary: 2500/5000
+null 7/8 coverage_boundary: 3000/5000
+null 7/8 coverage_boundary: 3500/5000
+null 7/8 coverage_boundary: 4000/5000
+null 7/8 coverage_boundary: 4500/5000
+null 7/8 coverage_boundary: 5000/5000
+finished null configuration coverage_boundary
+null 8/8 absolute_boundary: 500/5000
+null 8/8 absolute_boundary: 1000/5000
+null 8/8 absolute_boundary: 1500/5000
+null 8/8 absolute_boundary: 2000/5000
+null 8/8 absolute_boundary: 2500/5000
+null 8/8 absolute_boundary: 3000/5000
+null 8/8 absolute_boundary: 3500/5000
+null 8/8 absolute_boundary: 4000/5000
+null 8/8 absolute_boundary: 4500/5000
+null 8/8 absolute_boundary: 5000/5000
+finished null configuration absolute_boundary
+{
+  "identity": {
+    "inference_sha256": "c3b010d5da0ea4756b26502516fe0aee08ef33a0b1f79093f509294804ad14c8",
+    "qualification_code_sha256": "7b3628d19b73ce15b127151b3ce69056a007cf374a91dcb12a222a99dab9a9d0",
+    "utility_hash": "54d533b7eec36ceac6f2e29b0298766de6f3a3c240dcb2ea1965ce6ddae67018",
+    "replicates": 5000,
+    "draws": 20000,
+    "seed": 20261019,
+    "configurations": [
+      [
+        "global_null",
+        100,
+        0.0
+      ],
+      [
+        "error_boundary",
+        200,
+        0.0
+      ],
+      [
+        "coverage_boundary",
+        200,
+        0.0
+      ],
+      [
+        "absolute_boundary",
+        200,
+        0.0
+      ],
+      [
+        "mixed_boundary",
+        200,
+        0.0
+      ],
+      [
+        "error_boundary",
+        100,
+        0.25
+      ],
+      [
+        "coverage_boundary",
+        500,
+        0.25
+      ],
+      [
+        "absolute_boundary",
+        500,
+        0.25
+      ]
+    ],
+    "rejection_threshold": 0.05,
+    "material_anti_conservatism_rule": "one-sided 99% exact binomial lower bound > .05",
+    "scope": "finite synthetic paired error/issuance distributions; not E5 outcomes"
+  },
+  "run_id": "838eaf1413f837ef4e19475b735c825f671e8cc157146cebc4a152c25b409ccb",
+  "configurations": [
+    {
+      "configuration": "global_null",
+      "n": 100,
+      "missing_fraction": 0.0,
+      "expected_statistics": [
+        0.0,
+        0.0,
+        0.8
+      ],
+      "null_components": [
+        true,
+        false,
+        false
+      ],
+      "replicates": 5000,
+      "draws": 20000,
+      "component_estimable": [
+        4999,
+        5000,
+        5000
+      ],
+      "component_rejections": [
+        62,
+        1044,
+        4959
+      ],
+      "component_rates": [
+        0.0124,
+        0.2088,
+        0.9918
+      ],
+      "component_one_sided99_lower": [
+        0.009047092956475987,
+        0.1955629744307261,
+        0.9883148801457555
+      ],
+      "iut_rejections": 7,
+      "iut_rate": 0.0014,
+      "holm_family_rejections": 0,
+      "holm_fwer": 0.0,
+      "material_anti_conservatism": false
+    },
+    {
+      "configuration": "error_boundary",
+      "n": 200,
+      "missing_fraction": 0.0,
+      "expected_statistics": [
+        0.010962962962962966,
+        0.0,
+        0.8
+      ],
+      "null_components": [
+        true,
+        false,
+        false
+      ],
+      "replicates": 5000,
+      "draws": 20000,
+      "component_estimable": [
+        5000,
+        5000,
+        5000
+      ],
+      "component_rejections": [
+        201,
+        1658,
+        5000
+      ],
+      "component_rates": [
+        0.0402,
+        0.3316,
+        1.0
+      ],
+      "component_one_sided99_lower": [
+        0.034003800140933835,
+        0.3161498716979621,
+        0.9990793899844618
+      ],
+      "iut_rejections": 50,
+      "iut_rate": 0.01,
+      "holm_family_rejections": 18,
+      "holm_fwer": 0.0036,
+      "material_anti_conservatism": false
+    },
+    {
+      "configuration": "coverage_boundary",
+      "n": 200,
+      "missing_fraction": 0.0,
+      "expected_statistics": [
+        0.13,
+        -0.050000000000000044,
+        0.7999999999999999
+      ],
+      "null_components": [
+        false,
+        true,
+        false
+      ],
+      "replicates": 5000,
+      "draws": 20000,
+      "component_estimable": [
+        5000,
+        5000,
+        5000
+      ],
+      "component_rejections": [
+        4923,
+        248,
+        5000
+      ],
+      "component_rates": [
+        0.9846,
+        0.0496,
+        1.0
+      ],
+      "component_one_sided99_lower": [
+        0.9800454857187094,
+        0.042715869743923565,
+        0.9990793899844618
+      ],
+      "iut_rejections": 244,
+      "iut_rate": 0.0488,
+      "holm_family_rejections": 112,
+      "holm_fwer": 0.0224,
+      "material_anti_conservatism": false
+    },
+    {
+      "configuration": "absolute_boundary",
+      "n": 200,
+      "missing_fraction": 0.0,
+      "expected_statistics": [
+        0.13,
+        0.0,
+        0.6244444444444444
+      ],
+      "null_components": [
+        false,
+        false,
+        true
+      ],
+      "replicates": 5000,
+      "draws": 20000,
+      "component_estimable": [
+        5000,
+        5000,
+        5000
+      ],
+      "component_rejections": [
+        4941,
+        1281,
+        286
+      ],
+      "component_rates": [
+        0.9882,
+        0.2562,
+        0.0572
+      ],
+      "component_one_sided99_lower": [
+        0.9841375773932564,
+        0.2419361241172333,
+        0.04981297022490005
+      ],
+      "iut_rejections": 237,
+      "iut_rate": 0.0474,
+      "holm_family_rejections": 108,
+      "holm_fwer": 0.0216,
+      "material_anti_conservatism": false
+    },
+    {
+      "configuration": "mixed_boundary",
+      "n": 200,
+      "missing_fraction": 0.0,
+      "expected_statistics": [
+        0.010962962962962966,
+        -0.050000000000000044,
+        0.6244444444444444
+      ],
+      "null_components": [
+        true,
+        true,
+        true
+      ],
+      "replicates": 5000,
+      "draws": 20000,
+      "component_estimable": [
+        5000,
+        5000,
+        5000
+      ],
+      "component_rejections": [
+        199,
+        232,
+        296
+      ],
+      "component_rates": [
+        0.0398,
+        0.0464,
+        0.0592
+      ],
+      "component_one_sided99_lower": [
+        0.033635001296166284,
+        0.03974098528322653,
+        0.051687251335349564
+      ],
+      "iut_rejections": 4,
+      "iut_rate": 0.0008,
+      "holm_family_rejections": 0,
+      "holm_fwer": 0.0,
+      "material_anti_conservatism": true
+    },
+    {
+      "configuration": "error_boundary",
+      "n": 100,
+      "missing_fraction": 0.25,
+      "expected_statistics": [
+        0.010962962962962966,
+        0.0,
+        0.8
+      ],
+      "null_components": [
+        true,
+        false,
+        false
+      ],
+      "replicates": 5000,
+      "draws": 20000,
+      "component_estimable": [
+        4999,
+        5000,
+        5000
+      ],
+      "component_rejections": [
+        219,
+        1069,
+        4966
+      ],
+      "component_rates": [
+        0.0438,
+        0.2138,
+        0.9932
+      ],
+      "component_one_sided99_lower": [
+        0.037330521516872016,
+        0.2004427243391636,
+        0.989973772093911
+      ],
+      "iut_rejections": 44,
+      "iut_rate": 0.0088,
+      "holm_family_rejections": 5,
+      "holm_fwer": 0.001,
+      "material_anti_conservatism": false
+    },
+    {
+      "configuration": "coverage_boundary",
+      "n": 500,
+      "missing_fraction": 0.25,
+      "expected_statistics": [
+        0.13,
+        -0.050000000000000044,
+        0.7999999999999999
+      ],
+      "null_components": [
+        false,
+        true,
+        false
+      ],
+      "replicates": 5000,
+      "draws": 20000,
+      "component_estimable": [
+        5000,
+        5000,
+        5000
+      ],
+      "component_rejections": [
+        4999,
+        239,
+        5000
+      ],
+      "component_rates": [
+        0.9998,
+        0.0478,
+        1.0
+      ],
+      "component_one_sided99_lower": [
+        0.9986730779254002,
+        0.041041433878494765,
+        0.9990793899844618
+      ],
+      "iut_rejections": 239,
+      "iut_rate": 0.0478,
+      "holm_family_rejections": 106,
+      "holm_fwer": 0.0212,
+      "material_anti_conservatism": false
+    },
+    {
+      "configuration": "absolute_boundary",
+      "n": 500,
+      "missing_fraction": 0.25,
+      "expected_statistics": [
+        0.13,
+        0.0,
+        0.6244444444444444
+      ],
+      "null_components": [
+        false,
+        false,
+        true
+      ],
+      "replicates": 5000,
+      "draws": 20000,
+      "component_estimable": [
+        5000,
+        5000,
+        5000
+      ],
+      "component_rejections": [
+        5000,
+        2430,
+        258
+      ],
+      "component_rates": [
+        1.0,
+        0.486,
+        0.0516
+      ],
+      "component_one_sided99_lower": [
+        0.9990793899844618,
+        0.4694731559945636,
+        0.04457940317017735
+      ],
+      "iut_rejections": 253,
+      "iut_rate": 0.0506,
+      "holm_family_rejections": 121,
+      "holm_fwer": 0.0242,
+      "material_anti_conservatism": false
+    }
+  ],
+  "status": "FAILED_ANTI_CONSERVATISM",
+  "limitations": [
+    "Comparator duplication tests perfect dependence, not a broad P1/P2 correlation grid.",
+    "No event-prevalence or informative-missingness grid; this is not full mandate qualification.",
+    "No scientific freeze is authorized by these engineering results alone."
+  ]
+}

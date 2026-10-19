@@ -67,4 +67,4 @@ research/v041_development/** text eol=lf
 research/v042_experiments/** text eol=lf
 
 # Execution mandate identity hashes the exact uploaded bytes, including CRLF.
-research/e5/execution/E5_EXECUTION_MANDATE.md -text
+research/e5/execution/E5_EXECUTION_MANDATE.md -text whitespace=cr-at-eol

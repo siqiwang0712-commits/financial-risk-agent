@@ -1,0 +1,20 @@
+........................................................................ [ 27%]
+........................................................................ [ 54%]
+........................................................................ [ 82%]
+..........................................F...                           [100%]
+=================================== FAILURES ===================================
+_____ test_historical_synthetic_source_retains_its_recorded_byte_identity ______
+
+    def test_historical_synthetic_source_retains_its_recorded_byte_identity() -> None:
+        record = json.loads((ROOT / "research/v040_development/development_reference.json").read_text())
+        actual = hashlib.sha256((ROOT / "examples/synthetic_company.json").read_bytes()).hexdigest()
+>       assert actual == record["source_fixture_sha256"]
+E       AssertionError: assert 'abc71e315f5e...ff083019518da' == 'dd8360c9781b...166ffda24e443'
+E         
+E         - dd8360c9781bada28660ac4704a15b5b43fa7222575d528199e166ffda24e443
+E         + abc71e315f5e95b4d840296f97e9156276aac1c152cb86b3583ff083019518da
+
+tests/test_v041_release_research.py:19: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_v041_release_research.py::test_historical_synthetic_source_retains_its_recorded_byte_identity
+1 failed, 261 passed in 2.06s

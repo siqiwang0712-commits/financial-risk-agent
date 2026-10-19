@@ -1,0 +1,62 @@
+{
+  "schema_version": 1,
+  "captured_git_commit": "2bafadce8aef275b697b0dd0388f507c2e923c7e",
+  "captured_git_tree": "5088962b28513218f4d9f20d76bd9efcc3c6f959",
+  "qualification_runtime": {
+    "architecture": "x86_64",
+    "git_commit": "017984b8ec5955e8db69b2fa0196a89798025b38",
+    "git_tree": "b43effd087c138a930dfe989c0f69e4b2db85632",
+    "numpy": "2.5.3",
+    "os": "Linux-6.18.55-x86_64-with-glibc2.41",
+    "python": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]",
+    "requirements_lock_sha256": "a73ed331f9bb9c4c469f3bd7ae12cff80185315fc0e717c8bbca8817c7b22046",
+    "scipy": "1.18.1",
+    "sklearn": "1.9.1"
+  },
+  "package_versions": {
+    "numpy": "2.5.3",
+    "pandas": "NOT_INSTALLED",
+    "scipy": "1.18.1",
+    "scikit-learn": "1.9.1",
+    "pydantic": "2.13.4",
+    "pytest": "9.1.1",
+    "ruff": "0.16.6"
+  },
+  "requirements_lock_sha256": "a73ed331f9bb9c4c469f3bd7ae12cff80185315fc0e717c8bbca8817c7b22046",
+  "random_seeds": [
+    20261019
+  ],
+  "actual_agent_model_provider": null,
+  "actual_agent_model_id": null,
+  "generation_settings": null,
+  "prompt_hash": null,
+  "study_calibration_hash": null,
+  "study_policy_hash": null,
+  "s0_fitted_identity": "3e1ebd825f1699bcc88e52a531bf9199aad3e93a671cfe28640f15dd33759a26",
+  "s0_replay_report_sha256": "91c07bee80aa2f8a4f2337513af746281aea9994a3647d2c46744f7d3e7d4bc2",
+  "feature_schema_source_sha256": "86fd4f23c640d19f5503b73524cfc03dbdc617a2a50c0b73360f459011c5ee8b",
+  "production_policy_hash": "c0ce6ed4752c53e67f3528de1013a4a6ff4d512b1790cde1c6628b354c8b9053",
+  "production_assurance_source_hashes": {
+    "backend/finrisk/assurance/__init__.py": "a029616a19bf61e2a8c751e98df59b6a61e5f69109b526ed662e3e89a7848933",
+    "backend/finrisk/assurance/certificate.py": "2ad2bf2dd57886b209a4adbc597cd5668305eb09d556ed274091ed227f7e6d80",
+    "backend/finrisk/assurance/domain.py": "924253fdd51f0ac9fc5324ba5c13a62c8c564365919275418615dea362f19c5c",
+    "backend/finrisk/assurance/engine.py": "9e3ec2525a71df317b0adc87f7460894aa4781a1263109d9e1126f3ef35a0e88",
+    "backend/finrisk/assurance/evidence.py": "3048a7bbd2c22ced6b269ee9e0a38218704a78bfea905fb4f11e09fc756c3277",
+    "backend/finrisk/assurance/fragility.py": "011e84dcf077d2d213686d558be6fba26600c08cd1f0fd787fb46eeec3eaefc8",
+    "backend/finrisk/assurance/policy.py": "44f2f20502ee9e5fa5c59ded5618812f117852a053f172ba69e67d327ed9ce2c",
+    "backend/finrisk/assurance/reason_codes.py": "7b4cc2c9d6ee5a491b933fcbcaf0827eee0e2c2d2afd9e9d6f6a577eb70adf9f",
+    "backend/finrisk/assurance/semantics.py": "9784ddfe7de33370dbc2bfed947fdb88a7c164061d229b461bdcd09f609ca765",
+    "backend/finrisk/assurance/shift.py": "22e649004605e7e53c464a8f811321681ab8855e017b64b1b919dd87de9eddeb"
+  },
+  "certificate_schema": "decision-certificate-v0.4",
+  "endpoint_source_sha256": "b627dcf081ef449778587de210c3e0779698f28b6ec7d517cf3d22b9148b6966",
+  "tested_inference_source_sha256": "c3b010d5da0ea4756b26502516fe0aee08ef33a0b1f79093f509294804ad14c8",
+  "code_hashes": {
+    "research/e5/execution/core.py": "e93634de80845a202155adc5779aea72d40357c9dfc04d56d0f272481c0fa951",
+    "research/e5/execution/development.py": "6de4efa50ca097f5eee35c626d51169b8dc7ce2050f5a24f4eaa953c29d3f513",
+    "research/e5/execution/inference.py": "c3b010d5da0ea4756b26502516fe0aee08ef33a0b1f79093f509294804ad14c8",
+    "research/e5/execution/qualification.py": "7b3628d19b73ce15b127151b3ce69056a007cf374a91dcb12a222a99dab9a9d0",
+    "research/e5/run_e5.py": "8f54809bdd58874da97d7153676ad661ba1fdfdc2dafb66b512838e23cfa7ccb"
+  },
+  "scope": "Reproduction of the actual development/engineering checkpoint only. Missing scientific identities are absent, not fabricated."
+}

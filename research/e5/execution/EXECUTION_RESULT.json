@@ -1,0 +1,119 @@
+{
+  "created_at": "2026-10-19T15:24:14.051872+00:00",
+  "starting_head": "7060e6a9f1c71f05aac86926ac0dc548b781d73d",
+  "studies": {
+    "E5-R": "DRAFT_BLOCKED",
+    "E5-P": "DRAFT_BLOCKED"
+  },
+  "cohort": {
+    "window": null,
+    "candidate_n": null,
+    "final_n": null,
+    "verified_n": null,
+    "events": null,
+    "non_events": null
+  },
+  "prospective": {
+    "protocol_identity": null,
+    "enrolled": 0,
+    "prediction_frozen": 0,
+    "future_outcomes": "NOT_ACCESSED"
+  },
+  "identities": {
+    "protocol": null,
+    "producer": null,
+    "calibration": null,
+    "study_policy": null,
+    "production_assurance_source": "9e3ec2525a71df317b0adc87f7460894aa4781a1263109d9e1126f3ef35a0e88",
+    "endpoint_source": "b627dcf081ef449778587de210c3e0779698f28b6ec7d517cf3d22b9148b6966",
+    "tested_inference_code": "c3b010d5da0ea4756b26502516fe0aee08ef33a0b1f79093f509294804ad14c8",
+    "utility_artifact": "1e2b6db8e9908505e7b227a38cf4423c33ca77afab6c7c247e389fa9210684fb",
+    "mandate": "c1f5882cd1fe2d11b90194f4e6517b9ef132f2eb9c7e221380a65e8d9dc750f4",
+    "s0_fitted_artifact": "3e1ebd825f1699bcc88e52a531bf9199aad3e93a671cfe28640f15dd33759a26"
+  },
+  "primary": {
+    "P1": {
+      "status": "NOT_ESTIMABLE",
+      "reason": "NOT_EXECUTED_NO_COHORT_OR_PREDICTIONS",
+      "error_benefit": null,
+      "error_benefit_ci95": null,
+      "coverage_difference": null,
+      "coverage_difference_ci95": null,
+      "absolute_s4_coverage": null,
+      "component_pvalues": {
+        "error": null,
+        "coverage_NI": null,
+        "absolute_coverage": null
+      },
+      "iut_pvalue": null,
+      "holm_adjusted_pvalue": null
+    },
+    "P2": {
+      "status": "NOT_ESTIMABLE",
+      "reason": "NOT_EXECUTED_NO_COHORT_OR_PREDICTIONS",
+      "error_benefit": null,
+      "error_benefit_ci95": null,
+      "coverage_difference": null,
+      "coverage_difference_ci95": null,
+      "absolute_s4_coverage": null,
+      "component_pvalues": {
+        "error": null,
+        "coverage_NI": null,
+        "absolute_coverage": null
+      },
+      "iut_pvalue": null,
+      "holm_adjusted_pvalue": null
+    },
+    "family": "NOT_EVALUATED"
+  },
+  "tests": {
+    "passed": 306,
+    "failed": 0,
+    "skipped": 0,
+    "scope": "relevant target suites, including 44 new execution tests",
+    "full_suite": "TIMED_OUT_IN_EXISTING_HTTP_TEST"
+  },
+  "lint": "PASS",
+  "type1_simulation_status": "FAILED_ANTI_CONSERVATISM",
+  "synthetic_trials": 40000,
+  "bootstrap_draws_per_trial": 20000,
+  "outcomes_accessed": false,
+  "real_e5_cases_evaluated": 0,
+  "complete_empirical_reproduction": "NOT_EXECUTED",
+  "completion_claim": false,
+  "arms": {
+    "S0": {
+      "coverage": null,
+      "error_incidence": null,
+      "status": "NOT_EVALUATED"
+    },
+    "S1": {
+      "coverage": null,
+      "error_incidence": null,
+      "status": "NOT_EVALUATED"
+    },
+    "S2": {
+      "coverage": null,
+      "error_incidence": null,
+      "status": "NOT_EVALUATED"
+    },
+    "S3": {
+      "coverage": null,
+      "error_incidence": null,
+      "status": "NOT_EVALUATED"
+    },
+    "S4": {
+      "coverage": null,
+      "error_incidence": null,
+      "status": "NOT_EVALUATED"
+    }
+  },
+  "integrity": {
+    "proposal_mismatches": null,
+    "point_in_time_violations": null,
+    "historical_overlap_violations": null,
+    "certificate_failures": null,
+    "real_case_metrics_status": "NOT_ASSESSED_ZERO_E5_CASES",
+    "outcome_access": "NOT_ACCESSED"
+  }
+}

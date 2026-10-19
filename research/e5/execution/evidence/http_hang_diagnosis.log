@@ -1,0 +1,73 @@
+============================= test session starts ==============================
+platform linux -- Python 3.12.14, pytest-9.1.1, pluggy-1.6.0 -- /workspace/financial-risk-agent/.venv/bin/python
+cachedir: .pytest_cache
+rootdir: /workspace/financial-risk-agent
+configfile: pyproject.toml
+plugins: anyio-4.14.2, cov-7.1.0
+collecting ... collected 1 item
+
+tests/test_api_upload.py::test_pdf_upload_reaches_assessment_pipeline Timeout (0:00:15)!
+Thread 0x00007f3d4a5096c0 (most recent call first):
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/selectors.py", line 468 in select
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/asyncio/base_events.py", line 1961 in _run_once
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/asyncio/base_events.py", line 645 in run_forever
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/asyncio/base_events.py", line 678 in run_until_complete
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/asyncio/runners.py", line 118 in run
+  File "/workspace/financial-risk-agent/.venv/lib/python3.12/site-packages/anyio/_backends/_asyncio.py", line 2481 in run
+  File "/workspace/financial-risk-agent/.venv/lib/python3.12/site-packages/anyio/_core/_eventloop.py", line 83 in run
+  File "/workspace/financial-risk-agent/.venv/lib/python3.12/site-packages/anyio/from_thread.py", line 536 in run_blocking_portal
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/threading.py", line 1012 in run
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/threading.py", line 1075 in _bootstrap_inner
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/threading.py", line 1032 in _bootstrap
+
+Thread 0x00007f3d51044740 (most recent call first):
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/threading.py", line 355 in wait
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/concurrent/futures/_base.py", line 451 in result
+  File "/workspace/financial-risk-agent/.venv/lib/python3.12/site-packages/anyio/_backends/_asyncio.py", line 2715 in run_sync_from_thread
+  File "/workspace/financial-risk-agent/.venv/lib/python3.12/site-packages/anyio/from_thread.py", line 118 in run_sync
+  File "/workspace/financial-risk-agent/.venv/lib/python3.12/site-packages/anyio/from_thread.py", line 301 in _spawn_task_from_thread
+  File "/workspace/financial-risk-agent/.venv/lib/python3.12/site-packages/anyio/from_thread.py", line 382 in start_task_soon
+  File "/workspace/financial-risk-agent/.venv/lib/python3.12/site-packages/anyio/from_thread.py", line 338 in call
+  File "/workspace/financial-risk-agent/.venv/lib/python3.12/site-packages/starlette/testclient.py", line 350 in handle_request
+  File "/workspace/financial-risk-agent/.venv/lib/python3.12/site-packages/httpx/_client.py", line 1014 in _send_single_request
+  File "/workspace/financial-risk-agent/.venv/lib/python3.12/site-packages/httpx/_client.py", line 979 in _send_handling_redirects
+  File "/workspace/financial-risk-agent/.venv/lib/python3.12/site-packages/httpx/_client.py", line 942 in _send_handling_auth
+  File "/workspace/financial-risk-agent/.venv/lib/python3.12/site-packages/httpx/_client.py", line 914 in send
+  File "/workspace/financial-risk-agent/.venv/lib/python3.12/site-packages/httpx/_client.py", line 825 in request
+  File "/workspace/financial-risk-agent/.venv/lib/python3.12/site-packages/starlette/testclient.py", line 455 in request
+  File "/workspace/financial-risk-agent/.venv/lib/python3.12/site-packages/httpx/_client.py", line 1144 in post
+  File "/workspace/financial-risk-agent/.venv/lib/python3.12/site-packages/starlette/testclient.py", line 556 in post
+  File "/workspace/financial-risk-agent/tests/test_api_upload.py", line 9 in authenticated_client
+  File "/workspace/financial-risk-agent/tests/test_api_upload.py", line 28 in test_pdf_upload_reaches_assessment_pipeline
+  File "/workspace/financial-risk-agent/.venv/lib/python3.12/site-packages/_pytest/python.py", line 167 in pytest_pyfunc_call
+  File "/workspace/financial-risk-agent/.venv/lib/python3.12/site-packages/pluggy/_callers.py", line 121 in _multicall
+  File "/workspace/financial-risk-agent/.venv/lib/python3.12/site-packages/pluggy/_manager.py", line 120 in _hookexec
+  File "/workspace/financial-risk-agent/.venv/lib/python3.12/site-packages/pluggy/_hooks.py", line 512 in __call__
+  File "/workspace/financial-risk-agent/.venv/lib/python3.12/site-packages/_pytest/python.py", line 1707 in runtest
+  File "/workspace/financial-risk-agent/.venv/lib/python3.12/site-packages/_pytest/runner.py", line 184 in pytest_runtest_call
+  File "/workspace/financial-risk-agent/.venv/lib/python3.12/site-packages/pluggy/_callers.py", line 121 in _multicall
+  File "/workspace/financial-risk-agent/.venv/lib/python3.12/site-packages/pluggy/_manager.py", line 120 in _hookexec
+  File "/workspace/financial-risk-agent/.venv/lib/python3.12/site-packages/pluggy/_hooks.py", line 512 in __call__
+  File "/workspace/financial-risk-agent/.venv/lib/python3.12/site-packages/_pytest/runner.py", line 250 in <lambda>
+  File "/workspace/financial-risk-agent/.venv/lib/python3.12/site-packages/_pytest/runner.py", line 361 in from_call
+  File "/workspace/financial-risk-agent/.venv/lib/python3.12/site-packages/_pytest/runner.py", line 249 in call_and_report
+  File "/workspace/financial-risk-agent/.venv/lib/python3.12/site-packages/_pytest/runner.py", line 139 in runtestprotocol
+  File "/workspace/financial-risk-agent/.venv/lib/python3.12/site-packages/_pytest/runner.py", line 118 in pytest_runtest_protocol
+  File "/workspace/financial-risk-agent/.venv/lib/python3.12/site-packages/pluggy/_callers.py", line 121 in _multicall
+  File "/workspace/financial-risk-agent/.venv/lib/python3.12/site-packages/pluggy/_manager.py", line 120 in _hookexec
+  File "/workspace/financial-risk-agent/.venv/lib/python3.12/site-packages/pluggy/_hooks.py", line 512 in __call__
+  File "/workspace/financial-risk-agent/.venv/lib/python3.12/site-packages/_pytest/main.py", line 408 in pytest_runtestloop
+  File "/workspace/financial-risk-agent/.venv/lib/python3.12/site-packages/pluggy/_callers.py", line 121 in _multicall
+  File "/workspace/financial-risk-agent/.venv/lib/python3.12/site-packages/pluggy/_manager.py", line 120 in _hookexec
+  File "/workspace/financial-risk-agent/.venv/lib/python3.12/site-packages/pluggy/_hooks.py", line 512 in __call__
+  File "/workspace/financial-risk-agent/.venv/lib/python3.12/site-packages/_pytest/main.py", line 384 in _main
+  File "/workspace/financial-risk-agent/.venv/lib/python3.12/site-packages/_pytest/main.py", line 330 in wrap_session
+  File "/workspace/financial-risk-agent/.venv/lib/python3.12/site-packages/_pytest/main.py", line 377 in pytest_cmdline_main
+  File "/workspace/financial-risk-agent/.venv/lib/python3.12/site-packages/pluggy/_callers.py", line 121 in _multicall
+  File "/workspace/financial-risk-agent/.venv/lib/python3.12/site-packages/pluggy/_manager.py", line 120 in _hookexec
+  File "/workspace/financial-risk-agent/.venv/lib/python3.12/site-packages/pluggy/_hooks.py", line 512 in __call__
+  File "/workspace/financial-risk-agent/.venv/lib/python3.12/site-packages/_pytest/config/__init__.py", line 229 in _main
+  File "/workspace/financial-risk-agent/.venv/lib/python3.12/site-packages/_pytest/config/__init__.py", line 253 in _console_main
+  File "/workspace/financial-risk-agent/.venv/lib/python3.12/site-packages/pytest/__main__.py", line 9 in <module>
+  File "<frozen runpy>", line 88 in _run_code
+  File "<frozen runpy>", line 198 in _run_module_as_main
