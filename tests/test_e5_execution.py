@@ -296,3 +296,24 @@ def test_historical_s0_replay_without_rewriting_nan_fixture():
     result = qualify_s0(ROOT)
     assert result['maximum_absolute_difference'] <= result['tolerance']
     assert file_hash(path) == before
+
+
+def test_corrected_absolute_null_matches_exact_binomial_and_is_reproducible():
+    from scipy.stats import binom
+
+    from research.e5.coverage_null_v2 import absolute_pvalue
+    exact = binom.sf(330 - 1, 500, .6244444444444444)
+    p = absolute_pvalue(330, 500, .6244444444444444)
+    assert p == absolute_pvalue(330, 500, .6244444444444444)
+    assert p == pytest.approx(exact, abs=.01)
+    assert absolute_pvalue(0, 500, .6244444444444444) == 1.
+    assert absolute_pvalue(500, 500, .6244444444444444) >= 1/20001
+
+
+def test_corrected_null_keeps_undefined_primary_undefined():
+    from research.e5.coverage_null_v2 import analyze as corrected_analyze
+    arms = {name: {'automated': False, 'decision': 'REVIEW'} for name in ['S0', 'S1', 'S2', 'S3', 'S4']}
+    rows = [{'cik': str(i), 'outcome': {'status': 'VERIFIED', 'label': i % 2}, 'arms': arms} for i in range(6)]
+    result = corrected_analyze(rows, delta=.01, margin=.05, floor=.6, draws=100)
+    assert result['comparisons']['P1']['result'] == 'NOT_ESTIMABLE'
+    assert result['comparisons']['P2']['iut_p'] is None
