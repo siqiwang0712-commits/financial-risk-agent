@@ -1,0 +1,9 @@
+{
+  "mandate_sha256": "7677afd4b339bb0340b0cac646b71af872dc58707435c1b991ecabad35899947",
+  "starting_head": "38804c9649e8451b683f9f5f2d97d041e18e69cd",
+  "created_at": "2026-10-19T15:46:17.115966+00:00",
+  "authorization": "SPONSOR_AUTHORIZED",
+  "outcomes_accessed": false,
+  "prior_evidence": "PRESERVE_V1_FAILURE_V2_AMENDMENT_AND_ALL_PRIOR_QUALIFICATION_REPORTS",
+  "scope": "Phase-II execution mandate; supersedes the prior readiness-only ceiling"
+}

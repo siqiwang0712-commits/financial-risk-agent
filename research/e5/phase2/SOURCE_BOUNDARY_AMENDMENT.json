@@ -1,0 +1,13 @@
+{
+  "amendment": "PHASE2-INDEX-SOURCE-IDENTITY-V2",
+  "old_commit": "38804c9649e8451b683f9f5f2d97d041e18e69cd",
+  "old_core_sha256": "e93634de80845a202155adc5779aea72d40357c9dfc04d56d0f272481c0fa951",
+  "new_core_sha256": "2f9aa3c97af20c21f99926777019b4124022dc880c4e18b1a3a24db003afbabb",
+  "reason": "Reject cross-CIK and cross-accession substitutions; allow same-index comparative periods only. Filing-agent accession prefixes are not issuer identities.",
+  "source_roles": [
+    "INDEX_FILING"
+  ],
+  "supporting_accessions": "NOT_ADMITTED_BY_THIS_SCHEMA",
+  "outcome_exposure": false,
+  "prior_qualification_disposition": "Earlier source hashes remain historical evidence. The prior all-code qualification identity is not silently updated; Phase-II qualification will bind this strengthened boundary."
+}

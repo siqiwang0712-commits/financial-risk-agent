@@ -42,7 +42,7 @@ def feature():
             'prediction_cutoff': '2025-01-01T00:00:00Z', 'schema_hash': H,
             'extraction_code_hash': H, 'preprocessing_hash': H, 'reference_distribution_hash': H,
             'features': {'current_ratio': 1.},
-            'sources': [{'sha256': H, 'available_at': '2025-01-01T00:00:00Z',
+            'sources': [{'sha256': H, 'cik': '0000000001', 'role': 'INDEX_FILING', 'available_at': '2025-01-01T00:00:00Z',
                          'filing_timestamp': '2025-01-01T00:00:00Z', 'accession': '0000000001-25-000001'}]}
 
 

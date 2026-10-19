@@ -1,0 +1,32 @@
+name: E5 authoritative SEC feature acquisition
+on:
+  workflow_dispatch:
+  push:
+    branches: [E5-experiment]
+    paths:
+      - '.github/workflows/e5-sec-acquisition.yml'
+permissions:
+  contents: read
+concurrency:
+  group: e5-sec-feature-acquisition
+  cancel-in-progress: false
+jobs:
+  acquire:
+    if: github.ref == 'refs/heads/E5-experiment'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7
+        with:
+          python-version: '3.12'
+      - name: Acquire feature-period data only, with official EDGAR fallback
+        run: python research/e5/phase2/acquire_sec.py --quarter 2025q3 --output '${{ runner.temp }}/e5-sec-features'
+      - name: Preserve successful source manifests or exact failed acquisition evidence
+        if: always()
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
+        with:
+          name: e5-sec-feature-2025q3-${{ github.sha }}
+          path: ${{ runner.temp }}/e5-sec-features/
+          retention-days: 30
+          if-no-files-found: error

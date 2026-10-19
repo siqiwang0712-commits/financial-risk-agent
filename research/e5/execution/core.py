@@ -102,7 +102,7 @@ def verify_files(root: Path, manifest: dict[str, str]) -> None:
 FEATURE_FIELDS = {'case_id', 'cik', 'accession', 'filing_timestamp', 'prediction_cutoff',
                   'schema_hash', 'extraction_code_hash', 'preprocessing_hash',
                   'reference_distribution_hash', 'sources', 'features'}
-SOURCE_FIELDS = {'sha256', 'available_at', 'filing_timestamp', 'accession'}
+SOURCE_FIELDS = {'sha256', 'available_at', 'filing_timestamp', 'accession', 'cik', 'role'}
 
 
 def validate_features(packet: dict, *, schema_hash: str, code_hash: str) -> str:
@@ -120,6 +120,11 @@ def validate_features(packet: dict, *, schema_hash: str, code_hash: str) -> str:
     require(isinstance(packet['sources'], list) and bool(packet['sources']), 'source provenance required')
     for source in packet['sources']:
         require(set(source) == SOURCE_FIELDS, 'source schema differs')
+        require(source['role'] == 'INDEX_FILING', 'only index-accession facts are admitted by this schema')
+        require(source['cik'] == packet['cik'], 'cross-CIK source substitution')
+        require(source['accession'] == packet['accession'], 'cross-accession source substitution')
+        require(timestamp(source['filing_timestamp']) == timestamp(packet['filing_timestamp']),
+                'source index filing timestamp mismatch')
         hash_string(source['sha256'])
         require(timestamp(source['available_at']) <= cutoff, 'post-cutoff source availability')
         require(timestamp(source['filing_timestamp']) <= cutoff, 'post-cutoff source filing')

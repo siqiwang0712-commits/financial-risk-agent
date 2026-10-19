@@ -70,3 +70,5 @@ research/v042_experiments/** text eol=lf
 research/e5/execution/E5_EXECUTION_MANDATE.md -text whitespace=cr-at-eol
 # Captured pytest diagnostics retain their exact emitted whitespace.
 research/e5/execution/evidence/*.log whitespace=-blank-at-eol
+# Phase-II authorization binds the exact uploaded bytes.
+research/e5/phase2/PHASE_II_MANDATE.md -text whitespace=cr-at-eol
