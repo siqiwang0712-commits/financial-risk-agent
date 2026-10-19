@@ -89,3 +89,7 @@ def test_authoritative_path_cannot_point_to_legacy_protocol() -> None:
     config = _config()
     config["authoritative_protocol"]["path"] = "research/e5/protocol/STUDY_PROTOCOL.md"
     _rejected(config, "authority path")
+
+
+def test_empty_config_cannot_silently_load_the_real_contract() -> None:
+    _rejected({}, "schema version")

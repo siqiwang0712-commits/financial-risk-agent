@@ -43,7 +43,7 @@ def load_config(path: Path = CONFIG_PATH) -> dict[str, Any]:
 
 
 def validate(config: dict[str, Any] | None = None) -> list[str]:
-    config = config or load_config()
+    config = load_config() if config is None else config
     checks: list[str] = []
 
     def require(condition: bool, message: str) -> None:

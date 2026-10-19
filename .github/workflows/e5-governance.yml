@@ -1,0 +1,50 @@
+name: E5 governance integrity (not scientific readiness)
+on:
+  push:
+    branches: [E5-experiment]
+    paths: &governance_paths
+      - 'AGENTS.md'
+      - 'research/e5/**'
+      - 'research/e5_readiness/**'
+      - 'research/strong_tabular_reference/**'
+      - 'backend/finrisk/**'
+      - 'config/**'
+      - 'rules/**'
+      - 'requirements.lock'
+      - 'tests/**'
+      - '.github/workflows/e5-governance.yml'
+  pull_request:
+    paths: *governance_paths
+permissions:
+  contents: read
+jobs:
+  governance:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ['3.11', '3.12']
+    env:
+      PYTHONPATH: backend
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7
+        with:
+          python-version: ${{ matrix.python-version }}
+      - run: python -m pip install -c requirements.lock -e '.[dev,postgres,research]'
+      - run: python -m pip check
+      - run: python research/e5/validate_study_contract.py
+      - run: python research/e5/harness/verify_e5.py
+      - run: python research/e5/autonomy/verify_state.py
+      - run: python research/e5/autonomy/verify_frozen_identity.py
+      - run: python research/e5/autonomy/e5_autopilot.py --check
+      - run: python -m pytest -q tests/test_e5*.py tests/test_assurance*.py tests/test_release_ci_admission.py tests/test_candidate_image_metadata.py tests/test_trivy_report_verifier.py tests/test_v041_release_research.py
+      - run: ruff check backend tests scripts research
+      - run: python scripts/check_markdown_links.py
+      - run: git diff --exit-code
+      - name: Report scientific status separately
+        run: |
+          python research/e5/autonomy/resolve_protocol.py >> "$GITHUB_STEP_SUMMARY"
+          echo 'Integrity success is not READY_TO_FREEZE or E5 validation.' >> "$GITHUB_STEP_SUMMARY"
