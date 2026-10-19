@@ -2,6 +2,11 @@
 
 Status: **BLOCKED / DRAFT_NOT_FROZEN**
 
+The [final readiness report](FINAL_READINESS_REPORT.md) and
+[machine-readable blockers](autonomy/blockers.json) distinguish four protocol-design
+blockers from the missing prior-270 cohort blocker. Governance integrity may pass
+while scientific readiness remains BLOCKED. No protocol freeze is executed.
+
 No E5 cohort, prediction, label, result, preregistration hash or freeze manifest exists.
 The authoritative human draft is [`STUDY_PROTOCOL_DRAFT.md`](STUDY_PROTOCOL_DRAFT.md);
 its machine-readable companion is [`experiment_config.json`](experiment_config.json).
@@ -17,10 +22,10 @@ prediction.
 
 | Arm | Conceptual role |
 |---|---|
-| `S0` | Strong Tabular Predictor selected prospectively under `StrongTabularReference-v1` |
+| `S0` | Existing fitted historical StrongTabularReference-v1, exact candidate identity bound |
 | `S1` | S0 plus a prospectively frozen simple selective policy |
-| `S2` | Raw Agent proposal with no final-decision authority |
-| `S3` | S2 plus evidence verification, excluding the remaining Full Assurance controls |
+| `S2` | Full prediction-layer proposal; producer qualification blocked, no final authority |
+| `S3` | Same immutable proposal plus evidence-only routing; ablation qualification blocked |
 | `S4` | Full FinRisk Assurance: evidence, fragility, distribution validity, admission policy and certificate-bound authorization |
 
 B0 and B6 remain historical reference and interpretability anchors. They may be reported

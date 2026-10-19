@@ -5,12 +5,16 @@
    "status": "PARTIAL"
   },
   "calibration_design": {
-   "reason": "v0.4.1 is resolved as UNCALIBRATED; E5 must freeze that state or a valid disjoint calibration design.",
-   "status": "PARTIAL"
+   "reason": "E5 explicitly remains UNCALIBRATED; no calibration or probability claim.",
+   "status": "READY"
   },
   "decision_certificate_stability": {
    "reason": "Implemented and internally replay-tested; no E5 schema/version freeze exists.",
    "status": "PARTIAL"
+  },
+  "deterministic_replay": {
+   "reason": "The fitted historical reference verifies component hashes before trusted loading and replays a fixed sample under Python 3.12.",
+   "status": "READY"
   },
   "development_data_contract": {
    "reason": "Temporal, endpoint, provenance, grouping, feature, integrity, exposure and E5-isolation gates are machine-validated.",
@@ -24,13 +28,9 @@
    "reason": "Superseded by the approved 675-row manifest; all 2,000 source companies are registered for future E5 exclusion.",
    "status": "READY"
   },
-  "deterministic_replay": {
-   "reason": "The fitted historical reference verifies component hashes before trusted loading and replays a fixed sample under Python 3.12.",
-   "status": "READY"
-  },
   "e5_governance_freeze_chain": {
-   "reason": "The authoritative S0-S4 contract, config and active harness agree; the chain remains unfrozen and freeze-critical fields remain unresolved.",
-   "status": "PARTIAL"
+   "reason": "Strict manifest loading, immutable writes, autonomy guards and scientific source bindings; current mandate prohibits actual freeze.",
+   "status": "IMPLEMENTED_NOT_FROZEN"
   },
   "feature_schema_stability": {
    "reason": "A validated draft schema now exists but is deliberately not frozen or extraction-bound.",
@@ -73,7 +73,7 @@
    "status": "READY"
   },
   "strong_reference": {
-   "reason": "Approved historical data, mechanical selection, fitted artifacts, hashes, diagnostics and replay exist; the E5 identity remains unfrozen.",
+   "reason": "Existing fitted historical identity is bound as a candidate; no refitting, freeze or E5 validation.",
    "status": "READY"
   },
   "strong_reference_artifact_contract": {
@@ -81,12 +81,23 @@
    "status": "READY"
   }
  },
+ "assessment_date": "2026-10-19",
+ "cohort_blocker_ids": [
+  "E5-C01"
+ ],
+ "current_assessment_report": "research/e5/FINAL_READINESS_REPORT.md",
  "evidence_boundary": {
   "e5": "NOT_RUN_NOT_FROZEN",
   "external_validation": "NOT_ESTABLISHED",
   "historical_e1_e4": "UNCHANGED",
   "strong_tabular_reference": "FITTED_RETROSPECTIVE_DEVELOPMENT_NOT_E5_FROZEN"
  },
+ "protocol_blocker_ids": [
+  "E5-P01",
+  "E5-P02",
+  "E5-P03",
+  "E5-P04"
+ ],
  "schema_version": "1",
  "status": "BLOCKED",
  "study": "E5"

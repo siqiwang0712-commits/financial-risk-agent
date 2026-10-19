@@ -78,7 +78,7 @@ def unresolved(value: Any, prefix: str = '') -> list[str]:
     elif isinstance(value, list):
         for index, item in enumerate(value):
             result.extend(unresolved(item, f'{prefix}.{index}'))
-    elif value is None or isinstance(value, str) and ('TO_BE_FROZEN' in value or value.startswith('BLOCKED')):
+    elif value is None or isinstance(value, str) and ('TO_BE_' in value or value.startswith('BLOCKED')):
         result.append(prefix)
     return result
 
@@ -123,7 +123,14 @@ def resolve(root: Path = ROOT, *, config: dict | None = None) -> dict:
     require(simple['flag_at_or_above'] == .65 and simple['pass_below'] == .35
             and simple['policy_id'] == 's1-fixed-review-band-v1', 'S1 policy drift')
     blockers = validate_blockers(load(root / 'research/e5/autonomy/blockers.json'))
-    paths = unresolved({key: config[key] for key in ('freeze_prerequisites', 'conceptual_arms', 'primary_family', 'reference_distribution')})
+    all_open_paths = unresolved(config)
+    deferred = {
+        'environment_variables.status': 'EXECUTION_ENVIRONMENT_MANIFEST_NOT_CREATED',
+        'cohort.company_disjointness': 'COHORT_FREEZE_PROOF_NOT_PROTOCOL_CHOICE',
+        'cohort.previous_270_exclusion': 'COHORT_FREEZE_INPUT_NOT_PROTOCOL_CHOICE',
+    }
+    explicit_values = {'endpoint_contract.nonverified_label', 'design_governance.readiness'}
+    paths = [path for path in all_open_paths if path not in deferred and path not in explicit_values]
     critical = [item['id'] for item in blockers if item['scope'] == 'PROTOCOL_FREEZE']
     # The config cannot bless itself; unresolved fields and independent feasibility
     # blockers both prevent readiness, even if the flags say otherwise.
@@ -134,11 +141,24 @@ def resolve(root: Path = ROOT, *, config: dict | None = None) -> dict:
             'unresolved scientific blockers require explicit approved redesign')
     return {'status': 'BLOCKED' if paths or critical else 'READY_TO_FREEZE',
             'freeze_critical_unresolved_count': len(paths), 'unresolved_config_paths': paths,
+            'deferred_stage_fields': deferred,
             'protocol_blockers': critical,
             'cohort_blockers': [x['id'] for x in blockers if x['scope'] == 'COHORT_FREEZE'],
             'future_data_blockers': [x['id'] for x in blockers if x['scope'] == 'FUTURE_DATA'],
             'protocol_sha256': file_hash(root / AUTHORITY[0]),
             'config_sha256': file_hash(root / AUTHORITY[1])}
+
+
+def verify_readiness_report(report: dict, decision: dict) -> None:
+    require(report['status'] == decision['status'] and report['readiness'] == decision,
+            'readiness report contradicts independent gates')
+    require(report['current_protocol_sha256'] == decision['protocol_sha256']
+            and report['current_config_sha256'] == decision['config_sha256'], 'readiness report identity drift')
+    expected = {'COHORT':'NOT_ENUMERATED','PREDICTIONS':'NOT_GENERATED','OUTCOMES':'NOT_ACCESSED',
+                'PROTOCOL FREEZE':'NOT_EXECUTED','E5 VALIDATION':'NOT_ESTABLISHED','CALIBRATION':'UNCALIBRATED'}
+    require(report['critical_assertions'] == expected, 'readiness report fabricates execution')
+    current_sources = {str(p.relative_to(ROOT)): file_hash(p) for p in [*DIRECTORY.glob('*.py'), ROOT/'research/e5/harness/e5_harness.py', ROOT/'research/e5/validate_study_contract.py']}
+    require(report['validated_code_sha256'] == current_sources, 'readiness audit code identity drift')
 
 
 def verify_state(root: Path = ROOT) -> dict:
@@ -156,6 +176,9 @@ def verify_state(root: Path = ROOT) -> dict:
         require(not p.exists(), f'actual E5 execution artifact forbidden: {name}')
     decision = resolve(root)
     require(value['readiness'] == decision['status'], 'state disagrees with resolver')
+    report_path = root / 'research/e5/final_readiness.json'
+    if report_path.exists():
+        verify_readiness_report(load(report_path), decision)
     return decision
 
 

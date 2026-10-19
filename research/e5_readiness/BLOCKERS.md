@@ -1,53 +1,31 @@
-# E5 blockers
+# Current Structured E5 blockers
 
-This list identifies the smallest future work needed at each governance boundary. It is
-diagnostic; none of these actions is performed by this audit.
+Authority: [human protocol](../e5/STUDY_PROTOCOL_DRAFT.md), machine config and
+[typed blocker register](../e5/autonomy/blockers.json). Overall **BLOCKED**.
 
-## Must resolve before E5 protocol freeze
+## Protocol-freeze blockers
 
-1. **Choose the prospective calibration path.** v0.4.1 is explicitly `UNCALIBRATED`.
-   Either freeze a
-   valid development/calibration/validation design or explicitly freeze E5 as
-   `UNCALIBRATED`; do not imply probability reliability.
-2. **Freeze the E5 reference-distribution design.** A historical label-independent
-   development profile now exists, but E5 must specify its permitted reference cohort,
-   statistics, schema, scope and fail-closed behavior.
-3. **Nominate the E5 policy/certificate identities.** v0.4.1 versions and hashes are bound,
-   but E5 must nominate/freeze them with migration and replay acceptance rules.
-4. **Finalize the confirmatory estimands and implementation identities.** Resolve the
-   `TO_BE_FROZEN` primary estimands, meaningful effects, alpha allocation, S1 admission
-   policy, and exact S2/S3 implementations without inspecting future outcomes.
+- **E5-P01:** released HEURISTIC_POLICY / UNCALIBRATED S4 withholds automation;
+  useful automated coverage cannot be obtained by relabelling restricted outputs.
+- **E5-P02:** a qualified shared prediction producer and a genuine evidence-only
+  intervention are missing. The released Agent verifies before proposing.
+- **E5-P03:** meaningful effect, coverage margin and useful coverage floor lack
+  independent loss/review-capacity justification. Joint inference/power must be
+  qualified after those constraints resolve; no arbitrary favorable N or margin.
+- **E5-P04:** runtime reference/structured extraction and per-company/global timing
+  qualification remain open. A development profile is not external validation.
 
-## Must resolve before cohort freeze
+## Cohort-freeze blocker
 
-1. **Publish or otherwise verifiably provide the prior 270-company exclusion set.** It is
-   missing at `research/e4/_cache/previous_270.json`, so company disjointness cannot be
-   reproduced. Add the exact approved list with provenance and hash, without altering
-   frozen E4 results.
-2. **Freeze eligibility, time windows and packet construction.** The future filing/outcome
-   periods must exist, and packet construction must prove every predictor was available by
-   its cutoff. Do not enumerate candidates until these rules and the sampling salt freeze.
-3. **Freeze historical-cohort exclusion inputs.** Consolidate E1–E4, public-pilot,
-   development and prior-validation company identifiers into a versioned exclusion
-   manifest whose source hashes are checked by the cohort builder.
+**E5-C01:** exact prior-270 exclusion input missing; no proved containing superset.
+All 2,000 StrongTabular development source companies remain excluded. Qualification
+and prior-validation registries must also be complete before enumeration. This is
+not, by itself, a protocol-readiness blocker. Never invent or approximate the list.
 
-## Must resolve before predictions
+## Future-data/stage prerequisites
 
-1. **Bind all five arms to one frozen input/certificate schema.** Record model/config,
-   code, container, policy, reference profile and feature-schema identities. Reject schema
-   drift and unknown fields.
-2. **Qualify E5 replay and environment isolation.** Bind the historical S0 artifact into
-   the E5 freeze and enforce that prediction containers cannot mount outcome paths.
-3. **Complete outcome-blind software gates.** Run the Assurance bypass, tamper, fragility,
-   observability-separation and distribution fail-closed qualification suite named by the
-   v0.4 draft.
+**E5-F01:** later authorized qualification, cohort/features/predictions and future
+blinded outcomes. Their absence is required now. No protocol-freeze manifest exists.
 
-## Must resolve before outcome access
-
-1. **Freeze and verify predictions/certificates.** Complete the staged manifest chain and
-   independently verify every artifact hash, row count, arm coverage and replay sample.
-2. **Approve the unlock.** Record that no prediction-stage process could access outcomes,
-   all expected arms are complete, and deviations are signed before mounting outcome data.
-3. **Freeze analysis/adjudication execution inputs.** Lock the endpoint implementation,
-   blinded review packets, multiplicity family, missing-outcome rules and permitted
-   sensitivity analyses before labels are read.
+The historical `preflight_v041.json` remains unchanged as its dated development
+record; the autonomy resolver and final report are the current detailed assessment.

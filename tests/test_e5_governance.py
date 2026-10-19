@@ -197,6 +197,7 @@ def test_primary_alpha_or_unknown_authority_cannot_drift(tmp_path,monkeypatch):
 def test_planning_is_reproducible_and_not_selected_power():
     from research.e5.autonomy.power_design import planning
     first=planning();assert first==planning()
+    assert first==g.load(g.DIRECTORY.parent/'power_plan.json')
     assert first['final_sample_size'] is None and len(first['rows'])==144
     assert min(row['joint_design_lower_bound_n'] for row in first['rows'])>0
 
@@ -268,3 +269,10 @@ def test_rehashed_root_cannot_claim_a_previous_protocol(tmp_path):
     value['previous_manifest_sha256']='a'*64
     h.write_manifest(tmp_path,value)
     assert any('root has no previous' in x['check'] for x in h.verify(tmp_path).failures)
+
+
+@pytest.mark.parametrize('mutate', [lambda x:x.update(status='READY_TO_FREEZE'),lambda x:x.update(current_config_sha256='0'*64),lambda x:x['readiness'].update(freeze_critical_unresolved_count=0),lambda x:x['critical_assertions'].update(OUTCOMES='ACCESSED'),lambda x:x.update(validated_code_sha256={})])
+def test_readiness_report_cannot_fabricate_readiness_identity_or_execution(mutate):
+    report=g.load(g.DIRECTORY.parent/'final_readiness.json')
+    mutate(report)
+    with pytest.raises(g.GovernanceError):g.verify_readiness_report(report,g.resolve())

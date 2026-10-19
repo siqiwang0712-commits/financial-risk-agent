@@ -1,0 +1,475 @@
+{
+  "arm_identities": {
+    "S0": {
+      "artifact": "StrongTabularReference-v1",
+      "development_data": {
+        "company_count": 675,
+        "events": 235,
+        "historical_exposure": "DESIGN_EXPOSED_HISTORICAL_DEVELOPMENT",
+        "manifest": "../development_data_manifest.json",
+        "manifest_sha256": "4b58f3101bb75c69029333bf83f18d4c2a927363fdae2eebdf48353b32ee1fdf",
+        "observation_count": 675
+      },
+      "evidence_status": "RETROSPECTIVE_DEVELOPMENT",
+      "feature_contract": {
+        "feature_schema_sha256": "90219904d55805c2bd55457bfe2bbe1a92a34765768857e77004322fe7f3a836",
+        "ordered_feature_names": [
+          "current_ratio",
+          "debt_to_assets",
+          "net_margin",
+          "cfo_to_net_income",
+          "fcf_margin",
+          "revenue_growth",
+          "operating_cash_flow_growth",
+          "total_debt_growth",
+          "cash_growth",
+          "observed__current_ratio",
+          "observed__debt_to_assets",
+          "observed__net_margin",
+          "observed__cfo_to_net_income",
+          "observed__fcf_margin",
+          "observed__revenue_growth",
+          "observed__operating_cash_flow_growth",
+          "observed__total_debt_growth",
+          "observed__cash_growth"
+        ],
+        "selected_feature_block": "VO"
+      },
+      "hashes": {
+        "candidate_results_sha256": "f50b1cba82b9b2dff3cb3bc49b1cb9a2a530a32d1c14b8438daf89d54a41aa67",
+        "e5_freeze_identity": "TO_BE_FROZEN",
+        "empirical_reference_sha256": "506dfb50f14a063e510518f11f35ca4f25384a81fd46f0f33c2dc97d3dc6efea",
+        "fitted_artifact_hash": "3e1ebd825f1699bcc88e52a531bf9199aad3e93a671cfe28640f15dd33759a26",
+        "fitted_model_sha256": "7a523e4061ce324ee2f4554a0000cb3caa283ff051595bd5d27c86429835d833",
+        "fitted_preprocessor_sha256": "473fde6b6078d2d3de0527e259cf10fad45441e7737fd19181d1a99da49e48e6",
+        "fold_assignments_sha256": "fc981b826e33af08c08d00666aa8d5c9e3828d0a75e76f0e8de552491be9fa22",
+        "observability_diagnostic_sha256": "28cd407b452a6eb93d1f646654db0700f2ae7f9a985360fa54bdbfc7b12bf21b",
+        "oof_predictions_sha256": "e055985e62819743a7b69c25e087e01e5c00cddce09385b5bc83552ec3f9758c",
+        "replay_sample_sha256": "ba2fcb18cb86ec61c1c3235730fc72a7a3d857e69c86ea38d8d93a61fe3557b0",
+        "runtime_identity_sha256": "d217495df7cdd396802a794f6b7629e9935702ea435ca568438df552a8a2fe0c",
+        "selection_record_sha256": "f67142a60a4b59bbd1b26c094f42297071d9f70e67e4e1d092ec08745e9cd494",
+        "selective_evaluation_sha256": "e1a273c97d0e365b1b54a191027560917382dbc92b192c45d67edc0140c57006",
+        "verification_report_sha256": "bb6511b1770eaffff9adcfb7adf17554fd2f386c9183e51a47f2d635efd5160c"
+      },
+      "model": {
+        "exact_hyperparameters": {
+          "early_stopping": false,
+          "l2_regularization": 1.0,
+          "learning_rate": 0.05,
+          "loss": "log_loss",
+          "max_leaf_nodes": 7,
+          "min_samples_leaf": 20
+        },
+        "family": "histogram_gradient_boosting",
+        "serialized_artifact": "model.pkl"
+      },
+      "output_contract": {
+        "calibration_status": "UNCALIBRATED",
+        "field": "reference_model_score",
+        "final_decision_authority": "NONE_PREDICTION_ONLY",
+        "probability_interpretation_allowed": false,
+        "score_semantics": "UNCALIBRATED_RANKING_SCORE"
+      },
+      "preprocessing": {
+        "automatic_missing_indicators": false,
+        "fit_scope": "FULL_APPROVED_DEVELOPMENT_SET_AFTER_NESTED_SELECTION",
+        "serialized_artifact": "preprocessor.pkl"
+      },
+      "runtime": {
+        "numpy_version": "2.5.3",
+        "platform": "Windows-11-10.0.26200-SP0",
+        "python_version": "3.12.14",
+        "requirements_lock_sha256": "c910dcce669e014b7d3cfd89973fd36cf099a5b6c661dae80464b4bad6158140",
+        "scikit_learn_version": "1.9.1",
+        "serialization": "python_pickle_protocol_5_trusted_hash_verified_artifacts_only",
+        "source_commit": "af3fb09add10d990b2cc9a8b8bb23ccd5de98b52",
+        "working_tree_state": "UNCOMMITTED_V0.4.1_RESEARCH_DEVELOPMENT"
+      },
+      "schema_version": "1",
+      "selection": {
+        "mechanical_no_override": true,
+        "record": "selection_record.json"
+      },
+      "status": "FITTED_HISTORICAL_NOT_E5_FROZEN"
+    },
+    "S1": {
+      "authorization_authority": "SIMPLE_SELECTIVE_POLICY_ONLY",
+      "evidence": "research/strong_tabular_reference/development_run_config.json",
+      "flag_at_or_above": 0.65,
+      "id": "S1",
+      "implementation_status": "HISTORICAL_PRESPECIFIED_POLICY_ADOPTED_NOT_E5_FROZEN",
+      "name": "Strong Tabular Predictor + Selective Policy",
+      "otherwise": "REVIEW",
+      "pass_below": 0.35,
+      "policy_id": "s1-fixed-review-band-v1",
+      "purpose": "isolate simple selective admission from Agent reasoning and Full Assurance",
+      "score": "EXACT_S0_REFERENCE_SCORE",
+      "selection_rule": "RETAIN_EXISTING_PRESPECIFIED_DEVELOPMENT_POLICY_WITHOUT_THRESHOLD_SEARCH"
+    },
+    "S2": {
+      "adapter": "research/e5/autonomy/candidate_arms.py",
+      "producer_qualification": "BLOCKED_E5_P02"
+    },
+    "S3": {
+      "delta": "EVIDENCE_ONLY_ROUTING_NO_FULL_ASSURANCE",
+      "producer_qualification": "BLOCKED_E5_P02"
+    },
+    "S4": {
+      "certificate_schema": "decision-certificate-v0.4",
+      "policy_hash": "c0ce6ed4752c53e67f3528de1013a4a6ff4d512b1790cde1c6628b354c8b9053",
+      "qualification": "NOT_E5_QUALIFIED_NO_AUTOMATION_UNDER_DEFAULT_POLICY"
+    },
+    "candidate_binding": "research/e5/autonomy/design_identities.json"
+  },
+  "assessment_date": "2026-10-19",
+  "authority": {
+    "config": "research/e5/experiment_config.json",
+    "harness": "research/e5/harness/e5_harness.py",
+    "legacy": "research/e5/protocol/ is not freeze authority",
+    "protocol": "research/e5/STUDY_PROTOCOL_DRAFT.md"
+  },
+  "blockers": [
+    {
+      "allowed_next_actions": [
+        "Keep released policy unchanged",
+        "Design and independently approve a different study before exposure"
+      ],
+      "config_paths": [
+        "freeze_prerequisites.reference_distribution_design"
+      ],
+      "confirmatory_risk": "Choosing or relabelling a scientific rule to obtain readiness would invalidate attribution or utility claims.",
+      "evidence_insufficient_because": "The adopted HEURISTIC_POLICY / UNCALIBRATED engine sets automation_allowed=false. Increasing N cannot change this. Restricted PASS/FLAG cannot be counted as automated authorizations.",
+      "id": "E5-P01",
+      "missing_information": "A scientifically justified admission/calibration study or an explicitly approved redesign of the scientific question, before E5 exposure.",
+      "prohibited_shortcuts": [
+        "Set require_calibration_for_automation=false",
+        "Relabel restricted outputs as automated",
+        "Weaken maturity checks"
+      ],
+      "scope": "PROTOCOL_FREEZE",
+      "status": "OPEN",
+      "unresolved_decision": "Reconcile useful automated coverage with the adopted released S4 policy."
+    },
+    {
+      "allowed_next_actions": [
+        "Specify and qualify a study-only producer without changing product authority",
+        "Use shared immutable proposal packets only after producer qualification"
+      ],
+      "config_paths": [
+        "conceptual_arms.2.implementation_status",
+        "conceptual_arms.3.implementation_status"
+      ],
+      "confirmatory_risk": "Choosing or relabelling a scientific rule to obtain readiness would invalidate attribution or utility claims.",
+      "evidence_insufficient_because": "The released Agent verifies claims before assessment/fusion and applies failure review before Assurance; copying its post-verification proposal is not a raw no-verification ablation. A shared serialization guard alone does not prove scientific component isolation.",
+      "id": "E5-P02",
+      "missing_information": "An approved structured prediction representation, stable model/prompt identity, and an extraction boundary validated to leave proposal generation identical across S2/S3/S4.",
+      "prohibited_shortcuts": [
+        "Treat copied already-verified proposals as proof of an evidence-only ablation",
+        "Restore legacy A2/Hybrid"
+      ],
+      "scope": "PROTOCOL_FREEZE",
+      "status": "OPEN",
+      "unresolved_decision": "Define a qualified S2 prediction layer and separable evidence-only S3 intervention."
+    },
+    {
+      "allowed_next_actions": [
+        "Obtain independent loss and capacity constraints before E5 exposure",
+        "Apply a prespecified rule to approved historical data only"
+      ],
+      "config_paths": [
+        "primary_family.minimum_meaningful_effects",
+        "primary_family.coverage_condition"
+      ],
+      "confirmatory_risk": "Choosing or relabelling a scientific rule to obtain readiness would invalidate attribution or utility claims.",
+      "evidence_insufficient_because": "Historical OOF rankings lack same-cohort S4 authorized outcomes or an independently justified review/error utility. Maximizing historical significance or choosing an arbitrary coverage target is not a scientific utility justification.",
+      "id": "E5-P03",
+      "missing_information": "Outcome-blind stakeholder loss/review-capacity requirements or an approved mechanical historical-development utility-selection rule.",
+      "prohibited_shortcuts": [
+        "Select thresholds using E5 outcomes",
+        "Choose zero coverage to claim perfect safety",
+        "Pick margins to guarantee significance"
+      ],
+      "scope": "PROTOCOL_FREEZE",
+      "status": "OPEN",
+      "unresolved_decision": "Select minimum meaningful authorization-error effect, coverage noninferiority margin and useful coverage floor."
+    },
+    {
+      "allowed_next_actions": [
+        "Design and qualify a historical-only reference adapter",
+        "Retain UNKNOWN and withhold automation until supported"
+      ],
+      "config_paths": [
+        "reference_distribution.freeze_status",
+        "freeze_prerequisites.eligibility_and_timing_logic"
+      ],
+      "confirmatory_risk": "Choosing or relabelling a scientific rule to obtain readiness would invalidate attribution or utility claims.",
+      "evidence_insufficient_because": "The historical empirical profile is not in the runtime reference format or an externally validated reference; E5 packets and endpoint wrappers have not been qualification-tested prospectively. The synthetic runtime profile is ineligible. A twelve-month filing collection window also needs a qualified prediction deadline/outcome-isolation design; early companies must not acquire observable outcomes before their predictions are frozen.",
+      "id": "E5-P04",
+      "missing_information": "An outcome-blind schema mapping and applicability/reference specification with approved scope and extraction conformance tests. Explicit per-company prediction deadlines and cohort/global-freeze ordering qualification, without enumerating future cases.",
+      "prohibited_shortcuts": [
+        "Rename development reference VALIDATED_EXTERNAL",
+        "Use E5 outcomes to fit the reference"
+      ],
+      "scope": "PROTOCOL_FREEZE",
+      "status": "OPEN",
+      "unresolved_decision": "Complete E5-compatible reference, extraction and prospective timing contracts."
+    },
+    {
+      "allowed_next_actions": [
+        "Recover exact input",
+        "Supply independently verifiable containment proof",
+        "Otherwise block cohort freeze"
+      ],
+      "config_paths": [],
+      "confirmatory_risk": "Choosing or relabelling a scientific rule to obtain readiness would invalidate attribution or utility claims.",
+      "evidence_insufficient_because": "The exact previous_270 input is absent. The 2000-company development exclusion is available but no proof shows it contains the missing 270.",
+      "id": "E5-C01",
+      "missing_information": "Exact original list with pinned hash/provenance, or a proved immutable containing superset; complete qualification/validation exclusions.",
+      "prohibited_shortcuts": [
+        "Invent previous_270.json",
+        "Approximate historical CIKs and call them exact"
+      ],
+      "scope": "COHORT_FREEZE",
+      "status": "OPEN",
+      "unresolved_decision": "Prove prior-company exclusion including previous_270."
+    },
+    {
+      "allowed_next_actions": [
+        "Wait until required governance approvals and data windows exist"
+      ],
+      "config_paths": [],
+      "confirmatory_risk": "Choosing or relabelling a scientific rule to obtain readiness would invalidate attribution or utility claims.",
+      "evidence_insufficient_because": "These artifacts must not exist during this task. Their absence is intentional.",
+      "id": "E5-F01",
+      "missing_information": "Later approved stage execution and independently controlled outcome mounts.",
+      "prohibited_shortcuts": [
+        "Enumerate a future cohort now",
+        "Manufacture prospective outcomes"
+      ],
+      "scope": "FUTURE_DATA",
+      "status": "OPEN",
+      "unresolved_decision": "Obtain future cohort, immutable prediction chain and later blinded outcomes through governed stages."
+    }
+  ],
+  "critical_assertions": {
+    "CALIBRATION": "UNCALIBRATED",
+    "COHORT": "NOT_ENUMERATED",
+    "E5 VALIDATION": "NOT_ESTABLISHED",
+    "OUTCOMES": "NOT_ACCESSED",
+    "PREDICTIONS": "NOT_GENERATED",
+    "PROTOCOL FREEZE": "NOT_EXECUTED"
+  },
+  "current_config_sha256": "62a28c3e074da5cb75ca7b5b62655e9cca9d9b9f138f6188ae660858cd666ce0",
+  "current_protocol_sha256": "d7bb91b52ad138f637346938345ca83e85f22b70b3fc74ff25c1fac865f9eec1",
+  "endpoint": {
+    "anchor": "FILING_ACCEPTANCE_TIMESTAMP_UTC",
+    "e4_fixed_archive_wrapper_not_adopted": true,
+    "e5_adapter_status": "BLOCKED_PENDING_EXTRACTION_QUALIFICATION",
+    "event": "AT_LEAST_TWO_VERIFIED_ADVERSE_CONDITIONS",
+    "horizon": "CALENDAR_12_MONTHS_USING_ADD_TWELVE_MONTHS",
+    "implementation": "backend/finrisk/sec_bulk.py::build_deterioration_labels",
+    "name": "deterministic_forward_outcome_rule_v1",
+    "nonverified_label": null,
+    "raw_status_mapping": {
+      "INSUFFICIENT_DATA": "INSUFFICIENT_DATA",
+      "REQUIRES_HUMAN_REVIEW": "REQUIRES_REVIEW",
+      "VERIFIED": "VERIFIED"
+    },
+    "review_rule": "BLINDED_TWO_INDEPENDENT_REVIEWERS_THIRD_ADJUDICATOR_LATER_STAGE_ONLY"
+  },
+  "final_sha_resolution": "git log -1 --format=%H -- research/e5/FINAL_READINESS_REPORT.md",
+  "pre_audit_implementation_sha": "6d47f31d8245cdd2e65f5efec5e83232d567b299",
+  "primary_inference": {
+    "bootstrap_seed": 20261019,
+    "confidence_interval": "BCA_COMPANY_PAIRED_20000_REPLICATES",
+    "coverage_condition": null,
+    "degenerate_inference": "NOT_ESTIMABLE_NO_PRIMARY_SUCCESS",
+    "estimator": "PAIRED_MEAN_ERROR_INDICATOR_DIFFERENCE",
+    "family_wise_alpha": 0.05,
+    "hypotheses": [
+      {
+        "comparison": "S4_vs_S1",
+        "estimand": "COMPARATOR_MINUS_S4_ERRONEOUS_AUTOMATED_AUTHORIZATION_RATE",
+        "id": "P1",
+        "status": "DEFINED_NOT_FROZEN"
+      },
+      {
+        "comparison": "S4_vs_S3",
+        "estimand": "COMPARATOR_MINUS_S4_ERRONEOUS_AUTOMATED_AUTHORIZATION_RATE",
+        "id": "P2",
+        "status": "DEFINED_NOT_FROZEN"
+      }
+    ],
+    "inference_contract": "research/e5/autonomy/INFERENCE_DESIGN.md",
+    "minimum_meaningful_effects": "TO_BE_FROZEN",
+    "multiplicity": "HOLM_STEP_DOWN_P1_P2",
+    "primary_pair_pvalue": "MAX_SAFETY_COVERAGE_NONINFERIORITY_AND_ABSOLUTE_COVERAGE_FLOOR_PVALUES",
+    "primary_success": "BOTH_HOLM_REJECTION_AND_MINIMUM_EFFECT_AND_COVERAGE_REQUIREMENTS",
+    "pvalue_method": "ONE_SIDED_NULL_CENTERED_PAIRED_BOOTSTRAP_PLUS_ONE",
+    "statistical_tests": "PAIRED_COMPANY_BOOTSTRAP_IUT_SAFETY_SUPERIORITY_AND_COVERAGE_NONINFERIORITY",
+    "status": "BLOCKED_PENDING_EFFECT_AND_COVERAGE_CONSTRAINTS"
+  },
+  "proposal_ablation_invariant": {
+    "adapter_test": "PASS_SYNTHETIC_CANONICAL_SHARED_PROPOSAL",
+    "qualified_actual_producer": "NOT_ESTABLISHED",
+    "scientific_isolation": "BLOCKED_E5_P02"
+  },
+  "readiness": {
+    "cohort_blockers": [
+      "E5-C01"
+    ],
+    "config_sha256": "62a28c3e074da5cb75ca7b5b62655e9cca9d9b9f138f6188ae660858cd666ce0",
+    "deferred_stage_fields": {
+      "cohort.company_disjointness": "COHORT_FREEZE_PROOF_NOT_PROTOCOL_CHOICE",
+      "cohort.previous_270_exclusion": "COHORT_FREEZE_INPUT_NOT_PROTOCOL_CHOICE",
+      "environment_variables.status": "EXECUTION_ENVIRONMENT_MANIFEST_NOT_CREATED"
+    },
+    "freeze_critical_unresolved_count": 11,
+    "future_data_blockers": [
+      "E5-F01"
+    ],
+    "protocol_blockers": [
+      "E5-P01",
+      "E5-P02",
+      "E5-P03",
+      "E5-P04"
+    ],
+    "protocol_sha256": "d7bb91b52ad138f637346938345ca83e85f22b70b3fc74ff25c1fac865f9eec1",
+    "status": "BLOCKED",
+    "unresolved_config_paths": [
+      "conceptual_arms.2.implementation_status",
+      "conceptual_arms.3.implementation_status",
+      "eligibility_design.sample_size",
+      "endpoint_contract.e5_adapter_status",
+      "freeze_prerequisites.eligibility_and_timing_logic",
+      "freeze_prerequisites.minimum_effects_and_thresholds",
+      "freeze_prerequisites.reference_distribution_design",
+      "primary_family.coverage_condition",
+      "primary_family.minimum_meaningful_effects",
+      "primary_family.status",
+      "reference_distribution.freeze_status"
+    ]
+  },
+  "resolved": {
+    "S0": "Exact historical fitted artifact/schema/preprocessor/model/generation environment binding, no refit",
+    "S1": "Adopt existing prespecified 0.35/0.65 review band without threshold search",
+    "calibration": "E5 UNCALIBRATED, no probability interpretation",
+    "endpoint": "deterministic_forward_outcome_rule_v1 with explicit status mapping and calendar-12-month anchor; prospective adapter not qualified",
+    "governance": "Constitution, typed blockers, state ceiling, immutable stage chain, source identities, prospective guards and exposure-classified amendments",
+    "planning": "144 analytic paired-incidence sensitivity scenarios, no selected effect or final N",
+    "policy_certificate": "Released policy version/hash and v0.4 certificate schema/verifiers bound",
+    "primary_family": "P1 S4-vs-S1 and P2 S4-vs-S3; paired error incidence denominator defined; alpha=.05 and Holm; conditional inference blueprint",
+    "qualification_TEVV": "Outcome-blind selection/qualification and separate future robustness contracts prepared, not executed"
+  },
+  "schema_version": 1,
+  "starting_repository_state": {
+    "branch": "E5-experiment",
+    "clean": true,
+    "config_sha256": "e4745609c0425d575b1b359beb538f95fc32d9bcd2658cacdb8f5719081a285e",
+    "harness_sha256": "949b78927fc4a370e675e37854536e10314cd30d6147a6e292171c0d4231596e",
+    "protocol_sha256": "b45418774786f4cdfd9f56a0cab157f33375483a46d88e82a6255e4f0d30145a",
+    "python": "3.12.14",
+    "requirements_lock_sha256": "a73ed331f9bb9c4c469f3bd7ae12cff80185315fc0e717c8bbca8817c7b22046",
+    "same_as_main_at_start": true,
+    "sha": "6a6f2053dd168d74aa97533ad901af47a7a5023a"
+  },
+  "status": "BLOCKED",
+  "test_evidence": {
+    "authoritative_contract": {
+      "checks": 60,
+      "command": "python research/e5/validate_study_contract.py",
+      "result": "PASS"
+    },
+    "autopilot": {
+      "command": "python research/e5/autonomy/e5_autopilot.py --check",
+      "meaning": "governance integrity only",
+      "result": "PASS"
+    },
+    "candidate_and_historical_identities": {
+      "command": "python research/e5/autonomy/verify_frozen_identity.py",
+      "result": "PASS"
+    },
+    "diff": {
+      "command": "git diff --check",
+      "result": "PASS"
+    },
+    "freeze_chain": {
+      "command": "python research/e5/harness/verify_e5.py",
+      "meaning": "no stage is frozen",
+      "result": "PASS"
+    },
+    "full_product_release_gate": {
+      "reason": "contains historical diagnostic execution; not needed to modify governed design, immutable product/research checks used instead",
+      "result": "NOT_RUN"
+    },
+    "historical_e4": {
+      "command": "python scripts/verify_e4_public_artifacts.py",
+      "result": "PASS"
+    },
+    "historical_preflight": {
+      "command": "python scripts/e5_preflight.py --check",
+      "meaning": "unchanged historical preflight, not new scientific authority",
+      "result": "PASS"
+    },
+    "links": {
+      "command": "python scripts/check_markdown_links.py",
+      "result": "PASS"
+    },
+    "local_python311": {
+      "reason": "no Python 3.11 interpreter available; remote matrix configured",
+      "result": "NOT_RUN"
+    },
+    "pip_check": {
+      "command": "python -m pip check",
+      "result": "PASS"
+    },
+    "remote_ci": {
+      "meaning": "inspect exact final commit after push; no remote success pre-attested",
+      "result": "NOT_VERIFIED_BEFORE_FINAL_PUSH"
+    },
+    "require_ready": {
+      "command": "python research/e5/autonomy/verify_state.py --require-ready",
+      "exit_code": 2,
+      "result": "FAIL_AS_REQUIRED"
+    },
+    "ruff": {
+      "command": "ruff check backend tests scripts research",
+      "result": "PASS"
+    },
+    "state": {
+      "command": "python research/e5/autonomy/verify_state.py",
+      "readiness": "BLOCKED",
+      "result": "PASS"
+    },
+    "targeted_and_full_relevant_suites": {
+      "command": "python -m pytest -o addopts= -q tests/test_e5*.py tests/test_assurance*.py tests/test_certificate_persistence_binding.py::test_memory_rejects_sibling_certificate_under_another_id tests/test_release_ci_admission.py tests/test_candidate_image_metadata.py tests/test_trivy_report_verifier.py tests/test_v041_release_research.py",
+      "python": "3.12.14",
+      "result": "PASS",
+      "skipped": 0,
+      "tests": 263
+    },
+    "v042_release_metadata": {
+      "command": "python -c \"from scripts.verify_v042 import verify_release_metadata; verify_release_metadata()\"",
+      "result": "PASS"
+    },
+    "v042_runtime_identity": {
+      "command": "python -m scripts.generate_v042_runtime_identities --check",
+      "result": "PASS"
+    },
+    "workflow": {
+      "meaning": "YAML syntax, two-Python matrix, read-only permissions, full action SHA pins",
+      "result": "PASS_STATIC_ONLY"
+    }
+  },
+  "validated_code_sha256": {
+    "research/e5/autonomy/candidate_arms.py": "f01fdfc685b77c669e450f9382ab18067061526e692eedb5b40c2173c86fe27b",
+    "research/e5/autonomy/e5_autopilot.py": "a39f6d6003af2268e97faba64b0dd7ceb6128cff8c646acbe1547b029e28217b",
+    "research/e5/autonomy/governance.py": "b469cb353b2dd485636cde45f66853c92d2067a30dd00241641672aee40f1c55",
+    "research/e5/autonomy/power_design.py": "697abc3ced9d316fd3bc517d6ed5a619b1bdc28a82c89863a9b502086e465d5a",
+    "research/e5/autonomy/resolve_protocol.py": "6cbd6482aee0ed35bcf6f32799f0f169de6ba8e924d8fb193a58bb9175d017c8",
+    "research/e5/autonomy/verify_frozen_identity.py": "4c9563d8599288c09e652d99020f149e0fc4cdece70bd88a190e5a51ad606308",
+    "research/e5/autonomy/verify_state.py": "f2f28d4bb65d1b466fbd060fb3c26997085bb213c0f47cea10f50111440d69bb",
+    "research/e5/harness/e5_harness.py": "ccfde2e2088f9d6e7f8dcd1208b5c78645abe6b3525dc6926930b507925f999b",
+    "research/e5/validate_study_contract.py": "a242bab2d323829d3db8bd64d37e7c7ad07db779e7dbefa907d649b30949242e"
+  }
+}
