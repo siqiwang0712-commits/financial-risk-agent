@@ -1,5 +1,16 @@
 # Limitations
 
+## Current v0.4.2 software boundary
+
+The Security & Reliability Patch strengthens evidence/authorization integrity; it
+does not establish financial truth or external validation. Prompt injection remains
+possible, certificate hashes are integrity checks rather than issuer authentication,
+and worker isolation is not a native-code sandbox. Resource limits also depend on
+deployment configuration. Dev-only `braces` and unfixed API base-image advisories
+remain documented in the [closeout audit](../docs/RELEASE_AUDIT_v0.4.2.md).
+Existing v0.4.2 OOF diagnostics are design-exposed retrospective development; mock
+Agent repetition is synthetic engineering only. E5 is `BLOCKED / DRAFT_NOT_FROZEN`.
+
 ## v0.4 Assurance limitations
 
 The Assurance Runtime has completed its v0.4 internal development validation, but this does not establish

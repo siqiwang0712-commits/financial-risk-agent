@@ -152,7 +152,7 @@ def test_immutable_decision_bundle_and_agent_integration():
     source = {"metrics": {"cash": 1}}
     bundle = build_decision_bundle(
         "org", "entity", {"10-K": "abc"}, {"cash": 1},
-        {"final_decision": state.decision}, {"score": 50}, [], source, [],
+        {"final_decision": state.decision}, {"score": 50}, state.decision_trace["paths"], source, [],
         {"rules": "v1", "calibration": "none"}, state.decision,
         proposed_decision=state.proposed_decision,
         assurance=state.assurance,
@@ -161,6 +161,8 @@ def test_immutable_decision_bundle_and_agent_integration():
     source["metrics"]["cash"] = 999
     assert bundle.calculations["metrics"]["cash"] == 1
     assert verify_decision_bundle(bundle, agent.pipeline.assurance.policy)
+    missing_evidence = bundle.__class__(**{**bundle.to_dict(), "evidence_paths": ()})
+    assert not verify_decision_bundle(missing_evidence, agent.pipeline.assurance.policy)
     altered = bundle.__class__(**{**bundle.to_dict(), "final_decision": "PASS"})
     assert not verify_decision_bundle(altered, agent.pipeline.assurance.policy)
     assert state.decision_bundle["bundle_hash"]

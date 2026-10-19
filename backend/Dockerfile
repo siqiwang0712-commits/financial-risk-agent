@@ -27,7 +27,9 @@ COPY pyproject.toml requirements.lock ./
 COPY backend ./backend
 COPY rules ./rules
 COPY config ./config
-RUN python -m venv /opt/venv \
+RUN --mount=type=secret,id=finrisk_ca_bundle \
+    if [ -f /run/secrets/finrisk_ca_bundle ]; then export PIP_CERT=/run/secrets/finrisk_ca_bundle; fi; \
+    python -m venv /opt/venv \
     && /opt/venv/bin/python -m pip install --no-cache-dir pip==26.2.0 \
     && /opt/venv/bin/python -m pip install --no-cache-dir -c requirements.lock ".[postgres]"
 
@@ -37,7 +39,7 @@ RUN python -m venv /opt/venv \
 # *constraint* file here, so the dev extra is never installed).
 # ---------------------------------------------------------------------------
 FROM ${PYTHON_BASE} AS runtime
-ARG OCI_VERSION=0.4.1
+ARG OCI_VERSION=0.4.2
 ARG OCI_REVISION=unknown
 ARG OCI_CREATED=1970-01-01T00:00:00Z
 LABEL org.opencontainers.image.title="FinRisk API" \
@@ -78,16 +80,9 @@ ENV PYTHONPATH=/app/backend \
 # takes `/opt/venv` and nothing else).
 RUN apt-get update \
     && apt-get install -y --no-install-recommends --only-upgrade libpcre2-8-0 \
+    && dpkg --compare-versions "$(dpkg-query -W -f='${Version}' libpcre2-8-0)" ge '10.46-1~deb13u3' \
     && rm -rf /var/lib/apt/lists/*
 COPY --from=builder /opt/venv /opt/venv
-# The current 3.12-slim manifest still carries libpcre2-8-0 deb13u2 even though
-# Debian has published deb13u3 for CVE-2026-103111. Install that fixed revision
-# explicitly so the release image is reproducible and the security update cannot
-# be lost when an upstream tag is rebuilt.
-RUN apt-get update \
-    && apt-get install --no-install-recommends --only-upgrade -y \
-       libpcre2-8-0=10.46-1~deb13u3 \
-    && rm -rf /var/lib/apt/lists/*
 # Harden the runtime: `pip` is build tooling, and the copy it ships also carries its
 # own vendored `msgpack` (GHSA-6v7p-g79w-8964) and `setuptools` (CVE-2025-47273) —
 # two HIGH advisories that Trivy reports against this image and that the application
@@ -108,6 +103,16 @@ COPY migrations ./migrations
 COPY scripts/validate_postgres_migration.py ./scripts/validate_postgres_migration.py
 RUN addgroup --system finrisk && adduser --system --ingroup finrisk finrisk \
     && chown -R finrisk:finrisk /app
+# Document analysis never mounts filesystems or changes Unix identities. Remove
+# the optional mount package without autoremove/essential-package overrides,
+# then remove every inherited SUID/SGID bit from the application runtime image.
+# Shared/essential base packages remain recorded and scanned, even if their CVE
+# is reported against a source package whose vulnerable utility is absent.
+RUN apt-get purge -y mount \
+    && find / -xdev -type f -perm /6000 -exec chmod a-s {} + \
+    && test ! -e /usr/bin/mount && test ! -e /usr/bin/umount \
+    && find / -xdev -type f -perm /6000 -print -quit > /tmp/finrisk-privilege-check \
+    && test ! -s /tmp/finrisk-privilege-check && rm /tmp/finrisk-privilege-check
 USER finrisk
 EXPOSE 8000
 CMD ["uvicorn", "finrisk.api:app", "--host", "0.0.0.0", "--port", "8000"]

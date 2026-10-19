@@ -53,6 +53,7 @@ from .enterprise.security import (
 from .pipeline import FinRiskPipeline
 from .process_isolation import WorkerTimeoutError, run_spawned_worker
 from .public_pilot import PublicPilotUnavailable, public_pilot_payload
+from .request_boundary import RequestBodyBoundary
 from .runtime import build_runtime_components, document_limits
 from .secret_files import env_or_file as _env_or_file
 from .upload_boundary import UPLOAD_PRINCIPAL, UploadBoundary
@@ -237,6 +238,7 @@ if FastAPI:
     # Keep the upload boundary inside CORS/correlation handling, but outside
     # routing (multipart parsing). The callback is resolved when requests arrive.
     app.add_middleware(UploadBoundary, authenticate=lambda key: authenticate_api_key(key))
+    app.add_middleware(RequestBodyBoundary)
     app.add_middleware(
         CORSMiddleware,
         allow_origins=cors_origins,
@@ -686,8 +688,8 @@ if FastAPI:
 
     @app.post("/api/v1/documents/analyze")
     async def analyze_document(
-        company: Annotated[str, Form()],
-        fiscal_year: Annotated[int, Form()],
+        company: Annotated[str, Form(min_length=1, max_length=300)],
+        fiscal_year: Annotated[int, Form(ge=1900, le=2100)],
         file: Annotated[UploadFile, File()],
         entity_id: Annotated[str | None, Form()] = None,
         actor: Principal = protected,
@@ -698,6 +700,8 @@ if FastAPI:
         except RuntimeError as exc:
             structured_event(api_logger, "document.configuration_invalid")
             raise HTTPException(503, "document analysis is not configured safely") from exc
+        if file.filename and len(file.filename) > 500:
+            raise HTTPException(422, "document name exceeds length limit")
         data = await file.read(max_bytes + 1)
         if len(data) > max_bytes:
             raise HTTPException(413, "PDF upload-size limit exceeded")

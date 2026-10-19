@@ -1,0 +1,599 @@
+{
+  "deferred": [
+    {
+      "id": "ASSURANCE_ABLATION",
+      "reason": "Historical OOF rows lack Agent evidence, fragility and Assurance states; no intermediate arms fabricated.",
+      "status": "NOT_ESTIMABLE"
+    },
+    {
+      "id": "SHIFT_SUBGROUP_REFIT",
+      "reason": "Existing diagnostics preserved; further feature reconstruction/refitting is outside the bounded closeout.",
+      "status": "DEFERRED_NON_BLOCKING"
+    }
+  ],
+  "experiments": [
+    {
+      "affects_production": false,
+      "calibration_status": "UNCALIBRATED",
+      "code_version_sha256": "dd7d17881cd7fc60980c4721bb46765f2d836b1ee9939b765bd0d0d61e730225",
+      "cohort_identity": "75dc947040908c82018436107a74960b05eaf3978c014c60d4ddd8e4b8ec3706",
+      "configuration": {
+        "candidate": "histogram_gradient_boosting__VO",
+        "cohort_sha256": "75dc947040908c82018436107a74960b05eaf3978c014c60d4ddd8e4b8ec3706",
+        "compute_budget": "CPU only, <=5 minutes; no refitting; 675 OOF rows, five existing folds, six mock Agent calls",
+        "dataset_id": "e4s-replication-verified-development-v1",
+        "experiment_version": "v0.4.2-development-experiments",
+        "input_hash_canonicalization": "UTF-8 bytes with CRLF normalized to LF; original files never rewritten",
+        "inputs": {
+          "examples/synthetic_company.json": "abc71e315f5e95b4d840296f97e9156276aac1c152cb86b3583ff083019518da",
+          "research/strong_tabular_reference/artifacts/artifact_manifest.json": "df6ddd6403599391b681971d1a9241e98ea9dda6b3f9c0a65fee7b4dbc9d9e6d",
+          "research/strong_tabular_reference/artifacts/development_companies_675.json": "75dc947040908c82018436107a74960b05eaf3978c014c60d4ddd8e4b8ec3706",
+          "research/strong_tabular_reference/artifacts/fold_assignments.json": "fc981b826e33af08c08d00666aa8d5c9e3828d0a75e76f0e8de552491be9fa22",
+          "research/strong_tabular_reference/artifacts/oof_predictions.json": "e055985e62819743a7b69c25e087e01e5c00cddce09385b5bc83552ec3f9758c",
+          "research/strong_tabular_reference/development_data_manifest.json": "0d040512a7f351eef4a3db83fda2254c19a200b8cb76556c7e2dbbde78fe3efc"
+        },
+        "metric_definitions": {
+          "abstain_rate": "0 by diagnostic construction, not an empirical Assurance result",
+          "budget": "floor(N*budget) highest scores, ties broken by observation_id; does not exceed budget",
+          "consistency": "fraction of equal unordered run pairs; evidence mean pairwise Jaccard, empty union NOT_ESTIMABLE",
+          "coverage": "issued / all observations; all equal confidence ties included at threshold",
+          "fold_error": "fixed-threshold OOF misclassification on each existing outer test fold, no seed sensitivity/refit claim",
+          "issued": "Diagnostic PASS/FLAG predictions at fixed 0.5; not Assurance authorization",
+          "precision": "events in reviewed rows / reviewed rows",
+          "recall": "events in reviewed rows / all historical events",
+          "review_rate": "1-coverage, a descriptive hypothetical review band",
+          "selective_error": "wrong issued predictions / issued; zero issued is NOT_ESTIMABLE, never correct abstention"
+        },
+        "minimum_n": 30,
+        "review_budgets": [
+          0.05,
+          0.1,
+          0.2
+        ],
+        "source_blob_sha256": {
+          "examples/synthetic_company.json": "abc71e315f5e95b4d840296f97e9156276aac1c152cb86b3583ff083019518da",
+          "research/strong_tabular_reference/artifacts/artifact_manifest.json": "df6ddd6403599391b681971d1a9241e98ea9dda6b3f9c0a65fee7b4dbc9d9e6d",
+          "research/strong_tabular_reference/artifacts/development_companies_675.json": "75dc947040908c82018436107a74960b05eaf3978c014c60d4ddd8e4b8ec3706",
+          "research/strong_tabular_reference/artifacts/fold_assignments.json": "fc981b826e33af08c08d00666aa8d5c9e3828d0a75e76f0e8de552491be9fa22",
+          "research/strong_tabular_reference/artifacts/oof_predictions.json": "e055985e62819743a7b69c25e087e01e5c00cddce09385b5bc83552ec3f9758c",
+          "research/strong_tabular_reference/development_data_manifest.json": "0d040512a7f351eef4a3db83fda2254c19a200b8cb76556c7e2dbbde78fe3efc"
+        },
+        "source_commit": "7e9bd827a638c2aa992de9e193e39b82e451616c",
+        "thresholds": [
+          0,
+          0.1,
+          0.2,
+          0.3,
+          0.4,
+          0.5
+        ],
+        "timestamp_utc": "2026-10-15T15:22:55.902215+00:00"
+      },
+      "dataset_identity": "e4s-replication-verified-development-v1",
+      "evidence_class": [
+        "RETROSPECTIVE_DEVELOPMENT",
+        "DESIGN_EXPOSED",
+        "POST_HOC_EXPLORATORY"
+      ],
+      "id": "V042-RC-01",
+      "random_seeds": "NONE_NO_REFITTING_OR_SAMPLING",
+      "results": [
+        {
+          "abstain_rate": 0,
+          "actual_authorization_rate": "NOT_ESTIMABLE",
+          "coverage": 1.0,
+          "errors": 128,
+          "issued": 675,
+          "n": 675,
+          "review_rate": 0.0,
+          "selective_error": 0.18962962962962962,
+          "threshold": 0
+        },
+        {
+          "abstain_rate": 0,
+          "actual_authorization_rate": "NOT_ESTIMABLE",
+          "coverage": 0.9007407407407407,
+          "errors": 93,
+          "issued": 608,
+          "n": 675,
+          "review_rate": 0.09925925925925927,
+          "selective_error": 0.15296052631578946,
+          "threshold": 0.1
+        },
+        {
+          "abstain_rate": 0,
+          "actual_authorization_rate": "NOT_ESTIMABLE",
+          "coverage": 0.7822222222222223,
+          "errors": 60,
+          "issued": 528,
+          "n": 675,
+          "review_rate": 0.21777777777777774,
+          "selective_error": 0.11363636363636363,
+          "threshold": 0.2
+        },
+        {
+          "abstain_rate": 0,
+          "actual_authorization_rate": "NOT_ESTIMABLE",
+          "coverage": 0.6725925925925926,
+          "errors": 40,
+          "issued": 454,
+          "n": 675,
+          "review_rate": 0.32740740740740737,
+          "selective_error": 0.0881057268722467,
+          "threshold": 0.3
+        },
+        {
+          "abstain_rate": 0,
+          "actual_authorization_rate": "NOT_ESTIMABLE",
+          "coverage": 0.45185185185185184,
+          "errors": 17,
+          "issued": 305,
+          "n": 675,
+          "review_rate": 0.5481481481481482,
+          "selective_error": 0.05573770491803279,
+          "threshold": 0.4
+        },
+        {
+          "abstain_rate": 0,
+          "actual_authorization_rate": "NOT_ESTIMABLE",
+          "coverage": 0.0,
+          "errors": 0,
+          "issued": 0,
+          "n": 675,
+          "review_rate": 1.0,
+          "selective_error": "NOT_ESTIMABLE",
+          "threshold": 0.5
+        }
+      ],
+      "runtime_identity_sha256": "276436304d21353e16af9d7c958f191984659e5c3250d808c955b81565bb8e7b",
+      "source_commit": "7e9bd827a638c2aa992de9e193e39b82e451616c",
+      "status": "COMPLETE",
+      "timestamp_utc": "2026-10-15T15:22:55.902215+00:00"
+    },
+    {
+      "affects_production": false,
+      "calibration_status": "UNCALIBRATED",
+      "code_version_sha256": "dd7d17881cd7fc60980c4721bb46765f2d836b1ee9939b765bd0d0d61e730225",
+      "cohort_identity": "75dc947040908c82018436107a74960b05eaf3978c014c60d4ddd8e4b8ec3706",
+      "configuration": {
+        "candidate": "histogram_gradient_boosting__VO",
+        "cohort_sha256": "75dc947040908c82018436107a74960b05eaf3978c014c60d4ddd8e4b8ec3706",
+        "compute_budget": "CPU only, <=5 minutes; no refitting; 675 OOF rows, five existing folds, six mock Agent calls",
+        "dataset_id": "e4s-replication-verified-development-v1",
+        "experiment_version": "v0.4.2-development-experiments",
+        "input_hash_canonicalization": "UTF-8 bytes with CRLF normalized to LF; original files never rewritten",
+        "inputs": {
+          "examples/synthetic_company.json": "abc71e315f5e95b4d840296f97e9156276aac1c152cb86b3583ff083019518da",
+          "research/strong_tabular_reference/artifacts/artifact_manifest.json": "df6ddd6403599391b681971d1a9241e98ea9dda6b3f9c0a65fee7b4dbc9d9e6d",
+          "research/strong_tabular_reference/artifacts/development_companies_675.json": "75dc947040908c82018436107a74960b05eaf3978c014c60d4ddd8e4b8ec3706",
+          "research/strong_tabular_reference/artifacts/fold_assignments.json": "fc981b826e33af08c08d00666aa8d5c9e3828d0a75e76f0e8de552491be9fa22",
+          "research/strong_tabular_reference/artifacts/oof_predictions.json": "e055985e62819743a7b69c25e087e01e5c00cddce09385b5bc83552ec3f9758c",
+          "research/strong_tabular_reference/development_data_manifest.json": "0d040512a7f351eef4a3db83fda2254c19a200b8cb76556c7e2dbbde78fe3efc"
+        },
+        "metric_definitions": {
+          "abstain_rate": "0 by diagnostic construction, not an empirical Assurance result",
+          "budget": "floor(N*budget) highest scores, ties broken by observation_id; does not exceed budget",
+          "consistency": "fraction of equal unordered run pairs; evidence mean pairwise Jaccard, empty union NOT_ESTIMABLE",
+          "coverage": "issued / all observations; all equal confidence ties included at threshold",
+          "fold_error": "fixed-threshold OOF misclassification on each existing outer test fold, no seed sensitivity/refit claim",
+          "issued": "Diagnostic PASS/FLAG predictions at fixed 0.5; not Assurance authorization",
+          "precision": "events in reviewed rows / reviewed rows",
+          "recall": "events in reviewed rows / all historical events",
+          "review_rate": "1-coverage, a descriptive hypothetical review band",
+          "selective_error": "wrong issued predictions / issued; zero issued is NOT_ESTIMABLE, never correct abstention"
+        },
+        "minimum_n": 30,
+        "review_budgets": [
+          0.05,
+          0.1,
+          0.2
+        ],
+        "source_blob_sha256": {
+          "examples/synthetic_company.json": "abc71e315f5e95b4d840296f97e9156276aac1c152cb86b3583ff083019518da",
+          "research/strong_tabular_reference/artifacts/artifact_manifest.json": "df6ddd6403599391b681971d1a9241e98ea9dda6b3f9c0a65fee7b4dbc9d9e6d",
+          "research/strong_tabular_reference/artifacts/development_companies_675.json": "75dc947040908c82018436107a74960b05eaf3978c014c60d4ddd8e4b8ec3706",
+          "research/strong_tabular_reference/artifacts/fold_assignments.json": "fc981b826e33af08c08d00666aa8d5c9e3828d0a75e76f0e8de552491be9fa22",
+          "research/strong_tabular_reference/artifacts/oof_predictions.json": "e055985e62819743a7b69c25e087e01e5c00cddce09385b5bc83552ec3f9758c",
+          "research/strong_tabular_reference/development_data_manifest.json": "0d040512a7f351eef4a3db83fda2254c19a200b8cb76556c7e2dbbde78fe3efc"
+        },
+        "source_commit": "7e9bd827a638c2aa992de9e193e39b82e451616c",
+        "thresholds": [
+          0,
+          0.1,
+          0.2,
+          0.3,
+          0.4,
+          0.5
+        ],
+        "timestamp_utc": "2026-10-15T15:22:55.902215+00:00"
+      },
+      "dataset_identity": "e4s-replication-verified-development-v1",
+      "evidence_class": [
+        "RETROSPECTIVE_DEVELOPMENT",
+        "DESIGN_EXPOSED",
+        "POST_HOC_EXPLORATORY"
+      ],
+      "id": "V042-BUDGET-01",
+      "random_seeds": "NONE_NO_REFITTING_OR_SAMPLING",
+      "results": [
+        {
+          "actual_budget_fraction": 0.04888888888888889,
+          "budget": 0.05,
+          "events_captured": 33,
+          "events_per_100_reviews": 100.0,
+          "n": 675,
+          "precision": 1.0,
+          "recall": 0.14042553191489363,
+          "reviews": 33
+        },
+        {
+          "actual_budget_fraction": 0.09925925925925926,
+          "budget": 0.1,
+          "events_captured": 65,
+          "events_per_100_reviews": 97.01492537313433,
+          "n": 675,
+          "precision": 0.9701492537313433,
+          "recall": 0.2765957446808511,
+          "reviews": 67
+        },
+        {
+          "actual_budget_fraction": 0.2,
+          "budget": 0.2,
+          "events_captured": 120,
+          "events_per_100_reviews": 88.88888888888889,
+          "n": 675,
+          "precision": 0.8888888888888888,
+          "recall": 0.5106382978723404,
+          "reviews": 135
+        }
+      ],
+      "runtime_identity_sha256": "276436304d21353e16af9d7c958f191984659e5c3250d808c955b81565bb8e7b",
+      "source_commit": "7e9bd827a638c2aa992de9e193e39b82e451616c",
+      "status": "COMPLETE",
+      "timestamp_utc": "2026-10-15T15:22:55.902215+00:00"
+    },
+    {
+      "affects_production": false,
+      "calibration_status": "UNCALIBRATED",
+      "code_version_sha256": "dd7d17881cd7fc60980c4721bb46765f2d836b1ee9939b765bd0d0d61e730225",
+      "cohort_identity": "75dc947040908c82018436107a74960b05eaf3978c014c60d4ddd8e4b8ec3706",
+      "configuration": {
+        "candidate": "histogram_gradient_boosting__VO",
+        "cohort_sha256": "75dc947040908c82018436107a74960b05eaf3978c014c60d4ddd8e4b8ec3706",
+        "compute_budget": "CPU only, <=5 minutes; no refitting; 675 OOF rows, five existing folds, six mock Agent calls",
+        "dataset_id": "e4s-replication-verified-development-v1",
+        "experiment_version": "v0.4.2-development-experiments",
+        "input_hash_canonicalization": "UTF-8 bytes with CRLF normalized to LF; original files never rewritten",
+        "inputs": {
+          "examples/synthetic_company.json": "abc71e315f5e95b4d840296f97e9156276aac1c152cb86b3583ff083019518da",
+          "research/strong_tabular_reference/artifacts/artifact_manifest.json": "df6ddd6403599391b681971d1a9241e98ea9dda6b3f9c0a65fee7b4dbc9d9e6d",
+          "research/strong_tabular_reference/artifacts/development_companies_675.json": "75dc947040908c82018436107a74960b05eaf3978c014c60d4ddd8e4b8ec3706",
+          "research/strong_tabular_reference/artifacts/fold_assignments.json": "fc981b826e33af08c08d00666aa8d5c9e3828d0a75e76f0e8de552491be9fa22",
+          "research/strong_tabular_reference/artifacts/oof_predictions.json": "e055985e62819743a7b69c25e087e01e5c00cddce09385b5bc83552ec3f9758c",
+          "research/strong_tabular_reference/development_data_manifest.json": "0d040512a7f351eef4a3db83fda2254c19a200b8cb76556c7e2dbbde78fe3efc"
+        },
+        "metric_definitions": {
+          "abstain_rate": "0 by diagnostic construction, not an empirical Assurance result",
+          "budget": "floor(N*budget) highest scores, ties broken by observation_id; does not exceed budget",
+          "consistency": "fraction of equal unordered run pairs; evidence mean pairwise Jaccard, empty union NOT_ESTIMABLE",
+          "coverage": "issued / all observations; all equal confidence ties included at threshold",
+          "fold_error": "fixed-threshold OOF misclassification on each existing outer test fold, no seed sensitivity/refit claim",
+          "issued": "Diagnostic PASS/FLAG predictions at fixed 0.5; not Assurance authorization",
+          "precision": "events in reviewed rows / reviewed rows",
+          "recall": "events in reviewed rows / all historical events",
+          "review_rate": "1-coverage, a descriptive hypothetical review band",
+          "selective_error": "wrong issued predictions / issued; zero issued is NOT_ESTIMABLE, never correct abstention"
+        },
+        "minimum_n": 30,
+        "review_budgets": [
+          0.05,
+          0.1,
+          0.2
+        ],
+        "source_blob_sha256": {
+          "examples/synthetic_company.json": "abc71e315f5e95b4d840296f97e9156276aac1c152cb86b3583ff083019518da",
+          "research/strong_tabular_reference/artifacts/artifact_manifest.json": "df6ddd6403599391b681971d1a9241e98ea9dda6b3f9c0a65fee7b4dbc9d9e6d",
+          "research/strong_tabular_reference/artifacts/development_companies_675.json": "75dc947040908c82018436107a74960b05eaf3978c014c60d4ddd8e4b8ec3706",
+          "research/strong_tabular_reference/artifacts/fold_assignments.json": "fc981b826e33af08c08d00666aa8d5c9e3828d0a75e76f0e8de552491be9fa22",
+          "research/strong_tabular_reference/artifacts/oof_predictions.json": "e055985e62819743a7b69c25e087e01e5c00cddce09385b5bc83552ec3f9758c",
+          "research/strong_tabular_reference/development_data_manifest.json": "0d040512a7f351eef4a3db83fda2254c19a200b8cb76556c7e2dbbde78fe3efc"
+        },
+        "source_commit": "7e9bd827a638c2aa992de9e193e39b82e451616c",
+        "thresholds": [
+          0,
+          0.1,
+          0.2,
+          0.3,
+          0.4,
+          0.5
+        ],
+        "timestamp_utc": "2026-10-15T15:22:55.902215+00:00"
+      },
+      "dataset_identity": "e4s-replication-verified-development-v1",
+      "evidence_class": [
+        "RETROSPECTIVE_DEVELOPMENT",
+        "DESIGN_EXPOSED",
+        "POST_HOC_EXPLORATORY"
+      ],
+      "id": "V042-FOLD-01",
+      "random_seeds": "NONE_NO_REFITTING_OR_SAMPLING",
+      "results": [
+        {
+          "abstain_rate": 0,
+          "actual_authorization_rate": "NOT_ESTIMABLE",
+          "coverage": 1.0,
+          "errors": 30,
+          "fold": 0,
+          "issued": 135,
+          "n": 135,
+          "review_rate": 0.0,
+          "selective_error": 0.2222222222222222,
+          "status": "COMPLETE",
+          "threshold": 0
+        },
+        {
+          "abstain_rate": 0,
+          "actual_authorization_rate": "NOT_ESTIMABLE",
+          "coverage": 1.0,
+          "errors": 22,
+          "fold": 1,
+          "issued": 135,
+          "n": 135,
+          "review_rate": 0.0,
+          "selective_error": 0.16296296296296298,
+          "status": "COMPLETE",
+          "threshold": 0
+        },
+        {
+          "abstain_rate": 0,
+          "actual_authorization_rate": "NOT_ESTIMABLE",
+          "coverage": 1.0,
+          "errors": 28,
+          "fold": 2,
+          "issued": 135,
+          "n": 135,
+          "review_rate": 0.0,
+          "selective_error": 0.2074074074074074,
+          "status": "COMPLETE",
+          "threshold": 0
+        },
+        {
+          "abstain_rate": 0,
+          "actual_authorization_rate": "NOT_ESTIMABLE",
+          "coverage": 1.0,
+          "errors": 25,
+          "fold": 3,
+          "issued": 135,
+          "n": 135,
+          "review_rate": 0.0,
+          "selective_error": 0.18518518518518517,
+          "status": "COMPLETE",
+          "threshold": 0
+        },
+        {
+          "abstain_rate": 0,
+          "actual_authorization_rate": "NOT_ESTIMABLE",
+          "coverage": 1.0,
+          "errors": 23,
+          "fold": 4,
+          "issued": 135,
+          "n": 135,
+          "review_rate": 0.0,
+          "selective_error": 0.17037037037037037,
+          "status": "COMPLETE",
+          "threshold": 0
+        }
+      ],
+      "runtime_identity_sha256": "276436304d21353e16af9d7c958f191984659e5c3250d808c955b81565bb8e7b",
+      "source_commit": "7e9bd827a638c2aa992de9e193e39b82e451616c",
+      "status": "COMPLETE",
+      "timestamp_utc": "2026-10-15T15:22:55.902215+00:00"
+    },
+    {
+      "affects_production": false,
+      "calibration_status": "UNCALIBRATED",
+      "cases": [
+        {
+          "case": "synthetic_with_pages",
+          "k": 3,
+          "metrics": {
+            "automation_consistency": 1.0,
+            "evidence_jaccard": 1.0,
+            "final_consistency": 1.0,
+            "proposal_consistency": 1.0,
+            "reasons_consistency": 1.0,
+            "score_consistency": 1.0
+          },
+          "runs": [
+            {
+              "automation": false,
+              "evidence": [
+                "evidence_58466f281bbf3b983dae"
+              ],
+              "final": "ABSTAIN",
+              "proposal": "ABSTAIN",
+              "reasons": [
+                "INSUFFICIENT_VERIFIED_EVIDENCE",
+                "DISTRIBUTION_VALIDITY_UNKNOWN",
+                "RUNTIME_FAILURE_REQUIRES_REVIEW",
+                "ASSURANCE_POLICY_UNCALIBRATED",
+                "PROPOSED_DECISION_WITHHELD"
+              ],
+              "score": 95.0
+            },
+            {
+              "automation": false,
+              "evidence": [
+                "evidence_58466f281bbf3b983dae"
+              ],
+              "final": "ABSTAIN",
+              "proposal": "ABSTAIN",
+              "reasons": [
+                "INSUFFICIENT_VERIFIED_EVIDENCE",
+                "DISTRIBUTION_VALIDITY_UNKNOWN",
+                "RUNTIME_FAILURE_REQUIRES_REVIEW",
+                "ASSURANCE_POLICY_UNCALIBRATED",
+                "PROPOSED_DECISION_WITHHELD"
+              ],
+              "score": 95.0
+            },
+            {
+              "automation": false,
+              "evidence": [
+                "evidence_58466f281bbf3b983dae"
+              ],
+              "final": "ABSTAIN",
+              "proposal": "ABSTAIN",
+              "reasons": [
+                "INSUFFICIENT_VERIFIED_EVIDENCE",
+                "DISTRIBUTION_VALIDITY_UNKNOWN",
+                "RUNTIME_FAILURE_REQUIRES_REVIEW",
+                "ASSURANCE_POLICY_UNCALIBRATED",
+                "PROPOSED_DECISION_WITHHELD"
+              ],
+              "score": 95.0
+            }
+          ]
+        },
+        {
+          "case": "synthetic_without_pages",
+          "k": 3,
+          "metrics": {
+            "automation_consistency": 1.0,
+            "evidence_jaccard": "NOT_ESTIMABLE",
+            "final_consistency": 1.0,
+            "proposal_consistency": 1.0,
+            "reasons_consistency": 1.0,
+            "score_consistency": 1.0
+          },
+          "runs": [
+            {
+              "automation": false,
+              "evidence": [],
+              "final": "ABSTAIN",
+              "proposal": "ABSTAIN",
+              "reasons": [
+                "INSUFFICIENT_VERIFIED_EVIDENCE",
+                "EVIDENCE_FRAGILITY_NOT_ESTIMABLE",
+                "DISTRIBUTION_VALIDITY_UNKNOWN",
+                "RUNTIME_FAILURE_REQUIRES_REVIEW",
+                "ASSURANCE_POLICY_UNCALIBRATED",
+                "PROPOSED_DECISION_WITHHELD"
+              ],
+              "score": 85.0
+            },
+            {
+              "automation": false,
+              "evidence": [],
+              "final": "ABSTAIN",
+              "proposal": "ABSTAIN",
+              "reasons": [
+                "INSUFFICIENT_VERIFIED_EVIDENCE",
+                "EVIDENCE_FRAGILITY_NOT_ESTIMABLE",
+                "DISTRIBUTION_VALIDITY_UNKNOWN",
+                "RUNTIME_FAILURE_REQUIRES_REVIEW",
+                "ASSURANCE_POLICY_UNCALIBRATED",
+                "PROPOSED_DECISION_WITHHELD"
+              ],
+              "score": 85.0
+            },
+            {
+              "automation": false,
+              "evidence": [],
+              "final": "ABSTAIN",
+              "proposal": "ABSTAIN",
+              "reasons": [
+                "INSUFFICIENT_VERIFIED_EVIDENCE",
+                "EVIDENCE_FRAGILITY_NOT_ESTIMABLE",
+                "DISTRIBUTION_VALIDITY_UNKNOWN",
+                "RUNTIME_FAILURE_REQUIRES_REVIEW",
+                "ASSURANCE_POLICY_UNCALIBRATED",
+                "PROPOSED_DECISION_WITHHELD"
+              ],
+              "score": 85.0
+            }
+          ]
+        }
+      ],
+      "code_version_sha256": "dd7d17881cd7fc60980c4721bb46765f2d836b1ee9939b765bd0d0d61e730225",
+      "cohort_identity": "abc71e315f5e95b4d840296f97e9156276aac1c152cb86b3583ff083019518da",
+      "configuration": {
+        "candidate": "histogram_gradient_boosting__VO",
+        "cohort_sha256": "75dc947040908c82018436107a74960b05eaf3978c014c60d4ddd8e4b8ec3706",
+        "compute_budget": "CPU only, <=5 minutes; no refitting; 675 OOF rows, five existing folds, six mock Agent calls",
+        "dataset_id": "e4s-replication-verified-development-v1",
+        "experiment_version": "v0.4.2-development-experiments",
+        "input_hash_canonicalization": "UTF-8 bytes with CRLF normalized to LF; original files never rewritten",
+        "inputs": {
+          "examples/synthetic_company.json": "abc71e315f5e95b4d840296f97e9156276aac1c152cb86b3583ff083019518da",
+          "research/strong_tabular_reference/artifacts/artifact_manifest.json": "df6ddd6403599391b681971d1a9241e98ea9dda6b3f9c0a65fee7b4dbc9d9e6d",
+          "research/strong_tabular_reference/artifacts/development_companies_675.json": "75dc947040908c82018436107a74960b05eaf3978c014c60d4ddd8e4b8ec3706",
+          "research/strong_tabular_reference/artifacts/fold_assignments.json": "fc981b826e33af08c08d00666aa8d5c9e3828d0a75e76f0e8de552491be9fa22",
+          "research/strong_tabular_reference/artifacts/oof_predictions.json": "e055985e62819743a7b69c25e087e01e5c00cddce09385b5bc83552ec3f9758c",
+          "research/strong_tabular_reference/development_data_manifest.json": "0d040512a7f351eef4a3db83fda2254c19a200b8cb76556c7e2dbbde78fe3efc"
+        },
+        "metric_definitions": {
+          "abstain_rate": "0 by diagnostic construction, not an empirical Assurance result",
+          "budget": "floor(N*budget) highest scores, ties broken by observation_id; does not exceed budget",
+          "consistency": "fraction of equal unordered run pairs; evidence mean pairwise Jaccard, empty union NOT_ESTIMABLE",
+          "coverage": "issued / all observations; all equal confidence ties included at threshold",
+          "fold_error": "fixed-threshold OOF misclassification on each existing outer test fold, no seed sensitivity/refit claim",
+          "issued": "Diagnostic PASS/FLAG predictions at fixed 0.5; not Assurance authorization",
+          "precision": "events in reviewed rows / reviewed rows",
+          "recall": "events in reviewed rows / all historical events",
+          "review_rate": "1-coverage, a descriptive hypothetical review band",
+          "selective_error": "wrong issued predictions / issued; zero issued is NOT_ESTIMABLE, never correct abstention"
+        },
+        "minimum_n": 30,
+        "review_budgets": [
+          0.05,
+          0.1,
+          0.2
+        ],
+        "source_blob_sha256": {
+          "examples/synthetic_company.json": "abc71e315f5e95b4d840296f97e9156276aac1c152cb86b3583ff083019518da",
+          "research/strong_tabular_reference/artifacts/artifact_manifest.json": "df6ddd6403599391b681971d1a9241e98ea9dda6b3f9c0a65fee7b4dbc9d9e6d",
+          "research/strong_tabular_reference/artifacts/development_companies_675.json": "75dc947040908c82018436107a74960b05eaf3978c014c60d4ddd8e4b8ec3706",
+          "research/strong_tabular_reference/artifacts/fold_assignments.json": "fc981b826e33af08c08d00666aa8d5c9e3828d0a75e76f0e8de552491be9fa22",
+          "research/strong_tabular_reference/artifacts/oof_predictions.json": "e055985e62819743a7b69c25e087e01e5c00cddce09385b5bc83552ec3f9758c",
+          "research/strong_tabular_reference/development_data_manifest.json": "0d040512a7f351eef4a3db83fda2254c19a200b8cb76556c7e2dbbde78fe3efc"
+        },
+        "source_commit": "7e9bd827a638c2aa992de9e193e39b82e451616c",
+        "thresholds": [
+          0,
+          0.1,
+          0.2,
+          0.3,
+          0.4,
+          0.5
+        ],
+        "timestamp_utc": "2026-10-15T15:22:55.902215+00:00"
+      },
+      "dataset_identity": "examples/synthetic_company.json",
+      "evidence_class": [
+        "SYNTHETIC_ENGINEERING_ONLY"
+      ],
+      "id": "V042-AGENT-01",
+      "instability_reduction": "NOT_ESTIMABLE_DETERMINISTIC_MOCK",
+      "random_seeds": "NONE_NO_REFITTING_OR_SAMPLING",
+      "real_run": "NOT_RUN_PROVIDER_UNAVAILABLE",
+      "runtime_identity_sha256": "276436304d21353e16af9d7c958f191984659e5c3250d808c955b81565bb8e7b",
+      "source_commit": "7e9bd827a638c2aa992de9e193e39b82e451616c",
+      "status": "MOCK_HARNESS_ONLY",
+      "timestamp_utc": "2026-10-15T15:22:55.902215+00:00"
+    }
+  ],
+  "metric_definitions": {
+    "abstain_rate": "0 by diagnostic construction, not an empirical Assurance result",
+    "budget": "floor(N*budget) highest scores, ties broken by observation_id; does not exceed budget",
+    "consistency": "fraction of equal unordered run pairs; evidence mean pairwise Jaccard, empty union NOT_ESTIMABLE",
+    "coverage": "issued / all observations; all equal confidence ties included at threshold",
+    "fold_error": "fixed-threshold OOF misclassification on each existing outer test fold, no seed sensitivity/refit claim",
+    "issued": "Diagnostic PASS/FLAG predictions at fixed 0.5; not Assurance authorization",
+    "precision": "events in reviewed rows / reviewed rows",
+    "recall": "events in reviewed rows / all historical events",
+    "review_rate": "1-coverage, a descriptive hypothetical review band",
+    "selective_error": "wrong issued predictions / issued; zero issued is NOT_ESTIMABLE, never correct abstention"
+  },
+  "schema_version": 1
+}

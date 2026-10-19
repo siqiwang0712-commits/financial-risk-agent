@@ -53,25 +53,25 @@ export default function Page() {
 
   return (
     <>
-      <AppHeader origin="offline-sample" runtime="v0.4.1-dev" />
+      <AppHeader origin="offline-sample" runtime="v0.4.2" />
       <main className="showcaseShell">
         <section className="showcaseHero" id="overview">
           <div className="heroCopy">
-            <p className="heroEyebrow"><span /> Assured selective financial intelligence</p>
+            <p className="heroEyebrow"><span /> Evidence-grounded analysis · decision assurance</p>
             <h2>
               Prediction proposes.{" "}
               <em>Assurance authorizes.</em>
             </h2>
             <p className="heroLead">
-              FinRisk separates financial-risk prediction from decision authorization. A final decision
-              is issued only after deterministic evidence, fragility and distribution-validity checks.
+              FinRisk combines corporate-filing analysis with decision assurance. Models, rules and Agent
+              propose; Assurance checks evidence, fragility, distribution validity and policy before authorizing a final decision.
             </p>
             <div className="heroRoute" aria-label="FinRisk input, process and output">
               <div><small>INPUT</small><span>Company filing</span></div>
               <i aria-hidden="true">→</i>
-              <div><small>PROCESS</small><span>Metrics · rules · evidence analysis</span></div>
+              <div><small>PROCESS</small><span>Analysis → proposal → Assurance</span></div>
               <i aria-hidden="true">→</i>
-              <div><small>OUTPUT</small><span>Final decision + certificate</span></div>
+              <div><small>OUTPUT</small><span>Authorized final + integrity record</span></div>
             </div>
             <div className="heroActions">
               <a className="primaryAction" href="#case">Explore the assessment</a>
@@ -179,7 +179,7 @@ export default function Page() {
           <div className="systemRule">
             <span>CORE CONTROL</span>
             <p>No verified evidence path → <b>REVIEW</b> or <b>ABSTAIN</b></p>
-            <code>evidence → fact → metric → rule/model → dimension → decision</code>
+            <code>evidence → analysis → proposal → Assurance → authorized final → certificate</code>
           </div>
         </section>
 
@@ -303,7 +303,7 @@ export default function Page() {
             <span>Evidence-grounded financial risk intelligence</span>
           </div>
           <p>
-            v0.4.1 development · Research prototype · Assurance policy is heuristic and UNCALIBRATED.<br />
+            v0.4.2 · Research prototype · Assurance policy is heuristic and UNCALIBRATED.<br />
             Not a bankruptcy probability, credit rating, investment recommendation or regulatory determination.
           </p>
         </footer>

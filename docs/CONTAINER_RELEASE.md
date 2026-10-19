@@ -8,6 +8,15 @@ Workflow: `.github/workflows/container-release.yml`
 Stack for end users: `docker-compose.release.yml`
 Stack used by the pipeline: `docker-compose.yml` + `docker-compose.prod.yml` + `docker-compose.candidate.yml`
 
+Current source release: **v0.4.2 Security & Reliability Patch — 2026-10-19**.
+This guide describes publication mechanics, not proof that publication occurred. The
+[closeout audit](RELEASE_AUDIT_v0.4.2.md) records successful ordinary CI and a separate
+`publish=false` candidate dry-run on `e41638d8`; publishing was skipped. Historical
+release/dry-run records below retain their original versions and identities. A later
+commit needs its own applicable verification; old image evidence does not attest a
+new frontend build. Known dev-only `braces` and unfixed API base-image advisories
+remain residuals; the unfiltered API image is not clean.
+
 ## Images
 
 | image | contents |
@@ -366,7 +375,7 @@ Workflow default is `contents: read`. Per job:
 
 ```bash
 # dry run — builds, verifies and scans, but creates no release tag
-gh workflow run container-release.yml --ref try-v0.4.1 -f version=v0.4.1 -f publish=false
+gh workflow run container-release.yml --ref try-v0.4.2 -f version=v0.4.2 -f publish=false
 
 # Human-authorized publication only after all gates; use the exact intended release ref.
 gh workflow run container-release.yml --ref <release-ref> -f version=vX.Y.Z -f publish=true

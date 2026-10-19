@@ -1,6 +1,7 @@
 # Capability Maturity Matrix
 
-Updated: 2026-10-05. v0.4.1 is released. `Production` means externally operated and
+Current surface: v0.4.2 Security & Reliability Patch, source release **2026-10-19**.
+Engineering evidence is recorded in the [closeout audit](RELEASE_AUDIT_v0.4.2.md). `Production` means externally operated and
 validated, not software release status; no row currently meets that standard.
 
 `Wired` asks a different question from the other columns: is this capability reachable
@@ -18,6 +19,7 @@ caller actually reaches, not that it is broken.
 | Traditional models | Yes | Yes | Yes | Pilot inputs incomplete | Formula tests | No |
 | 68-rule engine | Yes | Yes | Yes | Pilot | Not expert-validated | No |
 | Evidence verification/decision trace | Yes | Yes | Yes | Pilot | Partial | No |
+| Assurance material-path source binding and deduplication (EV-01/02/03) | Yes | Yes | Yes | Synthetic negative-path fixtures | Integrity mechanics, not source-truth or external validation | No |
 | Assurance authority boundary | Yes | Yes | Yes | Synthetic/internal only | Internal development | No |
 | Evidence fragility | Yes | Yes | Yes | Synthetic dependency graphs | Deterministic property tests | No |
 | Decision-Sufficient Evidence | Yes | Yes | Yes | Synthetic dependency graphs | Exact/approximation contract tests | No |
@@ -25,7 +27,7 @@ caller actually reaches, not that it is broken.
 | Financial/reporting feature separation | Yes | Yes | Yes | Runtime payloads; 675-row historical V/O/VO/CC diagnostics | Internal development; observability is not financial severity | No |
 | StrongTabularReference-v1 | Yes | Yes | No | 675 companies / 235 events / 440 non-events | Design-exposed retrospective selection/replay; uncalibrated | No |
 | Empirical development reference | Yes | Yes | No | 2,000 historical source companies; built without labels | `EMPIRICAL_DEVELOPMENT_REFERENCE_ONLY`; not external/production validated or E5-frozen | No |
-| Correlated-evidence de-duplication | Yes | Yes | No | Fixture only | Monotonicity property test | No |
+| Legacy contribution-family de-duplication helper | Yes | Yes | No | Fixture only | Monotonicity property test | No |
 | Temporal risk state/attribution | Yes | Yes | Yes | 30-company numeric trajectories | Executed; usefulness not validated | No |
 | Temporal evidence graph | Yes | Yes | No | No | No | No |
 | Applicability Router | Yes | Yes | Yes | No sector validation | No | No |
@@ -40,11 +42,12 @@ caller actually reaches, not that it is broken.
 `Wired: No` rows and why:
 
 - **Temporal evidence graph** — schema and traversal exist; no entry point populates it.
-- **Correlated-evidence de-duplication** — `deduplicate_contributions` /
+- **Legacy contribution-family de-duplication helper** — `deduplicate_contributions` /
   `fuse_verified_contributions` are a tested library capability reached only from tests.
   Both live decision paths (`pipeline.assess` and the Agent) call
   `hierarchical_escalation` directly, which consumes per-dimension maxima without
-  invoking the de-duplication step.
+  invoking the de-duplication step. This is separate from the wired v0.4.2 Assurance
+  material-path deduplication above; they must not be conflated.
 - **Champion–Challenger gate**, **Human–AI study** — offline/analysis-only by design.
 - **StrongTabularReference-v1**, **Empirical development reference** — research artifacts
   and offline entry points; not silently installed into live scoring or Assurance.

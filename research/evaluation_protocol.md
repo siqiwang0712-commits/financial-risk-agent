@@ -1,5 +1,10 @@
 # Evaluation Protocol
 
+This page retains historical pilot/E3 protocols and later research-design context.
+The current v0.4.2 [research overview](EXPERIMENT_OVERVIEW.md) classifies existing
+E4/E4-S/E4-R and retrospective development evidence. No protocol text here implies
+E5 execution or freeze: E5 remains BLOCKED / DRAFT_NOT_FROZEN.
+
 ## Pilot v1 (executed)
 
 - Dataset: `finrisk-sec-mini-v1`, three FY2024 public technology companies.

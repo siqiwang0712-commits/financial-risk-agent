@@ -22,6 +22,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import re
 from pathlib import Path
 
 # `Metadata.OS` is only populated once Trivy has actually resolved the image under
@@ -51,7 +52,8 @@ def assert_scanned_digest(document: dict, digest: str) -> str:
         raise SystemExit("the report carries no ArtifactName, so it records nothing.")
     # A tag reference would mean the scan could have resolved to a different artifact
     # than the one the build job published and the verify job exercised.
-    if digest not in artifact:
+    if (re.fullmatch(r"sha256:[0-9a-f]{64}", digest) is None
+            or "@" not in artifact or artifact.rsplit("@", 1)[1] != digest):
         raise SystemExit(
             f"the report scanned {artifact!r}, which does not reference the candidate "
             f"digest {digest!r}. A tag or a rebuilt image must never satisfy this gate."

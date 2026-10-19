@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "finrisk-agent"
-version = "0.4.1"
+version = "0.4.2"
 description = "Assurance-controlled selective corporate financial risk intelligence"
 license = "Apache-2.0"
 license-files = ["LICENSE"]

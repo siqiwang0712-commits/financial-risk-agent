@@ -51,7 +51,8 @@ pipeline; it does not replace deterministic calculation and cannot authorize its
 module migration is recorded in [Three-layer migration map](three_layer_migration.md).
 
 Only structured execution metadata is retained: plan step, tool name, status, result
-summary, admitted evidence references, rationale and confidence. Hidden chain-of-thought
+summary, admitted evidence references, rationale and uncalibrated evidence-quality
+indices. Hidden chain-of-thought
 is neither stored nor displayed.
 
 ### Agent orchestration and tool registry
@@ -82,7 +83,7 @@ proxy is labeled as such.
 | Altman Z | Distress screening zone | Public-manufacturer applicability checks |
 | Beneish M | Manipulation-risk screening signal | Never presented as proof of fraud |
 | Piotroski-style F-Score proxy | Nine-signal financial-strength proxy | Limited, non-canonical implementation; original value-stock context disclosed |
-| Ohlson O | O-score and separately derived logistic probability | Input-domain and unit warnings |
+| Ohlson O | O-score and formula-derived logistic transform | Original-model assumptions and input-domain/unit warnings; not a calibrated FinRisk probability |
 
 Model mappings live in [`config/model_scoring.json`](../config/model_scoring.json).
 [`rules/rules.json`](../rules/rules.json) contains 68 versioned single-factor and
@@ -146,9 +147,11 @@ support, fragility, distribution validity, policy maturity and model disagreemen
 separate. Findings can become owned cases with reviewer status, due dates,
 actions, comments and an audited human override.
 
-When the API is unreachable, the Workbench falls back to a bundled sample and labels its
-origin on screen. That sample is a real pipeline output for the repository's explicitly
-synthetic fixture, not a hand-written mock-up. The screenshot at
+The landing page presents a labelled bundled synthetic pipeline output. Live upload
+failures, invalid authorization and authentication errors are shown as errors; they do
+not silently become sample assessments. Loading the sample is an explicit action.
+That sample exercises software mechanics, not real-company financial validity. The
+screenshot at
 [`docs/assets/dashboard-running.png`](assets/dashboard-running.png) is from the local
 prototype and is not evidence of a hosted production deployment.
 

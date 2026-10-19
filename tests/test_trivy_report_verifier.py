@@ -116,3 +116,18 @@ def test_release_upload_retains_hidden_scan_reports_and_fails_if_missing():
     assert upload["with"]["path"] == ".runtime/trivy-*.json"
     assert upload["with"]["include-hidden-files"] is True
     assert upload["with"]["if-no-files-found"] == "error"
+
+
+@pytest.mark.parametrize('artifact', [
+    f'ghcr.io/image:{DIGEST}', f'ghcr.io/image@{DIGEST}ff',
+    f'ghcr.io/image@{DIGEST}:latest',
+])
+def test_digest_substrings_are_not_artifact_identity(artifact):
+    with pytest.raises(SystemExit, match='candidate'):
+        verify_trivy_report.assert_scanned_digest(report(ArtifactName=artifact), DIGEST)
+
+
+@pytest.mark.parametrize('digest', ['', 'sha256:', 'sha256:' + 'a'*63, 'sha256:' + 'g'*64])
+def test_invalid_expected_digest_cannot_match_a_report(digest):
+    with pytest.raises(SystemExit, match='candidate'):
+        verify_trivy_report.assert_scanned_digest(report(), digest)

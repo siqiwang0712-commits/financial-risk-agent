@@ -1,5 +1,46 @@
 # Changelog
 
+## [0.4.2] - 2026-10-19
+
+- Reject empty-source Assurance paths, require source identities in verified proofs,
+  and deduplicate identical material dependencies.
+- Add bounded, separately identified retrospective OOF diagnostics and a mock Agent
+  repeatability harness without changing policy, fitted models or frozen evidence.
+
+- Reject rehashed but impossible Assurance states, bind certificate IDs and stored
+  ledger identities, and require full successful CI for the exact release source.
+- Preserve worker reclamation through repeated cancellation; validate upload metadata
+  before PDF workers and enforce serialized-result quotas before writing partial files.
+- Remove unnecessary API mount utilities and privilege bits; verify candidate OCI
+  source/version metadata and exact scan-report digests.
+
+- Reject credential-bearing provider redirects and move caller-controlled document
+  metadata out of LLM system instructions; keep provider error text out of public errors.
+- Enforce Assurance evidence/state consistency for restricted final decisions, prevent
+  v0.4 certificate downgrade, and bind persisted evidence paths to Assurance coverage.
+- Bound direct JSON/form API bodies and reclaim stalled document workers, including
+  partial result publication and cancellation; reject non-finite time budgets.
+- Update the vulnerable sharp/libvips and source-map-js transitive dependency
+  families; retain security thresholds and the empty vulnerability ignore policy.
+- Update Next.js and its ESLint configuration to 15.5.27 for the newly reported
+  response-cache advisories; refresh the pinned Node 22 base and require Alpine's
+  signed zlib fix for CVE-2026-85091.
+- Add optional build CA mounts and require a minimum fixed PCRE2 version without the
+  duplicate stale exact-version installation.
+- Separate explicit manual publication from tag-push publication so every manual
+  `publish=false` run skips promotion, including runs on tag refs.
+- Add a complete v0.4.2 local release gate with candidate image identity checks,
+  current release metadata checks and preserved historical research verification.
+- Run both Compose paths and image vulnerability/secret scans in ordinary CI,
+  retain reports bound to the tested image IDs, and preserve failure diagnostics
+  before removing disposable containers.
+- Preserve the historical synthetic reference's CRLF source identity on every
+  checkout platform and verify it in ordinary CI without rewriting research data.
+- Preserve v0.4.1 release evidence and all frozen research artifacts, while separately
+  binding current development sources and verifying their historical predecessors.
+  Current package/frontend/container metadata is 0.4.2; no tag, publication or E5
+  freeze is performed by release preparation.
+
 ## [0.4.1] - 2026-10-05
 
 ### Research readiness and strong reference

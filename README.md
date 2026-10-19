@@ -6,7 +6,7 @@
 
 # FinRisk
 
-### Assured selective financial intelligence — v0.4.1
+### Evidence-grounded financial-risk analysis & decision assurance — v0.4.2
 
 [![CI](https://github.com/siqiwang0712-commits/financial-risk-agent/actions/workflows/ci.yml/badge.svg)](https://github.com/siqiwang0712-commits/financial-risk-agent/actions/workflows/ci.yml)
 [![Python 3.11–3.12](https://img.shields.io/badge/Python-3.11%E2%80%933.12-3776AB?logo=python&logoColor=white)](https://www.python.org/)
@@ -16,8 +16,14 @@
 
 English | [简体中文](README.zh-CN.md)
 
-Current release: **v0.4.1 — 2026-10-05** ·
-[Release notes](RELEASE_NOTES_v0.4.1.md) · [Engineering audit](docs/RELEASE_AUDIT_v0.4.1.md)
+Release date: **v0.4.2 — 2026-10-19** ·
+[Release notes](RELEASE_NOTES_v0.4.2.md) · [Security and validation](docs/SECURITY_HARDENING_v0.4.2.md)
+
+**Security & Reliability Patch · Released 2026-10-19.**
+This records the source-version release. GitHub Release creation, tagging and container
+publication are separate actions; this documentation update does not perform them.
+v0.4.1 research evidence is preserved. Default Assurance remains
+`HEURISTIC_POLICY / UNCALIBRATED`; E5 remains blocked/unfrozen.
 
 [Quick start](#quick-start) · [How it works](#how-it-works) ·
 [Research results](#research-results) · [Documentation](#documentation)
@@ -33,8 +39,9 @@ Current release: **v0.4.1 — 2026-10-05** ·
 
 ## What is FinRisk?
 
-FinRisk is an open research system for analyzing financial deterioration and deciding
-whether a proposed conclusion is sufficiently supported to be issued. It combines
+FinRisk is an evidence-grounded financial-risk analysis and decision-assurance research
+system for corporate filings. It checks whether a proposed assessment is sufficiently
+supported to be issued under a versioned policy. It combines
 structured SEC/XBRL facts and annual-report PDFs with deterministic financial metrics,
 traditional screening models, versioned expert rules, and a constrained LLM that
 interprets narrative disclosures.
@@ -50,15 +57,18 @@ analysis; v0.4 makes decision authorization a separate, fail-closed runtime laye
 Severity, evidence support, fragility, distribution validity, model disagreement and
 calibration remain separate quantities rather than one persuasive confidence score.
 
-### What v0.4.1 adds
+### What v0.4.2 changes
 
-v0.4.1 completes research-readiness and release hardening around that architecture:
-a research-only StrongTabularReference-v1, approved historical development data,
-explicit V/O/VO/CC observability diagnostics, an empirical development reference,
-selective-evaluation tooling and stage-aware E5 preflight. Upload admission, numeric
-evidence provenance, malformed Assurance rejection and certificate-bound display were
-also hardened. The software release does not establish prospective or external validity;
-E5 remains blocked and unfrozen.
+This patch hardens provider credential/redirect handling, untrusted document metadata,
+bounded request admission and worker reclamation. It rejects semantically inconsistent
+Assurance states, certificate downgrades and persisted evidence corruption. Verified material
+paths require source evidence and source IDs; identical paths cannot inflate coverage
+or dependency counts. The frontend fails closed on missing authorization, and release
+verification binds the tested and scanned candidate images to promotion.
+
+Historical v0.4.1 research references remain unchanged. Existing v0.4.2 diagnostics are
+retrospective development or synthetic engineering evidence, not external validation.
+See the [closeout audit](docs/RELEASE_AUDIT_v0.4.2.md).
 
 ## Why FinRisk?
 
@@ -98,10 +108,10 @@ Metrics / rules / models / constrained LLM / Agent
         ↓
 Risk fusion → PROPOSED DECISION
         ↓
-Decision Assurance Runtime
+AssuranceEngine → AssuranceResult
   evidence · fragility · distribution validity · admission policy
         ↓
-PASS / FLAG / REVIEW / ABSTAIN
+Authorized final_decision: PASS / FLAG / REVIEW / ABSTAIN
         ↓
 Decision Certificate
 ```
@@ -128,7 +138,7 @@ Material claims trace from source document, location, period, XBRL concept, unit
 value through normalization, metric, rule/model and fusion contribution into the proposal
 and its assurance decision. These are computational dependencies, not causal claims.
 
-Read the [v0.4 Assurance architecture](docs/assurance_architecture.md),
+Read the [v0.4.2 Assurance architecture](docs/assurance_architecture.md),
 [full platform boundary](docs/enterprise_platform.md),
 [three-layer migration map](docs/three_layer_migration.md), and
 [decision-grade controls](docs/decision_grade_controls.md).
@@ -139,10 +149,13 @@ Read the [v0.4 Assurance architecture](docs/assurance_architecture.md),
   accession and restatement provenance.
 - Page-aware annual-report PDF analysis with bounded, killable processing.
 - Cross-source reconciliation without silent averaging or missing-value substitution.
-- Liquidity, leverage, profitability, cash-flow, working-capital and multi-period trends.
+- Liquidity, leverage, profitability, cash-flow, working-capital and multi-period trends;
+  explicit deterministic scenario shocks and temporal trajectory comparisons.
 - Altman Z, Beneish M, Piotroski-style F and Ohlson O screening with applicability checks.
-- 68 versioned expert rules, including inspectable single-factor and cross-factor signals.
-- Typed Agent orchestration that proposes—but cannot authorize—risk dispositions.
+- 68 versioned rule definitions: 43 enabled and 25 explicitly disabled for missing
+  producers, with inspectable single-factor and cross-factor signals.
+- Typed Agent planning, tool use, structured state, evidence retrieval, contradiction
+  checks, reflection and synthesis that propose—but cannot authorize—dispositions.
 - Quote verification, evidence-state tracking and source-to-decision provenance graphs.
 - Deterministic evidence ablation with score impact, decision flips and affected claims.
 - Exact or explicitly approximate Decision-Sufficient Evidence sets.
@@ -167,7 +180,8 @@ credential rather than caller headers.
 
 Assessment responses distinguish `risk_score`, `risk_severity`, `proposed_decision`,
 `assurance`, `final_decision` and `decision_certificate`. Legacy `decision` fields are
-documented proposal/final aliases rather than overloaded confidence measures. Failures
+context-specific compatibility aliases; use verified Assurance and certificate state
+for final authority. Failures
 retain correlation IDs and fail closed around validation, rate limiting,
 datastore access and document processing. See the [complete API reference](docs/API_REFERENCE.md)
 for every endpoint, upload limit, error contract and bootstrap rule. With the backend
@@ -190,8 +204,8 @@ Open the Workbench at `http://localhost:3000`; the API is at
 `http://localhost:8000`.
 
 For images published by the maintainer, use `docker-compose.release.yml` and pin the
-digests from the publication run. The audited v0.4.1 container run was a non-publishing
-dry-run, not evidence that v0.4.1 release tags already exist:
+digests from the publication run. The v0.4.2 candidate dry-run was non-publishing;
+these commands require actually published images or explicitly supplied candidate digests:
 
 ```bash
 cp .env.release.example .env    # edit secrets and first-run bootstrap settings
@@ -236,6 +250,15 @@ python scripts/run_demo.py
 The included company fixture is explicitly `synthetic`. It validates mechanics, not
 real-world performance. For research verification and SEC source-data acquisition, use
 the [reproducibility guide](research/EXPERIMENT_REPRODUCIBILITY.md).
+
+## Verification
+
+For documentation-only checks without rerunning experiments, use the static subset
+in the [reproducibility guide](research/EXPERIMENT_REPRODUCIBILITY.md). Frontend copy
+changes also require `npm ci`, tests, lint, typecheck and build. Full release-candidate
+gates are separate and include development-diagnostic execution; do not run them
+when experiments are prohibited. Dated results are in the
+[closeout audit](docs/RELEASE_AUDIT_v0.4.2.md).
 
 ## Research results
 
@@ -375,10 +398,12 @@ The canonical integrity, selection-bias and source-concordance results remain in
 
 ## Project maturity
 
-**v0.4.1 — Research Readiness & Strong Reference** was released on **2026-10-05**.
+**v0.4.2 — Security & Reliability Patch** has a source release date of **2026-10-19**.
+This is software release status, not external financial validation or proof of a
+GitHub Release, tag or production image publication.
 The Assurance Runtime, proposal/authorization boundary, deterministic
 fragility analysis, Decision-Sufficient Evidence, distribution-validity diagnostics and
-Decision Certificate are implemented. This is a research-prototype software release:
+Decision Certificate are implemented. This remains a research prototype:
 it does not change frozen E4 results, establish prospective predictive superiority,
 or freeze/run E5.
 
@@ -398,9 +423,9 @@ or freeze/run E5.
   admission policy, external validation and production/regulatory evaluation.
 
 [Project Status](PROJECT_STATUS.md) is the authoritative maturity inventory. See the
-[v0.4.1 release notes](RELEASE_NOTES_v0.4.1.md) and [Changelog](CHANGELOG.md) for release
-scope and history. The [final engineering audit](docs/RELEASE_AUDIT_v0.4.1.md) records
-the tested runtime SHA, successful CI and container dry-run, and local environment limits.
+[v0.4.2 release notes](RELEASE_NOTES_v0.4.2.md) and [Changelog](CHANGELOG.md) for current
+scope and history. The [v0.4.2 closeout audit](docs/RELEASE_AUDIT_v0.4.2.md) separates
+engineering gates, retrospective diagnostics and residual risks.
 
 ## Repository map
 
@@ -470,6 +495,9 @@ before any deployment.
 ### Development
 
 - [API Reference](docs/API_REFERENCE.md)
+- [Example and report semantics](examples/README.md)
+- [v0.4.2 release notes](RELEASE_NOTES_v0.4.2.md)
+- [v0.4.2 closeout audit](docs/RELEASE_AUDIT_v0.4.2.md)
 - [Contributing](CONTRIBUTING.md)
 - [Changelog](CHANGELOG.md)
 - [v0.4.1 release notes](RELEASE_NOTES_v0.4.1.md)
@@ -479,6 +507,12 @@ before any deployment.
 - [Failure Lab](failure_lab/README.md)
 
 ## Limitations
+
+Prompt injection remains possible. Certificate hashes provide content integrity, not
+issuer authentication. Worker processes are not native-code security sandboxes;
+resource controls also depend on deployment limits. The dev-only `braces` advisory
+and unfixed API base-image HIGH advisories remain documented in the
+[closeout audit](docs/RELEASE_AUDIT_v0.4.2.md); the unfiltered image is not clean.
 
 FinRisk is a research prototype. In particular, it is:
 

@@ -1,12 +1,34 @@
 # FinRisk Reproducibility Guide
 
-## v0.4 development verification
+## v0.4.2 engineering verification and experiment boundary
+
+**Do not run the aggregate gate for a no-experiments documentation task.** Both
+`verify_v042` and the aggregate release wrapper execute development diagnostics;
+`research.v042_experiments.run_diagnostics --check` recomputes diagnostics, including
+mock Agent runs. A `--check` flag does not necessarily mean hash-only verification.
+The commands below document reproduction procedures, not experiments rerun by this
+narrative pass. Frozen outputs must never be overwritten.
+
+For documentation-only validation, safe static checks include:
+
+```bash
+python scripts/check_markdown_links.py
+python -c "from scripts.verify_v042 import verify_release_metadata; verify_release_metadata()"
+python -m scripts.generate_v042_runtime_identities --check
+ruff check backend tests scripts research
+git diff --check
+```
+
+The identity check reads source/policy hashes and historical Git bytes; it does not
+fit models or execute experiments. Frontend copy changes additionally require its
+install, tests, lint, typecheck and build. Full release gates remain required for
+release candidates; the focused documentation checks do not replace those gates.
 
 v0.4 runtime validation is separate from historical experiment replay. The authoritative
 release-review entry point is:
 
 ```bash
-python scripts/verify_v041_release.py \
+python -m scripts.verify_v042_release \
   --python311 /path/to/python3.11 \
   --python312 /path/to/python3.12 \
   --docker-bin /path/to/docker
@@ -14,8 +36,8 @@ python scripts/verify_v041_release.py \
 
 It runs the individual backend/coverage, lint, frontend, package, research-integrity,
 documentation, Docker, migration, restart, replay and release-Compose checks. See
-[`v040_development/VALIDATION_REPORT.md`](v040_development/VALIDATION_REPORT.md) for the
-release-scoped result.
+[v0.4.2 closeout audit](../docs/RELEASE_AUDIT_v0.4.2.md) for dated engineering evidence.
+The v0.4.0 validation report remains a historical record, not current-source attestation.
 
 These checks establish deterministic software behavior, not predictive validity. No E5
 cohort, prediction or future outcome is accessed. E1–E4-R verification commands below

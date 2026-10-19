@@ -12,7 +12,10 @@ SCHEMES = ("http://", "https://", "mailto:", "data:")
 
 
 def active_markdown() -> list[Path]:
-    files = [ROOT / "README.md", ROOT / "README.zh-CN.md", ROOT / "PROJECT_STATUS.md"]
+    files = [ROOT / name for name in (
+        "README.md", "README.zh-CN.md", "PROJECT_STATUS.md", "CHANGELOG.md",
+        "CONTRIBUTING.md", "SECURITY.md", "RELEASE_NOTES_v0.4.2.md",
+    )]
     files.extend((ROOT / "docs").rglob("*.md"))
     files.extend((ROOT / "research").rglob("*.md"))
     return sorted({path for path in files if path.is_file()})

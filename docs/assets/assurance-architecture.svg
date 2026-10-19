@@ -1,5 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1440" height="760" viewBox="0 0 1440 760" role="img" aria-labelledby="title desc">
-  <title id="title">FinRisk v0.4 assurance-controlled decision architecture</title>
+  <title id="title">FinRisk v0.4.2 assurance-controlled decision architecture</title>
   <desc id="desc">Financial analysis proposes a risk decision. An independent assurance runtime checks evidence, fragility, distribution validity and policy before issuing a final decision certificate.</desc>
   <defs>
     <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#071525"/><stop offset="1" stop-color="#102c3a"/></linearGradient>

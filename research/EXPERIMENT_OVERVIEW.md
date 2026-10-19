@@ -1,5 +1,16 @@
 # FinRisk Experiment Overview
 
+## Current v0.4.2 boundary
+
+FinRisk v0.4.2 is the **2026-10-19 Security & Reliability Patch** source release. Its
+[engineering audit](../docs/RELEASE_AUDIT_v0.4.2.md) is separate from research validity.
+Existing [v0.4.2 diagnostics](v042_experiments/EXPERIMENT_SUMMARY.md) reuse historical
+OOF predictions for exploratory risk/coverage, review-budget and fold analysis; the
+Agent repetition evidence is synthetic/mock only. These are design-exposed
+retrospective development results, not calibration or prospective/external validation.
+The default runtime remains `HEURISTIC_POLICY / UNCALIBRATED`. E5 remains
+`BLOCKED / DRAFT_NOT_FROZEN`. No historical result is upgraded by the software patch.
+
 ## v0.4.1 retrospective development boundary
 
 v0.4.1 adds a mechanically selected and replayable `StrongTabularReference-v1` using the
@@ -27,8 +38,9 @@ Any v0.4 work using historical data must be labelled `RETROSPECTIVE`, `POST_HOC`
 
 ## v0.3.4 / E4 evidence base
 
-This is the entry point for the current FinRisk research evidence. The active
-test and publication surface is E4 on locked FinRisk v0.3.4. Earlier pilot and
+This is the entry point for the current FinRisk research evidence. The historical
+E4 evidence uses locked FinRisk v0.3.4; later development evidence is classified
+separately above. Earlier pilot and
 v0.3.1 artifacts remain available only as historical audit records; they are
 not part of the current release gate or primary result presentation.
 

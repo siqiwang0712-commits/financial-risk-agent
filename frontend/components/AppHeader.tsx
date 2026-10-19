@@ -27,7 +27,7 @@ export function AppHeader({ origin, runtime }: Props) {
         <h1>
           Fin<span>Risk</span>
         </h1>
-        <small>Financial intelligence system</small>
+        <small>Financial-risk analysis & decision assurance</small>
       </div>
       <nav className="appNav" aria-label="Workbench sections">
         <a href="#why">Why</a>

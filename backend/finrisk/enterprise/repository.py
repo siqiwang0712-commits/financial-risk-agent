@@ -4,7 +4,7 @@ from copy import deepcopy
 from threading import RLock
 from typing import Protocol, TypeVar
 
-from .decision_bundle import DecisionBundle
+from .decision_bundle import DecisionBundle, verify_decision_bundle
 from .domain import (
     AnalysisSnapshot,
     AuditEvent,
@@ -206,6 +206,8 @@ class InMemoryEnterpriseRepository:
         )
 
     def save_decision_bundle(self, bundle: DecisionBundle) -> DecisionBundle:
+        if not verify_decision_bundle(bundle):
+            raise ValueError("decision bundle hash verification failed")
         with self._lock:
             if bundle.bundle_id in self.decision_bundles:
                 raise ValueError(f"decision bundle already exists: {bundle.bundle_id}")
@@ -217,4 +219,6 @@ class InMemoryEnterpriseRepository:
         bundle = self.decision_bundles.get(bundle_id)
         if bundle is None or bundle.organization_id != organization_id or bundle.entity_id != entity_id:
             raise KeyError(bundle_id)
+        if bundle.bundle_id != bundle_id or not verify_decision_bundle(bundle):
+            raise ValueError("persisted decision bundle identity/hash verification failed")
         return deepcopy(bundle)
