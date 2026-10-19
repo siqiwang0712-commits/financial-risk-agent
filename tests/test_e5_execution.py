@@ -287,3 +287,12 @@ def test_certificate_binding_rejects_wrong_proposal_and_policy(field):
         certificate['policy_hash'] = 'b' * 64
     with pytest.raises(GateError):
         verify_certificate_binding(certificate, proposal_hash=H, policy=policy)
+
+
+def test_historical_s0_replay_without_rewriting_nan_fixture():
+    from research.e5.execution.qualification import qualify_s0
+    path = ROOT / 'research/strong_tabular_reference/artifacts/replay_sample.json'
+    before = file_hash(path)
+    result = qualify_s0(ROOT)
+    assert result['maximum_absolute_difference'] <= result['tolerance']
+    assert file_hash(path) == before

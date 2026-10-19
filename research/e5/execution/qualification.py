@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import itertools
+import json
 from pathlib import Path
 
 import numpy as np
@@ -16,7 +17,11 @@ def qualify_s0(root: Path) -> dict:
     from research.strong_tabular_reference.artifact import predict_scores
     base = root / 'research/strong_tabular_reference/artifacts'
     manifest = read_json(base / 'artifact_manifest.json')
-    sample = read_json(base / 'replay_sample.json')
+    sample_path = base / 'replay_sample.json'
+    require(file_hash(sample_path) == manifest['hashes']['replay_sample_sha256'], 'historical replay sample hash mismatch')
+    # This immutable historical fixture encodes missing numeric predictors as NaN.
+    # Preserve it verbatim; strict JSON remains mandatory for all new packets.
+    sample = json.loads(sample_path.read_bytes())
     scores = predict_scores(sample['matrix'], ordered_feature_names=manifest['feature_contract']['ordered_feature_names'])
     deviation = float(np.max(np.abs(np.asarray(scores) - sample['expected_scores'])))
     require(deviation <= sample['absolute_tolerance'], 'S0 replay mismatch')
