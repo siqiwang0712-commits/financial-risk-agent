@@ -1,0 +1,8 @@
+{
+  "objects": 2786,
+  "blobs_hashed": 1827,
+  "bytes_hashed": 48202233,
+  "expected_sha256": "d73b371ccb026f556387cf6ff8ba204a4fde0664dcd780f099f12aa005e36603",
+  "exact_matches": [],
+  "scope": "all locally reachable refs; not remote/unreachable object recovery"
+}

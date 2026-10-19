@@ -1,0 +1,1547 @@
+{
+  "refs": {
+    "tags": [
+      {
+        "ref": "refs/tags/v0.1.0",
+        "node_id": "REF_kwDOUOeRx7ByZWZzL3RhZ3MvdjAuMS4w",
+        "url": "https://api.github.com/repos/siqiwang0712-commits/financial-risk-agent/git/refs/tags/v0.1.0",
+        "object": {
+          "sha": "8cef8a005d7997e2cc1ef262a0d2f091dbe94aa8",
+          "type": "commit",
+          "url": "https://api.github.com/repos/siqiwang0712-commits/financial-risk-agent/git/commits/8cef8a005d7997e2cc1ef262a0d2f091dbe94aa8"
+        }
+      },
+      {
+        "ref": "refs/tags/v0.2.0",
+        "node_id": "REF_kwDOUOeRx7ByZWZzL3RhZ3MvdjAuMi4w",
+        "url": "https://api.github.com/repos/siqiwang0712-commits/financial-risk-agent/git/refs/tags/v0.2.0",
+        "object": {
+          "sha": "17d4984464e7d3e5178a4943cb51da8c94dec7fb",
+          "type": "commit",
+          "url": "https://api.github.com/repos/siqiwang0712-commits/financial-risk-agent/git/commits/17d4984464e7d3e5178a4943cb51da8c94dec7fb"
+        }
+      },
+      {
+        "ref": "refs/tags/v0.2.1",
+        "node_id": "REF_kwDOUOeRx7ByZWZzL3RhZ3MvdjAuMi4x",
+        "url": "https://api.github.com/repos/siqiwang0712-commits/financial-risk-agent/git/refs/tags/v0.2.1",
+        "object": {
+          "sha": "4e67f8dab3d5630b7650956496f45676a0f6f478",
+          "type": "commit",
+          "url": "https://api.github.com/repos/siqiwang0712-commits/financial-risk-agent/git/commits/4e67f8dab3d5630b7650956496f45676a0f6f478"
+        }
+      },
+      {
+        "ref": "refs/tags/v0.3.0",
+        "node_id": "REF_kwDOUOeRx7ByZWZzL3RhZ3MvdjAuMy4w",
+        "url": "https://api.github.com/repos/siqiwang0712-commits/financial-risk-agent/git/refs/tags/v0.3.0",
+        "object": {
+          "sha": "7e87e12dc4f02d7d0c63b84908a27ae0c64166d9",
+          "type": "commit",
+          "url": "https://api.github.com/repos/siqiwang0712-commits/financial-risk-agent/git/commits/7e87e12dc4f02d7d0c63b84908a27ae0c64166d9"
+        }
+      },
+      {
+        "ref": "refs/tags/v0.3.1",
+        "node_id": "REF_kwDOUOeRx7ByZWZzL3RhZ3MvdjAuMy4x",
+        "url": "https://api.github.com/repos/siqiwang0712-commits/financial-risk-agent/git/refs/tags/v0.3.1",
+        "object": {
+          "sha": "4eb47a353411735da1f7c22492a61e19879fe3b0",
+          "type": "commit",
+          "url": "https://api.github.com/repos/siqiwang0712-commits/financial-risk-agent/git/commits/4eb47a353411735da1f7c22492a61e19879fe3b0"
+        }
+      },
+      {
+        "ref": "refs/tags/v0.3.2",
+        "node_id": "REF_kwDOUOeRx7ByZWZzL3RhZ3MvdjAuMy4y",
+        "url": "https://api.github.com/repos/siqiwang0712-commits/financial-risk-agent/git/refs/tags/v0.3.2",
+        "object": {
+          "sha": "e1101e5c5c426b88f38fbb3865a46d7d34a8754e",
+          "type": "commit",
+          "url": "https://api.github.com/repos/siqiwang0712-commits/financial-risk-agent/git/commits/e1101e5c5c426b88f38fbb3865a46d7d34a8754e"
+        }
+      },
+      {
+        "ref": "refs/tags/v0.3.3",
+        "node_id": "REF_kwDOUOeRx7ByZWZzL3RhZ3MvdjAuMy4z",
+        "url": "https://api.github.com/repos/siqiwang0712-commits/financial-risk-agent/git/refs/tags/v0.3.3",
+        "object": {
+          "sha": "3e48add4fb6c6f74b16101e0ba897836a39988e1",
+          "type": "commit",
+          "url": "https://api.github.com/repos/siqiwang0712-commits/financial-risk-agent/git/commits/3e48add4fb6c6f74b16101e0ba897836a39988e1"
+        }
+      },
+      {
+        "ref": "refs/tags/v0.3.4",
+        "node_id": "REF_kwDOUOeRx7ByZWZzL3RhZ3MvdjAuMy40",
+        "url": "https://api.github.com/repos/siqiwang0712-commits/financial-risk-agent/git/refs/tags/v0.3.4",
+        "object": {
+          "sha": "4273b070678240fe7cbdf01a17527afcc71c500e",
+          "type": "commit",
+          "url": "https://api.github.com/repos/siqiwang0712-commits/financial-risk-agent/git/commits/4273b070678240fe7cbdf01a17527afcc71c500e"
+        }
+      },
+      {
+        "ref": "refs/tags/v0.4.0",
+        "node_id": "REF_kwDOUOeRx7ByZWZzL3RhZ3MvdjAuNC4w",
+        "url": "https://api.github.com/repos/siqiwang0712-commits/financial-risk-agent/git/refs/tags/v0.4.0",
+        "object": {
+          "sha": "40024040ad01198c79b50c09af87b9c0829237a3",
+          "type": "commit",
+          "url": "https://api.github.com/repos/siqiwang0712-commits/financial-risk-agent/git/commits/40024040ad01198c79b50c09af87b9c0829237a3"
+        }
+      },
+      {
+        "ref": "refs/tags/v0.4.1",
+        "node_id": "REF_kwDOUOeRx7ByZWZzL3RhZ3MvdjAuNC4x",
+        "url": "https://api.github.com/repos/siqiwang0712-commits/financial-risk-agent/git/refs/tags/v0.4.1",
+        "object": {
+          "sha": "e60abba2976e389ddf80a147227a56cc4cad8e06",
+          "type": "commit",
+          "url": "https://api.github.com/repos/siqiwang0712-commits/financial-risk-agent/git/commits/e60abba2976e389ddf80a147227a56cc4cad8e06"
+        }
+      },
+      {
+        "ref": "refs/tags/v0.4.2",
+        "node_id": "REF_kwDOUOeRx7ByZWZzL3RhZ3MvdjAuNC4y",
+        "url": "https://api.github.com/repos/siqiwang0712-commits/financial-risk-agent/git/refs/tags/v0.4.2",
+        "object": {
+          "sha": "6a6f2053dd168d74aa97533ad901af47a7a5023a",
+          "type": "commit",
+          "url": "https://api.github.com/repos/siqiwang0712-commits/financial-risk-agent/git/commits/6a6f2053dd168d74aa97533ad901af47a7a5023a"
+        }
+      }
+    ],
+    "runs": [
+      {
+        "id": 39267953420,
+        "artifacts_url": "https://api.github.com/repos/siqiwang0712-commits/financial-risk-agent/actions/runs/39267953420/artifacts",
+        "name": "E5 governance integrity (not scientific readiness)",
+        "head_sha": "7060e6a9f1c71f05aac86926ac0dc548b781d73d",
+        "created_at": "2026-10-19T14:19:44Z"
+      },
+      {
+        "id": 39267952933,
+        "artifacts_url": "https://api.github.com/repos/siqiwang0712-commits/financial-risk-agent/actions/runs/39267952933/artifacts",
+        "name": "CI",
+        "head_sha": "7060e6a9f1c71f05aac86926ac0dc548b781d73d",
+        "created_at": "2026-10-19T14:19:44Z"
+      },
+      {
+        "id": 39262085073,
+        "artifacts_url": "https://api.github.com/repos/siqiwang0712-commits/financial-risk-agent/actions/runs/39262085073/artifacts",
+        "name": "CI",
+        "head_sha": "6a6f2053dd168d74aa97533ad901af47a7a5023a",
+        "created_at": "2026-10-19T13:40:00Z"
+      },
+      {
+        "id": 39251499691,
+        "artifacts_url": "https://api.github.com/repos/siqiwang0712-commits/financial-risk-agent/actions/runs/39251499691/artifacts",
+        "name": "CI",
+        "head_sha": "6a6f2053dd168d74aa97533ad901af47a7a5023a",
+        "created_at": "2026-10-19T12:22:04Z"
+      },
+      {
+        "id": 39251499380,
+        "artifacts_url": "https://api.github.com/repos/siqiwang0712-commits/financial-risk-agent/actions/runs/39251499380/artifacts",
+        "name": "Container Release",
+        "head_sha": "6a6f2053dd168d74aa97533ad901af47a7a5023a",
+        "created_at": "2026-10-19T12:22:03Z"
+      },
+      {
+        "id": 39249903751,
+        "artifacts_url": "https://api.github.com/repos/siqiwang0712-commits/financial-risk-agent/actions/runs/39249903751/artifacts",
+        "name": "Graph Update: pip in /. #1636797688",
+        "head_sha": "6a6f2053dd168d74aa97533ad901af47a7a5023a",
+        "created_at": "2026-10-19T12:09:47Z"
+      },
+      {
+        "id": 39249891205,
+        "artifacts_url": "https://api.github.com/repos/siqiwang0712-commits/financial-risk-agent/actions/runs/39249891205/artifacts",
+        "name": "CI",
+        "head_sha": "6a6f2053dd168d74aa97533ad901af47a7a5023a",
+        "created_at": "2026-10-19T12:09:41Z"
+      },
+      {
+        "id": 39249279919,
+        "artifacts_url": "https://api.github.com/repos/siqiwang0712-commits/financial-risk-agent/actions/runs/39249279919/artifacts",
+        "name": "Code scanning AI findings on PR #8",
+        "head_sha": "f88e515beefa73dea456dd5caf1e3412b5dac54d",
+        "created_at": "2026-10-19T12:04:50Z"
+      },
+      {
+        "id": 39249276561,
+        "artifacts_url": "https://api.github.com/repos/siqiwang0712-commits/financial-risk-agent/actions/runs/39249276561/artifacts",
+        "name": "CI",
+        "head_sha": "f88e515beefa73dea456dd5caf1e3412b5dac54d",
+        "created_at": "2026-10-19T12:04:49Z"
+      },
+      {
+        "id": 39248545483,
+        "artifacts_url": "https://api.github.com/repos/siqiwang0712-commits/financial-risk-agent/actions/runs/39248545483/artifacts",
+        "name": "CI",
+        "head_sha": "f88e515beefa73dea456dd5caf1e3412b5dac54d",
+        "created_at": "2026-10-19T11:58:53Z"
+      },
+      {
+        "id": 38868653301,
+        "artifacts_url": "https://api.github.com/repos/siqiwang0712-commits/financial-risk-agent/actions/runs/38868653301/artifacts",
+        "name": "CI",
+        "head_sha": "dd61eb20ec36ee16ba32b27dc2471b5a2692d518",
+        "created_at": "2026-10-16T07:39:55Z"
+      },
+      {
+        "id": 38769950209,
+        "artifacts_url": "https://api.github.com/repos/siqiwang0712-commits/financial-risk-agent/actions/runs/38769950209/artifacts",
+        "name": "Container Release",
+        "head_sha": "e41638d8d02636127dc6f3fa6d4c2a72e07baca6",
+        "created_at": "2026-10-15T16:33:07Z"
+      },
+      {
+        "id": 38769888323,
+        "artifacts_url": "https://api.github.com/repos/siqiwang0712-commits/financial-risk-agent/actions/runs/38769888323/artifacts",
+        "name": "CI",
+        "head_sha": "e41638d8d02636127dc6f3fa6d4c2a72e07baca6",
+        "created_at": "2026-10-15T16:32:40Z"
+      },
+      {
+        "id": 37968443313,
+        "artifacts_url": "https://api.github.com/repos/siqiwang0712-commits/financial-risk-agent/actions/runs/37968443313/artifacts",
+        "name": "Container Release",
+        "head_sha": "7e9bd827a638c2aa992de9e193e39b82e451616c",
+        "created_at": "2026-10-09T17:44:52Z"
+      },
+      {
+        "id": 37968388964,
+        "artifacts_url": "https://api.github.com/repos/siqiwang0712-commits/financial-risk-agent/actions/runs/37968388964/artifacts",
+        "name": "CI",
+        "head_sha": "7e9bd827a638c2aa992de9e193e39b82e451616c",
+        "created_at": "2026-10-09T17:44:23Z"
+      },
+      {
+        "id": 37821051768,
+        "artifacts_url": "https://api.github.com/repos/siqiwang0712-commits/financial-risk-agent/actions/runs/37821051768/artifacts",
+        "name": "Container Release",
+        "head_sha": "6a6c6b38411fb8d72c8c3a62cf319e67aeda223e",
+        "created_at": "2026-10-08T18:01:15Z"
+      },
+      {
+        "id": 37819091548,
+        "artifacts_url": "https://api.github.com/repos/siqiwang0712-commits/financial-risk-agent/actions/runs/37819091548/artifacts",
+        "name": "CI",
+        "head_sha": "6a6c6b38411fb8d72c8c3a62cf319e67aeda223e",
+        "created_at": "2026-10-08T17:45:58Z"
+      },
+      {
+        "id": 37583318142,
+        "artifacts_url": "https://api.github.com/repos/siqiwang0712-commits/financial-risk-agent/actions/runs/37583318142/artifacts",
+        "name": "CI",
+        "head_sha": "d3d16da42f14bd1efd793ada0c06994412e21af3",
+        "created_at": "2026-10-07T06:45:48Z"
+      },
+      {
+        "id": 37578095163,
+        "artifacts_url": "https://api.github.com/repos/siqiwang0712-commits/financial-risk-agent/actions/runs/37578095163/artifacts",
+        "name": "CI",
+        "head_sha": "e60abba2976e389ddf80a147227a56cc4cad8e06",
+        "created_at": "2026-10-07T05:47:46Z"
+      },
+      {
+        "id": 37338599037,
+        "artifacts_url": "https://api.github.com/repos/siqiwang0712-commits/financial-risk-agent/actions/runs/37338599037/artifacts",
+        "name": "Container Release",
+        "head_sha": "e60abba2976e389ddf80a147227a56cc4cad8e06",
+        "created_at": "2026-10-05T16:09:18Z"
+      },
+      {
+        "id": 37338598814,
+        "artifacts_url": "https://api.github.com/repos/siqiwang0712-commits/financial-risk-agent/actions/runs/37338598814/artifacts",
+        "name": "CI",
+        "head_sha": "e60abba2976e389ddf80a147227a56cc4cad8e06",
+        "created_at": "2026-10-05T16:09:18Z"
+      },
+      {
+        "id": 37337240884,
+        "artifacts_url": "https://api.github.com/repos/siqiwang0712-commits/financial-risk-agent/actions/runs/37337240884/artifacts",
+        "name": "CI",
+        "head_sha": "cbaed30933a579991ec7827c81348437599efe52",
+        "created_at": "2026-10-05T15:59:14Z"
+      },
+      {
+        "id": 37337049345,
+        "artifacts_url": "https://api.github.com/repos/siqiwang0712-commits/financial-risk-agent/actions/runs/37337049345/artifacts",
+        "name": "Graph Update: pip in /. #1610758305",
+        "head_sha": "e60abba2976e389ddf80a147227a56cc4cad8e06",
+        "created_at": "2026-10-05T15:57:47Z"
+      },
+      {
+        "id": 37337039070,
+        "artifacts_url": "https://api.github.com/repos/siqiwang0712-commits/financial-risk-agent/actions/runs/37337039070/artifacts",
+        "name": "CI",
+        "head_sha": "e60abba2976e389ddf80a147227a56cc4cad8e06",
+        "created_at": "2026-10-05T15:57:42Z"
+      },
+      {
+        "id": 37336977865,
+        "artifacts_url": "https://api.github.com/repos/siqiwang0712-commits/financial-risk-agent/actions/runs/37336977865/artifacts",
+        "name": "Code scanning AI findings on PR #7",
+        "head_sha": "cbaed30933a579991ec7827c81348437599efe52",
+        "created_at": "2026-10-05T15:57:14Z"
+      },
+      {
+        "id": 37335469731,
+        "artifacts_url": "https://api.github.com/repos/siqiwang0712-commits/financial-risk-agent/actions/runs/37335469731/artifacts",
+        "name": "CI",
+        "head_sha": "cbaed30933a579991ec7827c81348437599efe52",
+        "created_at": "2026-10-05T15:46:03Z"
+      },
+      {
+        "id": 37302629899,
+        "artifacts_url": "https://api.github.com/repos/siqiwang0712-commits/financial-risk-agent/actions/runs/37302629899/artifacts",
+        "name": "Container Release",
+        "head_sha": "00fc338f73be0529a4adc6a1705d518af7bf8030",
+        "created_at": "2026-10-05T11:23:33Z"
+      },
+      {
+        "id": 37302574534,
+        "artifacts_url": "https://api.github.com/repos/siqiwang0712-commits/financial-risk-agent/actions/runs/37302574534/artifacts",
+        "name": "CI",
+        "head_sha": "00fc338f73be0529a4adc6a1705d518af7bf8030",
+        "created_at": "2026-10-05T11:23:01Z"
+      },
+      {
+        "id": 37300287238,
+        "artifacts_url": "https://api.github.com/repos/siqiwang0712-commits/financial-risk-agent/actions/runs/37300287238/artifacts",
+        "name": "Container Release",
+        "head_sha": "21b670ef8fee4615a660a34e8e4ca04038e05edf",
+        "created_at": "2026-10-05T11:01:37Z"
+      },
+      {
+        "id": 37300233486,
+        "artifacts_url": "https://api.github.com/repos/siqiwang0712-commits/financial-risk-agent/actions/runs/37300233486/artifacts",
+        "name": "CI",
+        "head_sha": "21b670ef8fee4615a660a34e8e4ca04038e05edf",
+        "created_at": "2026-10-05T11:01:06Z"
+      },
+      {
+        "id": 37299016540,
+        "artifacts_url": "https://api.github.com/repos/siqiwang0712-commits/financial-risk-agent/actions/runs/37299016540/artifacts",
+        "name": "CI",
+        "head_sha": "b91462742b30e8271eff27f2bca5c1225588a3bd",
+        "created_at": "2026-10-05T10:49:26Z"
+      },
+      {
+        "id": 37272098934,
+        "artifacts_url": "https://api.github.com/repos/siqiwang0712-commits/financial-risk-agent/actions/runs/37272098934/artifacts",
+        "name": "CI",
+        "head_sha": "f11214497863d49399f89f7f701ac7cabbf90d19",
+        "created_at": "2026-10-05T06:22:37Z"
+      },
+      {
+        "id": 37270969258,
+        "artifacts_url": "https://api.github.com/repos/siqiwang0712-commits/financial-risk-agent/actions/runs/37270969258/artifacts",
+        "name": "CI",
+        "head_sha": "75d3c86da32091398c25399d06af48ff315fae4c",
+        "created_at": "2026-10-05T06:09:05Z"
+      },
+      {
+        "id": 37269330562,
+        "artifacts_url": "https://api.github.com/repos/siqiwang0712-commits/financial-risk-agent/actions/runs/37269330562/artifacts",
+        "name": "CI",
+        "head_sha": "c1494167fd4ff6e185ea983d64d32f770ac253b1",
+        "created_at": "2026-10-05T05:47:21Z"
+      },
+      {
+        "id": 37265396644,
+        "artifacts_url": "https://api.github.com/repos/siqiwang0712-commits/financial-risk-agent/actions/runs/37265396644/artifacts",
+        "name": "CI",
+        "head_sha": "322d0d4da66f8b1035da52830e021168cf72adeb",
+        "created_at": "2026-10-05T04:53:04Z"
+      },
+      {
+        "id": 37129645414,
+        "artifacts_url": "https://api.github.com/repos/siqiwang0712-commits/financial-risk-agent/actions/runs/37129645414/artifacts",
+        "name": "CI",
+        "head_sha": "49b9a1707283b91b1e5e28071c85e7ea577375f3",
+        "created_at": "2026-10-03T14:27:22Z"
+      },
+      {
+        "id": 37113996610,
+        "artifacts_url": "https://api.github.com/repos/siqiwang0712-commits/financial-risk-agent/actions/runs/37113996610/artifacts",
+        "name": "CI",
+        "head_sha": "1d7570706a401485a20f9219eb9d60978ee2f35e",
+        "created_at": "2026-10-03T09:43:13Z"
+      },
+      {
+        "id": 36993938637,
+        "artifacts_url": "https://api.github.com/repos/siqiwang0712-commits/financial-risk-agent/actions/runs/36993938637/artifacts",
+        "name": "Graph Update: pip in /. #1604953178",
+        "head_sha": "1d7570706a401485a20f9219eb9d60978ee2f35e",
+        "created_at": "2026-10-02T10:09:53Z"
+      },
+      {
+        "id": 36991819319,
+        "artifacts_url": "https://api.github.com/repos/siqiwang0712-commits/financial-risk-agent/actions/runs/36991819319/artifacts",
+        "name": "CI",
+        "head_sha": "1d7570706a401485a20f9219eb9d60978ee2f35e",
+        "created_at": "2026-10-02T09:47:36Z"
+      },
+      {
+        "id": 36988498830,
+        "artifacts_url": "https://api.github.com/repos/siqiwang0712-commits/financial-risk-agent/actions/runs/36988498830/artifacts",
+        "name": "Container Release",
+        "head_sha": "40024040ad01198c79b50c09af87b9c0829237a3",
+        "created_at": "2026-10-02T09:13:03Z"
+      },
+      {
+        "id": 36988498604,
+        "artifacts_url": "https://api.github.com/repos/siqiwang0712-commits/financial-risk-agent/actions/runs/36988498604/artifacts",
+        "name": "CI",
+        "head_sha": "40024040ad01198c79b50c09af87b9c0829237a3",
+        "created_at": "2026-10-02T09:13:03Z"
+      },
+      {
+        "id": 36984378656,
+        "artifacts_url": "https://api.github.com/repos/siqiwang0712-commits/financial-risk-agent/actions/runs/36984378656/artifacts",
+        "name": "CI",
+        "head_sha": "40024040ad01198c79b50c09af87b9c0829237a3",
+        "created_at": "2026-10-02T08:30:08Z"
+      },
+      {
+        "id": 36966710856,
+        "artifacts_url": "https://api.github.com/repos/siqiwang0712-commits/financial-risk-agent/actions/runs/36966710856/artifacts",
+        "name": "CI",
+        "head_sha": "af3fb09add10d990b2cc9a8b8bb23ccd5de98b52",
+        "created_at": "2026-10-02T04:56:07Z"
+      },
+      {
+        "id": 36966710797,
+        "artifacts_url": "https://api.github.com/repos/siqiwang0712-commits/financial-risk-agent/actions/runs/36966710797/artifacts",
+        "name": "Container Release",
+        "head_sha": "af3fb09add10d990b2cc9a8b8bb23ccd5de98b52",
+        "created_at": "2026-10-02T04:56:07Z"
+      },
+      {
+        "id": 36965960459,
+        "artifacts_url": "https://api.github.com/repos/siqiwang0712-commits/financial-risk-agent/actions/runs/36965960459/artifacts",
+        "name": "CI",
+        "head_sha": "af3fb09add10d990b2cc9a8b8bb23ccd5de98b52",
+        "created_at": "2026-10-02T04:45:42Z"
+      },
+      {
+        "id": 36593646477,
+        "artifacts_url": "https://api.github.com/repos/siqiwang0712-commits/financial-risk-agent/actions/runs/36593646477/artifacts",
+        "name": "CI",
+        "head_sha": "69cafe6a8afbb35aceec27a8e27660419d401b57",
+        "created_at": "2026-09-29T15:53:34Z"
+      },
+      {
+        "id": 36446595951,
+        "artifacts_url": "https://api.github.com/repos/siqiwang0712-commits/financial-risk-agent/actions/runs/36446595951/artifacts",
+        "name": "CI",
+        "head_sha": "fba91d5c04a80835e20c13bec008b23f627d2ccc",
+        "created_at": "2026-09-28T15:50:12Z"
+      },
+      {
+        "id": 36310600037,
+        "artifacts_url": "https://api.github.com/repos/siqiwang0712-commits/financial-risk-agent/actions/runs/36310600037/artifacts",
+        "name": "CI",
+        "head_sha": "4d91f1d316cd0b22b30e4d9ee61275970dd63de4",
+        "created_at": "2026-09-27T09:49:40Z"
+      },
+      {
+        "id": 36210960696,
+        "artifacts_url": "https://api.github.com/repos/siqiwang0712-commits/financial-risk-agent/actions/runs/36210960696/artifacts",
+        "name": "CI",
+        "head_sha": "657ae81520eeb86c8c3cb07520bada2d030e32bb",
+        "created_at": "2026-09-26T02:12:43Z"
+      },
+      {
+        "id": 36210065785,
+        "artifacts_url": "https://api.github.com/repos/siqiwang0712-commits/financial-risk-agent/actions/runs/36210065785/artifacts",
+        "name": "CI",
+        "head_sha": "51fe1581a9bd812beca6dd97f27cda360ed2583f",
+        "created_at": "2026-09-26T01:56:12Z"
+      },
+      {
+        "id": 36169632789,
+        "artifacts_url": "https://api.github.com/repos/siqiwang0712-commits/financial-risk-agent/actions/runs/36169632789/artifacts",
+        "name": "CI",
+        "head_sha": "aaa0e8d59ae27b4b5d3424c8a5c94bad42eaabef",
+        "created_at": "2026-09-25T17:50:26Z"
+      },
+      {
+        "id": 36113539055,
+        "artifacts_url": "https://api.github.com/repos/siqiwang0712-commits/financial-risk-agent/actions/runs/36113539055/artifacts",
+        "name": "CI",
+        "head_sha": "9d58778f3dec16f05e35ef86bd7f6154d926dc57",
+        "created_at": "2026-09-25T08:33:06Z"
+      },
+      {
+        "id": 36111409435,
+        "artifacts_url": "https://api.github.com/repos/siqiwang0712-commits/financial-risk-agent/actions/runs/36111409435/artifacts",
+        "name": "CI",
+        "head_sha": "d887129f2dfa56311ee5e491420e09152b1644ff",
+        "created_at": "2026-09-25T08:09:37Z"
+      },
+      {
+        "id": 36108281728,
+        "artifacts_url": "https://api.github.com/repos/siqiwang0712-commits/financial-risk-agent/actions/runs/36108281728/artifacts",
+        "name": "CI",
+        "head_sha": "203ca43c16281838e28cb7b4881f62aec94075eb",
+        "created_at": "2026-09-25T07:33:55Z"
+      },
+      {
+        "id": 36096674378,
+        "artifacts_url": "https://api.github.com/repos/siqiwang0712-commits/financial-risk-agent/actions/runs/36096674378/artifacts",
+        "name": "CI",
+        "head_sha": "dae445649ed279a8cf27ef39c77a157456659410",
+        "created_at": "2026-09-25T04:59:30Z"
+      },
+      {
+        "id": 36090929098,
+        "artifacts_url": "https://api.github.com/repos/siqiwang0712-commits/financial-risk-agent/actions/runs/36090929098/artifacts",
+        "name": "CI",
+        "head_sha": "e2d4133e34134254755e68072d2567928b1ed49a",
+        "created_at": "2026-09-25T03:34:49Z"
+      },
+      {
+        "id": 36090561399,
+        "artifacts_url": "https://api.github.com/repos/siqiwang0712-commits/financial-risk-agent/actions/runs/36090561399/artifacts",
+        "name": "CI",
+        "head_sha": "b2af45cd137c64346b681b1e1f4e5b3673d2d632",
+        "created_at": "2026-09-25T03:29:28Z"
+      },
+      {
+        "id": 36089428588,
+        "artifacts_url": "https://api.github.com/repos/siqiwang0712-commits/financial-risk-agent/actions/runs/36089428588/artifacts",
+        "name": "CI",
+        "head_sha": "96e60ae91c0ba73342c6e96e42eaa40145f082b1",
+        "created_at": "2026-09-25T03:12:42Z"
+      },
+      {
+        "id": 35955798106,
+        "artifacts_url": "https://api.github.com/repos/siqiwang0712-commits/financial-risk-agent/actions/runs/35955798106/artifacts",
+        "name": "Container Release",
+        "head_sha": "4273b070678240fe7cbdf01a17527afcc71c500e",
+        "created_at": "2026-09-24T04:28:32Z"
+      },
+      {
+        "id": 35955798085,
+        "artifacts_url": "https://api.github.com/repos/siqiwang0712-commits/financial-risk-agent/actions/runs/35955798085/artifacts",
+        "name": "CI",
+        "head_sha": "4273b070678240fe7cbdf01a17527afcc71c500e",
+        "created_at": "2026-09-24T04:28:32Z"
+      },
+      {
+        "id": 35890518032,
+        "artifacts_url": "https://api.github.com/repos/siqiwang0712-commits/financial-risk-agent/actions/runs/35890518032/artifacts",
+        "name": "CI",
+        "head_sha": "4273b070678240fe7cbdf01a17527afcc71c500e",
+        "created_at": "2026-09-23T16:41:42Z"
+      },
+      {
+        "id": 35887089024,
+        "artifacts_url": "https://api.github.com/repos/siqiwang0712-commits/financial-risk-agent/actions/runs/35887089024/artifacts",
+        "name": "Container Release",
+        "head_sha": "326568800c44cf5fe317ffb3b9ce9a7bf4e616c1",
+        "created_at": "2026-09-23T16:12:07Z"
+      },
+      {
+        "id": 35887088981,
+        "artifacts_url": "https://api.github.com/repos/siqiwang0712-commits/financial-risk-agent/actions/runs/35887088981/artifacts",
+        "name": "CI",
+        "head_sha": "326568800c44cf5fe317ffb3b9ce9a7bf4e616c1",
+        "created_at": "2026-09-23T16:12:07Z"
+      },
+      {
+        "id": 35886501524,
+        "artifacts_url": "https://api.github.com/repos/siqiwang0712-commits/financial-risk-agent/actions/runs/35886501524/artifacts",
+        "name": "CI",
+        "head_sha": "326568800c44cf5fe317ffb3b9ce9a7bf4e616c1",
+        "created_at": "2026-09-23T16:07:09Z"
+      },
+      {
+        "id": 35865807564,
+        "artifacts_url": "https://api.github.com/repos/siqiwang0712-commits/financial-risk-agent/actions/runs/35865807564/artifacts",
+        "name": "CI",
+        "head_sha": "bf59697d7c74ea12b1fd75143d248434ca56f60b",
+        "created_at": "2026-09-23T13:15:22Z"
+      },
+      {
+        "id": 35862021550,
+        "artifacts_url": "https://api.github.com/repos/siqiwang0712-commits/financial-risk-agent/actions/runs/35862021550/artifacts",
+        "name": "CI",
+        "head_sha": "82a04037e59a0af335cd71887627dff258f7c064",
+        "created_at": "2026-09-23T12:40:55Z"
+      },
+      {
+        "id": 35797107607,
+        "artifacts_url": "https://api.github.com/repos/siqiwang0712-commits/financial-risk-agent/actions/runs/35797107607/artifacts",
+        "name": "CI",
+        "head_sha": "3d51d845a6ab1c816d6a973211d5228036c0215e",
+        "created_at": "2026-09-22T23:22:36Z"
+      },
+      {
+        "id": 35796406237,
+        "artifacts_url": "https://api.github.com/repos/siqiwang0712-commits/financial-risk-agent/actions/runs/35796406237/artifacts",
+        "name": "CI",
+        "head_sha": "c192d7a92724b30ec8ad673f2a3f75cbc19f1ffc",
+        "created_at": "2026-09-22T23:13:57Z"
+      },
+      {
+        "id": 35743616420,
+        "artifacts_url": "https://api.github.com/repos/siqiwang0712-commits/financial-risk-agent/actions/runs/35743616420/artifacts",
+        "name": "CI",
+        "head_sha": "c6fa39f1d5b70e5c70d2d3c70bd87718666aa2ba",
+        "created_at": "2026-09-22T14:54:39Z"
+      },
+      {
+        "id": 35453625548,
+        "artifacts_url": "https://api.github.com/repos/siqiwang0712-commits/financial-risk-agent/actions/runs/35453625548/artifacts",
+        "name": "CI",
+        "head_sha": "189fd595304e897b205c102a50475af307fb8668",
+        "created_at": "2026-09-19T16:01:32Z"
+      },
+      {
+        "id": 35451035341,
+        "artifacts_url": "https://api.github.com/repos/siqiwang0712-commits/financial-risk-agent/actions/runs/35451035341/artifacts",
+        "name": "CI",
+        "head_sha": "c5164490bec8741e18d13c1197d32f65cf300425",
+        "created_at": "2026-09-19T15:11:36Z"
+      },
+      {
+        "id": 35450051063,
+        "artifacts_url": "https://api.github.com/repos/siqiwang0712-commits/financial-risk-agent/actions/runs/35450051063/artifacts",
+        "name": "CI",
+        "head_sha": "da504c731a0f4ebeddba47d1ef3b8ef17d178973",
+        "created_at": "2026-09-19T14:52:21Z"
+      },
+      {
+        "id": 35449799521,
+        "artifacts_url": "https://api.github.com/repos/siqiwang0712-commits/financial-risk-agent/actions/runs/35449799521/artifacts",
+        "name": "Container Release",
+        "head_sha": "c99f29e60d272ae8ce50069f9cb8ae4d857272d6",
+        "created_at": "2026-09-19T14:47:18Z"
+      },
+      {
+        "id": 35449790521,
+        "artifacts_url": "https://api.github.com/repos/siqiwang0712-commits/financial-risk-agent/actions/runs/35449790521/artifacts",
+        "name": "CI",
+        "head_sha": "c99f29e60d272ae8ce50069f9cb8ae4d857272d6",
+        "created_at": "2026-09-19T14:47:09Z"
+      },
+      {
+        "id": 35448832653,
+        "artifacts_url": "https://api.github.com/repos/siqiwang0712-commits/financial-risk-agent/actions/runs/35448832653/artifacts",
+        "name": "CI",
+        "head_sha": "832e1aa0fe11fe6864a84e71b32c6db938a1d953",
+        "created_at": "2026-09-19T14:28:14Z"
+      },
+      {
+        "id": 35448112282,
+        "artifacts_url": "https://api.github.com/repos/siqiwang0712-commits/financial-risk-agent/actions/runs/35448112282/artifacts",
+        "name": "Container Release",
+        "head_sha": "432732def9b9a947eadeee8edcd7c3e6a9cd7990",
+        "created_at": "2026-09-19T14:14:11Z"
+      },
+      {
+        "id": 35448104559,
+        "artifacts_url": "https://api.github.com/repos/siqiwang0712-commits/financial-risk-agent/actions/runs/35448104559/artifacts",
+        "name": "CI",
+        "head_sha": "432732def9b9a947eadeee8edcd7c3e6a9cd7990",
+        "created_at": "2026-09-19T14:14:03Z"
+      },
+      {
+        "id": 35447634200,
+        "artifacts_url": "https://api.github.com/repos/siqiwang0712-commits/financial-risk-agent/actions/runs/35447634200/artifacts",
+        "name": "Container Release",
+        "head_sha": "c63fd5e36140286e788770c0f1680d129fa8ba7e",
+        "created_at": "2026-09-19T14:04:38Z"
+      },
+      {
+        "id": 35447623702,
+        "artifacts_url": "https://api.github.com/repos/siqiwang0712-commits/financial-risk-agent/actions/runs/35447623702/artifacts",
+        "name": "CI",
+        "head_sha": "c63fd5e36140286e788770c0f1680d129fa8ba7e",
+        "created_at": "2026-09-19T14:04:27Z"
+      },
+      {
+        "id": 35447367273,
+        "artifacts_url": "https://api.github.com/repos/siqiwang0712-commits/financial-risk-agent/actions/runs/35447367273/artifacts",
+        "name": "Container Release",
+        "head_sha": "083bcf89ca4448c2519d2d5792bf6ebba7ff214b",
+        "created_at": "2026-09-19T13:59:32Z"
+      },
+      {
+        "id": 35447357566,
+        "artifacts_url": "https://api.github.com/repos/siqiwang0712-commits/financial-risk-agent/actions/runs/35447357566/artifacts",
+        "name": "CI",
+        "head_sha": "083bcf89ca4448c2519d2d5792bf6ebba7ff214b",
+        "created_at": "2026-09-19T13:59:19Z"
+      },
+      {
+        "id": 35446367210,
+        "artifacts_url": "https://api.github.com/repos/siqiwang0712-commits/financial-risk-agent/actions/runs/35446367210/artifacts",
+        "name": "Container Release",
+        "head_sha": "f09825f869e9467a64ac7c36129fff281cebd70e",
+        "created_at": "2026-09-19T13:38:30Z"
+      },
+      {
+        "id": 35446353428,
+        "artifacts_url": "https://api.github.com/repos/siqiwang0712-commits/financial-risk-agent/actions/runs/35446353428/artifacts",
+        "name": "CI",
+        "head_sha": "f09825f869e9467a64ac7c36129fff281cebd70e",
+        "created_at": "2026-09-19T13:38:15Z"
+      },
+      {
+        "id": 35445967637,
+        "artifacts_url": "https://api.github.com/repos/siqiwang0712-commits/financial-risk-agent/actions/runs/35445967637/artifacts",
+        "name": "Container Release",
+        "head_sha": "18c39a55f021d260a69020b8861d7cc68559166a",
+        "created_at": "2026-09-19T13:30:29Z"
+      },
+      {
+        "id": 35445942117,
+        "artifacts_url": "https://api.github.com/repos/siqiwang0712-commits/financial-risk-agent/actions/runs/35445942117/artifacts",
+        "name": "CI",
+        "head_sha": "18c39a55f021d260a69020b8861d7cc68559166a",
+        "created_at": "2026-09-19T13:30:02Z"
+      },
+      {
+        "id": 35445651122,
+        "artifacts_url": "https://api.github.com/repos/siqiwang0712-commits/financial-risk-agent/actions/runs/35445651122/artifacts",
+        "name": "Container Release",
+        "head_sha": "6bb3681725af7cb4e761506be675aadcf2d8514e",
+        "created_at": "2026-09-19T13:24:05Z"
+      },
+      {
+        "id": 35445617902,
+        "artifacts_url": "https://api.github.com/repos/siqiwang0712-commits/financial-risk-agent/actions/runs/35445617902/artifacts",
+        "name": "CI",
+        "head_sha": "6bb3681725af7cb4e761506be675aadcf2d8514e",
+        "created_at": "2026-09-19T13:23:28Z"
+      },
+      {
+        "id": 35445260707,
+        "artifacts_url": "https://api.github.com/repos/siqiwang0712-commits/financial-risk-agent/actions/runs/35445260707/artifacts",
+        "name": "Container Release",
+        "head_sha": "e87dd220265ed7b276803dcae91b35f32fe42e96",
+        "created_at": "2026-09-19T13:16:19Z"
+      },
+      {
+        "id": 35445237472,
+        "artifacts_url": "https://api.github.com/repos/siqiwang0712-commits/financial-risk-agent/actions/runs/35445237472/artifacts",
+        "name": "CI",
+        "head_sha": "e87dd220265ed7b276803dcae91b35f32fe42e96",
+        "created_at": "2026-09-19T13:15:51Z"
+      },
+      {
+        "id": 35442853785,
+        "artifacts_url": "https://api.github.com/repos/siqiwang0712-commits/financial-risk-agent/actions/runs/35442853785/artifacts",
+        "name": "CI",
+        "head_sha": "9e517e24534af348b26217b8f5d18c25d0025f7f",
+        "created_at": "2026-09-19T12:26:18Z"
+      },
+      {
+        "id": 35442465993,
+        "artifacts_url": "https://api.github.com/repos/siqiwang0712-commits/financial-risk-agent/actions/runs/35442465993/artifacts",
+        "name": "CI",
+        "head_sha": "3e48add4fb6c6f74b16101e0ba897836a39988e1",
+        "created_at": "2026-09-19T12:18:05Z"
+      },
+      {
+        "id": 35442070526,
+        "artifacts_url": "https://api.github.com/repos/siqiwang0712-commits/financial-risk-agent/actions/runs/35442070526/artifacts",
+        "name": "CI",
+        "head_sha": "3e48add4fb6c6f74b16101e0ba897836a39988e1",
+        "created_at": "2026-09-19T12:09:39Z"
+      },
+      {
+        "id": 35441798244,
+        "artifacts_url": "https://api.github.com/repos/siqiwang0712-commits/financial-risk-agent/actions/runs/35441798244/artifacts",
+        "name": "CI",
+        "head_sha": "ee19724b17a2e3ee3b72f29d9b3a2904312d3ac6",
+        "created_at": "2026-09-19T12:03:45Z"
+      },
+      {
+        "id": 35246749690,
+        "artifacts_url": "https://api.github.com/repos/siqiwang0712-commits/financial-risk-agent/actions/runs/35246749690/artifacts",
+        "name": "CI",
+        "head_sha": "2cea50ba402c672d97cbc93a9f99162f4cb0d055",
+        "created_at": "2026-09-17T16:27:58Z"
+      },
+      {
+        "id": 35246195683,
+        "artifacts_url": "https://api.github.com/repos/siqiwang0712-commits/financial-risk-agent/actions/runs/35246195683/artifacts",
+        "name": "CI",
+        "head_sha": "7e84fc7e2da72179e558bb005bf01de09ac7aea9",
+        "created_at": "2026-09-17T16:22:39Z"
+      },
+      {
+        "id": 35243822467,
+        "artifacts_url": "https://api.github.com/repos/siqiwang0712-commits/financial-risk-agent/actions/runs/35243822467/artifacts",
+        "name": "CI",
+        "head_sha": "5db125ea037c34106c7ebcc931d4ad467f37210c",
+        "created_at": "2026-09-17T15:59:58Z"
+      },
+      {
+        "id": 35092394007,
+        "artifacts_url": "https://api.github.com/repos/siqiwang0712-commits/financial-risk-agent/actions/runs/35092394007/artifacts",
+        "name": "CI",
+        "head_sha": "661e02d3a1035cff0de5183b7f2500db82e198a9",
+        "created_at": "2026-09-16T11:49:29Z"
+      },
+      {
+        "id": 34975018096,
+        "artifacts_url": "https://api.github.com/repos/siqiwang0712-commits/financial-risk-agent/actions/runs/34975018096/artifacts",
+        "name": "CI",
+        "head_sha": "3c7b0fe829f0aaaa0f91582fdc5736b4c0367d63",
+        "created_at": "2026-09-15T13:26:37Z"
+      },
+      {
+        "id": 34736514082,
+        "artifacts_url": "https://api.github.com/repos/siqiwang0712-commits/financial-risk-agent/actions/runs/34736514082/artifacts",
+        "name": "CI",
+        "head_sha": "6688c0f7a386e9c2e68c7613b5317eae6810f370",
+        "created_at": "2026-09-13T03:51:38Z"
+      },
+      {
+        "id": 34736443475,
+        "artifacts_url": "https://api.github.com/repos/siqiwang0712-commits/financial-risk-agent/actions/runs/34736443475/artifacts",
+        "name": "CI",
+        "head_sha": "fafb37854031c04aa85b6b8549465a410e4c10fe",
+        "created_at": "2026-09-13T03:49:58Z"
+      },
+      {
+        "id": 34736410126,
+        "artifacts_url": "https://api.github.com/repos/siqiwang0712-commits/financial-risk-agent/actions/runs/34736410126/artifacts",
+        "name": "CI",
+        "head_sha": "fafb37854031c04aa85b6b8549465a410e4c10fe",
+        "created_at": "2026-09-13T03:49:06Z"
+      },
+      {
+        "id": 34702925748,
+        "artifacts_url": "https://api.github.com/repos/siqiwang0712-commits/financial-risk-agent/actions/runs/34702925748/artifacts",
+        "name": "CI",
+        "head_sha": "c37c72bd5f9ccfef013c38013801e639d9831201",
+        "created_at": "2026-09-12T15:40:09Z"
+      },
+      {
+        "id": 34701090385,
+        "artifacts_url": "https://api.github.com/repos/siqiwang0712-commits/financial-risk-agent/actions/runs/34701090385/artifacts",
+        "name": "CI",
+        "head_sha": "87efefbaf599f3d31a62a8afde6b514d57b11973",
+        "created_at": "2026-09-12T15:03:49Z"
+      },
+      {
+        "id": 34698954055,
+        "artifacts_url": "https://api.github.com/repos/siqiwang0712-commits/financial-risk-agent/actions/runs/34698954055/artifacts",
+        "name": "CI",
+        "head_sha": "bea633bea768fbfcbc35e588a87048d7a761fff0",
+        "created_at": "2026-09-12T14:19:36Z"
+      },
+      {
+        "id": 34698515724,
+        "artifacts_url": "https://api.github.com/repos/siqiwang0712-commits/financial-risk-agent/actions/runs/34698515724/artifacts",
+        "name": "CI",
+        "head_sha": "e640824047ce24f5c7e3dac25a2781d20823b04b",
+        "created_at": "2026-09-12T14:10:39Z"
+      },
+      {
+        "id": 34698291285,
+        "artifacts_url": "https://api.github.com/repos/siqiwang0712-commits/financial-risk-agent/actions/runs/34698291285/artifacts",
+        "name": "CI",
+        "head_sha": "e640824047ce24f5c7e3dac25a2781d20823b04b",
+        "created_at": "2026-09-12T14:06:09Z"
+      },
+      {
+        "id": 34693672980,
+        "artifacts_url": "https://api.github.com/repos/siqiwang0712-commits/financial-risk-agent/actions/runs/34693672980/artifacts",
+        "name": "CI",
+        "head_sha": "0ce470ef60c59a6c078543a29ffd5695bc168ac3",
+        "created_at": "2026-09-12T12:26:25Z"
+      },
+      {
+        "id": 34693263091,
+        "artifacts_url": "https://api.github.com/repos/siqiwang0712-commits/financial-risk-agent/actions/runs/34693263091/artifacts",
+        "name": "CI",
+        "head_sha": "8b54e8b071480ac77e9aa5fbdec1853e8e8bb54f",
+        "created_at": "2026-09-12T12:17:17Z"
+      },
+      {
+        "id": 34692757878,
+        "artifacts_url": "https://api.github.com/repos/siqiwang0712-commits/financial-risk-agent/actions/runs/34692757878/artifacts",
+        "name": "CI",
+        "head_sha": "8b54e8b071480ac77e9aa5fbdec1853e8e8bb54f",
+        "created_at": "2026-09-12T12:06:10Z"
+      },
+      {
+        "id": 34684648736,
+        "artifacts_url": "https://api.github.com/repos/siqiwang0712-commits/financial-risk-agent/actions/runs/34684648736/artifacts",
+        "name": "CI",
+        "head_sha": "8d213d53e1174639b6ebe3769a7d2a8bc572b38f",
+        "created_at": "2026-09-12T08:59:07Z"
+      },
+      {
+        "id": 34684171472,
+        "artifacts_url": "https://api.github.com/repos/siqiwang0712-commits/financial-risk-agent/actions/runs/34684171472/artifacts",
+        "name": "CI",
+        "head_sha": "8d213d53e1174639b6ebe3769a7d2a8bc572b38f",
+        "created_at": "2026-09-12T08:47:23Z"
+      },
+      {
+        "id": 34672307425,
+        "artifacts_url": "https://api.github.com/repos/siqiwang0712-commits/financial-risk-agent/actions/runs/34672307425/artifacts",
+        "name": "CI",
+        "head_sha": "e1101e5c5c426b88f38fbb3865a46d7d34a8754e",
+        "created_at": "2026-09-12T04:10:27Z"
+      },
+      {
+        "id": 34672001437,
+        "artifacts_url": "https://api.github.com/repos/siqiwang0712-commits/financial-risk-agent/actions/runs/34672001437/artifacts",
+        "name": "CI",
+        "head_sha": "e1101e5c5c426b88f38fbb3865a46d7d34a8754e",
+        "created_at": "2026-09-12T04:03:36Z"
+      },
+      {
+        "id": 34671453433,
+        "artifacts_url": "https://api.github.com/repos/siqiwang0712-commits/financial-risk-agent/actions/runs/34671453433/artifacts",
+        "name": "CI",
+        "head_sha": "ceb4b45fdef6debeea34cbb3f1b5b622ae61a143",
+        "created_at": "2026-09-12T03:50:42Z"
+      },
+      {
+        "id": 34669548281,
+        "artifacts_url": "https://api.github.com/repos/siqiwang0712-commits/financial-risk-agent/actions/runs/34669548281/artifacts",
+        "name": "CI",
+        "head_sha": "2fc6786266a8914d7f4b4fed3d906544c85ef316",
+        "created_at": "2026-09-12T03:08:11Z"
+      },
+      {
+        "id": 34669101384,
+        "artifacts_url": "https://api.github.com/repos/siqiwang0712-commits/financial-risk-agent/actions/runs/34669101384/artifacts",
+        "name": "CI",
+        "head_sha": "5da0aea89436af2d7d6324176da37079129f6a43",
+        "created_at": "2026-09-12T02:58:23Z"
+      },
+      {
+        "id": 34627399091,
+        "artifacts_url": "https://api.github.com/repos/siqiwang0712-commits/financial-risk-agent/actions/runs/34627399091/artifacts",
+        "name": "CI",
+        "head_sha": "51acd3aa0e503f329a134fd53b340ea3ec19bab9",
+        "created_at": "2026-09-11T17:23:24Z"
+      },
+      {
+        "id": 34623117753,
+        "artifacts_url": "https://api.github.com/repos/siqiwang0712-commits/financial-risk-agent/actions/runs/34623117753/artifacts",
+        "name": "CI",
+        "head_sha": "7fe2451f30305ad3eae2d4aad39d9ccfe52303d4",
+        "created_at": "2026-09-11T16:38:02Z"
+      },
+      {
+        "id": 34622673221,
+        "artifacts_url": "https://api.github.com/repos/siqiwang0712-commits/financial-risk-agent/actions/runs/34622673221/artifacts",
+        "name": "CI",
+        "head_sha": "3da523b00e398309482b075ffa1a5944bee5a8ce",
+        "created_at": "2026-09-11T16:33:26Z"
+      },
+      {
+        "id": 34620089269,
+        "artifacts_url": "https://api.github.com/repos/siqiwang0712-commits/financial-risk-agent/actions/runs/34620089269/artifacts",
+        "name": "CI",
+        "head_sha": "1ab345765e13191bafd4a7d6667fbca3a208328f",
+        "created_at": "2026-09-11T16:06:42Z"
+      },
+      {
+        "id": 34603815160,
+        "artifacts_url": "https://api.github.com/repos/siqiwang0712-commits/financial-risk-agent/actions/runs/34603815160/artifacts",
+        "name": "CI",
+        "head_sha": "152f58d3f4dfe5b121c82da42cc5ec4cc4dd4230",
+        "created_at": "2026-09-11T13:21:13Z"
+      },
+      {
+        "id": 34594937113,
+        "artifacts_url": "https://api.github.com/repos/siqiwang0712-commits/financial-risk-agent/actions/runs/34594937113/artifacts",
+        "name": "CI",
+        "head_sha": "cbda2181efe7d7814aeb61b72650b2d0e6b6429e",
+        "created_at": "2026-09-11T11:37:34Z"
+      },
+      {
+        "id": 34503221930,
+        "artifacts_url": "https://api.github.com/repos/siqiwang0712-commits/financial-risk-agent/actions/runs/34503221930/artifacts",
+        "name": "CI",
+        "head_sha": "bf4f7d1cfbde6b7f087d5534cf746df881a26abd",
+        "created_at": "2026-09-10T16:37:17Z"
+      },
+      {
+        "id": 34473532479,
+        "artifacts_url": "https://api.github.com/repos/siqiwang0712-commits/financial-risk-agent/actions/runs/34473532479/artifacts",
+        "name": "CI",
+        "head_sha": "4eb47a353411735da1f7c22492a61e19879fe3b0",
+        "created_at": "2026-09-10T11:51:42Z"
+      },
+      {
+        "id": 34471688860,
+        "artifacts_url": "https://api.github.com/repos/siqiwang0712-commits/financial-risk-agent/actions/runs/34471688860/artifacts",
+        "name": "CI",
+        "head_sha": "4eb47a353411735da1f7c22492a61e19879fe3b0",
+        "created_at": "2026-09-10T11:30:53Z"
+      },
+      {
+        "id": 34469303540,
+        "artifacts_url": "https://api.github.com/repos/siqiwang0712-commits/financial-risk-agent/actions/runs/34469303540/artifacts",
+        "name": "CI",
+        "head_sha": "e0ba98aa805f262ace79ae9c8f0a5b14cb4a0207",
+        "created_at": "2026-09-10T11:03:46Z"
+      },
+      {
+        "id": 34438879797,
+        "artifacts_url": "https://api.github.com/repos/siqiwang0712-commits/financial-risk-agent/actions/runs/34438879797/artifacts",
+        "name": "CI",
+        "head_sha": "6e7315a983fbac079307ce1d32ceebf273c112c2",
+        "created_at": "2026-09-10T04:52:45Z"
+      },
+      {
+        "id": 34014024428,
+        "artifacts_url": "https://api.github.com/repos/siqiwang0712-commits/financial-risk-agent/actions/runs/34014024428/artifacts",
+        "name": "CI",
+        "head_sha": "1486cf8e2e86115bff27f3f0c8940e2237efaf10",
+        "created_at": "2026-09-06T05:27:21Z"
+      },
+      {
+        "id": 34013310195,
+        "artifacts_url": "https://api.github.com/repos/siqiwang0712-commits/financial-risk-agent/actions/runs/34013310195/artifacts",
+        "name": "CI",
+        "head_sha": "4f3cfa3cbeb09cd3bd8ce3044e7869576f7a0355",
+        "created_at": "2026-09-06T05:10:16Z"
+      },
+      {
+        "id": 34010127406,
+        "artifacts_url": "https://api.github.com/repos/siqiwang0712-commits/financial-risk-agent/actions/runs/34010127406/artifacts",
+        "name": "CI",
+        "head_sha": "7e87e12dc4f02d7d0c63b84908a27ae0c64166d9",
+        "created_at": "2026-09-06T03:53:37Z"
+      },
+      {
+        "id": 34009949157,
+        "artifacts_url": "https://api.github.com/repos/siqiwang0712-commits/financial-risk-agent/actions/runs/34009949157/artifacts",
+        "name": "CI",
+        "head_sha": "7e87e12dc4f02d7d0c63b84908a27ae0c64166d9",
+        "created_at": "2026-09-06T03:49:18Z"
+      },
+      {
+        "id": 33981542265,
+        "artifacts_url": "https://api.github.com/repos/siqiwang0712-commits/financial-risk-agent/actions/runs/33981542265/artifacts",
+        "name": "CI",
+        "head_sha": "36e16229988d0ee1c14de8a4e85c94f7720c09e6",
+        "created_at": "2026-09-05T17:37:31Z"
+      },
+      {
+        "id": 33981058256,
+        "artifacts_url": "https://api.github.com/repos/siqiwang0712-commits/financial-risk-agent/actions/runs/33981058256/artifacts",
+        "name": "CI",
+        "head_sha": "a9c911647f8d30e7eee05d869102bf8a4d00930a",
+        "created_at": "2026-09-05T17:28:14Z"
+      },
+      {
+        "id": 33972739657,
+        "artifacts_url": "https://api.github.com/repos/siqiwang0712-commits/financial-risk-agent/actions/runs/33972739657/artifacts",
+        "name": "CI",
+        "head_sha": "4e67f8dab3d5630b7650956496f45676a0f6f478",
+        "created_at": "2026-09-05T14:45:12Z"
+      },
+      {
+        "id": 33972318634,
+        "artifacts_url": "https://api.github.com/repos/siqiwang0712-commits/financial-risk-agent/actions/runs/33972318634/artifacts",
+        "name": "CI",
+        "head_sha": "4e67f8dab3d5630b7650956496f45676a0f6f478",
+        "created_at": "2026-09-05T14:36:30Z"
+      },
+      {
+        "id": 33966471025,
+        "artifacts_url": "https://api.github.com/repos/siqiwang0712-commits/financial-risk-agent/actions/runs/33966471025/artifacts",
+        "name": "CI",
+        "head_sha": "534d058080267b81636c71361eeaac4b58e443e0",
+        "created_at": "2026-09-05T12:35:24Z"
+      },
+      {
+        "id": 33965689525,
+        "artifacts_url": "https://api.github.com/repos/siqiwang0712-commits/financial-risk-agent/actions/runs/33965689525/artifacts",
+        "name": "CI",
+        "head_sha": "17d4984464e7d3e5178a4943cb51da8c94dec7fb",
+        "created_at": "2026-09-05T12:19:00Z"
+      },
+      {
+        "id": 33965165500,
+        "artifacts_url": "https://api.github.com/repos/siqiwang0712-commits/financial-risk-agent/actions/runs/33965165500/artifacts",
+        "name": "CI",
+        "head_sha": "17d4984464e7d3e5178a4943cb51da8c94dec7fb",
+        "created_at": "2026-09-05T12:07:40Z"
+      },
+      {
+        "id": 33965097127,
+        "artifacts_url": "https://api.github.com/repos/siqiwang0712-commits/financial-risk-agent/actions/runs/33965097127/artifacts",
+        "name": "CI",
+        "head_sha": "bbc23cfca5a9811bafc6c25534c44b23c0c91072",
+        "created_at": "2026-09-05T12:06:13Z"
+      },
+      {
+        "id": 33962315761,
+        "artifacts_url": "https://api.github.com/repos/siqiwang0712-commits/financial-risk-agent/actions/runs/33962315761/artifacts",
+        "name": "CI",
+        "head_sha": "aaf68415909a106205601e5bf4b7e4c1e4858925",
+        "created_at": "2026-09-05T11:03:55Z"
+      },
+      {
+        "id": 33962314004,
+        "artifacts_url": "https://api.github.com/repos/siqiwang0712-commits/financial-risk-agent/actions/runs/33962314004/artifacts",
+        "name": "CI",
+        "head_sha": "aaf68415909a106205601e5bf4b7e4c1e4858925",
+        "created_at": "2026-09-05T11:03:53Z"
+      },
+      {
+        "id": 33953898975,
+        "artifacts_url": "https://api.github.com/repos/siqiwang0712-commits/financial-risk-agent/actions/runs/33953898975/artifacts",
+        "name": "CI",
+        "head_sha": "8cef8a005d7997e2cc1ef262a0d2f091dbe94aa8",
+        "created_at": "2026-09-05T07:56:17Z"
+      },
+      {
+        "id": 33952642497,
+        "artifacts_url": "https://api.github.com/repos/siqiwang0712-commits/financial-risk-agent/actions/runs/33952642497/artifacts",
+        "name": "CI",
+        "head_sha": "8cef8a005d7997e2cc1ef262a0d2f091dbe94aa8",
+        "created_at": "2026-09-05T07:28:18Z"
+      },
+      {
+        "id": 33951826493,
+        "artifacts_url": "https://api.github.com/repos/siqiwang0712-commits/financial-risk-agent/actions/runs/33951826493/artifacts",
+        "name": "CI",
+        "head_sha": "37cdeeba26d391736788f251365bbf6e285e5e64",
+        "created_at": "2026-09-05T07:10:42Z"
+      },
+      {
+        "id": 33948196928,
+        "artifacts_url": "https://api.github.com/repos/siqiwang0712-commits/financial-risk-agent/actions/runs/33948196928/artifacts",
+        "name": "CI",
+        "head_sha": "4dbefce72e3300d32d6028d486bbdc59e7fa2433",
+        "created_at": "2026-09-05T05:49:18Z"
+      },
+      {
+        "id": 33947567832,
+        "artifacts_url": "https://api.github.com/repos/siqiwang0712-commits/financial-risk-agent/actions/runs/33947567832/artifacts",
+        "name": "CI",
+        "head_sha": "1b3894bc73505bb6cb234bfc31b5847a4a483c12",
+        "created_at": "2026-09-05T05:34:37Z"
+      }
+    ]
+  },
+  "artifacts": [
+    {
+      "run_id": 39267952933,
+      "artifacts": [
+        {
+          "id": 12193873493,
+          "name": "v042-container-verification",
+          "expired": false
+        }
+      ]
+    },
+    {
+      "run_id": 39262085073,
+      "artifacts": [
+        {
+          "id": 12191287818,
+          "name": "v042-container-verification",
+          "expired": false
+        }
+      ]
+    },
+    {
+      "run_id": 39251499691,
+      "artifacts": [
+        {
+          "id": 12186221636,
+          "name": "v042-container-verification",
+          "expired": false
+        }
+      ]
+    },
+    {
+      "run_id": 39251499380,
+      "artifacts": [
+        {
+          "id": 12187385003,
+          "name": "trivy-results",
+          "expired": false
+        },
+        {
+          "id": 12186785307,
+          "name": "siqiwang0712-commits~financial-risk-agent~JK1AAP.dockerbuild",
+          "expired": false
+        },
+        {
+          "id": 12186053798,
+          "name": "siqiwang0712-commits~financial-risk-agent~TOGQO1.dockerbuild",
+          "expired": false
+        }
+      ]
+    },
+    {
+      "run_id": 39249891205,
+      "artifacts": [
+        {
+          "id": 12185276743,
+          "name": "v042-container-verification",
+          "expired": false
+        }
+      ]
+    },
+    {
+      "run_id": 39249276561,
+      "artifacts": [
+        {
+          "id": 12184593214,
+          "name": "v042-container-verification",
+          "expired": false
+        }
+      ]
+    },
+    {
+      "run_id": 39248545483,
+      "artifacts": [
+        {
+          "id": 12184402639,
+          "name": "v042-container-verification",
+          "expired": false
+        }
+      ]
+    },
+    {
+      "run_id": 38868653301,
+      "artifacts": [
+        {
+          "id": 12032049280,
+          "name": "v042-container-verification",
+          "expired": false
+        }
+      ]
+    },
+    {
+      "run_id": 38769950209,
+      "artifacts": [
+        {
+          "id": 11991602225,
+          "name": "trivy-results",
+          "expired": false
+        },
+        {
+          "id": 11991054030,
+          "name": "siqiwang0712-commits~financial-risk-agent~V2CY3G.dockerbuild",
+          "expired": false
+        },
+        {
+          "id": 11990729626,
+          "name": "siqiwang0712-commits~financial-risk-agent~Y34TXR.dockerbuild",
+          "expired": false
+        }
+      ]
+    },
+    {
+      "run_id": 38769888323,
+      "artifacts": [
+        {
+          "id": 11990613167,
+          "name": "v042-container-verification",
+          "expired": false
+        }
+      ]
+    },
+    {
+      "run_id": 37968443313,
+      "artifacts": [
+        {
+          "id": 11635805062,
+          "name": "siqiwang0712-commits~financial-risk-agent~EUGZKH.dockerbuild",
+          "expired": false
+        },
+        {
+          "id": 11635440505,
+          "name": "siqiwang0712-commits~financial-risk-agent~RFW10V.dockerbuild",
+          "expired": false
+        },
+        {
+          "id": 11634519488,
+          "name": "trivy-results",
+          "expired": false
+        }
+      ]
+    },
+    {
+      "run_id": 37968388964,
+      "artifacts": [
+        {
+          "id": 11635065159,
+          "name": "v042-container-verification",
+          "expired": false
+        }
+      ]
+    },
+    {
+      "run_id": 37821051768,
+      "artifacts": [
+        {
+          "id": 11569233295,
+          "name": "trivy-results",
+          "expired": false
+        },
+        {
+          "id": 11569108398,
+          "name": "siqiwang0712-commits~financial-risk-agent~I3GIE2.dockerbuild",
+          "expired": false
+        },
+        {
+          "id": 11568354910,
+          "name": "siqiwang0712-commits~financial-risk-agent~WUGYW4.dockerbuild",
+          "expired": false
+        }
+      ]
+    },
+    {
+      "run_id": 37819091548,
+      "artifacts": [
+        {
+          "id": 11568976054,
+          "name": "v042-container-verification",
+          "expired": false
+        }
+      ]
+    },
+    {
+      "run_id": 37338599037,
+      "artifacts": [
+        {
+          "id": 11357896338,
+          "name": "trivy-results",
+          "expired": false
+        },
+        {
+          "id": 11356624951,
+          "name": "siqiwang0712-commits~financial-risk-agent~LUUDZ4.dockerbuild",
+          "expired": false
+        },
+        {
+          "id": 11356624833,
+          "name": "siqiwang0712-commits~financial-risk-agent~7OFOVC.dockerbuild",
+          "expired": false
+        }
+      ]
+    },
+    {
+      "run_id": 37302629899,
+      "artifacts": [
+        {
+          "id": 11342570650,
+          "name": "trivy-results",
+          "expired": false
+        },
+        {
+          "id": 11342400502,
+          "name": "siqiwang0712-commits~financial-risk-agent~MV6KIV.dockerbuild",
+          "expired": false
+        },
+        {
+          "id": 11341074714,
+          "name": "siqiwang0712-commits~financial-risk-agent~L7E9UD.dockerbuild",
+          "expired": false
+        }
+      ]
+    },
+    {
+      "run_id": 37300287238,
+      "artifacts": [
+        {
+          "id": 11341231633,
+          "name": "siqiwang0712-commits~financial-risk-agent~MWF3N7.dockerbuild",
+          "expired": false
+        },
+        {
+          "id": 11340976704,
+          "name": "siqiwang0712-commits~financial-risk-agent~K6HJ6E.dockerbuild",
+          "expired": false
+        }
+      ]
+    },
+    {
+      "run_id": 36988498830,
+      "artifacts": [
+        {
+          "id": 11218985056,
+          "name": "siqiwang0712-commits~financial-risk-agent~XN1J2O.dockerbuild",
+          "expired": false
+        },
+        {
+          "id": 11218825625,
+          "name": "siqiwang0712-commits~financial-risk-agent~OAIFDE.dockerbuild",
+          "expired": false
+        }
+      ]
+    },
+    {
+      "run_id": 36966710797,
+      "artifacts": [
+        {
+          "id": 11210401791,
+          "name": "siqiwang0712-commits~financial-risk-agent~QQJOVF.dockerbuild",
+          "expired": false
+        },
+        {
+          "id": 11209737044,
+          "name": "siqiwang0712-commits~financial-risk-agent~NG04SN.dockerbuild",
+          "expired": false
+        }
+      ]
+    },
+    {
+      "run_id": 35955798106,
+      "artifacts": [
+        {
+          "id": 10790486915,
+          "name": "siqiwang0712-commits~financial-risk-agent~POKZUA.dockerbuild",
+          "expired": false
+        },
+        {
+          "id": 10789484462,
+          "name": "siqiwang0712-commits~financial-risk-agent~LIC9TJ.dockerbuild",
+          "expired": false
+        }
+      ]
+    },
+    {
+      "run_id": 35449799521,
+      "artifacts": [
+        {
+          "id": 10586398980,
+          "name": "siqiwang0712-commits~financial-risk-agent~M5G3X0.dockerbuild",
+          "expired": false
+        },
+        {
+          "id": 10586373972,
+          "name": "siqiwang0712-commits~financial-risk-agent~G5PSUU.dockerbuild",
+          "expired": false
+        }
+      ]
+    },
+    {
+      "run_id": 35448112282,
+      "artifacts": [
+        {
+          "id": 10586161871,
+          "name": "siqiwang0712-commits~financial-risk-agent~YS18OB.dockerbuild",
+          "expired": false
+        },
+        {
+          "id": 10586141043,
+          "name": "siqiwang0712-commits~financial-risk-agent~MWCDVH.dockerbuild",
+          "expired": false
+        }
+      ]
+    },
+    {
+      "run_id": 35447634200,
+      "artifacts": [
+        {
+          "id": 10586306122,
+          "name": "siqiwang0712-commits~financial-risk-agent~IT9Y1W.dockerbuild",
+          "expired": false
+        },
+        {
+          "id": 10585506193,
+          "name": "siqiwang0712-commits~financial-risk-agent~EFOPBO.dockerbuild",
+          "expired": false
+        }
+      ]
+    },
+    {
+      "run_id": 35447367273,
+      "artifacts": [
+        {
+          "id": 10586585401,
+          "name": "siqiwang0712-commits~financial-risk-agent~U2XP9Y.dockerbuild",
+          "expired": false
+        },
+        {
+          "id": 10586390702,
+          "name": "siqiwang0712-commits~financial-risk-agent~OSWM0L.dockerbuild",
+          "expired": false
+        }
+      ]
+    },
+    {
+      "run_id": 35446367210,
+      "artifacts": [
+        {
+          "id": 10585359064,
+          "name": "siqiwang0712-commits~financial-risk-agent~J9YVOB.dockerbuild",
+          "expired": false
+        },
+        {
+          "id": 10585314301,
+          "name": "siqiwang0712-commits~financial-risk-agent~WB6BS4.dockerbuild",
+          "expired": false
+        }
+      ]
+    },
+    {
+      "run_id": 35445967637,
+      "artifacts": [
+        {
+          "id": 10584579026,
+          "name": "siqiwang0712-commits~financial-risk-agent~O7CLDG.dockerbuild",
+          "expired": false
+        },
+        {
+          "id": 10584494119,
+          "name": "siqiwang0712-commits~financial-risk-agent~QR7KWC.dockerbuild",
+          "expired": false
+        }
+      ]
+    },
+    {
+      "run_id": 35445651122,
+      "artifacts": [
+        {
+          "id": 10585133423,
+          "name": "siqiwang0712-commits~financial-risk-agent~RROQ0G.dockerbuild",
+          "expired": false
+        },
+        {
+          "id": 10585103426,
+          "name": "siqiwang0712-commits~financial-risk-agent~AXUE40.dockerbuild",
+          "expired": false
+        }
+      ]
+    },
+    {
+      "run_id": 35445260707,
+      "artifacts": [
+        {
+          "id": 10584753914,
+          "name": "siqiwang0712-commits~financial-risk-agent~OA016A.dockerbuild",
+          "expired": false
+        },
+        {
+          "id": 10584618310,
+          "name": "siqiwang0712-commits~financial-risk-agent~KFW55N.dockerbuild",
+          "expired": false
+        }
+      ]
+    }
+  ],
+  "evidence_hashes": {
+    "work/recovery_refs_and_runs.json": "ec4458007a1914605d506cc080c531103f459edd122321f19fab947bb4db80f7",
+    "work/recovery_artifacts.json": "6b7c0f7e172781d4d1dca75c1e41e0b075d86967a33d9fc4838f8468f525f91b",
+    "work/remote_branch_blob_scan.json": "82e734f449841a4b3fef81006bf3720bc1ab6f26e62a2830054cc3264f81b3b9"
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "status": "REAL_E5_SOURCE_ACQUISITION_BLOCKED",
+  "git_fetch": "Failed to connect to proxy port 8080; exact required repository objects recovered via the connected GitHub API instead.",
+  "sec_request": {
+    "url": "https://www.sec.gov/files/dera/data/financial-statement-data-sets/2025q3.zip",
+    "result": "urllib.error.URLError: [Errno 1] Operation not permitted",
+    "response_dataset_received": false
+  },
+  "configured_environment": {
+    "observations_current": true,
+    "http_policy_observed_state": "unknown",
+    "secret_bindings": 0,
+    "outbound_identities": 0,
+    "vpn_configured": false
+  },
+  "alternative_source_review": {
+    "connector": "financial_datasets.get_income_statement",
+    "schema_reviewed_only": true,
+    "data_requested": false,
+    "reason": "Report-period filters and as-reported values do not establish filing acceptance, source availability by cutoff, immutable accession-bound snapshots or an independent cohort. Latest/restated data cannot substitute for point-in-time provenance."
+  },
+  "outcome_data_accessed": false,
+  "historical_development_only": "Existing immutable E4-S development data and S0 OOF/replay artifacts were used only as described by the qualification records.",
+  "alternative_cohort_boundary": "A newly established issuer boundary could in principle prove non-overlap, but no authenticated new-issuer corpus with mature point-in-time features was recovered here. No cohort was invented.",
+  "next_required_capability": "Authoritative immutable accession-bound historical filing inputs, filing-acceptance timestamps and independently checkable historical non-overlap evidence."
+}

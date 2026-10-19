@@ -1,0 +1,87 @@
+{
+  "outcomes_accessed": false,
+  "schema_version": 1,
+  "stages": {
+    "freeze-e5p": {
+      "checkpoint": "3755b057ddb1bd576d0642b0ca7c4625087c37a8af403b48a1e1f15f1910a135",
+      "code_commit": "017984b8ec5955e8db69b2fa0196a89798025b38",
+      "completed_at": "2026-10-19T15:18:48.638857+00:00",
+      "failure_reason": "[{\"gate\": \"MODEL_QUALIFIED\", \"id\": \"P01/P02\", \"reason\": \"No qualified evidence-independent Agent producer or matched historical development score corpus; no study calibration/authorization policy can be honestly certified.\"}, {\"gate\": \"FEATURE_PACKETS_FROZEN\", \"id\": \"P04\", \"reason\": \"New immutable point-in-time SEC source data are unavailable locally; direct authoritative SEC request failed with Operation not permitted.\"}, {\"gate\": \"COHORT_FROZEN\", \"id\": \"C01\", \"reason\": \"Exact previous_270 absent from locally reachable history; no independently checkable containing-superset proof. Remote artifact recovery is incomplete.\"}, {\"gate\": \"PROTOCOL_FROZEN\", \"id\": \"INFERENCE\", \"reason\": \"Synthetic engine tests and null grid do not establish the complete required joint-power/type-I qualification or all comparator-dependence scenarios.\"}, {\"gate\": \"OUTCOMES_UNLOCKED\", \"id\": \"ISOLATION\", \"reason\": \"No independent operational outcome isolation or genuine blinded adjudication process has been established. Filesystem path guards alone are insufficient.\"}]",
+      "input_hashes": {
+        "research/e5/execution/core.py": "e93634de80845a202155adc5779aea72d40357c9dfc04d56d0f272481c0fa951",
+        "research/e5/execution/development.py": "6de4efa50ca097f5eee35c626d51169b8dc7ce2050f5a24f4eaa953c29d3f513",
+        "research/e5/execution/inference.py": "c3b010d5da0ea4756b26502516fe0aee08ef33a0b1f79093f509294804ad14c8",
+        "research/e5/execution/qualification.py": "7b3628d19b73ce15b127151b3ce69056a007cf374a91dcb12a222a99dab9a9d0",
+        "research/e5/run_e5.py": "8f54809bdd58874da97d7153676ad661ba1fdfdc2dafb66b512838e23cfa7ccb"
+      },
+      "output_hashes": {},
+      "stage": "freeze-e5p",
+      "started_at": "2026-10-19T15:18:48.638845+00:00",
+      "state": "BLOCKED",
+      "validation_result": "BLOCKED"
+    },
+    "historical_development_qualification": {
+      "checkpoint": "8d70809c1a73d6d10dd01fbb75ce1f61e3e8687c8113b5c51e0a71625506fe3b",
+      "code_commit": "017984b8ec5955e8db69b2fa0196a89798025b38",
+      "completed_at": "2026-10-19T15:18:47.755207+00:00",
+      "failure_reason": null,
+      "input_hashes": {
+        "research/e5/execution/core.py": "e93634de80845a202155adc5779aea72d40357c9dfc04d56d0f272481c0fa951",
+        "research/e5/execution/development.py": "6de4efa50ca097f5eee35c626d51169b8dc7ce2050f5a24f4eaa953c29d3f513",
+        "research/e5/execution/inference.py": "c3b010d5da0ea4756b26502516fe0aee08ef33a0b1f79093f509294804ad14c8",
+        "research/e5/execution/qualification.py": "7b3628d19b73ce15b127151b3ce69056a007cf374a91dcb12a222a99dab9a9d0",
+        "research/e5/run_e5.py": "8f54809bdd58874da97d7153676ad661ba1fdfdc2dafb66b512838e23cfa7ccb"
+      },
+      "output_hashes": {
+        "research/e5/qualification/execution_qualification_identity.json": "02dab83d20939794bb938c5277880adca1d3217842fa54fa2a146e348ab9144e",
+        "research/e5/qualification/s0_replay.json": "91c07bee80aa2f8a4f2337513af746281aea9994a3647d2c46744f7d3e7d4bc2",
+        "research/e5/qualification/utility_rule.json": "1e2b6db8e9908505e7b227a38cf4423c33ca77afab6c7c247e389fa9210684fb"
+      },
+      "stage": "historical_development_qualification",
+      "started_at": "2026-10-19T15:18:47.573878+00:00",
+      "state": "COMPLETE",
+      "validation_result": "PASS"
+    },
+    "run-e5r": {
+      "checkpoint": "d884525ac95572eccb9788883d6212002511af715cb6a4e1f7abbc76be182e6a",
+      "code_commit": "017984b8ec5955e8db69b2fa0196a89798025b38",
+      "completed_at": "2026-10-19T15:18:47.770947+00:00",
+      "failure_reason": "[{\"gate\": \"MODEL_QUALIFIED\", \"id\": \"P01/P02\", \"reason\": \"No qualified evidence-independent Agent producer or matched historical development score corpus; no study calibration/authorization policy can be honestly certified.\"}, {\"gate\": \"FEATURE_PACKETS_FROZEN\", \"id\": \"P04\", \"reason\": \"New immutable point-in-time SEC source data are unavailable locally; direct authoritative SEC request failed with Operation not permitted.\"}, {\"gate\": \"COHORT_FROZEN\", \"id\": \"C01\", \"reason\": \"Exact previous_270 absent from locally reachable history; no independently checkable containing-superset proof. Remote artifact recovery is incomplete.\"}, {\"gate\": \"PROTOCOL_FROZEN\", \"id\": \"INFERENCE\", \"reason\": \"Synthetic engine tests and null grid do not establish the complete required joint-power/type-I qualification or all comparator-dependence scenarios.\"}, {\"gate\": \"OUTCOMES_UNLOCKED\", \"id\": \"ISOLATION\", \"reason\": \"No independent operational outcome isolation or genuine blinded adjudication process has been established. Filesystem path guards alone are insufficient.\"}]",
+      "input_hashes": {
+        "research/e5/execution/core.py": "e93634de80845a202155adc5779aea72d40357c9dfc04d56d0f272481c0fa951",
+        "research/e5/execution/development.py": "6de4efa50ca097f5eee35c626d51169b8dc7ce2050f5a24f4eaa953c29d3f513",
+        "research/e5/execution/inference.py": "c3b010d5da0ea4756b26502516fe0aee08ef33a0b1f79093f509294804ad14c8",
+        "research/e5/execution/qualification.py": "7b3628d19b73ce15b127151b3ce69056a007cf374a91dcb12a222a99dab9a9d0",
+        "research/e5/run_e5.py": "8f54809bdd58874da97d7153676ad661ba1fdfdc2dafb66b512838e23cfa7ccb"
+      },
+      "output_hashes": {},
+      "stage": "run-e5r",
+      "started_at": "2026-10-19T15:18:47.770939+00:00",
+      "state": "BLOCKED",
+      "validation_result": "BLOCKED"
+    },
+    "unlock-outcomes": {
+      "checkpoint": "0489a5313330a5ba301dabc12ce875fa132c26cd4e60660e60c06d3c65819ba8",
+      "code_commit": "017984b8ec5955e8db69b2fa0196a89798025b38",
+      "completed_at": "2026-10-19T15:18:49.463183+00:00",
+      "failure_reason": "[{\"gate\": \"MODEL_QUALIFIED\", \"id\": \"P01/P02\", \"reason\": \"No qualified evidence-independent Agent producer or matched historical development score corpus; no study calibration/authorization policy can be honestly certified.\"}, {\"gate\": \"FEATURE_PACKETS_FROZEN\", \"id\": \"P04\", \"reason\": \"New immutable point-in-time SEC source data are unavailable locally; direct authoritative SEC request failed with Operation not permitted.\"}, {\"gate\": \"COHORT_FROZEN\", \"id\": \"C01\", \"reason\": \"Exact previous_270 absent from locally reachable history; no independently checkable containing-superset proof. Remote artifact recovery is incomplete.\"}, {\"gate\": \"PROTOCOL_FROZEN\", \"id\": \"INFERENCE\", \"reason\": \"Synthetic engine tests and null grid do not establish the complete required joint-power/type-I qualification or all comparator-dependence scenarios.\"}, {\"gate\": \"OUTCOMES_UNLOCKED\", \"id\": \"ISOLATION\", \"reason\": \"No independent operational outcome isolation or genuine blinded adjudication process has been established. Filesystem path guards alone are insufficient.\"}]",
+      "input_hashes": {
+        "research/e5/execution/core.py": "e93634de80845a202155adc5779aea72d40357c9dfc04d56d0f272481c0fa951",
+        "research/e5/execution/development.py": "6de4efa50ca097f5eee35c626d51169b8dc7ce2050f5a24f4eaa953c29d3f513",
+        "research/e5/execution/inference.py": "c3b010d5da0ea4756b26502516fe0aee08ef33a0b1f79093f509294804ad14c8",
+        "research/e5/execution/qualification.py": "7b3628d19b73ce15b127151b3ce69056a007cf374a91dcb12a222a99dab9a9d0",
+        "research/e5/run_e5.py": "8f54809bdd58874da97d7153676ad661ba1fdfdc2dafb66b512838e23cfa7ccb"
+      },
+      "output_hashes": {},
+      "stage": "unlock-outcomes",
+      "started_at": "2026-10-19T15:18:49.463168+00:00",
+      "state": "BLOCKED",
+      "validation_result": "BLOCKED"
+    }
+  },
+  "studies": {
+    "E5-P": "DRAFT",
+    "E5-R": "DRAFT"
+  },
+  "updated_at": "2026-10-19T15:18:49.466485+00:00"
+}

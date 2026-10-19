@@ -1,0 +1,33 @@
+{
+  "integrity": "PASS",
+  "historical_files_verified": 172,
+  "outcomes_accessed_by_this_execution": false,
+  "pre_outcome_freeze_barrier": "BLOCKED",
+  "remaining": [
+    {
+      "id": "P01/P02",
+      "gate": "MODEL_QUALIFIED",
+      "reason": "No qualified evidence-independent Agent producer or matched historical development score corpus; no study calibration/authorization policy can be honestly certified."
+    },
+    {
+      "id": "P04",
+      "gate": "FEATURE_PACKETS_FROZEN",
+      "reason": "New immutable point-in-time SEC source data are unavailable locally; direct authoritative SEC request failed with Operation not permitted."
+    },
+    {
+      "id": "C01",
+      "gate": "COHORT_FROZEN",
+      "reason": "Exact previous_270 absent from locally reachable history; no independently checkable containing-superset proof. Remote artifact recovery is incomplete."
+    },
+    {
+      "id": "INFERENCE",
+      "gate": "PROTOCOL_FROZEN",
+      "reason": "Synthetic engine tests and null grid do not establish the complete required joint-power/type-I qualification or all comparator-dependence scenarios."
+    },
+    {
+      "id": "ISOLATION",
+      "gate": "OUTCOMES_UNLOCKED",
+      "reason": "No independent operational outcome isolation or genuine blinded adjudication process has been established. Filesystem path guards alone are insufficient."
+    }
+  ]
+}

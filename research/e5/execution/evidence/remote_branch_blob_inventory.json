@@ -1,0 +1,502 @@
+[
+  {
+    "path": ".gitattributes",
+    "git_blob": "0bb3f2c9f245f23a12f3024365990819e7e83787",
+    "sha256": "14b94ae5c742d54ffcf9a87c521a6952ede615f3a2eb62be6f82f419a66fc65a"
+  },
+  {
+    "path": "README.md",
+    "git_blob": "039a95aa1aed7699c0179d9a17e38210058f3e69",
+    "sha256": "37392128ae4c2a032e14c819c77808dcd6e07857674edf01aedb8906f254b079"
+  },
+  {
+    "path": "backend/finrisk/agent/orchestrator.py",
+    "git_blob": "01713d7aed2fe0d9968c871bb3548f1f8d79128a",
+    "sha256": "7921b6f7547b71c9372858640e0e139ba4d3f7fd603236f348616e13b4714a92"
+  },
+  {
+    "path": "backend/finrisk/agent/state.py",
+    "git_blob": "bf84e4884bd96c6340f8142fca9585dbfda50a5c",
+    "sha256": "8864662db9adbe5477dd10b37a307610162b3a04fb5c40dc715f92951b5b461a"
+  },
+  {
+    "path": "backend/finrisk/api.py",
+    "git_blob": "b2676a19cdcf39eaa147369491434298336da9fd",
+    "sha256": "0f607e7a8a9313bd6d4bdb91cdbf31104b091a3279f5e46e257c97d77e4edeed"
+  },
+  {
+    "path": "backend/finrisk/benchmark.py",
+    "git_blob": "2a2ff68fe7041e42492def88aa0bbf3d9f86d82c",
+    "sha256": "b84c39dc4656ea16505484ca227fb6ef22937e8d4b4713fc28d71f32245c8551"
+  },
+  {
+    "path": "backend/finrisk/benchmark_protocol.py",
+    "git_blob": "e44b339b428b59c25da4dce0111123d7c3559181",
+    "sha256": "a62b33c33d3a822c3cbc3fc8f41894bc9be03a63d22358851c8fb8c796ffb3c8"
+  },
+  {
+    "path": "backend/finrisk/contradictions.py",
+    "git_blob": "8e8fdad4f6240979c268d8bd694abc2ba68b247c",
+    "sha256": "c56d9e13c0481329ddb66a3749647ba43defd1ae16e81f595b4385a58967efc9"
+  },
+  {
+    "path": "backend/finrisk/domain.py",
+    "git_blob": "8068c6cb0907e510a4d7001e401209ef2b6550a4",
+    "sha256": "ac05ce1c80d30c2c5c64ab1bb15d0a8e7c08e25074900506df38277633310de3"
+  },
+  {
+    "path": "backend/finrisk/enterprise/alerts.py",
+    "git_blob": "d3bdd11756681713c7f57b42fbadfd8486da96a5",
+    "sha256": "917d2ba0c713af0ac77177ae917fe5eba69e959aee4ad5d2903720bf8ac8ffbb"
+  },
+  {
+    "path": "backend/finrisk/enterprise/api.py",
+    "git_blob": "137e3aefe894a80dcd15833aeb181ac44f8fa26f",
+    "sha256": "fc0ea6f1aa566bc654a33e68b00006e6a3a5c3fdb20eff3b085ee96e0f62ddca"
+  },
+  {
+    "path": "backend/finrisk/enterprise/applicability.py",
+    "git_blob": "5ce3e1d19cc72115eadc80e60ebd221ba81f34fe",
+    "sha256": "3e84d4cb9ed1af3216781ad055773610cb7ac3c48ccda89c051f4228796127be"
+  },
+  {
+    "path": "backend/finrisk/enterprise/calibration.py",
+    "git_blob": "2f9b20149ee7e1009c790520cfa884a92a901e8d",
+    "sha256": "9acb202f9b6a10a9b08e987390722e659f09b0eaa7335fa252fea00b9c5bf465"
+  },
+  {
+    "path": "backend/finrisk/enterprise/decision.py",
+    "git_blob": "05835c2228810710ab54a2c3e14d8cfd2bf6eba1",
+    "sha256": "abcc738f6fcc8f2b005cb2eccf9f33d0f9a1eff6a7a14dfab54ec4d08526d060"
+  },
+  {
+    "path": "backend/finrisk/enterprise/domain.py",
+    "git_blob": "78cf989f8f90bdabc25191ae53b5b8695e67cc13",
+    "sha256": "cfa7574bd124d57dbf09f04f0a72d7bff11460c291eb6ceb8006370204232f71"
+  },
+  {
+    "path": "backend/finrisk/enterprise/evidence_graph.py",
+    "git_blob": "2f06a796f22901a0e07fac7265b7486db2e8af25",
+    "sha256": "953f24b4614e8d4daacab0e4e56dcbd2a467ea67350870ac5c6d6e2bc51a063c"
+  },
+  {
+    "path": "backend/finrisk/enterprise/fusion.py",
+    "git_blob": "af5a35c2710bbc07ff71ff753a3564b038931717",
+    "sha256": "6a2aa3b07ade80f450701b75e5889072debdfa9ca8f0b7b8207dc9e1b889324f"
+  },
+  {
+    "path": "backend/finrisk/enterprise/governance.py",
+    "git_blob": "490df446003f10cee79ee5b672428c343cdef955",
+    "sha256": "568daa8f1c1e008eab1cd6946e03a38ab16e808f4180a01469d8dbeced62b88d"
+  },
+  {
+    "path": "backend/finrisk/enterprise/jobs.py",
+    "git_blob": "675672cacfbdbf21ce1af7023e4cdfe27f4c65b0",
+    "sha256": "367efe868c00e55d8d7fa041d1a19e84025d5bdc9cc2662b4506e66291c5e266"
+  },
+  {
+    "path": "backend/finrisk/enterprise/observability.py",
+    "git_blob": "0cc65c448062f0960ad87df5f8a87b5258f72993",
+    "sha256": "cc92b55c7c51660f004bd01067e70afc51b4605df5f6fbc77d2bed6736ac20cc"
+  },
+  {
+    "path": "backend/finrisk/enterprise/policy.py",
+    "git_blob": "b70a5cadf4d08f71e30a6183301c0a53e8882ee9",
+    "sha256": "97262b4be78172a288ad417cde82d2b0077bc671c841fa1365b3c5cdb97bd498"
+  },
+  {
+    "path": "backend/finrisk/enterprise/postgres.py",
+    "git_blob": "64f9a60a566e06a0f6bef2820900ab7f9d9bc66c",
+    "sha256": "4c049091c05c6b8f36155fcd401c1eb335b7efc433bb75ec0dddcf86771888d6"
+  },
+  {
+    "path": "backend/finrisk/enterprise/repository.py",
+    "git_blob": "0d3041ae1862e1cc4c8a04812b48f67ca1bfeb8d",
+    "sha256": "ad392d2997f20e0f6ed8a4eafe08fdb22a24f2271acecbe276ebe88a6736d105"
+  },
+  {
+    "path": "backend/finrisk/enterprise/scenario.py",
+    "git_blob": "eabf8b8add4c843114663e403bdc9d63edbcc762",
+    "sha256": "77b341c489615ba2968efc025d763293cd030656c5ce635dd0db5d20e5a47c42"
+  },
+  {
+    "path": "backend/finrisk/enterprise/service.py",
+    "git_blob": "2c85239bf6d842f12d115beba711779c115604bb",
+    "sha256": "6f1ca07b554034a72e41d03dee0896e3594730036d3a6cd84e01f43d8b5db43b"
+  },
+  {
+    "path": "backend/finrisk/enterprise/storage.py",
+    "git_blob": "b73acbccede6f27731e8f118eb4e9c73bd992fe1",
+    "sha256": "22bc2f37a5696471e76d47f8f44e9c288b50de95e9d481142ad935c824cae58d"
+  },
+  {
+    "path": "backend/finrisk/enterprise/tension.py",
+    "git_blob": "32cfef61d44d60d500c4394ca3c3e786c4874292",
+    "sha256": "b64d085ef20ac7fedd72274cfb864732742ba4bd339e214d0629a92cd533f4cd"
+  },
+  {
+    "path": "backend/finrisk/enterprise/workflow.py",
+    "git_blob": "684968faa9d4e380530b1c06a962d972e5cf5b64",
+    "sha256": "fc8e416eda2866cff0fd97ed84f44d015f58f0a566b53f2413ada89657c6c761"
+  },
+  {
+    "path": "backend/finrisk/evaluation.py",
+    "git_blob": "5c89e1c0fe3ffbe19514d9fe39e3f4c7e9eee0eb",
+    "sha256": "bbd08e5538e888c9a367978da3f0aaf776ba76fdaf8bb1a45afb5fc410d1d9c0"
+  },
+  {
+    "path": "backend/finrisk/extraction_reference.py",
+    "git_blob": "350817eef225dc85d352ffe88a6e888a9e76907a",
+    "sha256": "e87f8b1753cab55fb2774c2d0b4844f64d4479caf84cad894610338bb9e1582c"
+  },
+  {
+    "path": "backend/finrisk/facts.py",
+    "git_blob": "60a387b70ccbe30535a530df535ae920f0023286",
+    "sha256": "8b7514d83d02183dc5d2ec0f5b3384fe86ebdd636f5bcae51eac6af930275509"
+  },
+  {
+    "path": "backend/finrisk/llm.py",
+    "git_blob": "669d59cc0da51906e3afa8fc75783a982a284301",
+    "sha256": "b6a6a3df63763278ff399a495ce4f4e805495dc961aff2f269cf65685eff3398"
+  },
+  {
+    "path": "backend/finrisk/metrics.py",
+    "git_blob": "b81f4de0e43f96697abbb3b4f19ddda583e5836d",
+    "sha256": "431a1561f873726f4daf73ef068ebf4aa5cc7cb59203df59524b9bfb1f519b5e"
+  },
+  {
+    "path": "backend/finrisk/models.py",
+    "git_blob": "daccc05edc12cb25ef6738efe8a4c346ac239a18",
+    "sha256": "33d9f77836a9dcf0fb678851cca8a541a4a2e87285230feced8eda49459b74ac"
+  },
+  {
+    "path": "backend/finrisk/normalization.py",
+    "git_blob": "0f46db190ee9f5b35bd227cc75ada80de6256928",
+    "sha256": "94938ff3aa8374edb83aabe8d2956d21ad57183d0332b66410a7529bbc0f52b7"
+  },
+  {
+    "path": "backend/finrisk/numeric_benchmark.py",
+    "git_blob": "474996f31fc50a1ec21438c528515aa040ba5594",
+    "sha256": "7346dbb1c16a309f6a4171cf320facd304acf1a09e9b01316481c7bb7b3507d1"
+  },
+  {
+    "path": "backend/finrisk/parser.py",
+    "git_blob": "65fe9912502a892f85ed4d4d69366743f7add97e",
+    "sha256": "98542d40fae3d4b72a4a16cf79f0fd806da36b9d8ba3b2a119099d70bf6d37d7"
+  },
+  {
+    "path": "backend/finrisk/pipeline.py",
+    "git_blob": "d2c910c74e41a8df41576b066bb8f894b30edad3",
+    "sha256": "befcaa6cd7d07e85c9f59947af0b544dc117c9973318b557113880288e82ea48"
+  },
+  {
+    "path": "backend/finrisk/report.py",
+    "git_blob": "e45cc1e04d7c5605a99da6a837ee2eb883a70e70",
+    "sha256": "82734c43682961d98eebcbf4bc73e2a8a0207c4d96cfc6ee8a3d9b60de12d401"
+  },
+  {
+    "path": "backend/finrisk/research_eval.py",
+    "git_blob": "682459cc2b22232fbb98e1558a60f4bd5fbb5053",
+    "sha256": "487c755327985d938ac43338154baa93930cb0aaa1486c1c89be412a95d4ff61"
+  },
+  {
+    "path": "backend/finrisk/rules.py",
+    "git_blob": "c113f0b879a185f11394d63ea79007b66003d786",
+    "sha256": "d307ec93126960d18f296549d6293562ab9ab620319577130d4e3caffd4b7bbc"
+  },
+  {
+    "path": "backend/finrisk/sec_bulk.py",
+    "git_blob": "0d0b80699d9c04aec584449d242601bbee5b0118",
+    "sha256": "305882e81c04c5d1c3576cc7bd4b66fa78bf985b9fa62adab445a6c687e87083"
+  },
+  {
+    "path": "backend/finrisk/xbrl.py",
+    "git_blob": "accfa76a1f18f14786ed9f7795918f1fcc90dd53",
+    "sha256": "839851b337553f47bad8c7cbb9bde7b930cfa6b73a2bb431fefca95c706ce3d6"
+  },
+  {
+    "path": "docs/audit_remediation_2026-09-14.md",
+    "git_blob": "0a4879b7eccaab30b0ec081ca5fd71ef8dc5b1b5",
+    "sha256": "087f932c581963740d95f16c5ec1950292b4fd9eee6466c42006772e72abc4c8"
+  },
+  {
+    "path": "docs/audit_report_2026-09-13.md",
+    "git_blob": "756ec9eb59ecb3ec2c9ef383e61c45bc18bc3d7e",
+    "sha256": "003087c53f3907f461e524185e22fd61787329a0f717286595292b4350d1f855"
+  },
+  {
+    "path": "docs/capability_maturity_matrix.md",
+    "git_blob": "e4433bea3e558c715b382f256d1779e810525def",
+    "sha256": "42ac218ef967b7a2e370e1cc4f3263856d0b10d960b13f4a234ed12f4625ae38"
+  },
+  {
+    "path": "docs/enterprise_platform.md",
+    "git_blob": "1a21e601d19bda624f3335f99c42906316951465",
+    "sha256": "9b419cb24546577805192edbdb80686895052c8e376874bf5f6cd420b94227fc"
+  },
+  {
+    "path": "examples/intel_2024_sample_report.txt",
+    "git_blob": "3351333628987cc8775d5d1cbca25692445b51e4",
+    "sha256": "bb9beddcf82493f0add7a57f43c4285c2d582916686f895d1aec32f5b704f0cc"
+  },
+  {
+    "path": "failure_lab/incidents.json",
+    "git_blob": "7aa1c1deb0e80cac8cae32c2ed8940a5a4887ce8",
+    "sha256": "d9ad61b9ceee4dc200440001f967809e90b7c934817f2303d083bc7986962f8a"
+  },
+  {
+    "path": "frontend/app/api/v1/[...path]/route.ts",
+    "git_blob": "c10df7242427069055c36437025ef9943a89834e",
+    "sha256": "f6e80df02727db065fab8c5e6db23952626cbc4e2beb1c6431b4a3720189eab4"
+  },
+  {
+    "path": "frontend/app/error.tsx",
+    "git_blob": "a3ccb44ab8e290a523f889ca8e2276cc58319f3b",
+    "sha256": "556353f6a17c8302b97ef4bd338518206f87055f4b53c3b5eb8673ef4647e612"
+  },
+  {
+    "path": "frontend/app/global-error.tsx",
+    "git_blob": "15465ddb1a62cb3f477e498246825fac737b0bdf",
+    "sha256": "0a597b6b120cc391516858ef7fb13c45c0780a1c35631e9c6e1ba4e7d80c04bf"
+  },
+  {
+    "path": "frontend/app/page.tsx",
+    "git_blob": "74fcf3097a8c45e90746f4c10e2a2a1d48a05a90",
+    "sha256": "e761ee3e6f314a80cf04023644898f5ef15465a472fd50a73706c30bcf64bbae"
+  },
+  {
+    "path": "frontend/components/AgentTrace.tsx",
+    "git_blob": "88dbb0a9bcca9a9688b5526bf0dc3cd71a99b0b3",
+    "sha256": "49a4b2c8f517e0692545da3a0b25209e13258f85065d2dbbacd3fad92126eb07"
+  },
+  {
+    "path": "frontend/components/DecisionPaths.tsx",
+    "git_blob": "8aa5d4a4f1811bb13d10e49c5e51025ef8ed0ddb",
+    "sha256": "0ac5a12c32a8bd30eeee7abe8b1bf15a826a702adc9206853a8f5127eb444eb1"
+  },
+  {
+    "path": "frontend/components/DecisionSummary.tsx",
+    "git_blob": "84da0a88b36e8e22eea0369eb26637c0a3326fc6",
+    "sha256": "908f7e38ff4c8de6c598fce6c1df7160e27bf8f9cfaa922299e5ff94db938bde"
+  },
+  {
+    "path": "frontend/components/DimensionGrid.tsx",
+    "git_blob": "679ff8fc27c42553f40349472641dee25afc36f8",
+    "sha256": "a26dbbf05c4cc1ec1052991843d21e7a789042d0c9e6731390dec3c653dc7d2d"
+  },
+  {
+    "path": "frontend/components/EvidenceTrail.tsx",
+    "git_blob": "9c306ae175c37dbb6e0b92e3dd21aa76d758ee40",
+    "sha256": "220b246074284b4a064445364151d5034268fb0ec59da78fbfe8f81d6080ed96"
+  },
+  {
+    "path": "frontend/components/IntakePanel.tsx",
+    "git_blob": "2d21ff4655a5ac70c031d55a1e593fae792db54d",
+    "sha256": "40dc32ee7bbd1619ccc459420bec4d1e9b1f03bfe530930d24bf2082debd85ce"
+  },
+  {
+    "path": "frontend/components/PanelBoundary.tsx",
+    "git_blob": "658796fb420cd3bd3a2db5c73c771e53b208b7e8",
+    "sha256": "b1e3d672d2757af827cf0da42fbf2f29bae04a8f89d4398e3163492e5f8ed525"
+  },
+  {
+    "path": "frontend/components/PilotTable.tsx",
+    "git_blob": "6411c497b4dd88ebc0f418e380da48c8d90ac032",
+    "sha256": "1e158799530fce9e16f7a3ce69baf1eb479b408c422111785dba941795a74890"
+  },
+  {
+    "path": "frontend/components/TelemetryPanel.tsx",
+    "git_blob": "dde6d1ca2e2d23edc15906a17d7c34905f008641",
+    "sha256": "81737a3d8925490978c9762a634d4d801e2b9583a7c9b7b18892f3eea9bdce47"
+  },
+  {
+    "path": "frontend/components/WhyDecision.tsx",
+    "git_blob": "8d115017d80f6a943238b4021dd916bd4d1af81c",
+    "sha256": "c89ddc532fd7b5f02746a5ccb45aeed877662991ba67591271bb57902bc4ec23"
+  },
+  {
+    "path": "frontend/lib/api.ts",
+    "git_blob": "d268dbc0c65696be41f4126607274ad3e0359284",
+    "sha256": "ebc096bf6eff2895092f561ad0b081095d81702713cb4c080f593516b8fe6c6d"
+  },
+  {
+    "path": "frontend/lib/demoFixture.ts",
+    "git_blob": "be00004fca8e67c5bf11575bac04ad2a4fc33f3f",
+    "sha256": "47835af0b5281cff6549908eb63642ad3ce03505e60d7df6b57084c18313adc1"
+  },
+  {
+    "path": "frontend/lib/guards.d.mts",
+    "git_blob": "fd746e649c354eb7f06db4c4af96e41492548f84",
+    "sha256": "2caf6f7c7af6fb4fab906902a351c62feae308443071a3dc925182874f0e3d71"
+  },
+  {
+    "path": "frontend/lib/guards.mjs",
+    "git_blob": "2f714511fd4730b99405ce7e0b8be4d6a2d6e913",
+    "sha256": "0f65b7063daab4a2800442bff2b9d511aabfd3e7f93f1f7684a686428120c198"
+  },
+  {
+    "path": "frontend/lib/presentation.d.mts",
+    "git_blob": "3d9a0694ac5de99835d687338a07897d00b9a39e",
+    "sha256": "373d8d3c2493f1348636d1a346241d520ffe53acf37794731d13fde851e8cf32"
+  },
+  {
+    "path": "frontend/lib/presentation.mjs",
+    "git_blob": "2523d2c258b2334b41b38d3f0a6ed430ee95ee34",
+    "sha256": "83c9f45384e1f56f6f0aad97ec281d0836e7c0f37336ce534da5d390c14d208a"
+  },
+  {
+    "path": "frontend/lib/proxy.d.mts",
+    "git_blob": "c8a665d5f4eb9d6466c583bd43fb6380fb14e26c",
+    "sha256": "fe40943045270d9c4695a0d9e5179a90e09e9c1951496ad6c31151518c7c517b"
+  },
+  {
+    "path": "frontend/lib/proxy.mjs",
+    "git_blob": "59647439e8118b80c702157cab30f980a775737a",
+    "sha256": "98e42e8f1f7b81269aae3965b8f312fe5c3c03ca53bce9a81a965abca37610b3"
+  },
+  {
+    "path": "frontend/lib/types.ts",
+    "git_blob": "94b4f3ac785b5ebce8b9e087b342ed00b4d5075d",
+    "sha256": "e20b93e6174688fabadd963574000f45fb28612364b4659f05d6a277b1b94272"
+  },
+  {
+    "path": "frontend/next.config.ts",
+    "git_blob": "57676ae6485ff576aeca6b5082b27c8da88282a1",
+    "sha256": "3acfa40ba80ebbd2a5669a007885175e468baa1329acdeaefe76671fd9b552f2"
+  },
+  {
+    "path": "frontend/test/guards.test.mjs",
+    "git_blob": "1d7161c29e92dda92d5b10d00ee113aa086f37e6",
+    "sha256": "a67a11f8f6efb69d6ceeb679b44bf2be8ba9c56b4c7dfcde76cde0eb332011cd"
+  },
+  {
+    "path": "frontend/test/presentation.test.mjs",
+    "git_blob": "915db2c7bdf3d9f2cf392415c3ab3711da4c14f9",
+    "sha256": "b479466338f12196e5d6cc313cca7219ae24ad46e398d3f51e397b2d261eaa5e"
+  },
+  {
+    "path": "frontend/test/proxy.test.mjs",
+    "git_blob": "bf98d7abf46c479f40108bc1dc03db4921e2ee4f",
+    "sha256": "e0d17af981cd0cabe8d488aeb28d9e3edae656947ffad63ec758eb5fdebe275b"
+  },
+  {
+    "path": "research/ablation.md",
+    "git_blob": "a8dac800ef65a1cfa010fd0c72e97e2319e69bd9",
+    "sha256": "898eb193a8be2a077dbc85942ff2dc80f50b9aba31e6ba64fbaa91844a2f5883"
+  },
+  {
+    "path": "research/results.md",
+    "git_blob": "8c04e1550bdd920831a3f6dece66d052ad84215c",
+    "sha256": "a3f111857c63f71371a921d03cae33f42297573d5a13d03dc73ac9dc09bae5c9"
+  },
+  {
+    "path": "scripts/generate_public_sample.py",
+    "git_blob": "ba5bd9d3bf797c46616865d0d6f7e556441ea0da",
+    "sha256": "78b77105655d6d7e25c42ff633eef0cebc24ee4620b8ec35241b103104d56869"
+  },
+  {
+    "path": "scripts/run_benchmark.py",
+    "git_blob": "ffb68925c0cce1fed033db057e7838be82985970",
+    "sha256": "b8b7e3db9665c58730afe6a972d376777156bb9cc8c0af5d763ec3c4eff28d82"
+  },
+  {
+    "path": "scripts/run_demo.py",
+    "git_blob": "52915c350b2a91d9847b52c8ae6d5b431785c8f0",
+    "sha256": "026fd80e77cf870d44f32d424554c4becc9e1c5e297e6ddf0e14061796ed22cb"
+  },
+  {
+    "path": "scripts/validate_decision_benchmark.py",
+    "git_blob": "348b9a2b790ddd7e06745f4dd2ba7cca33914bc7",
+    "sha256": "90739f1c0f7c9026eabf61d251d4730a91b61102ece7f595a13ef3b32c40cb08"
+  },
+  {
+    "path": "scripts/validate_postgres_migration.py",
+    "git_blob": "bb14b80ad394a02e51459eb24b5d9b3f5572b47e",
+    "sha256": "58d6f208aeb9c1a04ec19c2fa90059d33355085a747880d9fc9bbe9ab06ebac1"
+  },
+  {
+    "path": "scripts/verify_docker_health.py",
+    "git_blob": "51038ed23ad27c28700c65755ba9f90241a30991",
+    "sha256": "3ce2b4f94d97051f28314f457926358d7ef42172fd578f9b1b6e8980556d072f"
+  },
+  {
+    "path": "tests/test_agent_workflow.py",
+    "git_blob": "16bfa3f2d4a2a73805d11143b1174751a89842ca",
+    "sha256": "1838a4106943ceb653a59074911cf0de8511af24ac14ec4c2b0921818598bb48"
+  },
+  {
+    "path": "tests/test_api_upload.py",
+    "git_blob": "8ace57c31d5f109a091ed7d41d8acd9493cbc9c4",
+    "sha256": "65320ab32844f7b5bdaff5407eecefb168b8c290384eacc9d587f3b5c55c8063"
+  },
+  {
+    "path": "tests/test_audit_coverage_gaps.py",
+    "git_blob": "0f21f6b675163315944a5b6a72f027c8d1675d17",
+    "sha256": "78b3f0412b2f2e4d5561c264c5a22a164299701cf9fca894090cdbed81099cba"
+  },
+  {
+    "path": "tests/test_audit_fixes.py",
+    "git_blob": "cc85da5641b46fc1c8a9f0dc3c345aaa6a3fe53c",
+    "sha256": "99862b97464a4e5bbebdccc0336149256b0a30eb3d37a35dfb321600ab834502"
+  },
+  {
+    "path": "tests/test_batch2_guards.py",
+    "git_blob": "7ae51a8cce6c0bb2c06d2c49abf3c771b420b1e4",
+    "sha256": "9d24b8f0c1ebf773f267f015d110e8573bbfd93e81dae9e92a833916f5d2077d"
+  },
+  {
+    "path": "tests/test_benchmark.py",
+    "git_blob": "03a1c30717a5aaff7d4205895f425fc49e2ce486",
+    "sha256": "2c6db1ba2578cdb81383b190cbdc85c843b6a183da9cba8f222cc7e4cf65a4e0"
+  },
+  {
+    "path": "tests/test_enterprise.py",
+    "git_blob": "49b328bff5fafec8f16b7338f2a6c622263dd954",
+    "sha256": "408268f4d8f72586904d811d26ccf221fad7ccf6c079547ff2a87310e9f2ad84"
+  },
+  {
+    "path": "tests/test_enterprise_api_endpoints.py",
+    "git_blob": "eb81ee3c8a5c1c18916859c7bc3d6006467c1d6c",
+    "sha256": "c87a97d0fc40252adc4b296a558b952f7a863ac8adfab30fa8b6c96b0ff4f88d"
+  },
+  {
+    "path": "tests/test_evaluation.py",
+    "git_blob": "5ed5e54d2efd6a91f37d0963bf32ffa4e427c6ee",
+    "sha256": "b9922c0c6358b6bee8b90f5309bce353e75dbd7e2f7d489f3b2448711d199066"
+  },
+  {
+    "path": "tests/test_failure_lab.py",
+    "git_blob": "5c2333dad5c14231ae7978195a6bfca6f97c2037",
+    "sha256": "f9871b614996b1c7384ef48856d1f01bcfecbc0e3dbaeab833cb408f9b1f0767"
+  },
+  {
+    "path": "tests/test_migration_wiring_ratchet.py",
+    "git_blob": "be789aa0ad3a30840a623971fb5917f5b810b1ba",
+    "sha256": "ea248edb6833342812e1e15b4ec862af8857cc9195c2f39f2c2cd705134d3682"
+  },
+  {
+    "path": "tests/test_numeric_benchmark.py",
+    "git_blob": "87fa72220b46c8268cbca86bd9cc8308e259b7e0",
+    "sha256": "807d613e00e75047c0e1be20f62031eff9566fdfb73561249a755c1545b38879"
+  },
+  {
+    "path": "tests/test_numeric_guards.py",
+    "git_blob": "2606478468288c39480acf308de457468a626733",
+    "sha256": "59ab21cd26a09ceb406d4388b8eb4038ba91c645fcc95d302563ed1c3cea4740"
+  },
+  {
+    "path": "tests/test_postgres_runtime.py",
+    "git_blob": "7bbaf833cecf0b0cd6d4aefd559f1a69c1586d63",
+    "sha256": "8c2bf5e8b8714651100d4a4949db99ad4733770001aeb2b866159701d91fab16"
+  },
+  {
+    "path": "tests/test_public_benchmark.py",
+    "git_blob": "99e98dea00d19be04d49807bb077720900eb948e",
+    "sha256": "5b841d81016cb929febc906663c150a76465ece6c9895f39998016522cdac5f6"
+  },
+  {
+    "path": "tests/test_script_import_guards.py",
+    "git_blob": "bdba6da45f03de741cf9a08b9d43e9a83059b056",
+    "sha256": "851672dad81d89ce74c59d94cee999cb957aa35f72f0fa4b3da5f9503f561133"
+  }
+]

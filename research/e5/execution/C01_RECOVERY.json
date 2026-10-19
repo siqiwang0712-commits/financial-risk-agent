@@ -1,0 +1,462 @@
+{
+  "created_at": "2026-10-19T15:07:20.719448+00:00",
+  "expected_sha256": "d73b371ccb026f556387cf6ff8ba204a4fde0664dcd780f099f12aa005e36603",
+  "expected_cardinality": 270,
+  "reachable_objects": 2765,
+  "blob_count_hashed": 1818,
+  "blob_bytes_hashed": 48129276,
+  "exact_matches": [],
+  "named_historical_paths": [
+    {
+      "git_object": "a9e92481a7c693f8e45a986bf04a8040f334f431",
+      "path": "research/e4_statistical_audit/verify_previous_270.py"
+    },
+    {
+      "git_object": "1be193bb682f709a1e2e7918a61a67a3fbd13881",
+      "path": "research/e4_statistical_audit/verify_previous_270.py"
+    }
+  ],
+  "refs": [
+    "88d4c5d380bb2c60b4eb449d3149abd4fcb47dc5 refs/heads/E5-experiment",
+    "6a6f2053dd168d74aa97533ad901af47a7a5023a refs/heads/work",
+    "e60abba2976e389ddf80a147227a56cc4cad8e06 refs/remotes/origin/main"
+  ],
+  "git_fsck": "",
+  "remote_metadata": "research/e5/execution/REMOTE_RECOVERY_SUMMARY.json",
+  "containment_proven": false,
+  "status": "OPEN",
+  "limitation": "Local reachable history and all published tag tips were covered. Additional remote branch tip text objects were hash verified. Deleted/unreachable remote history and binary CI artifact contents were not recovered. No containing superset proof exists.",
+  "remote_search": {
+    "branch_count": 8,
+    "other_branch_tip_text_blobs_verified_and_hashed": 100,
+    "other_branch_exact_matches": [],
+    "tag_count": 11,
+    "tags_available_locally": [
+      "refs/tags/v0.1.0",
+      "refs/tags/v0.2.0",
+      "refs/tags/v0.2.1",
+      "refs/tags/v0.3.0",
+      "refs/tags/v0.3.1",
+      "refs/tags/v0.3.2",
+      "refs/tags/v0.3.3",
+      "refs/tags/v0.3.4",
+      "refs/tags/v0.4.0",
+      "refs/tags/v0.4.1",
+      "refs/tags/v0.4.2"
+    ],
+    "release_count": 11,
+    "release_assets": 0,
+    "workflow_runs_checked": 146,
+    "artifact_metadata": [
+      {
+        "run_id": 39267952933,
+        "artifacts": [
+          {
+            "id": 12193873493,
+            "name": "v042-container-verification",
+            "expired": false
+          }
+        ]
+      },
+      {
+        "run_id": 39262085073,
+        "artifacts": [
+          {
+            "id": 12191287818,
+            "name": "v042-container-verification",
+            "expired": false
+          }
+        ]
+      },
+      {
+        "run_id": 39251499691,
+        "artifacts": [
+          {
+            "id": 12186221636,
+            "name": "v042-container-verification",
+            "expired": false
+          }
+        ]
+      },
+      {
+        "run_id": 39251499380,
+        "artifacts": [
+          {
+            "id": 12187385003,
+            "name": "trivy-results",
+            "expired": false
+          },
+          {
+            "id": 12186785307,
+            "name": "siqiwang0712-commits~financial-risk-agent~JK1AAP.dockerbuild",
+            "expired": false
+          },
+          {
+            "id": 12186053798,
+            "name": "siqiwang0712-commits~financial-risk-agent~TOGQO1.dockerbuild",
+            "expired": false
+          }
+        ]
+      },
+      {
+        "run_id": 39249891205,
+        "artifacts": [
+          {
+            "id": 12185276743,
+            "name": "v042-container-verification",
+            "expired": false
+          }
+        ]
+      },
+      {
+        "run_id": 39249276561,
+        "artifacts": [
+          {
+            "id": 12184593214,
+            "name": "v042-container-verification",
+            "expired": false
+          }
+        ]
+      },
+      {
+        "run_id": 39248545483,
+        "artifacts": [
+          {
+            "id": 12184402639,
+            "name": "v042-container-verification",
+            "expired": false
+          }
+        ]
+      },
+      {
+        "run_id": 38868653301,
+        "artifacts": [
+          {
+            "id": 12032049280,
+            "name": "v042-container-verification",
+            "expired": false
+          }
+        ]
+      },
+      {
+        "run_id": 38769950209,
+        "artifacts": [
+          {
+            "id": 11991602225,
+            "name": "trivy-results",
+            "expired": false
+          },
+          {
+            "id": 11991054030,
+            "name": "siqiwang0712-commits~financial-risk-agent~V2CY3G.dockerbuild",
+            "expired": false
+          },
+          {
+            "id": 11990729626,
+            "name": "siqiwang0712-commits~financial-risk-agent~Y34TXR.dockerbuild",
+            "expired": false
+          }
+        ]
+      },
+      {
+        "run_id": 38769888323,
+        "artifacts": [
+          {
+            "id": 11990613167,
+            "name": "v042-container-verification",
+            "expired": false
+          }
+        ]
+      },
+      {
+        "run_id": 37968443313,
+        "artifacts": [
+          {
+            "id": 11635805062,
+            "name": "siqiwang0712-commits~financial-risk-agent~EUGZKH.dockerbuild",
+            "expired": false
+          },
+          {
+            "id": 11635440505,
+            "name": "siqiwang0712-commits~financial-risk-agent~RFW10V.dockerbuild",
+            "expired": false
+          },
+          {
+            "id": 11634519488,
+            "name": "trivy-results",
+            "expired": false
+          }
+        ]
+      },
+      {
+        "run_id": 37968388964,
+        "artifacts": [
+          {
+            "id": 11635065159,
+            "name": "v042-container-verification",
+            "expired": false
+          }
+        ]
+      },
+      {
+        "run_id": 37821051768,
+        "artifacts": [
+          {
+            "id": 11569233295,
+            "name": "trivy-results",
+            "expired": false
+          },
+          {
+            "id": 11569108398,
+            "name": "siqiwang0712-commits~financial-risk-agent~I3GIE2.dockerbuild",
+            "expired": false
+          },
+          {
+            "id": 11568354910,
+            "name": "siqiwang0712-commits~financial-risk-agent~WUGYW4.dockerbuild",
+            "expired": false
+          }
+        ]
+      },
+      {
+        "run_id": 37819091548,
+        "artifacts": [
+          {
+            "id": 11568976054,
+            "name": "v042-container-verification",
+            "expired": false
+          }
+        ]
+      },
+      {
+        "run_id": 37338599037,
+        "artifacts": [
+          {
+            "id": 11357896338,
+            "name": "trivy-results",
+            "expired": false
+          },
+          {
+            "id": 11356624951,
+            "name": "siqiwang0712-commits~financial-risk-agent~LUUDZ4.dockerbuild",
+            "expired": false
+          },
+          {
+            "id": 11356624833,
+            "name": "siqiwang0712-commits~financial-risk-agent~7OFOVC.dockerbuild",
+            "expired": false
+          }
+        ]
+      },
+      {
+        "run_id": 37302629899,
+        "artifacts": [
+          {
+            "id": 11342570650,
+            "name": "trivy-results",
+            "expired": false
+          },
+          {
+            "id": 11342400502,
+            "name": "siqiwang0712-commits~financial-risk-agent~MV6KIV.dockerbuild",
+            "expired": false
+          },
+          {
+            "id": 11341074714,
+            "name": "siqiwang0712-commits~financial-risk-agent~L7E9UD.dockerbuild",
+            "expired": false
+          }
+        ]
+      },
+      {
+        "run_id": 37300287238,
+        "artifacts": [
+          {
+            "id": 11341231633,
+            "name": "siqiwang0712-commits~financial-risk-agent~MWF3N7.dockerbuild",
+            "expired": false
+          },
+          {
+            "id": 11340976704,
+            "name": "siqiwang0712-commits~financial-risk-agent~K6HJ6E.dockerbuild",
+            "expired": false
+          }
+        ]
+      },
+      {
+        "run_id": 36988498830,
+        "artifacts": [
+          {
+            "id": 11218985056,
+            "name": "siqiwang0712-commits~financial-risk-agent~XN1J2O.dockerbuild",
+            "expired": false
+          },
+          {
+            "id": 11218825625,
+            "name": "siqiwang0712-commits~financial-risk-agent~OAIFDE.dockerbuild",
+            "expired": false
+          }
+        ]
+      },
+      {
+        "run_id": 36966710797,
+        "artifacts": [
+          {
+            "id": 11210401791,
+            "name": "siqiwang0712-commits~financial-risk-agent~QQJOVF.dockerbuild",
+            "expired": false
+          },
+          {
+            "id": 11209737044,
+            "name": "siqiwang0712-commits~financial-risk-agent~NG04SN.dockerbuild",
+            "expired": false
+          }
+        ]
+      },
+      {
+        "run_id": 35955798106,
+        "artifacts": [
+          {
+            "id": 10790486915,
+            "name": "siqiwang0712-commits~financial-risk-agent~POKZUA.dockerbuild",
+            "expired": false
+          },
+          {
+            "id": 10789484462,
+            "name": "siqiwang0712-commits~financial-risk-agent~LIC9TJ.dockerbuild",
+            "expired": false
+          }
+        ]
+      },
+      {
+        "run_id": 35449799521,
+        "artifacts": [
+          {
+            "id": 10586398980,
+            "name": "siqiwang0712-commits~financial-risk-agent~M5G3X0.dockerbuild",
+            "expired": false
+          },
+          {
+            "id": 10586373972,
+            "name": "siqiwang0712-commits~financial-risk-agent~G5PSUU.dockerbuild",
+            "expired": false
+          }
+        ]
+      },
+      {
+        "run_id": 35448112282,
+        "artifacts": [
+          {
+            "id": 10586161871,
+            "name": "siqiwang0712-commits~financial-risk-agent~YS18OB.dockerbuild",
+            "expired": false
+          },
+          {
+            "id": 10586141043,
+            "name": "siqiwang0712-commits~financial-risk-agent~MWCDVH.dockerbuild",
+            "expired": false
+          }
+        ]
+      },
+      {
+        "run_id": 35447634200,
+        "artifacts": [
+          {
+            "id": 10586306122,
+            "name": "siqiwang0712-commits~financial-risk-agent~IT9Y1W.dockerbuild",
+            "expired": false
+          },
+          {
+            "id": 10585506193,
+            "name": "siqiwang0712-commits~financial-risk-agent~EFOPBO.dockerbuild",
+            "expired": false
+          }
+        ]
+      },
+      {
+        "run_id": 35447367273,
+        "artifacts": [
+          {
+            "id": 10586585401,
+            "name": "siqiwang0712-commits~financial-risk-agent~U2XP9Y.dockerbuild",
+            "expired": false
+          },
+          {
+            "id": 10586390702,
+            "name": "siqiwang0712-commits~financial-risk-agent~OSWM0L.dockerbuild",
+            "expired": false
+          }
+        ]
+      },
+      {
+        "run_id": 35446367210,
+        "artifacts": [
+          {
+            "id": 10585359064,
+            "name": "siqiwang0712-commits~financial-risk-agent~J9YVOB.dockerbuild",
+            "expired": false
+          },
+          {
+            "id": 10585314301,
+            "name": "siqiwang0712-commits~financial-risk-agent~WB6BS4.dockerbuild",
+            "expired": false
+          }
+        ]
+      },
+      {
+        "run_id": 35445967637,
+        "artifacts": [
+          {
+            "id": 10584579026,
+            "name": "siqiwang0712-commits~financial-risk-agent~O7CLDG.dockerbuild",
+            "expired": false
+          },
+          {
+            "id": 10584494119,
+            "name": "siqiwang0712-commits~financial-risk-agent~QR7KWC.dockerbuild",
+            "expired": false
+          }
+        ]
+      },
+      {
+        "run_id": 35445651122,
+        "artifacts": [
+          {
+            "id": 10585133423,
+            "name": "siqiwang0712-commits~financial-risk-agent~RROQ0G.dockerbuild",
+            "expired": false
+          },
+          {
+            "id": 10585103426,
+            "name": "siqiwang0712-commits~financial-risk-agent~AXUE40.dockerbuild",
+            "expired": false
+          }
+        ]
+      },
+      {
+        "run_id": 35445260707,
+        "artifacts": [
+          {
+            "id": 10584753914,
+            "name": "siqiwang0712-commits~financial-risk-agent~OA016A.dockerbuild",
+            "expired": false
+          },
+          {
+            "id": 10584618310,
+            "name": "siqiwang0712-commits~financial-risk-agent~KFW55N.dockerbuild",
+            "expired": false
+          }
+        ]
+      }
+    ],
+    "artifact_content_examined": false,
+    "artifact_limitation": "Only container-verification, security-scanner and Docker build record artifacts listed. No research dataset artifact listed. Binary contents not downloaded.",
+    "alternate_boundary": "A new issuer created after all historical development could in principle prove nonoverlap, but no authenticated issuer-creation/first-filing corpus and mature point-in-time feature cohort is available in this environment.",
+    "exact_path_history_query": {
+      "branches_checked": 8,
+      "commits_found": 0,
+      "path": "research/e4/_cache/previous_270.json",
+      "method": "GitHub commits endpoint with path and branch filters"
+    }
+  }
+}
