@@ -65,3 +65,6 @@ research/v041_development/** text eol=lf
 
 # New derived experiment manifests hash exact code/config/result bytes.
 research/v042_experiments/** text eol=lf
+
+# Execution mandate identity hashes the exact uploaded bytes, including CRLF.
+research/e5/execution/E5_EXECUTION_MANDATE.md -text
