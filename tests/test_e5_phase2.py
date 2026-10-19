@@ -38,3 +38,30 @@ def test_cross_case_accession_source_cannot_be_reused():
     b['accession'] = '0000009999-25-000003'
     with pytest.raises(GateError):
         validate_features(b, schema_hash=H, code_hash=H)
+
+
+def test_numeric_producer_is_before_verification_and_provider_calls(monkeypatch):
+    from pathlib import Path
+
+    from research.e5.phase2.producer import NumericProposalProducer, flatten
+    root = Path(__file__).resolve().parents[1]
+    producer = NumericProposalProducer(root)
+    def forbidden(*args, **kwargs):
+        raise AssertionError('downstream verification/provider entered the raw producer')
+    monkeypatch.setattr('finrisk.assurance.engine.AssuranceEngine.evaluate', forbidden)
+    monkeypatch.setattr('finrisk.agent.verification.verify_conclusions', forbidden)
+    monkeypatch.setattr('finrisk.agent.review.three_role_review', forbidden)
+    result = producer({'features': flatten({'cash': 1., 'revenue': 2.}, {}, 2024)})
+    assert result['raw_structured_output']['evidence_verification_performed'] is False
+    assert result['raw_structured_output']['assurance_performed'] is False
+    assert producer.identity['generation_parameters']['provider_calls'] == 0
+
+
+def test_numeric_producer_rejects_evaluation_label_input():
+    from pathlib import Path
+
+    from research.e5.phase2.producer import NumericProposalProducer, flatten
+    producer = NumericProposalProducer(Path(__file__).resolve().parents[1])
+    features = flatten({}, {}, 2024) | {'evaluation_label': 0}
+    with pytest.raises(GateError):
+        producer({'features': features})
