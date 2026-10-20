@@ -159,10 +159,19 @@ def extract_packets(root: Path, cohort: list[dict], manifests: list[Path], *, re
         for row in tsv(Path(source['archive_path']), 'num.txt'):
             if row.get('adsh') in wanted:
                 nums[row['adsh']].append(row)
-        sub = {r['adsh']: r for r in tsv(Path(source['archive_path']), 'sub.txt') if r['adsh'] in wanted}
+        sub = {}
+        for row in tsv(Path(source['archive_path']), 'sub.txt'):
+            if row['adsh'] not in wanted:
+                continue
+            require(row['adsh'] not in sub or sub[row['adsh']] == row, 'conflicting accession metadata')
+            sub[row['adsh']] = row
         for case in cases:
             require(str(sub[case['accession']]['cik']).zfill(10) == case['cik'], 'cross-CIK accession substitution')
             require(accepted_utc(sub[case['accession']]['accepted']) == case['accepted'], 'acceptance metadata drift')
+            metadata = sub[case['accession']]
+            require(metadata['period'] == case['period'] and int(metadata['fy']) == case['fiscal_year']
+                    and metadata['form'] == '10-K' and metadata['filed'] == case['filed'],
+                    'index period/year/form/filed metadata substitution')
             rows = nums[case['accession']]
             prior_period = _comparative_period(rows, case['period'])
             current, previous, provenance = {}, {}, {}

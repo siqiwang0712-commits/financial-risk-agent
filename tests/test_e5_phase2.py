@@ -110,3 +110,90 @@ def test_nested_coverage_null_does_not_inherit_v2_false_rejection():
     # the null loss of five percent; V2's centered support lattice was too small.
     values = np.array([-1]*2 + [0]*98)
     assert paired_null_pvalue(values, -.05, draws=20000, seed=1) > .05
+
+
+def test_study_bands_and_policy_preserve_production_vetoes():
+    from dataclasses import asdict
+    from pathlib import Path
+
+    from finrisk.assurance.policy import AssurancePolicy
+
+    from research.e5.phase2.calibration import apply
+    from research.e5.phase2.study import CalibratedStudyProducer, band
+    producer = CalibratedStudyProducer(Path(__file__).resolve().parents[1])
+    before, after = asdict(AssurancePolicy()), asdict(producer.policy)
+    for key in before.keys() - {'version', 'maturity'}:
+        assert before[key] == after[key]
+    for j in range(1001):
+        points = j/10
+        decision = ('FLAG' if points >= producer.fusion_policy['flag_score'] else
+                    'REVIEW' if points >= producer.fusion_policy['review_score'] else 'PASS')
+        assert decision == band(apply(producer.artifact, points/100))
+
+
+def test_real_source_reextraction_fanout_and_certificate(tmp_path, monkeypatch):
+    import csv
+    import io
+    import zipfile
+    from pathlib import Path
+
+    from finrisk.e4_core import E4_INSTANT_FIELDS, EXTENDED_ALIASES
+
+    from research.e5.execution.core import (
+        FrozenProposalProducer,
+        digest,
+        file_hash,
+        freeze_json,
+        verify_certificate_binding,
+    )
+    from research.e5.phase2.sources import accepted_utc, extract_packets
+    from research.e5.phase2.study import REFERENCE, CalibratedStudyProducer, fanout
+    root = Path(__file__).resolve().parents[1]
+    cik, adsh = '0000000001', '0000000001-25-000001'
+    sub = {'adsh': adsh, 'cik': '1', 'accepted': '2025-02-01 12:00:00',
+           'period': '20241231', 'fy': '2024', 'form': '10-K', 'filed': '20250201'}
+    nums = []
+    values = {'cash': 10, 'revenue': 100, 'current_assets': 30, 'current_liabilities': 40,
+              'total_assets': 200, 'total_liabilities': 100, 'net_income': -10,
+              'operating_cash_flow': 20, 'capital_expenditure': 5, 'gross_profit': 30,
+              'operating_income': 10, 'shareholder_equity': 100, 'interest_expense': 5,
+              'inventory': 8, 'total_debt': 70}
+    for period in ('20241231', '20231231'):
+        for field, value in values.items():
+            nums.append({'adsh': adsh, 'tag': EXTENDED_ALIASES[field][0], 'ddate': period,
+                         'uom': 'USD', 'qtrs': '0' if field in E4_INSTANT_FIELDS else '4',
+                         'value': str(value), 'coreg': '', 'segments': ''})
+    def table(rows):
+        stream = io.StringIO()
+        writer = csv.DictWriter(stream, fieldnames=list(rows[0]), delimiter='\t')
+        writer.writeheader()
+        writer.writerows(rows)
+        return stream.getvalue()
+    archive = tmp_path/'2025q1.zip'
+    with zipfile.ZipFile(archive, 'w') as z:
+        z.writestr('sub.txt', table([sub]))
+        z.writestr('num.txt', table(nums))
+    manifest = tmp_path/'2025q1.manifest.json'
+    freeze_json(manifest, {'source_type': 'SEC_FSDS', 'dataset_quarter': '2025q1', 'file': archive.name,
+                          'sha256': file_hash(archive), 'download_timestamp': '2026-10-19T00:00:00Z',
+                          'source_url': 'https://www.sec.gov/files/dera/data/financial-statement-data-sets/2025q1.zip'})
+    case = {'cik': cik, 'accession': adsh, 'accepted': accepted_utc(sub['accepted']),
+            'source_hash': file_hash(archive), 'period': '20241231', 'fiscal_year': 2024, 'filed': '20250201'}
+    bundle = extract_packets(root, [case], [manifest], reference_hash=file_hash(root/REFERENCE))[0]
+    producer = CalibratedStudyProducer(root)
+    proposal = FrozenProposalProducer(producer.identity, producer).run(bundle['packet'], tmp_path/'proposal.json')
+    def forbidden(*args, **kwargs):
+        raise AssertionError('proposal regenerated downstream')
+    monkeypatch.setattr(producer, 'raw', forbidden)
+    result = fanout(producer, proposal, bundle, case=case, manifests=[manifest])
+    assert result['proposal_hash'] == proposal['proposal_hash']
+    assert result['certificate']['policy_hash'] == producer.policy.policy_hash
+    verify_certificate_binding(result['certificate'], proposal_hash=proposal['proposal_hash'], policy=producer.policy)
+    broken = deepcopy(result['certificate'])
+    broken['component_versions']['proposal_hash'] = digest('different')
+    with pytest.raises(GateError):
+        verify_certificate_binding(broken, proposal_hash=proposal['proposal_hash'], policy=producer.policy)
+    mutated = deepcopy(bundle)
+    mutated['packet']['features']['current__cash'] = 999
+    with pytest.raises(GateError):
+        fanout(producer, proposal, mutated, case=case, manifests=[manifest])

@@ -1,0 +1,22 @@
+{
+  "artifact_digest": "ef4fc2f2d05d0411f70fdbbdbe7d2de5d6dc5018dd7297c874ff19e61be78edb",
+  "artifact_id": 12201020392,
+  "job_id": 118463057976,
+  "manifest": {
+    "attempts": [],
+    "bytes": 127842298,
+    "dataset_quarter": "2025q3",
+    "download_timestamp": "2026-10-19T15:47:41.162359+00:00",
+    "evaluation_outcomes_accessed": false,
+    "file": "2025q3.zip",
+    "original_10k_metadata_rows": 382,
+    "resolved_url": "https://www.sec.gov/files/dera/data/financial-statement-data-sets/2025q3.zip",
+    "sha256": "ebe25fa74c3655f4738ed9eb144af3953c3981c80f57d74829fb9ad68b114710",
+    "source_type": "SEC_FSDS",
+    "source_url": "https://www.sec.gov/files/dera/data/financial-statement-data-sets/2025q3.zip",
+    "submission_metadata_sha256": "78d7e7a3217521be44b2fb67e230f6e15558c17b11293fd75eab96b17c9678db",
+    "user_agent": "FinancialRiskAgent E5 reproducibility research siqiwang0712@gmail.com"
+  },
+  "original_run": 39280632208,
+  "workflow_run": 39372430524
+}
