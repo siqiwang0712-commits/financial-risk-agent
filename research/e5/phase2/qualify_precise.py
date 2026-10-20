@@ -35,7 +35,17 @@ def sources(root, directory, output):
         case = resolve_universe(universe, root/'.runtime/e5-index-clock')['candidates'][0]
         archive = extract_packets(root, [case], [directory/'2025q3.manifest.json'], reference_hash=file_hash(root/REFERENCE))[0]
         live = live_extract(root, case['cik'], case['accession'], root/'.runtime/e5-live-source'/case['cik']/case['accession'])
-        require(archive['packet']['features'] == live['packet']['features'] == p['features'], 'real source financial feature mismatch')
+        differences = {key: {'archive': archive['packet']['features'].get(key),
+                             'live': live['packet']['features'].get(key), 'historical': value}
+                       for key, value in p['features'].items()
+                       if not archive['packet']['features'].get(key) == live['packet']['features'].get(key) == value}
+        if differences:
+            freeze_json(output.parent/'source-comparison-failure.json',
+                        {'status': 'FAILED', 'case': case, 'differences': differences,
+                         'source_sha256': file_hash(root/'research/e5/phase2/live_source.py'),
+                         'archive_bundle': archive, 'live_bundle': live,
+                         'scope': 'EXCLUDED_ENGINEERING_FIXTURES_ONLY', 'E5_outcomes_accessed': False})
+        require(not differences, 'real source financial feature mismatch')
         require(archive['packet']['prediction_cutoff'] == live['packet']['prediction_cutoff'], 'primary clock mismatch')
         records.append({'case': case, 'archive_bundle': archive, 'live_bundle': live,
                         'financial_features_exactly_equal': True, 'primary_second_resolution_clock_equal': True})

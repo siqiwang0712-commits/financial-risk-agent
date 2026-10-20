@@ -27,7 +27,7 @@ jobs:
           artifact-ids: 12201020392
           path: ${{ runner.temp }}/precise-qualification/sec
           merge-multiple: true
-      - name: Verify exact financial values and primary seconds from real original index documents
+      - name: Verify original XBRL instance financial values and original-index seconds
         run: python -m research.e5.phase2.qualify_precise sources --directory '${{ runner.temp }}/precise-qualification'
       - name: Build immutable no-host-volume/no-network all-role image
         run: docker build -f research/e5/phase2/Dockerfile.precise-prediction -t e5-precise-roles .
@@ -42,7 +42,7 @@ jobs:
           python - <<'PY'
           import base64,json,os,pathlib,zlib
           p=pathlib.Path(os.environ['QUALIFICATION_DIRECTORY'])
-          for name in ['live-source-qualified.json','precise-isolation-qualified.json']:
+          for name in ['live-source-qualified.json','precise-isolation-qualified.json','source-comparison-failure.json']:
               f=p/name
               if f.exists():print('E5_PRECISE_QUALIFICATION '+name+' '+base64.b64encode(zlib.compress(f.read_bytes())).decode())
           PY
