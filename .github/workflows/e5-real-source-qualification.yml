@@ -40,14 +40,15 @@ jobs:
           source = read_json(manifest)
           assert source['sha256'] == 'ebe25fa74c3655f4738ed9eb144af3953c3981c80f57d74829fb9ad68b114710'
           rows = read_json(directory/'2025q3.10k-submissions.json')
-          row = next(r for r in rows if str(r['cik']).zfill(10) == '0000789019')
-          case = {'cik': '0000789019', 'accession': row['adsh'], 'accepted': accepted_utc(row['accepted']),
+          row = next(r for r in rows if str(r['cik']).zfill(10) == '0000008858')
+          case = {'cik': '0000008858', 'accession': row['adsh'], 'accepted': accepted_utc(row['accepted']),
                   'period': row['period'], 'fiscal_year': int(row['fy']), 'filed': row['filed'], 'source_hash': source['sha256']}
           bundle = extract_packets(root, [case], [manifest], reference_hash=file_hash(root/REFERENCE))[0]
           producer = CalibratedStudyProducer(root)
           proposal = FrozenProposalProducer(producer.identity, producer).run(bundle['packet'], directory/'historical-qualification-proposal.json')
           result = fanout(producer, proposal, bundle, case=case, manifests=[manifest])
           proof = {'scope': 'KNOWN_HISTORICAL_COMPANY_SOURCE_PATH_QUALIFICATION_NOT_E5_EVIDENCE',
+                   'qualification_selection': 'SMALLEST_CIK_OF_ALREADY_EXCLUDED_NONFINANCIAL_10K_IN_DATASET',
                    'company': case['cik'], 'accession': case['accession'], 'bundle': bundle, 'proposal': proposal,
                    'fanout': result, 'producer_identity': producer.identity, 'provider_calls': 0,
                    'source_sha256': source['sha256'], 'E5_predictions_generated': 0, 'E5_outcomes_accessed': False}
