@@ -34,7 +34,7 @@ def status(root):
              'E5R': 'NOT_EVALUATED', 'E5P': 'DRAFT', 'empirical_claim': 'Assurance benefit was not evaluated.'}
     for study, directory in [('E5R', base/'e5r'), ('E5P', base/'e5p-core')]:
         if (directory/'protocol.json').exists():
-            state[study] = 'PROTOCOL_FROZEN_ENROLLMENT_REQUIRES_C01'
+            state[study] = 'COMMON_CORE_FROZEN_ENROLLMENT_NOT_STARTED' if study == 'E5P' else 'PROTOCOL_FROZEN_ENROLLMENT_REQUIRES_C01'
         if (directory/'final-report.json').exists():
             state[study] = read_json(directory/'final-report.json')['payload']['status']
     return state
@@ -126,8 +126,9 @@ def main(argv=None):
                 run.check_protocol()
                 if args.command == 'freeze-e5p':
                     freeze_json(directory/'prospective-state.json', {
-                        'status': 'PROTOCOL_FROZEN', 'protocol_manifest_hash': digest(result),
-                        'enrollment_status': 'NOT_STARTED_REQUIRES_HISTORICAL_NONOVERLAP_PROOF_AND_OPERATIONAL_TIMELY_COLLECTION',
+                        'status': 'COMMON_CORE_FROZEN', 'protocol_manifest_hash': digest(result),
+                        'full_prospective_protocol_frozen': False,
+                        'enrollment_status': 'NOT_STARTED_REQUIRES_C01_REALTIME_INDEX_SOURCE_QUALIFICATION_AND_DURABLE_RUNTIME_RETENTION',
                         'predictions_generated': 0, 'outcomes_accessed': False})
                 elif args.command == 'run-e5r':
                     def done(stage):
