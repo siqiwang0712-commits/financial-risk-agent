@@ -1,0 +1,56 @@
+name: E5 known-historical source-path qualification
+on:
+  workflow_dispatch:
+  push:
+    branches: [E5-experiment]
+    paths: ['.github/workflows/e5-real-source-qualification.yml']
+permissions:
+  contents: read
+  actions: read
+jobs:
+  qualify-source:
+    if: github.ref == 'refs/heads/E5-experiment'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7
+        with:
+          python-version: '3.12'
+      - uses: actions/download-artifact@018cc2cf5baa6db3ef3c5f8a56943fffe632ef53 # v6
+        with:
+          github-token: ${{ github.token }}
+          run-id: 39280632208
+          artifact-ids: 12201020392
+          path: ${{ runner.temp }}/sec
+          merge-multiple: true
+      - run: python -m pip install -c requirements.lock -e '.[research]'
+      - name: Qualify one already-excluded historical issuer; no E5 cohort or outcomes
+        env:
+          SEC_SOURCE_DIR: ${{ runner.temp }}/sec
+        run: |
+          python - <<'PY'
+          import base64, json, os, pathlib, zlib
+          from research.e5.execution.core import FrozenProposalProducer, digest, file_hash, read_json
+          from research.e5.phase2.sources import accepted_utc, extract_packets
+          from research.e5.phase2.study import CalibratedStudyProducer, REFERENCE, fanout
+          root = pathlib.Path.cwd()
+          directory = pathlib.Path(os.environ['SEC_SOURCE_DIR'])
+          manifest = directory/'2025q3.manifest.json'
+          source = read_json(manifest)
+          assert source['sha256'] == 'ebe25fa74c3655f4738ed9eb144af3953c3981c80f57d74829fb9ad68b114710'
+          rows = read_json(directory/'2025q3.10k-submissions.json')
+          row = next(r for r in rows if str(r['cik']).zfill(10) == '0000789019')
+          case = {'cik': '0000789019', 'accession': row['adsh'], 'accepted': accepted_utc(row['accepted']),
+                  'period': row['period'], 'fiscal_year': int(row['fy']), 'filed': row['filed'], 'source_hash': source['sha256']}
+          bundle = extract_packets(root, [case], [manifest], reference_hash=file_hash(root/REFERENCE))[0]
+          producer = CalibratedStudyProducer(root)
+          proposal = FrozenProposalProducer(producer.identity, producer).run(bundle['packet'], directory/'historical-qualification-proposal.json')
+          result = fanout(producer, proposal, bundle, case=case, manifests=[manifest])
+          proof = {'scope': 'KNOWN_HISTORICAL_COMPANY_SOURCE_PATH_QUALIFICATION_NOT_E5_EVIDENCE',
+                   'company': case['cik'], 'accession': case['accession'], 'bundle': bundle, 'proposal': proposal,
+                   'fanout': result, 'producer_identity': producer.identity, 'provider_calls': 0,
+                   'source_sha256': source['sha256'], 'E5_predictions_generated': 0, 'E5_outcomes_accessed': False}
+          print('E5_HISTORICAL_SOURCE_PATH '+base64.b64encode(zlib.compress(json.dumps(proof,sort_keys=True).encode())).decode())
+          print('E5_REAL_SOURCE_PATH_QUALIFIED '+digest(proof))
+          PY
