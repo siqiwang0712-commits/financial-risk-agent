@@ -1,9 +1,6 @@
 name: E5 outcome-value-blind filing availability
 on:
   workflow_dispatch:
-  push:
-    branches: [E5-experiment]
-    paths: ['.github/workflows/e5-outcome-metadata-availability.yml']
 permissions:
   contents: read
 jobs:

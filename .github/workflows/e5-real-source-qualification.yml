@@ -1,9 +1,6 @@
 name: E5 known-historical source-path qualification
 on:
   workflow_dispatch:
-  push:
-    branches: [E5-experiment]
-    paths: ['.github/workflows/e5-real-source-qualification.yml']
 permissions:
   contents: read
   actions: read

@@ -1,9 +1,6 @@
 name: E5 prove known historical source superset
 on:
   workflow_dispatch:
-  push:
-    branches: [E5-experiment]
-    paths: ['.github/workflows/e5-historical-source-superset.yml']
 permissions:
   contents: read
 jobs:

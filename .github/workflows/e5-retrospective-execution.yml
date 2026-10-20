@@ -1,0 +1,73 @@
+name: E5 real retrospective execution behind exact exclusion proof
+on:
+  workflow_dispatch:
+    inputs:
+      previous_270_path:
+        description: Repository-relative exact original exclusion artifact (pinned SHA256 is enforced)
+        required: true
+        default: research/e4/_cache/previous_270.json
+permissions:
+  contents: read
+  actions: read
+jobs:
+  execute:
+    if: github.ref == 'refs/heads/E5-experiment'
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7
+        with:
+          python-version: '3.12'
+      - run: python -m pip install -c requirements.lock -e '.[research]'
+      - name: Require actual historical non-overlap proof before any evaluation execution
+        env:
+          E5_PREVIOUS_270: ${{ inputs.previous_270_path }}
+        run: |
+          python - <<'PY'
+          import os, pathlib
+          from research.e5.phase2.cohort import prove_exclusions
+          root = pathlib.Path.cwd()
+          path = (root/os.environ['E5_PREVIOUS_270']).resolve()
+          assert path.is_relative_to(root)
+          prove_exclusions(root, path)
+          PY
+      - uses: actions/download-artifact@018cc2cf5baa6db3ef3c5f8a56943fffe632ef53 # v6
+        with:
+          github-token: ${{ github.token }}
+          run-id: 39280632208
+          artifact-ids: 12201020392
+          path: ${{ runner.temp }}/e5-feature-source
+          merge-multiple: true
+      - uses: actions/download-artifact@018cc2cf5baa6db3ef3c5f8a56943fffe632ef53 # v6
+        with:
+          github-token: ${{ github.token }}
+          run-id: 39376576767
+          artifact-ids: 12243677257
+          path: ${{ runner.temp }}/e5-prediction-image
+          merge-multiple: true
+      - name: Load exact previously qualified image
+        run: docker load --input '${{ runner.temp }}/e5-prediction-image/e5-qualified-prediction-image.tar.gz'
+      - name: Execute frozen real stages; future outcome acquisition occurs only after enforced prediction isolation and unlock
+        env:
+          E5_PREVIOUS_270: ${{ inputs.previous_270_path }}
+          E5_SOURCE_MANIFEST: ${{ runner.temp }}/e5-feature-source/2025q3.manifest.json
+        run: |
+          python - <<'PY'
+          import os
+          from research.e5.run_e5 import main
+          raise SystemExit(main(['run-e5r','--previous-270',os.environ['E5_PREVIOUS_270'],
+            '--universe','research/e5/phase2/sources/2025q3.universe-inspection-v2.json',
+            '--availability','research/e5/phase2/sources/outcome-availability-catalog.json',
+            '--manifest',os.environ['E5_SOURCE_MANIFEST']]))
+          PY
+      - name: Retain completed stages or exact failed-gate evidence
+        if: always()
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
+        with:
+          name: e5-real-retrospective-execution-${{ github.sha }}
+          path: research/e5/phase2/e5r/
+          retention-days: 90
+          if-no-files-found: warn
