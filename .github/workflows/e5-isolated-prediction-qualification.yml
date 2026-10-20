@@ -1,0 +1,49 @@
+name: E5 isolated numeric prediction qualification
+on:
+  workflow_dispatch:
+  push:
+    branches: [E5-experiment]
+    paths: ['.github/workflows/e5-isolated-prediction-qualification.yml']
+permissions:
+  contents: read
+jobs:
+  qualify-isolation:
+    if: github.ref == 'refs/heads/E5-experiment'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7
+        with:
+          python-version: '3.12'
+      - run: python -m pip install -c requirements.lock -e '.[research]'
+      - name: Build restricted feature-only image without source archives or E5 outcome inputs
+        run: docker build -f research/e5/phase2/Dockerfile.prediction -t e5-feature-only .
+      - name: Verify isolated actual numeric prediction exactly replays excluded historical fixture
+        run: |
+          python - <<'PY'
+          import base64, json, pathlib, subprocess, zlib
+          from research.e5.execution.core import digest, file_hash, read_json
+          from research.e5.phase2.isolated import call
+          from research.e5.phase2.study import CalibratedStudyProducer
+          root = pathlib.Path.cwd()
+          proof = read_json(root/'research/e5/phase2/qualification/known-historical-source-path-avnet.json')
+          producer = CalibratedStudyProducer(root)
+          image = subprocess.check_output(['docker', 'image', 'inspect', 'e5-feature-only', '--format', '{{.Id}}'], text=True).strip()
+          result, receipt = call(image, proof['bundle']['packet'], producer.identity)
+          assert result == {key: proof['proposal'][key] for key in ('raw_structured_output', 'normalized_risk_score', 'proposed_decision')}
+          record = {'status': 'PASSED', 'scope': 'KNOWN_HISTORICAL_ENGINEERING_ONLY_NOT_E5_PREDICTIONS',
+                    'producer_identity': producer.identity, 'image_id': image, 'receipt': receipt,
+                    'source_commit': subprocess.check_output(['git', 'rev-parse', 'HEAD'], text=True).strip(),
+                    'worker_source_sha256': file_hash(root/'research/e5/phase2/isolated.py'),
+                    'Dockerfile_sha256': file_hash(root/'research/e5/phase2/Dockerfile.prediction'),
+                    'output_hash': digest(result), 'E5_outcomes_accessed': False, 'E5_predictions_generated': 0}
+          print('E5_ISOLATION_QUALIFICATION '+base64.b64encode(zlib.compress(json.dumps(record, sort_keys=True).encode())).decode())
+          PY
+      - name: Retain exact qualified image for later separate execution
+        run: docker save e5-feature-only | gzip -1 > '${{ runner.temp }}/e5-qualified-prediction-image.tar.gz'
+      - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
+        with:
+          name: e5-isolated-prediction-image-${{ github.sha }}
+          path: ${{ runner.temp }}/e5-qualified-prediction-image.tar.gz
+          retention-days: 90

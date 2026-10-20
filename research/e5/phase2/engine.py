@@ -86,6 +86,11 @@ class Execution:
                     for path in sorted((self.root/'research/e5/phase2').glob('*.py'))}
         require(not subprocess.check_output(['git', 'status', '--porcelain', '--', *bindings], cwd=self.root, text=True),
                 'commit scientific implementation before protocol freeze')
+        isolation = read_json(self.root/'research/e5/phase2/qualification/isolated-prediction-qualification.json')
+        require(isolation['status'] == 'PASSED' and isolation['producer_identity'] == self.producer.identity
+                and isolation['worker_source_sha256'] == file_hash(self.root/'research/e5/phase2/isolated.py')
+                and isolation['Dockerfile_sha256'] == file_hash(self.root/'research/e5/phase2/Dockerfile.prediction'),
+                'actual feature-only isolated prediction qualification required')
         replay = qualify_s0(self.root)
         source_path = self.root/'research/e5/phase2/qualification/known-historical-source-path-avnet.json'
         source_proof = read_json(source_path)
@@ -95,7 +100,7 @@ class Execution:
         verify_certificate_binding(source_proof['fanout']['certificate'],
                                    proposal_hash=source_proof['proposal']['proposal_hash'], policy=self.producer.policy)
         payload = {'study_id': 'E5-STRUCTURED-NUMERIC-PHASE-II', 'scope': 'INTERNAL_NUMERIC_STUDY_NOT_LLM_OR_RELEASED_AGENT_VALIDATION',
-                   'producer': self.producer.identity, 'study_policy': self.producer.policy.to_dict(),
+                   'producer': self.producer.identity, 'prediction_runtime': isolation, 'study_policy': self.producer.policy.to_dict(),
                    'study_fusion_policy': self.producer.fusion_policy, 'production_policy_changed': False,
                    'analysis': spec, 'qualification': q, 'power': p, 'endpoint_qualification': endpoint,
                    'source_path_qualification_sha256': file_hash(source_path),
@@ -165,7 +170,7 @@ class Execution:
         return self.write('features', {'bundles': bundles, 'source_manifest_paths': [str(p.resolve()) for p in manifests]})
 
     def predictions(self):
-        self.check_protocol()
+        protocol = self.check_protocol()
         require(not (self.directory/'outcome-inputs').exists(), 'outcome inputs accessible before predictions')
         if (self.directory/'predictions.json').exists():
             return self.load('predictions')
@@ -174,6 +179,9 @@ class Execution:
         from research.strong_tabular_reference.artifact import predict_scores
         manifest = read_json(self.root/'research/strong_tabular_reference/artifacts/artifact_manifest.json')
         names = manifest['feature_contract']['ordered_feature_names']
+        from .isolated import call as isolated_call
+        image = protocol['prediction_runtime']['image_id']
+        subprocess.check_output(['docker', 'image', 'inspect', image], text=True)
         rows = []
         for bundle in features['bundles']:
             packet = bundle['packet']
@@ -184,15 +192,23 @@ class Execution:
             values = [float(metrics.get(n.removeprefix('observed__')) is not None) if n.startswith('observed__')
                       else metrics.get(n, float('nan')) for n in names]
             score0 = predict_scores([values], ordered_feature_names=names)[0]
-            proposal = FrozenProposalProducer(self.producer.identity, self.producer).run(
+            receipt_path = self.directory/'isolation-receipts'/(packet['case_id']+'.json')
+            def produce_once(value, output_receipt=receipt_path):
+                result, isolation_receipt = isolated_call(image, value, self.producer.identity)
+                freeze_json(output_receipt, isolation_receipt)
+                return result
+            proposal = FrozenProposalProducer(self.producer.identity, produce_once).run(
                 packet, self.directory/'proposals'/(packet['case_id']+'.json'))
+            isolation_receipt = read_json(receipt_path)
+            require(isolation_receipt['input_hash'] == digest(packet) and isolation_receipt['image_id'] == image,
+                    'prediction isolation receipt mismatch')
             consumers = fanout(self.producer, proposal, bundle, case=cases[packet['cik']],
                                manifests=[Path(s) for s in features['source_manifest_paths']])
             arms = {'S0': arm('FLAG' if score0 >= .5 else 'PASS', score0), 'S1': arm(band(score0), score0)}
             for name in ('S2', 'S3', 'S4'):
                 arms[name] = arm(consumers[name], proposal['normalized_risk_score'])
             rows.append({'cik': packet['cik'], 'case_id': packet['case_id'], 'arms': arms,
-                         'proposal': proposal, 'certificate': consumers['certificate']})
+                         'proposal': proposal, 'isolation_receipt': isolation_receipt, 'certificate': consumers['certificate']})
         require(len(rows) == len(cases), 'missing predictions')
         return self.write('predictions', {'rows': rows, 'proposal_mismatch_count': 0, 'all_certificates_verified': True})
 

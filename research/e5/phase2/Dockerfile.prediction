@@ -1,0 +1,14 @@
+FROM python:3.12-slim@sha256:dddfd7e07f9d15aeeca61529320492139d21cac7f0070c00609243e51e4e0016
+WORKDIR /study
+ENV PYTHONPATH=/study:/study/backend PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1 OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1
+COPY pyproject.toml requirements.lock ./
+COPY backend ./backend
+COPY config ./config
+COPY rules ./rules
+RUN python -m pip install --no-cache-dir -c requirements.lock '.[research]'
+COPY research/e5/phase2/*.py ./research/e5/phase2/
+COPY research/e5/execution/core.py ./research/e5/execution/core.py
+COPY research/e5/phase2/qualification/numeric-v2/ ./research/e5/phase2/qualification/numeric-v2/
+COPY research/strong_tabular_reference/artifacts/empirical_development_reference.json ./research/strong_tabular_reference/artifacts/empirical_development_reference.json
+USER 65532:65532
+ENTRYPOINT ["python", "-m", "research.e5.phase2.isolated"]

@@ -111,6 +111,9 @@ def main(argv=None):
             elif args.command == 'unlock-outcomes':
                 result = run.unlock()
             else:
+                if args.command in {'run-e5r', 'freeze-e5r'}:
+                    from .cohort import prove_exclusions
+                    prove_exclusions(root, prereq(args.previous_270, 'C01 exact historical exclusion artifact or independently verified boundary proof'))
                 null = prereq(base/'qualification/canonical-v3-complete.json', 'Complete canonical null qualification')
                 powers = list((base/'qualification/power').glob('*/report.json'))
                 require(len(powers) == 1, 'one active matched joint-power report required')
