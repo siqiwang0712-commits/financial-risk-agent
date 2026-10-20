@@ -56,6 +56,9 @@ def collect(root: Path, cik: str, accession: str, previous: Path):
     sic = int(metadata.get('sic') or 0)
     require(sic and not 6000 <= sic <= 6999, 'nonfinancial original filing scope')
     recent = metadata['filings']['recent']
+    require(not metadata['filings'].get('files')
+            or recent['filingDate'] and min(recent['filingDate']) <= start.date().isoformat(),
+            'recent metadata does not prove complete original-filing history through the enrollment window')
     require(accession in recent['accessionNumber'], 'index accession unavailable')
     i = recent['accessionNumber'].index(accession)
     require(recent['form'][i] == '10-K', 'original 10-K required')
