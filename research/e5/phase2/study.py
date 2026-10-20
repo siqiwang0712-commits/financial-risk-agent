@@ -60,7 +60,7 @@ class CalibratedStudyProducer:
             'research/e5/phase2/sources.py', 'research/e5/execution/core.py', REFERENCE)}
         self.calibration_hash = file_hash(directory / 'calibration_artifact.json')
         self.identity = self.raw.identity | {
-            'version': 'E5-NUMERIC-CALIBRATED-STUDY-V1',
+            'version': 'E5-NUMERIC-CALIBRATED-STUDY-V2-CONSISTENT-EVIDENCE-ADMISSION',
             'code_hash': digest({'raw': self.raw.identity, 'bindings': self.bindings,
                                  'calibration': self.calibration_hash}),
             'score_semantics': 'DEVELOPMENT_ONLY_ISOTONIC_OR_LOGISTIC_CALIBRATED_RISK',
@@ -171,6 +171,16 @@ def verified_paths(packet, evidence, raw):
     return build_decision_trace(assessment, raw['fusion'])['paths']
 
 
+def evidence_only_decision(proposed, paths, policy):
+    coverage = assess_evidence(paths, policy.minimum_verified_coverage)
+    if proposed == 'ABSTAIN' or not coverage.verified_path_count:
+        return 'ABSTAIN'
+    if (coverage.coverage < policy.minimum_verified_coverage
+            or coverage.verified_path_count < coverage.material_path_count):
+        return 'REVIEW'
+    return proposed
+
+
 def fanout(producer: CalibratedStudyProducer, proposal: dict, frozen_bundle: dict, *, case: dict, manifests: list[Path]):
     h = validate_proposal(proposal, producer_hash=digest(producer.identity))
     shared_proposals({a: proposal for a in ('S2', 'S3', 'S4')}, digest(producer.identity))
@@ -178,10 +188,8 @@ def fanout(producer: CalibratedStudyProducer, proposal: dict, frozen_bundle: dic
     verified = verify_source_bundle(producer.root, case, manifests, frozen_bundle)
     raw = proposal['raw_structured_output']
     paths = verified_paths(verified['packet'], verified['evidence'], raw)
-    coverage = assess_evidence(paths, producer.policy.minimum_verified_coverage)
     proposed = proposal['proposed_decision']
-    s3 = ('ABSTAIN' if not coverage.verified_path_count else 'REVIEW'
-          if coverage.coverage < producer.policy.minimum_verified_coverage else proposed)
+    s3 = evidence_only_decision(proposed, paths, producer.policy)
     profile = reference(producer.root)
     financial, reporting = separate_financial_and_reporting_features(raw['metrics'], set(profile.feature_bounds))
     engine = AssuranceEngine(producer.policy)

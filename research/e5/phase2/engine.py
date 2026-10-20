@@ -86,13 +86,13 @@ class Execution:
                     for path in sorted((self.root/'research/e5/phase2').glob('*.py'))}
         require(not subprocess.check_output(['git', 'status', '--porcelain', '--', *bindings], cwd=self.root, text=True),
                 'commit scientific implementation before protocol freeze')
-        isolation = read_json(self.root/'research/e5/phase2/qualification/isolated-prediction-qualification.json')
+        isolation = read_json(self.root/'research/e5/phase2/qualification/isolated-prediction-qualification-v2.json')
         require(isolation['status'] == 'PASSED' and isolation['producer_identity'] == self.producer.identity
                 and isolation['worker_source_sha256'] == file_hash(self.root/'research/e5/phase2/isolated.py')
                 and isolation['Dockerfile_sha256'] == file_hash(self.root/'research/e5/phase2/Dockerfile.prediction'),
                 'actual feature-only isolated prediction qualification required')
         replay = qualify_s0(self.root)
-        source_path = self.root/'research/e5/phase2/qualification/known-historical-source-path-avnet.json'
+        source_path = self.root/'research/e5/phase2/qualification/known-historical-source-path-avnet-v2.json'
         source_proof = read_json(source_path)
         require(source_proof['producer_identity'] == self.producer.identity
                 and source_proof['E5_outcomes_accessed'] is False
