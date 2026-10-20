@@ -88,6 +88,11 @@ def main(argv=None):
         elif args.command == 'qualify':
             from .qualify_endpoint import run
             result = run(root)
+        elif args.command == 'null-qualify' and (base/'qualification/canonical-v3-complete.json').exists():
+            from .inference import specification
+            result = read_json(base/'qualification/canonical-v3-complete.json')
+            require(result['analysis_identity'] == digest(specification(root)), 'canonical qualification code drift')
+            verify_files(root, result['qualification_artifact_hashes'])
         elif args.command == 'null-qualify':
             from .qualification import combine, supplement
             from .simulation import qualify
