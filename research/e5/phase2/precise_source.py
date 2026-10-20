@@ -9,10 +9,9 @@ import hashlib
 import re
 from pathlib import Path
 
-from finrisk.xbrl import SecClient
-
 from ..execution.core import digest, file_hash, require, utcnow, validate_features
 from .acquire_sec import USER_AGENT
+from .sec_access import SpacedSecClient as SecClient
 from .sources import accepted_utc
 from .sources import extract_packets as archive_packets
 

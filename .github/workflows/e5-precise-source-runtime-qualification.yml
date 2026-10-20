@@ -1,0 +1,55 @@
+name: E5 original-index clocks and all-role isolation qualification
+on:
+  workflow_dispatch:
+  push:
+    branches: [E5-experiment]
+    paths: ['.github/workflows/e5-precise-source-runtime-qualification.yml']
+permissions:
+  contents: read
+  actions: read
+jobs:
+  qualify-precise:
+    if: github.ref == 'refs/heads/E5-experiment'
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7
+        with:
+          python-version: '3.12'
+      - run: python -m pip install -c requirements.lock -e '.[research]'
+      - uses: actions/download-artifact@018cc2cf5baa6db3ef3c5f8a56943fffe632ef53 # v6
+        with:
+          github-token: ${{ github.token }}
+          run-id: 39280632208
+          artifact-ids: 12201020392
+          path: ${{ runner.temp }}/precise-qualification/sec
+          merge-multiple: true
+      - name: Verify exact financial values and primary seconds from real original index documents
+        run: python -m research.e5.phase2.qualify_precise sources --directory '${{ runner.temp }}/precise-qualification'
+      - name: Build immutable no-host-volume/no-network all-role image
+        run: docker build -f research/e5/phase2/Dockerfile.precise-prediction -t e5-precise-roles .
+      - name: Execute real S0, once-only raw proposal, evidence routing, Full Assurance and certificate checks inside restricted roles
+        run: |
+          python -m research.e5.phase2.qualify_precise runtime --directory '${{ runner.temp }}/precise-qualification' --image "$(docker image inspect e5-precise-roles --format '{{.Id}}')"
+      - name: Export small immutable qualification records through the connected log transport
+        if: always()
+        env:
+          QUALIFICATION_DIRECTORY: ${{ runner.temp }}/precise-qualification
+        run: |
+          python - <<'PY'
+          import base64,json,os,pathlib,zlib
+          p=pathlib.Path(os.environ['QUALIFICATION_DIRECTORY'])
+          for name in ['live-source-qualified.json','precise-isolation-qualified.json']:
+              f=p/name
+              if f.exists():print('E5_PRECISE_QUALIFICATION '+name+' '+base64.b64encode(zlib.compress(f.read_bytes())).decode())
+          PY
+      - name: Retain exact qualified role image
+        run: docker save e5-precise-roles | gzip -1 > '${{ runner.temp }}/e5-precise-prediction-image.tar.gz'
+      - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
+        with:
+          name: e5-precise-prediction-image-${{ github.sha }}
+          path: ${{ runner.temp }}/e5-precise-prediction-image.tar.gz
+          retention-days: 90

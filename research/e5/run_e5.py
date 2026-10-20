@@ -143,9 +143,9 @@ def audit() -> dict:
 def main(argv=None) -> int:
     arguments = sys.argv[1:] if argv is None else argv
     if arguments and arguments[0] == 'phase2':
-        from .phase2.engine import main as phase2_main
+        from .phase2.precise_stage import main as phase2_main
         return phase2_main(arguments[1:])
-    from .phase2.cli import main as active_main
+    from .phase2.precise_cli import main as active_main
     return active_main(arguments)
 
 
