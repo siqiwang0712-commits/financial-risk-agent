@@ -21,10 +21,13 @@ from .engine import Execution
 def status(root):
     base = root/'research/e5/phase2'
     null = base/'qualification/canonical-v3-complete.json'
+    universe_path = base/'sources/2025q3.universe-inspection-v2.json'
+    if not universe_path.exists():
+        universe_path = base/'sources/2025q3.universe-inspection.json'
     state = {'study_scope': 'INTERNAL_STRUCTURED_NUMERIC',
              'SEC_feature_source': 'ACQUIRED_AND_HASH_VERIFIED_ON_GITHUB_ACTIONS',
              'source_metadata_records': len(read_json(base/'sources/2025q3.10k-submissions.json')),
-             'candidate_universe_before_C01': len(read_json(base/'sources/2025q3.universe-inspection.json')['candidates']),
+             'candidate_universe_before_C01': len(read_json(universe_path)['candidates']),
              'C01': read_json(base/'C01_BOUNDARY_ASSESSMENT.json'),
              'canonical_inference': read_json(null)['status'] if null.exists() else 'QUALIFICATION_IN_PROGRESS',
              'power': 'DEVELOPMENT_ONLY_UNDERPOWERED',

@@ -1,6 +1,7 @@
 """Outcome-blind historical exclusion and deterministic temporal enrollment."""
 from __future__ import annotations
 
+import json
 import re
 import subprocess
 from datetime import UTC, datetime
@@ -60,6 +61,28 @@ def known_historical(root: Path):
         bindings[record['path']] = record['sha256']
         if path.suffix == '.json':
             collect(read_json(path))
+    # Exact original E4 input hashes establish this containing source universe;
+    # this proof deliberately makes no claim about the unpublished previous_270.
+    proof_path = root/'research/e5/phase2/qualification/known-E4-source-superset.json'
+    proof = read_json(proof_path)
+    parent = root/proof['parent_protocol']
+    require(file_hash(parent) == proof['parent_protocol_sha256'], 'E4 parent protocol changed')
+    config = read_json(parent)
+    union = set()
+    archives = set()
+    for item in proof['source_archives']:
+        m = item['manifest']
+        filename = m['dataset_quarter']+'.zip'
+        require(m['source_type'] == 'SEC_FSDS' and filename in config['feature_archives']
+                and m['sha256'] == config['data_hashes'][filename], 'historical parent source mismatch')
+        encoded = (json.dumps(item['original_10k_metadata'], sort_keys=True, separators=(',', ':'))+'\n').encode()
+        require(__import__('hashlib').sha256(encoded).hexdigest() == m['submission_metadata_sha256'], 'historical metadata drift')
+        archives.add(filename)
+        union.update(str(r['cik']).zfill(10) for r in item['original_10k_metadata'])
+    require(archives == set(config['feature_archives']) and sorted(union) == proof['ciks']
+            and proof['previous_270_containment_proven'] is False, 'incomplete or overclaimed historical source universe')
+    ciks |= union
+    bindings[str(proof_path.relative_to(root))] = file_hash(proof_path)
     return ciks, bindings
 
 
