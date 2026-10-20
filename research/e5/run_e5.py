@@ -1,7 +1,6 @@
 """Resumable E5 execution entrypoint; failed scientific gates never become success."""
 from __future__ import annotations
 
-import argparse
 import json
 import os
 import platform
@@ -11,7 +10,6 @@ import tempfile
 from pathlib import Path
 
 from .execution.core import (
-    GateError,
     digest,
     file_hash,
     freeze_json,
@@ -21,7 +19,7 @@ from .execution.core import (
     verify_files,
 )
 from .execution.development import utility
-from .execution.qualification import null_qualification, qualify_s0
+from .execution.qualification import qualify_s0
 
 ROOT = Path(__file__).resolve().parents[2]
 EXECUTION = ROOT / 'research/e5/execution'
@@ -147,42 +145,8 @@ def main(argv=None) -> int:
     if arguments and arguments[0] == 'phase2':
         from .phase2.engine import main as phase2_main
         return phase2_main(arguments[1:])
-    parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('command', choices=['status', 'qualify', 'null-qualify', 'audit',
-                                         'pre-outcome-audit', 'run-e5r', 'freeze-e5p',
-                                         'freeze-e5r', 'unlock-outcomes'])
-    parser.add_argument('--replicates', type=int, default=5000)
-    parser.add_argument('--draws', type=int, default=20000)
-    args = parser.parse_args(argv)
-    try:
-        if args.command == 'status':
-            result = {'run_state': read_json(EXECUTION / 'RUN_STATE.json') if (EXECUTION / 'RUN_STATE.json').exists() else None,
-                      'remaining': blockers()}
-        elif args.command == 'qualify':
-            result = qualify()
-        elif args.command == 'null-qualify':
-            require(args.replicates >= 5000 and args.draws == 20000, 'production null-grid settings required')
-            started = utcnow()
-            result = null_qualification(ROOT, QUALIFICATION, replicates=args.replicates, draws=args.draws)
-            name = QUALIFICATION / 'type1_simulation_report.json'
-            h = freeze_json(name, result)
-            checkpoint('null_grid', 'COMPLETE' if result['status'] == 'SIMULATION_GRID_PASSED_SCOPE_LIMITED' else 'BLOCKED',
-                       inputs=code_identity(), outputs={str(name.relative_to(ROOT)): h}, started_at=started,
-                       failure_reason=None if result['status'] == 'SIMULATION_GRID_PASSED_SCOPE_LIMITED' else result['status'])
-        else:
-            if args.command == 'run-e5r':
-                qualify()
-            result = audit()
-            if args.command != 'audit':
-                checkpoint(args.command, 'BLOCKED', inputs=code_identity(), outputs={},
-                           failure_reason=json.dumps(blockers(), sort_keys=True))
-                print(json.dumps(result, indent=2))
-                return 2
-        print(json.dumps(result, indent=2))
-        return 0
-    except (GateError, OSError, ValueError) as exc:
-        print(json.dumps({'status': 'BLOCKED', 'error': str(exc)}), file=sys.stderr)
-        return 2
+    from .phase2.cli import main as active_main
+    return active_main(arguments)
 
 
 if __name__ == '__main__':

@@ -254,8 +254,7 @@ def test_readiness_json_uses_only_the_declared_status_vocabulary() -> None:
     assert readiness["status"] == "BLOCKED"
     assert readiness["study"] == "E5"
     statuses = {area["status"] for area in readiness["areas"].values()}
-    # The governance audit records implementation separately from scientific freeze.
-    assert statuses <= {"READY", "PARTIAL", "BLOCKED", "NOT_APPLICABLE", "IMPLEMENTED_NOT_FROZEN"}
+    assert statuses <= {"READY", "PARTIAL", "BLOCKED", "NOT_APPLICABLE"}
     assert readiness["evidence_boundary"]["e5"] == "NOT_RUN_NOT_FROZEN"
 
 

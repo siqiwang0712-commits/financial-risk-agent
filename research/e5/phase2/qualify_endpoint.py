@@ -11,13 +11,23 @@ from ..execution.core import file_hash, freeze_json, require, utcnow
 
 
 def run(root):
+    destination = root/'research/e5/phase2/qualification/endpoint-qualification-v2.json'
+    if destination.exists():
+        from ..execution.core import read_json
+        saved = read_json(destination)
+        require(saved['adapter_sha256'] == file_hash(root/'research/e5/phase2/endpoint.py')
+                and saved['source_extractor_sha256'] == file_hash(root/'research/e5/phase2/sources.py')
+                and saved['qualification_source_sha256'] == file_hash(Path(__file__)), 'endpoint qualification code drift')
+        for name, sha in saved['test_bindings'].items():
+            require(file_hash(root/name) == sha, 'endpoint engineering test changed')
+        return saved
     command = [sys.executable, '-m', 'pytest', '-q', 'tests/test_e5_phase2.py',
                'tests/test_e5_execution.py', 'tests/test_assurance.py']
     # The full E5/Assurance suite is separately retained in validation evidence.
     command = [c for c in command if c != 'tests/test_assurance.py']
     with tempfile.TemporaryDirectory() as directory:
         junit = Path(directory)/'results.xml'
-        result = subprocess.run(command+['--junitxml='+str(junit)], cwd=root, capture_output=True, text=True)
+        result = subprocess.run(command+['--junitxml='+str(junit)], cwd=root, capture_output=True, text=True, check=False)
         require(result.returncode == 0, 'endpoint and boundary engineering tests failed: '+result.stdout[-1500:])
         suite = ET.parse(junit).getroot()[0]
         require(int(suite.attrib['failures']) == 0 and int(suite.attrib['errors']) == 0, 'qualification tests failed')
@@ -29,7 +39,7 @@ def run(root):
                   'command': command, 'junit_suite': suite.attrib,
                   'test_ids': [c.attrib['classname']+'::'+c.attrib['name'] for c in suite.findall('testcase')],
                   'outcomes_accessed': False}
-    freeze_json(root/'research/e5/phase2/qualification/endpoint-qualification.json', report)
+    freeze_json(destination, report)
     return report
 
 
