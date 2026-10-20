@@ -1,0 +1,44 @@
+name: E5 prove known historical source superset
+on:
+  workflow_dispatch:
+  push:
+    branches: [E5-experiment]
+    paths: ['.github/workflows/e5-historical-source-superset.yml']
+permissions:
+  contents: read
+jobs:
+  prove-source-superset:
+    if: github.ref == 'refs/heads/E5-experiment'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7
+        with:
+          python-version: '3.12'
+      - name: Prove containment for E4's declared feature archives, without inferring previous_270 membership
+        env:
+          SEC_SOURCE_DIR: ${{ runner.temp }}/historical-sources
+        run: |
+          python - <<'PY'
+          import base64, hashlib, json, os, pathlib, zlib
+          from research.e5.phase2.acquire_sec import acquire
+          config_path = pathlib.Path('research/e4/protocol/experiment_config.json')
+          config = json.loads(config_path.read_text())
+          ciks, records = set(), []
+          for filename in config['feature_archives']:
+              quarter = filename.removesuffix('.zip')
+              directory = pathlib.Path(os.environ['SEC_SOURCE_DIR'])/quarter
+              source = acquire(quarter, directory)
+              assert source['source_type'] == 'SEC_FSDS'
+              assert source['sha256'] == config['data_hashes'][filename]
+              rows = json.loads((directory/f'{quarter}.10k-submissions.json').read_text())
+              ciks.update(str(r['cik']).zfill(10) for r in rows)
+              records.append({'manifest': source, 'original_10k_metadata': rows})
+          proof = {'scope': 'PROVEN_KNOWN_E4_FEATURE_SOURCE_SUPERSET_NOT_PREVIOUS_270_CONTAINMENT',
+                   'parent_protocol': str(config_path), 'parent_protocol_sha256': hashlib.sha256(config_path.read_bytes()).hexdigest(),
+                   'proof': 'Every original E4 company requires an original 10-K in one of these exact pinned feature archives; union all original 10-K issuer CIKs, without outcome, fiscal-year, or filing-window filtering.',
+                   'source_archives': records, 'ciks': sorted(ciks),
+                   'previous_270_containment_proven': False, 'E5_outcomes_accessed': False}
+          print('E5_HISTORICAL_SOURCE_SUPERSET '+base64.b64encode(zlib.compress(json.dumps(proof,sort_keys=True).encode())).decode())
+          PY
