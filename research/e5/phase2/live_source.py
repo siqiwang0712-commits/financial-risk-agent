@@ -104,13 +104,17 @@ def extract(root: Path, cik: str, accession: str, cache: Path):
         if context[1] != ('0' if any(tag in EXTENDED_ALIASES[f] for f in E4_INSTANT_FIELDS if f in EXTENDED_ALIASES) else '4'):
             continue
         rows.append({'adsh': accession, 'tag': tag, 'ddate': context[0], 'qtrs': context[1], 'uom': unit,
-                     'value': (node.text or '').strip(), 'coreg': '', 'segments': ''})
+                     'value': (node.text or '').strip(), 'coreg': '', 'segments': '',
+                     'context_id': node.attrib.get('contextRef'), 'decimals': node.attrib.get('decimals')})
     require(bool(rows), 'qualified consolidated financial schema unavailable')
     previous_period = _comparative_period(rows, period)
     current, previous, provenance = {}, {}, {}
     for prefix, end, values in [('current', period, current), ('previous', previous_period, previous)]:
         for field in FIELDS:
             values[field], provenance[prefix+'__'+field] = select_value(rows, field, end)
+            if provenance[prefix+'__'+field] == {'status': 'CONFLICTING_SAME_ACCESSION_FACTS'}:
+                provenance[prefix+'__'+field]['conflicting_rows'] = [
+                    row for row in rows if row['tag'] in EXTENDED_ALIASES[field] and row['ddate'] == end]
         if values['total_debt'] is None:
             values['total_debt'], parents = resolve_total_debt(values)
             if values['total_debt'] is not None:

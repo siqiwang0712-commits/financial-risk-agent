@@ -27,7 +27,7 @@ jobs:
           artifact-ids: 12201020392
           path: ${{ runner.temp }}/precise-qualification/sec
           merge-multiple: true
-      - name: Verify original XBRL instance financial values and original-index seconds
+      - name: Verify original XBRL facts, retaining conflict precision diagnostics
         run: python -m research.e5.phase2.qualify_precise sources --directory '${{ runner.temp }}/precise-qualification'
       - name: Build immutable no-host-volume/no-network all-role image
         run: docker build -f research/e5/phase2/Dockerfile.precise-prediction -t e5-precise-roles .
