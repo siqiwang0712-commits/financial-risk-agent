@@ -31,7 +31,7 @@ def assemble(root: Path):
             require(bool(partitions), 'execution partition not yet complete: '+case['name'])
             # Duplicate scheduling must agree exactly; never select a favorable run.
             require(len({digest(p[1]) for p in partitions}) == 1, 'duplicate partition results disagree')
-            path, executed = sorted(partitions, key=lambda p: str(p[0]))[0]
+            path, executed = min(partitions, key=lambda p: str(p[0]))
             identity = executed['simulation_identity']
             require(identity['analysis_identity'] == digest(spec) and identity['replicates'] == 5000,
                     'partition canonical analysis/trials mismatch')
