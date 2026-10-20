@@ -65,3 +65,48 @@ def test_numeric_producer_rejects_evaluation_label_input():
     features = flatten({}, {}, 2024) | {'evaluation_label': 0}
     with pytest.raises(GateError):
         producer({'features': features})
+
+
+@pytest.mark.parametrize('boundary', [-.05, .01, .3])
+def test_constrained_null_is_likelihood_maximum(boundary):
+    import numpy as np
+
+    from research.e5.phase2.inference import constrained_probabilities
+    values = np.array([-1]*8 + [0]*71 + [1]*21)
+    p = constrained_probabilities(values, boundary)
+    assert p @ np.array([-1, 0, 1]) == pytest.approx(boundary)
+    counts = np.array([8, 71, 21])
+    optimum = counts @ np.log(p)
+    for s in np.linspace(abs(boundary)+1e-6, 1-1e-6, 1000):
+        candidate = np.array([(s-boundary)/2, 1-s, (s+boundary)/2])
+        assert counts @ np.log(candidate) <= optimum+1e-8
+
+
+def test_canonical_analysis_rejects_legacy_identity_and_missing_qualification():
+    from pathlib import Path
+
+    from research.e5.phase2.inference import analyze, specification, validate_spec
+    root = Path(__file__).resolve().parents[1]
+    spec = specification(root)
+    with pytest.raises(GateError):
+        validate_spec(root, spec | {'engine_id': 'V1'})
+    with pytest.raises(GateError):
+        analyze(root, [], spec, {'analysis_identity': 'wrong', 'status': 'PASSED'})
+
+
+def test_sec_acceptance_uses_eastern_and_rejects_ambiguous_time():
+    from research.e5.phase2.sources import accepted_utc
+    assert accepted_utc('2025-01-15 16:30:00') == '2025-01-15T21:30:00+00:00'
+    assert accepted_utc('20250715163000') == '2025-07-15T20:30:00+00:00'
+    with pytest.raises(GateError):
+        accepted_utc('2025-11-02 01:30:00')
+
+
+def test_nested_coverage_null_does_not_inherit_v2_false_rejection():
+    import numpy as np
+
+    from research.e5.phase2.inference import paired_null_pvalue
+    # At N=100, two observed lost automated decisions are insufficient to reject
+    # the null loss of five percent; V2's centered support lattice was too small.
+    values = np.array([-1]*2 + [0]*98)
+    assert paired_null_pvalue(values, -.05, draws=20000, seed=1) > .05
