@@ -107,7 +107,7 @@ def main(argv=None):
             directory = args.run or base/('e5p-core' if args.command == 'freeze-e5p' else 'e5r')
             run = Execution(root, directory)
             if args.command == 'pre-outcome-audit':
-                result = run.pre_outcome_audit(prereq(args.isolation_receipt, 'Operational isolation receipt'))
+                result = run.pre_outcome_audit(args.isolation_receipt)
             elif args.command == 'unlock-outcomes':
                 result = run.unlock()
             else:
@@ -130,7 +130,7 @@ def main(argv=None):
                                prereq(args.availability, 'Authoritative outcome-observability catalog'))
                     run.features(args.manifest)
                     run.predictions()
-                    run.pre_outcome_audit(prereq(args.isolation_receipt, 'Operational isolation receipt'))
+                    run.pre_outcome_audit(args.isolation_receipt)
                     run.unlock()
                     require(bool(args.outcome_manifest), 'Post-unlock official outcome manifests required')
                     from ..execution.core import utcnow

@@ -212,12 +212,37 @@ class Execution:
         require(len(rows) == len(cases), 'missing predictions')
         return self.write('predictions', {'rows': rows, 'proposal_mismatch_count': 0, 'all_certificates_verified': True})
 
-    def pre_outcome_audit(self, isolation_receipt: Path):
+    def pre_outcome_audit(self, isolation_receipt: Path | None = None):
         self.check_protocol()
         require(not (self.directory/'outcome-inputs').exists(), 'outcome inputs already accessible')
-        receipt = read_json(isolation_receipt)
+        if isolation_receipt is None:
+            predictions = self.load('predictions')
+            evidence = {}
+            containers = []
+            for row in predictions['payload']['rows']:
+                actual = row['isolation_receipt']
+                require(actual['image_id'] == self.load('protocol')['payload']['prediction_runtime']['image_id']
+                        and actual['network_mode'] == 'none' and actual['read_only_rootfs'] is True
+                        and not actual['host_binds'] and actual['exit_code'] == 0
+                        and actual['operational_boundary'] == 'FEATURE_ONLY_STDIN_NO_NETWORK_NO_HOST_VOLUMES',
+                        'actual isolated prediction enforcement missing')
+                require(all(m.get('Type') == 'tmpfs' and m.get('Destination') == '/tmp' and not m.get('Source')
+                            for m in actual['host_mounts'] or []), 'unexpected prediction host mount')
+                path = self.directory/'isolation-receipts'/(row['case_id']+'.json')
+                require(read_json(path) == actual, 'runtime isolation evidence changed')
+                evidence[str(path.relative_to(self.root))] = file_hash(path)
+                containers.append(actual['container_id'])
+            require(bool(containers), 'no real isolated predictions to audit')
+            receipt = {'prediction_manifest_sha256': digest(predictions),
+                       'mechanism': 'DOCKER_FEATURE_ONLY_NO_NETWORK_OR_HOST_VOLUMES',
+                       'enforcement_evidence': evidence, 'prediction_runner_identity': 'docker:'+digest(containers),
+                       'outcome_reader_identity': 'OUTCOME_STAGE_NOT_STARTED_NO_OUTCOME_INPUT_VOLUME_MOUNTED',
+                       'verified_at': utcnow(), 'independent_human_review_claimed': False}
+        else:
+            receipt = read_json(isolation_receipt)
         require(receipt['prediction_manifest_sha256'] == digest(self.load('predictions')), 'isolation receipt belongs to another prediction freeze')
-        require(receipt['mechanism'] in {'SEPARATE_RUNNER_WITH_SEPARATE_SOURCE_MOUNT', 'OS_ENFORCED_UNMOUNTED_OUTCOME_VOLUME'},
+        require(receipt['mechanism'] in {'SEPARATE_RUNNER_WITH_SEPARATE_SOURCE_MOUNT', 'OS_ENFORCED_UNMOUNTED_OUTCOME_VOLUME',
+                                          'DOCKER_FEATURE_ONLY_NO_NETWORK_OR_HOST_VOLUMES'},
                 'path assertion alone is not operational isolation')
         verify_files(self.root, receipt['enforcement_evidence'])
         require(bool(receipt['enforcement_evidence']) and receipt['outcome_reader_identity'] != receipt['prediction_runner_identity'],
