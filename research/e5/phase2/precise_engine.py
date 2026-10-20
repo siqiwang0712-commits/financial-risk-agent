@@ -31,6 +31,7 @@ class PreciseExecution(Execution):
             require(live['status'] == 'PASSED' and isolation['status'] == 'PASSED', 'exact-clock source/runtime qualification required')
             require(live['source_sha256'] == file_hash(self.root/'research/e5/phase2/live_source.py'), 'live source qualification drift')
             require(isolation['producer_identity'] == self.producer.identity, 'precise runtime producer mismatch')
+            require(isolation['Dockerfile_sha256'] == file_hash(self.root/'research/e5/phase2/Dockerfile.precise-prediction'), 'qualified role image build definition drift')
             for name, sha in isolation['adapter_source_hashes'].items():
                 require(file_hash(self.root/name) == sha, 'qualified precise source/worker drift')
             payload = payload | {
@@ -42,7 +43,7 @@ class PreciseExecution(Execution):
                 'prediction_runtime': isolation,
                 'source_qualification': live,
                 'retrospective_source': 'ORIGINAL_FSDS_VALUES_WITH_ORIGINAL_INDEX_CLOCK',
-                'prospective_source': 'OFFICIAL_SEC_FACTS_EXACT_INDEX_ACCESSION_NO_LATEST_VALUE_SELECTION',
+                'prospective_source': 'ORIGINAL_ACCESSION_EXTRACTED_XBRL_INSTANCE_NO_LATEST_API_VALUES',
                 'prospective_deadline_seconds': 86400,
                 'prospective_enrollment': 'ROLLING_FIRST_ORIGINAL_10K_PER_CIK_FROM_FROZEN_OFFICIAL_FEED_SNAPSHOTS',
                 'prospective_source_frame': 'FIRST_1000_OFFICIAL_CURRENT_10K_FEED_ENTRIES_PER_POLL',

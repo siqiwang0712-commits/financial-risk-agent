@@ -95,9 +95,13 @@ def main(argv=None):
                 result = run.load('protocol') if (directory/'protocol.json').exists() else run.protocol(null, powers[0], endpoint)
                 run.check_protocol()
                 if args.command == 'freeze-e5p':
+                    from .prospective import enrollment_window
+                    start, stop = enrollment_window(result['created_at'])
                     freeze_json(directory/'prospective-state.json', {
                         'status': 'PROTOCOL_FROZEN', 'protocol_manifest_hash': digest(result),
                         'full_prospective_protocol_frozen': True,
+                        'enrollment_window_utc': [start.isoformat(), stop.isoformat()],
+                        'window_stop_exclusive': True,
                         'enrollment_status': 'NOT_STARTED_BEFORE_WINDOW_OPEN_C01_PROOF_AND_DURABLE_RUNTIME_READY',
                         'predictions_generated': 0, 'outcomes_accessed': False})
                 elif args.command == 'run-e5r':
