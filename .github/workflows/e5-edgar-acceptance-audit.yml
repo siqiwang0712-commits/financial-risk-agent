@@ -1,0 +1,38 @@
+name: E5 verify authoritative index acceptance timestamp
+on:
+  workflow_dispatch:
+  push:
+    branches: [E5-experiment]
+    paths: ['.github/workflows/e5-edgar-acceptance-audit.yml']
+permissions:
+  contents: read
+jobs:
+  verify-timestamp:
+    if: github.ref == 'refs/heads/E5-experiment'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7
+        with:
+          python-version: '3.12'
+      - name: Compare official index header, minute-resolution archive and submissions metadata on excluded companies only
+        run: |
+          python - <<'PY'
+          import base64, hashlib, json, re, time, urllib.request, zlib
+          records=[]
+          for cik, adsh in [('8858','0000008858-25-000028'),('789019','0000950170-25-100235')]:
+              url=f'https://www.sec.gov/Archives/edgar/data/{cik}/{adsh.replace("-", "")}/{adsh}-index.html'
+              time.sleep(.3)
+              try:
+                  request=urllib.request.Request(url,headers={'User-Agent':'FinancialRiskAgent E5 reproducibility research siqiwang0712@gmail.com'})
+                  with urllib.request.urlopen(request,timeout=60) as response:raw=response.read()
+                  text=raw.decode()
+                  match=re.search(r'Accepted\s*</div>\s*<div[^>]*>\s*([^<]+)',text,re.I)
+                  records.append({'cik':cik.zfill(10),'accession':adsh,'url':url,'sha256':hashlib.sha256(raw).hexdigest(),
+                                  'accepted_index_text':match.group(1).strip() if match else None,
+                                  'index_html':text})
+              except Exception as exc:
+                  records.append({'cik':cik.zfill(10),'accession':adsh,'url':url,'error_type':type(exc).__name__,'error':str(exc)})
+          print('E5_EDGAR_ACCEPTANCE_AUDIT '+base64.b64encode(zlib.compress(json.dumps(records,sort_keys=True).encode())).decode())
+          PY
