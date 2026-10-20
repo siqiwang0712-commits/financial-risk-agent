@@ -87,10 +87,31 @@ class Execution:
         require(not subprocess.check_output(['git', 'status', '--porcelain', '--', *bindings], cwd=self.root, text=True),
                 'commit scientific implementation before protocol freeze')
         replay = qualify_s0(self.root)
+        source_path = self.root/'research/e5/phase2/qualification/known-historical-source-path-avnet.json'
+        source_proof = read_json(source_path)
+        require(source_proof['producer_identity'] == self.producer.identity
+                and source_proof['E5_outcomes_accessed'] is False
+                and source_proof['E5_predictions_generated'] == 0, 'matched real-source engineering qualification required')
+        verify_certificate_binding(source_proof['fanout']['certificate'],
+                                   proposal_hash=source_proof['proposal']['proposal_hash'], policy=self.producer.policy)
         payload = {'study_id': 'E5-STRUCTURED-NUMERIC-PHASE-II', 'scope': 'INTERNAL_NUMERIC_STUDY_NOT_LLM_OR_RELEASED_AGENT_VALIDATION',
                    'producer': self.producer.identity, 'study_policy': self.producer.policy.to_dict(),
                    'study_fusion_policy': self.producer.fusion_policy, 'production_policy_changed': False,
                    'analysis': spec, 'qualification': q, 'power': p, 'endpoint_qualification': endpoint,
+                   'source_path_qualification_sha256': file_hash(source_path),
+                   'source_path_qualification_scope': source_proof['scope'],
+                   'primary_comparisons': {'P1': 'S4 minus S1 authorization benefit with coverage NI and absolute floor',
+                                           'P2': 'S4 minus S3 authorization benefit with coverage NI and absolute floor'},
+                   'arms': {'S0': 'FROZEN_STRONG_TABULAR_UNCONDITIONAL_THRESHOLD_0_5',
+                            'S1': 'EXACT_S0_SCORE_FIXED_REVIEW_BAND', 'S2': 'ONCE_GENERATED_CALIBRATED_NUMERIC_PROPOSAL',
+                            'S3': 'SAME_PROPOSAL_EVIDENCE_ONLY_ROUTING', 'S4': 'SAME_PROPOSAL_FULL_ASSURANCE_AND_VERIFIED_CERTIFICATE'},
+                   'feature_schema_hash': digest(self.producer.raw.schema),
+                   'assurance_source_hashes': {str(f.relative_to(self.root)): file_hash(f)
+                                              for f in (self.root/'backend/finrisk/assurance').glob('*.py')},
+                   'certificate_schema_hash': file_hash(self.root/'backend/finrisk/enterprise/decision_bundle.py'),
+                   'eligibility': 'ORIGINAL_10K_FIRST_PER_CIK_EXCLUDE_SIC_6000_6999_AND_UNKNOWN_SIC_SAME_ACCESSION_INPUTS_ONLY',
+                   'runtime': {'python': __import__('sys').version, 'requirements_lock_sha256': file_hash(self.root/'requirements.lock')},
+                   'prospective_execution_gate': 'TIMELY_INDEX_FILING_EXTRACTION_AND_INDEPENDENT_OPERATIONAL_OUTCOME_ISOLATION_MUST_BE_PROVEN_BEFORE_ENROLLMENT',
                    'S0_replay': replay, 'S1': {'pass_below': .35, 'flag_at_or_above': .65},
                    'bindings': bindings, 'reference_sha256': file_hash(self.root/REFERENCE),
                    'endpoint': 'deterministic_forward_outcome_rule_v1_WITH_ACCESSION_TIMING_AND_STANDALONE_FCF_ADAPTER',
