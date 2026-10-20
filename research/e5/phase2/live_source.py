@@ -21,6 +21,8 @@ from finrisk.xbrl import SecClient
 from ..execution.core import (
     digest,
     file_hash,
+    freeze_json,
+    read_json,
     require,
     timestamp,
     utcnow,
@@ -55,6 +57,10 @@ def extract(root: Path, cik: str, accession: str, cache: Path):
     require(str(payload['cik']).zfill(10) == cik, 'CompanyFacts cross-CIK substitution')
     source_bytes = json.dumps(payload, sort_keys=True, separators=(',', ':')).encode()
     source_hash = hashlib.sha256(source_bytes).hexdigest()
+    capture_file = cache/('capture-'+cik+'-'+source_hash+'.json')
+    if not capture_file.exists():
+        freeze_json(capture_file, {'download_timestamp': utcnow(), 'source_sha256': source_hash})
+    capture = read_json(capture_file)
     rows, fiscal_years = [], set()
     aliases = {alias for values in EXTENDED_ALIASES.values() for alias in values}
     instant_tags = {tag for field in E4_INSTANT_FIELDS if field in EXTENDED_ALIASES for tag in EXTENDED_ALIASES[field]}
@@ -111,7 +117,8 @@ def extract(root: Path, cik: str, accession: str, cache: Path):
     validate_features(packet, schema_hash=digest(producer.schema), code_hash=file_hash(Path(__file__)))
     return {'packet': packet, 'evidence': {'packet_hash': digest(packet), 'provenance': provenance,
             'source_url': f'https://data.sec.gov/api/xbrl/companyfacts/CIK{cik}.json', 'source_sha256': source_hash,
-            'snapshot_acquired_at': utcnow(), 'availability_semantics': 'EXACT_INDEX_ACCESSION_FACTS_NOT_LATEST_VALUES',
+            'snapshot_acquired_at': capture['download_timestamp'], 'download_timestamp': capture['download_timestamp'],
+            'source_mode': 'LIVE_SEC_EXACT_INDEX_ACCESSION', 'availability_semantics': 'EXACT_INDEX_ACCESSION_FACTS_NOT_LATEST_VALUES',
             'index_acceptance_source': {'url': index_url, 'sha256': hashlib.sha256(index_bytes).hexdigest(),
                                         'accepted_text_eastern': match.group(1).strip(), 'precision': 'SECOND',
                                         'api_acceptance_field_used_for_clock': False},
