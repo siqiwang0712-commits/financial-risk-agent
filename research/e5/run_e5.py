@@ -143,6 +143,10 @@ def audit() -> dict:
 
 
 def main(argv=None) -> int:
+    arguments = sys.argv[1:] if argv is None else argv
+    if arguments and arguments[0] == 'phase2':
+        from .phase2.engine import main as phase2_main
+        return phase2_main(arguments[1:])
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('command', choices=['status', 'qualify', 'null-qualify', 'audit',
                                          'pre-outcome-audit', 'run-e5r', 'freeze-e5p',

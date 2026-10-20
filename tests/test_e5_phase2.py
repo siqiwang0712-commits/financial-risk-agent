@@ -197,3 +197,64 @@ def test_real_source_reextraction_fanout_and_certificate(tmp_path, monkeypatch):
     mutated['packet']['features']['current__cash'] = 999
     with pytest.raises(GateError):
         fanout(producer, proposal, mutated, case=case, manifests=[manifest])
+
+
+def test_c01_does_not_accept_an_approximate_list(tmp_path):
+    from pathlib import Path
+
+    from research.e5.phase2.cohort import prove_exclusions
+    p = tmp_path/'previous.json'
+    p.write_text('["0000000001"]')
+    with pytest.raises(GateError):
+        prove_exclusions(Path(__file__).resolve().parents[1], p)
+
+
+def test_conflicting_facts_are_unavailable_and_segments_are_not_consolidated():
+    from research.e5.phase2.sources import select_value
+    base = {'tag': 'Assets', 'ddate': '20241231', 'uom': 'USD', 'qtrs': '0', 'value': '10'}
+    value, _ = select_value([base | {'segments': 'one segment'}], 'total_assets', '20241231')
+    assert value is None
+    value, proof = select_value([base, base | {'value': '20'}], 'total_assets', '20241231')
+    assert value is None and proof['status'] == 'CONFLICTING_SAME_ACCESSION_FACTS'
+
+
+@pytest.mark.parametrize(('future_values', 'expected'), [
+    ({'revenue': 70, 'net_income': -5, 'operating_cash_flow': 15, 'total_assets': 100, 'total_debt': 10}, 1),
+    ({'revenue': 100, 'net_income': 5, 'operating_cash_flow': 15, 'total_assets': 100, 'total_debt': 10}, 0),
+])
+def test_endpoint_uses_bound_future_filing_without_score_input(tmp_path, future_values, expected):
+    import csv
+    import io
+    import zipfile
+
+    from finrisk.e4_core import E4_INSTANT_FIELDS, EXTENDED_ALIASES
+
+    from research.e5.execution.core import file_hash, freeze_json
+    from research.e5.phase2.endpoint import extract
+    def table(rows):
+        f = io.StringIO()
+        writer = csv.DictWriter(f, fieldnames=list(rows[0]), delimiter='\t')
+        writer.writeheader()
+        writer.writerows(rows)
+        return f.getvalue()
+    adsh = '0000000001-25-000001'
+    sub = {'adsh': adsh, 'cik': '1', 'form': '10-K', 'period': '20241231',
+           'fy': '2024', 'fp': 'FY', 'accepted': '2025-02-01 12:00:00'}
+    nums = [{'adsh': adsh, 'tag': EXTENDED_ALIASES[k][0], 'ddate': '20241231', 'uom': 'USD',
+             'qtrs': '0' if k in E4_INSTANT_FIELDS else '4', 'value': str(v)} for k, v in future_values.items()]
+    archive = tmp_path/'2025q1.zip'
+    with zipfile.ZipFile(archive, 'w') as z:
+        z.writestr('sub.txt', table([sub]))
+        z.writestr('num.txt', table(nums))
+    manifest = tmp_path/'manifest.json'
+    freeze_json(manifest, {'source_type': 'SEC_FSDS', 'dataset_quarter': '2025q1', 'file': archive.name,
+                          'sha256': file_hash(archive), 'download_timestamp': '2026-10-19T00:00:00Z',
+                          'source_url': 'https://www.sec.gov/files/dera/data/financial-statement-data-sets/2025q1.zip'})
+    features = {'fiscal_year': 2023} | {'current__'+k: v for k, v in
+               {'revenue': 100, 'net_income': 5, 'operating_cash_flow': 15, 'total_assets': 100, 'total_debt': 10}.items()}
+    bundle = {'packet': {'case_id': 'synthetic', 'cik': '0000000001',
+                         'prediction_cutoff': '2024-08-01T00:00:00Z', 'features': features}}
+    result = extract([bundle], [manifest], as_of='2026-10-19T00:00:00Z')
+    assert result['outcomes'][0]['status'] == 'VERIFIED'
+    assert result['outcomes'][0]['label'] == expected
+    assert result['annual_records'][0]['source_available_time'] == '2025-02-01T17:00:00+00:00'
