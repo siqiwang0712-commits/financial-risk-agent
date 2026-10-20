@@ -258,3 +258,32 @@ def test_endpoint_uses_bound_future_filing_without_score_input(tmp_path, future_
     assert result['outcomes'][0]['status'] == 'VERIFIED'
     assert result['outcomes'][0]['label'] == expected
     assert result['annual_records'][0]['source_available_time'] == '2025-02-01T17:00:00+00:00'
+
+
+def test_execution_journal_rejects_mutation_and_out_of_order_unlock(tmp_path):
+    from pathlib import Path
+
+    from research.e5.phase2.engine import Execution
+    run = Execution(Path(__file__).resolve().parents[1], tmp_path)
+    with pytest.raises(GateError):
+        run.unlock()
+    run.write('protocol', {'engineering_fixture_only': True})
+    run.write('cohort', {'engineering_fixture_only': True})
+    with pytest.raises(GateError):
+        run.write('cohort', {'changed': True})
+    (tmp_path/'protocol.json').write_text('{"payload":{},"payload_hash":"mutated"}')
+    with pytest.raises(GateError):
+        run.load('cohort')
+
+
+def test_missing_outcome_bounds_preserve_one_label_across_arms():
+    from research.e5.phase2.reporting import describe
+    arms = {name: {'decision': 'PASS', 'automated': True, 'score': .1} for name in ('S0', 'S1', 'S2', 'S3', 'S4')}
+    arms['S4'] = {'decision': 'FLAG', 'automated': True, 'score': .9}
+    rows = [{'cik': '0000000001', 'arms': arms, 'outcome': {'status': 'MISSING', 'label': None}}]
+    result = describe(rows)
+    assert result['verified_n'] == 0
+    assert result['arms']['S1']['error_incidence_common_verified'] is None
+    bounds = result['missing_outcome_bounds']['S1']
+    assert bounds['eligible_population_error_benefit_lower'] == -1
+    assert bounds['eligible_population_error_benefit_upper'] == 1

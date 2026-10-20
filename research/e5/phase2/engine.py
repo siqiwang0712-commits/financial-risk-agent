@@ -44,6 +44,8 @@ def arm(decision, score):
 class Execution:
     def __init__(self, root: Path, directory: Path):
         self.root, self.directory = root.resolve(), directory.resolve()
+        require(subprocess.check_output(['git', 'branch', '--show-current'], cwd=root, text=True).strip() == 'E5-experiment',
+                'Phase-II execution is authorized only on E5-experiment')
         self.producer = CalibratedStudyProducer(root)
 
     def load(self, stage):
@@ -119,9 +121,11 @@ class Execution:
         source_universe = read_json(universe)
         require(source_universe['outcome_values_used'] is False, 'outcome-driven universe forbidden')
         catalog = read_json(availability)
+        require(bool(catalog['evidence_files']), 'authoritative availability evidence files required')
+        verify_files(self.root, catalog['evidence_files'])
         for record in catalog['companies']:
             require(record['authoritative_evidence_url'].startswith('https://www.sec.gov/'), 'authoritative observability evidence required')
-            require(len(record['source_catalog_sha256']) == 64, 'availability catalog must bind immutable official metadata')
+            require(record['source_catalog_sha256'] in catalog['evidence_files'].values(), 'availability catalog must bind immutable official metadata')
         salt = digest([digest(p), 'v0.4.2', 'E5-company-order-v1'])
         payload = select(source_universe, excluded, n=p['N'], salt=salt, availability=catalog)
         payload['historical_nonoverlap_proof'] = proof
