@@ -1,0 +1,46 @@
+name: E5 official outcomes after verified unlock only
+on:
+  workflow_dispatch:
+    inputs:
+      run_directory:
+        description: Committed Phase-II run directory containing the real outcome-unlock manifest
+        required: true
+        default: research/e5/phase2/e5r
+      quarters_json:
+        description: Official FSDS outcome quarter identities as a JSON array
+        required: true
+        default: '["2025q4","2026q1","2026q2","2026q3"]'
+permissions:
+  contents: read
+jobs:
+  acquire-after-unlock:
+    if: github.ref == 'refs/heads/E5-experiment'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7
+        with:
+          python-version: '3.12'
+      - run: python -m pip install -c requirements.lock -e '.[research]'
+      - name: Verify protocol and full prediction/audit/unlock chain before any outcome request
+        env:
+          E5_RUN_DIRECTORY: ${{ inputs.run_directory }}
+          E5_OUTCOME_QUARTERS: ${{ inputs.quarters_json }}
+        run: |
+          python - <<'PY'
+          import json, os, pathlib
+          from research.e5.phase2.acquire_outcomes import acquire
+          root = pathlib.Path.cwd()
+          run = (root/os.environ['E5_RUN_DIRECTORY']).resolve()
+          assert run.is_relative_to(root/'research/e5/phase2')
+          quarters = json.loads(os.environ['E5_OUTCOME_QUARTERS'])
+          assert isinstance(quarters, list) and all(isinstance(q, str) for q in quarters)
+          print(acquire(root, run, quarters))
+          PY
+      - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
+        with:
+          name: e5-post-unlock-official-outcomes-${{ github.sha }}
+          path: ${{ inputs.run_directory }}/outcome-inputs/
+          retention-days: 90
+          if-no-files-found: error
