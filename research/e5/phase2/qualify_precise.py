@@ -53,7 +53,7 @@ def sources(root, directory, output):
                          'scope': 'EXCLUDED_ENGINEERING_FIXTURES_ONLY', 'E5_outcomes_accessed': False})
         require(not differences, 'real source financial feature mismatch')
         require(archive['packet']['prediction_cutoff'] == live['packet']['prediction_cutoff'], 'primary clock mismatch')
-        records.append({'case': case, 'archive_bundle': archive, 'live_bundle': live, 'diagnostic_archive_rows': source_rows,
+        records.append({'case': case, 'archive_bundle': archive, 'live_bundle': live,
                         'financial_features_exactly_equal': True, 'primary_second_resolution_clock_equal': True})
     report = {'status': 'PASSED', 'scope': 'ALREADY_EXCLUDED_HISTORICAL_SOURCE_QUALIFICATION_NOT_E5_EVIDENCE',
               'source_sha256': file_hash(root/'research/e5/phase2/live_source.py'),
