@@ -159,6 +159,7 @@ class Execution:
 
     def features(self, manifests: list[Path]):
         self.check_protocol()
+        self.source_manifest_paths = list(manifests)
         cohort = self.load('cohort')['payload']['cases']
         require(not (self.directory/'outcome-inputs').exists(), 'outcome inputs accessible before predictions')
         bundles = extract_packets(self.root, cohort, manifests, reference_hash=file_hash(self.root/REFERENCE))
@@ -167,14 +168,17 @@ class Execution:
             packet = bundle['packet']
             validate_features(packet, schema_hash=digest(self.producer.raw.schema),
                               code_hash=file_hash(self.root/'research/e5/phase2/sources.py'))
-        return self.write('features', {'bundles': bundles, 'source_manifest_paths': [str(p.resolve()) for p in manifests]})
+        return self.write('features', {'bundles': bundles, 'source_manifests': [{'manifest': read_json(p), 'sha256': file_hash(p)} for p in manifests]})
 
-    def predictions(self):
+    def predictions(self, manifests=None):
         protocol = self.check_protocol()
         require(not (self.directory/'outcome-inputs').exists(), 'outcome inputs accessible before predictions')
         if (self.directory/'predictions.json').exists():
             return self.load('predictions')
         features = self.load('features')['payload']
+        source_paths = list(manifests or getattr(self, 'source_manifest_paths', []))
+        require(source_paths and sorted(file_hash(p) for p in source_paths) ==
+                sorted(s['sha256'] for s in features['source_manifests']), 'original feature source manifests must be supplied for verification')
         cases = {c['cik']: c for c in self.load('cohort')['payload']['cases']}
         from research.strong_tabular_reference.artifact import predict_scores
         manifest = read_json(self.root/'research/strong_tabular_reference/artifacts/artifact_manifest.json')
@@ -203,7 +207,7 @@ class Execution:
             require(isolation_receipt['input_hash'] == digest(packet) and isolation_receipt['image_id'] == image,
                     'prediction isolation receipt mismatch')
             consumers = fanout(self.producer, proposal, bundle, case=cases[packet['cik']],
-                               manifests=[Path(s) for s in features['source_manifest_paths']])
+                               manifests=source_paths)
             arms = {'S0': arm('FLAG' if score0 >= .5 else 'PASS', score0), 'S1': arm(band(score0), score0)}
             for name in ('S2', 'S3', 'S4'):
                 arms[name] = arm(consumers[name], proposal['normalized_risk_score'])
@@ -326,7 +330,7 @@ def main(argv=None):
     elif args.stage == 'features':
         result = run.features(args.manifest)
     elif args.stage == 'predictions':
-        result = run.predictions()
+        result = run.predictions(args.manifest)
     elif args.stage == 'pre-outcome-audit':
         result = run.pre_outcome_audit(args.input)
     elif args.stage == 'outcome-unlock':

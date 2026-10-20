@@ -122,25 +122,55 @@ def main(argv=None):
                 require(len(powers) == 1, 'one active matched joint-power report required')
                 endpoint = prereq(base/'qualification/endpoint-qualification-v2.json', 'Endpoint qualification')
                 result = run.load('protocol') if (directory/'protocol.json').exists() else run.protocol(null, powers[0], endpoint)
+                run.check_protocol()
                 if args.command == 'freeze-e5p':
                     freeze_json(directory/'prospective-state.json', {
                         'status': 'PROTOCOL_FROZEN', 'protocol_manifest_hash': digest(result),
                         'enrollment_status': 'NOT_STARTED_REQUIRES_HISTORICAL_NONOVERLAP_PROOF_AND_OPERATIONAL_TIMELY_COLLECTION',
                         'predictions_generated': 0, 'outcomes_accessed': False})
                 elif args.command == 'run-e5r':
-                    run.cohort(prereq(args.universe, 'Frozen outcome-blind universe'),
-                               prereq(args.previous_270, 'C01 exact artifact'),
-                               prereq(args.availability, 'Authoritative outcome-observability catalog'))
-                    run.features(args.manifest)
-                    run.predictions()
-                    run.pre_outcome_audit(args.isolation_receipt)
-                    run.unlock()
-                    require(bool(args.outcome_manifest), 'Post-unlock official outcome manifests required')
-                    from ..execution.core import utcnow
-                    run.outcomes(args.outcome_manifest, as_of=utcnow())
-                    run.analysis()
-                    run.sensitivities()
-                    result = run.final_report()
+                    def done(stage):
+                        if (directory/(stage+'.json')).exists():
+                            run.load(stage)
+                            return True
+                        return False
+                    if not done('cohort'):
+                        run.cohort(prereq(args.universe, 'Frozen outcome-blind universe'),
+                                   prereq(args.previous_270, 'C01 exact artifact'),
+                                   prereq(args.availability, 'Authoritative outcome-observability catalog'))
+                    if not done('features'):
+                        run.features(args.manifest)
+                    if not done('predictions'):
+                        run.predictions(args.manifest)
+                    if not done('pre-outcome-audit'):
+                        run.pre_outcome_audit(args.isolation_receipt)
+                    if not done('outcome-unlock'):
+                        run.unlock()
+                    if not done('outcomes'):
+                        from ..execution.core import utcnow
+                        sources = args.outcome_manifest
+                        if not sources:
+                            from datetime import datetime
+
+                            from finrisk.sec_bulk import add_twelve_months
+
+                            from .acquire_outcomes import acquire
+                            cases = run.load('cohort')['payload']['cases']
+                            start = min(datetime.fromisoformat(c['accepted']) for c in cases)
+                            end = max(add_twelve_months(datetime.fromisoformat(c['accepted'])) for c in cases)
+                            quarters = []
+                            year, quarter = start.year, (start.month-1)//3+1
+                            last = (end.year, (end.month-1)//3+1)
+                            while (year, quarter) <= last:
+                                quarters.append(f'{year}q{quarter}')
+                                year, quarter = (year+1, 1) if quarter == 4 else (year, quarter+1)
+                            sources = acquire(root, directory, quarters)
+                        run.outcomes(sources, as_of=utcnow())
+                    if not done('analysis'):
+                        run.analysis()
+                    if not done('sensitivities'):
+                        run.sensitivities()
+                    result = run.load('final-report') if done('final-report') else run.final_report()
         print(json.dumps(result, indent=2))
         return 0
     except (GateError, OSError, ValueError) as exc:
