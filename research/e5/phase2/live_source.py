@@ -10,6 +10,7 @@ from __future__ import annotations
 import hashlib
 import json
 import math
+import re
 from datetime import date
 from pathlib import Path
 
@@ -27,7 +28,7 @@ from ..execution.core import (
 )
 from .acquire_sec import USER_AGENT
 from .producer import FIELDS, NumericProposalProducer, flatten
-from .sources import select_value
+from .sources import accepted_utc, select_value
 from .study import REFERENCE
 
 
@@ -42,8 +43,11 @@ def extract(root: Path, cik: str, accession: str, cache: Path):
     require(len(matches) == 1, 'live index accession absent or ambiguous')
     i = matches[0]
     require(table['form'][i] == '10-K', 'original 10-K required')
-    accepted = table['acceptanceDateTime'][i]
-    accepted = __import__('datetime').datetime.fromisoformat(accepted.replace('Z', '+00:00')).isoformat()
+    index_url = f'https://www.sec.gov/Archives/edgar/data/{int(cik)}/{accession.replace("-", "")}/{accession}-index.html'
+    index_bytes = client.get_bytes(index_url, 'index-'+accession)
+    match = re.search(r'Accepted\s*</div>\s*<div[^>]*>\s*([^<]+)', index_bytes.decode(), re.IGNORECASE)
+    require(match is not None, 'authoritative EDGAR index acceptance time missing')
+    accepted = accepted_utc(match.group(1).strip())
     timestamp(accepted)
     period = table['reportDate'][i].replace('-', '')
     filed = table['filingDate'][i]
@@ -108,6 +112,9 @@ def extract(root: Path, cik: str, accession: str, cache: Path):
     return {'packet': packet, 'evidence': {'packet_hash': digest(packet), 'provenance': provenance,
             'source_url': f'https://data.sec.gov/api/xbrl/companyfacts/CIK{cik}.json', 'source_sha256': source_hash,
             'snapshot_acquired_at': utcnow(), 'availability_semantics': 'EXACT_INDEX_ACCESSION_FACTS_NOT_LATEST_VALUES',
+            'index_acceptance_source': {'url': index_url, 'sha256': hashlib.sha256(index_bytes).hexdigest(),
+                                        'accepted_text_eastern': match.group(1).strip(), 'precision': 'SECOND',
+                                        'api_acceptance_field_used_for_clock': False},
             'index_metadata': {k: table[k][i] for k in ('accessionNumber', 'form', 'filingDate', 'reportDate', 'acceptanceDateTime')},
             'retained_accessions': sorted({r['adsh'] for r in rows}), 'future_or_other_accession_backfill': False,
             'known_limitation': 'Current SEC API snapshot; historical equivalence requires explicit qualification, and live use requires acquisition within the frozen prediction deadline.'}}

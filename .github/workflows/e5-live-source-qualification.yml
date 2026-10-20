@@ -23,6 +23,7 @@ jobs:
         run: |
           python - <<'PY'
           import base64, json, os, pathlib, zlib
+          from datetime import datetime
           from research.e5.execution.core import file_hash, read_json
           from research.e5.phase2.live_source import extract
           root = pathlib.Path.cwd()
@@ -32,10 +33,12 @@ jobs:
               expected = old['bundle']['packet']
               differences = {k: {'archive': v, 'live': actual['packet']['features'][k]} for k, v in expected['features'].items()
                              if actual['packet']['features'][k] != v}
-              same_time = actual['packet']['prediction_cutoff'] == expected['prediction_cutoff']
+              seconds = (datetime.fromisoformat(expected['prediction_cutoff'])-datetime.fromisoformat(actual['packet']['prediction_cutoff'])).total_seconds()
+              same_time = 0 <= seconds < 60
               result = {'status': 'PASSED' if not differences and same_time else 'FAILED',
                         'scope': 'EXCLUDED_HISTORICAL_SOURCE_QUALIFICATION_NOT_E5_EVIDENCE', 'bundle': actual,
-                        'feature_differences': differences, 'same_acceptance_timestamp': same_time,
+                        'feature_differences': differences, 'archive_minute_ceiling_matches_primary_seconds': same_time, 'archive_minus_primary_seconds': seconds,
+                        'clock_rule': 'ORIGINAL_EDGAR_INDEX_EASTERN_TO_UTC_SECOND_RESOLUTION; API_TIMESTAMP_IS_NOT_CLOCK_AUTHORITY',
                         'archive_acceptance': expected['prediction_cutoff'], 'source_sha256': file_hash(root/'research/e5/phase2/live_source.py'),
                         'E5_predictions_generated': 0, 'E5_outcomes_accessed': False}
           except Exception as exc:
