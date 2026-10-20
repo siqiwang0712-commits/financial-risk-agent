@@ -5,6 +5,7 @@ import argparse
 import json
 from pathlib import Path
 
+from finrisk.e4_core import EXTENDED_ALIASES
 from finrisk.metrics import calculate_metrics
 
 from ..execution.core import (
@@ -20,6 +21,7 @@ from .live_source import extract as live_extract
 from .precise_arms import fanout
 from .precise_source import extract_packets, resolve_universe
 from .producer import FIELDS
+from .sources import source_manifest, tsv
 from .study import REFERENCE, CalibratedStudyProducer
 
 
@@ -40,14 +42,18 @@ def sources(root, directory, output):
                        for key, value in p['features'].items()
                        if not archive['packet']['features'].get(key) == live['packet']['features'].get(key) == value}
         if differences:
+            archive_path = Path(source_manifest(directory/'2025q3.manifest.json')['archive_path'])
+            tags = {tag for field in differences for tag in EXTENDED_ALIASES.get(field.split('__', 1)[1], ())}
+            source_rows = [r for r in tsv(archive_path, 'num.txt')
+                           if r.get('adsh') == case['accession'] and r.get('tag') in tags]
             freeze_json(output.parent/'source-comparison-failure.json',
                         {'status': 'FAILED', 'case': case, 'differences': differences,
                          'source_sha256': file_hash(root/'research/e5/phase2/live_source.py'),
-                         'archive_bundle': archive, 'live_bundle': live,
+                         'archive_bundle': archive, 'live_bundle': live, 'diagnostic_archive_rows': source_rows,
                          'scope': 'EXCLUDED_ENGINEERING_FIXTURES_ONLY', 'E5_outcomes_accessed': False})
         require(not differences, 'real source financial feature mismatch')
         require(archive['packet']['prediction_cutoff'] == live['packet']['prediction_cutoff'], 'primary clock mismatch')
-        records.append({'case': case, 'archive_bundle': archive, 'live_bundle': live,
+        records.append({'case': case, 'archive_bundle': archive, 'live_bundle': live, 'diagnostic_archive_rows': source_rows,
                         'financial_features_exactly_equal': True, 'primary_second_resolution_clock_equal': True})
     report = {'status': 'PASSED', 'scope': 'ALREADY_EXCLUDED_HISTORICAL_SOURCE_QUALIFICATION_NOT_E5_EVIDENCE',
               'source_sha256': file_hash(root/'research/e5/phase2/live_source.py'),
