@@ -44,12 +44,12 @@ jobs:
       - uses: actions/download-artifact@018cc2cf5baa6db3ef3c5f8a56943fffe632ef53 # v6
         with:
           github-token: ${{ github.token }}
-          run-id: 39376576767
-          artifact-ids: 12243677257
+          run-id: 39383429646
+          artifact-ids: 12246323062
           path: ${{ runner.temp }}/e5-prediction-image
           merge-multiple: true
       - name: Load exact previously qualified image
-        run: docker load --input '${{ runner.temp }}/e5-prediction-image/e5-qualified-prediction-image.tar.gz'
+        run: docker load --input '${{ runner.temp }}/e5-prediction-image/e5-precise-prediction-image.tar.gz'
       - name: Execute frozen real stages; future outcome acquisition occurs only after enforced prediction isolation and unlock
         env:
           E5_PREVIOUS_270: ${{ inputs.previous_270_path }}

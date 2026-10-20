@@ -1,9 +1,6 @@
 name: E5 verify authoritative index acceptance timestamp
 on:
   workflow_dispatch:
-  push:
-    branches: [E5-experiment]
-    paths: ['.github/workflows/e5-edgar-acceptance-audit.yml']
 permissions:
   contents: read
 jobs:
