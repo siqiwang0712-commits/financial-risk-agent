@@ -41,3 +41,29 @@ def test_different_contexts_are_never_collapsed():
     rows[1]['context_id'] += '-other-period-or-entity'
     selected, resolutions = resolve_precision(rows)
     assert selected == rows and not resolutions
+
+
+def test_additional_observability_requires_original_evidence_and_never_changes_observed_values():
+    import pytest
+
+    from research.e5.execution.core import GateError
+    from research.e5.phase2.qualify_precise import compare_source_features
+    root = Path(__file__).resolve().parents[1]
+    proof = read_json(root/'research/e5/phase2/qualification/original-instance-v2-archive-diagnostics.json')
+    a, b = proof['archive_bundle'], proof['live_bundle']
+    historical = deepcopy(a['packet']['features'])
+    extras = compare_source_features(a, b, historical)
+    assert set(extras) == {'current__depreciation', 'previous__depreciation'}
+    assert proof['diagnostic_archive_rows'] == []
+    changed = deepcopy(b)
+    changed['packet']['features']['current__revenue'] += 1
+    with pytest.raises(GateError):
+        compare_source_features(a, changed, historical)
+    changed = deepcopy(b)
+    changed['evidence']['provenance']['current__depreciation']['row_hash'] = 'unbound'
+    with pytest.raises(GateError):
+        compare_source_features(a, changed, historical)
+    changed = deepcopy(b)
+    changed['packet']['features']['current__revenue'] = None
+    with pytest.raises(GateError):
+        compare_source_features(a, changed, historical)

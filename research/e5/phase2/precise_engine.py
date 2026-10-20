@@ -44,6 +44,7 @@ class PreciseExecution(Execution):
                 'source_qualification': live,
                 'retrospective_source': 'ORIGINAL_FSDS_VALUES_WITH_ORIGINAL_INDEX_CLOCK',
                 'prospective_source': 'ORIGINAL_ACCESSION_EXTRACTED_XBRL_INSTANCE_NO_LATEST_API_VALUES',
+                'source_observability': 'R_RETAINS_FSDS_PRIMARY_STATEMENT_FIELDS; P_ORIGINAL_INSTANCE_MAY_INCLUDE_ADDITIONAL_VALID_FACTS; REPORT_SEPARATELY_NO_R_P_POOLING',
                 'prospective_deadline_seconds': 86400,
                 'prospective_enrollment': 'ROLLING_FIRST_ORIGINAL_10K_PER_CIK_FROM_FROZEN_OFFICIAL_FEED_SNAPSHOTS',
                 'prospective_source_frame': 'FIRST_1000_OFFICIAL_CURRENT_10K_FEED_ENTRIES_PER_POLL',

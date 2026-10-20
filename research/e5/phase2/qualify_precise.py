@@ -25,6 +25,34 @@ from .sources import source_manifest, tsv
 from .study import REFERENCE, CalibratedStudyProducer
 
 
+def compare_source_features(archive, live, historical):
+    """R retains FSDS observability; P may use additionally available original facts.
+
+    This is a source contract amendment after the strict equality qualification
+    failed, not a retrospective reclassification of that failed test. Every
+    historical/R feature must replay exactly, and every common observed value
+    must agree. Additional live values require accession-bound original rows.
+    """
+    a, b = archive['packet']['features'], live['packet']['features']
+    require(a == historical and set(a) == set(b), 'historical feature or schema drift')
+    extras = {}
+    for key, value in a.items():
+        if value == b[key]:
+            continue
+        source = live['evidence']['provenance'].get(key)
+        require(value is None and b[key] is not None and source
+                and archive['evidence']['provenance'].get(key) is None
+                and source.get('status') == 'SOURCE_ROW_BOUND'
+                and source['row']['tag'] in EXTENDED_ALIASES.get(key.split('__', 1)[-1], ())
+                and digest(source['row']) == source['row_hash']
+                and source['row']['adsh'] == live['packet']['accession']
+                and float(source['row']['value']) == b[key],
+                'source values conflict or an observed archive value disappeared')
+        extras[key] = {'value': b[key], 'provenance': source,
+                       'reason': 'ORIGINAL_INSTANCE_FACT_ABSENT_FROM_FSDS_PRIMARY_STATEMENT_SOURCE'}
+    return extras
+
+
 def sources(root, directory, output):
     records = []
     for filename in ('known-historical-source-path-avnet-v2.json', 'known-historical-source-path.json'):
@@ -41,7 +69,9 @@ def sources(root, directory, output):
                              'live': live['packet']['features'].get(key), 'historical': value}
                        for key, value in p['features'].items()
                        if not archive['packet']['features'].get(key) == live['packet']['features'].get(key) == value}
-        if differences:
+        try:
+            additional = compare_source_features(archive, live, p['features'])
+        except ValueError:
             archive_path = Path(source_manifest(directory/'2025q3.manifest.json')['archive_path'])
             tags = {tag for field in differences for tag in EXTENDED_ALIASES.get(field.split('__', 1)[1], ())}
             source_rows = [r for r in tsv(archive_path, 'num.txt')
@@ -51,12 +81,18 @@ def sources(root, directory, output):
                          'source_sha256': file_hash(root/'research/e5/phase2/live_source.py'),
                          'archive_bundle': archive, 'live_bundle': live, 'diagnostic_archive_rows': source_rows,
                          'scope': 'EXCLUDED_ENGINEERING_FIXTURES_ONLY', 'E5_outcomes_accessed': False})
-        require(not differences, 'real source financial feature mismatch')
+            raise
         require(archive['packet']['prediction_cutoff'] == live['packet']['prediction_cutoff'], 'primary clock mismatch')
         records.append({'case': case, 'archive_bundle': archive, 'live_bundle': live,
-                        'financial_features_exactly_equal': True, 'primary_second_resolution_clock_equal': True})
+                        'financial_features_exactly_equal': not bool(differences),
+                        'common_observed_values_exactly_equal': True,
+                        'historical_archive_features_exactly_equal': True,
+                        'additional_live_observability': additional,
+                        'primary_second_resolution_clock_equal': True})
     report = {'status': 'PASSED', 'scope': 'ALREADY_EXCLUDED_HISTORICAL_SOURCE_QUALIFICATION_NOT_E5_EVIDENCE',
               'source_sha256': file_hash(root/'research/e5/phase2/live_source.py'),
+              'source_contract': 'ORIGINAL_INSTANCE_V3_COMMON_OBSERVED_VALUE_AGREEMENT_WITH_REPORTED_ADDITIONAL_OBSERVABILITY',
+              'strict_all_field_equality_previous_attempt': 'FAILED_PERMANENTLY_PRESERVED',
               'archive_clock_sha256': file_hash(root/'research/e5/phase2/precise_source.py'),
               'cases': records, 'E5_predictions_generated': 0, 'E5_outcomes_accessed': False}
     freeze_json(output, report)
