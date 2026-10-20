@@ -1,0 +1,34 @@
+name: E5 outcome-value-blind filing availability
+on:
+  workflow_dispatch:
+  push:
+    branches: [E5-experiment]
+    paths: ['.github/workflows/e5-outcome-metadata-availability.yml']
+permissions:
+  contents: read
+jobs:
+  metadata-only:
+    if: github.ref == 'refs/heads/E5-experiment'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7
+        with:
+          python-version: '3.12'
+      - name: Fetch official filing metadata only; never fetch future financial statements or labels
+        env:
+          E5_METADATA_OUTPUT: ${{ runner.temp }}/e5-metadata
+        run: |
+          python - <<'PY'
+          import base64, json, os, pathlib, zlib
+          from research.e5.phase2.availability import build
+          universe = json.loads(pathlib.Path('research/e5/phase2/sources/2025q3.universe-inspection-v2.json').read_text())
+          result = build(universe, pathlib.Path(os.environ['E5_METADATA_OUTPUT']))
+          print('E5_OUTCOME_VALUE_BLIND_AVAILABILITY '+base64.b64encode(zlib.compress(json.dumps(result,sort_keys=True).encode())).decode())
+          PY
+      - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
+        with:
+          name: e5-filing-metadata-only-${{ github.sha }}
+          path: ${{ runner.temp }}/e5-metadata/
+          retention-days: 90
