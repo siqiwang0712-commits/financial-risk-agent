@@ -27,7 +27,7 @@ jobs:
           from research.e5.phase2.isolated import call
           from research.e5.phase2.study import CalibratedStudyProducer
           root = pathlib.Path.cwd()
-          proof = read_json(root/'research/e5/phase2/qualification/known-historical-source-path-avnet.json')
+          proof = read_json(root/'research/e5/phase2/qualification/known-historical-source-path-avnet-v2.json')
           producer = CalibratedStudyProducer(root)
           image = subprocess.check_output(['docker', 'image', 'inspect', 'e5-feature-only', '--format', '{{.Id}}'], text=True).strip()
           result, receipt = call(image, proof['bundle']['packet'], producer.identity)
