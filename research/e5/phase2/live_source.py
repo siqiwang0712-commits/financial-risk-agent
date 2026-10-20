@@ -10,12 +10,14 @@ import hashlib
 import re
 import xml.etree.ElementTree as ET
 from datetime import date
+from decimal import Decimal, InvalidOperation
 from pathlib import Path
 
 from finrisk.e4_core import E4_INSTANT_FIELDS, EXTENDED_ALIASES, _comparative_period
 from finrisk.metrics import resolve_total_debt
 
 from ..execution.core import (
+    GateError,
     digest,
     file_hash,
     freeze_json,
@@ -33,6 +35,49 @@ from .sources import select_value
 from .study import REFERENCE
 
 NS = {'x': 'http://www.xbrl.org/2003/instance'}
+
+
+def resolve_precision(rows):
+    """Keep the unique most precise duplicate only when every declared interval contains it.
+
+    Context identity, concept, unit and period must all agree. Inconsistent,
+    equally precise discordant or undeclared precision facts remain conflicting.
+    This handles rounded narrative repetitions without averaging any values.
+    """
+    groups = {}
+    for row in rows:
+        key = tuple(row[k] for k in ('context_id', 'tag', 'uom', 'ddate', 'qtrs'))
+        groups.setdefault(key, []).append(row)
+    retained, resolutions = [], []
+    for group in groups.values():
+        try:
+            values = [Decimal(r['value']) for r in group]
+            require(all(v.is_finite() for v in values), 'nonfinite XBRL fact')
+            if len(set(values)) <= 1:
+                retained.extend(group)
+                continue
+            bounds = []
+            for row, value in zip(group, values, strict=True):
+                precision = row.get('decimals')
+                if precision == 'INF':
+                    radius = Decimal(0)
+                else:
+                    require(isinstance(precision, str) and re.fullmatch(r'-?\d{1,2}', precision) is not None,
+                            'ambiguous declared precision')
+                    radius = Decimal(10)**(-int(precision))/2
+                bounds.append((value-radius, value+radius, radius))
+            minimum = min(b[2] for b in bounds)
+            best = [i for i, b in enumerate(bounds) if b[2] == minimum]
+            require(len({values[i] for i in best}) == 1, 'equally precise contradictory facts')
+            selected = min(best, key=lambda i: digest(group[i]))
+            lo, hi, _ = bounds[selected]
+            require(all(b[0] <= lo and hi <= b[1] for b in bounds), 'inconsistent rounding intervals')
+            retained.append(group[selected])
+            resolutions.append({'method': 'UNIQUE_MOST_PRECISE_INTERVAL_CONTAINED_IN_ALL_DUPLICATES',
+                                'selected_row_hash': digest(group[selected]), 'all_rows': group})
+        except (GateError, ValueError, TypeError, InvalidOperation):
+            retained.extend(group)
+    return retained, resolutions
 
 
 def extract(root: Path, cik: str, accession: str, cache: Path):
@@ -107,6 +152,7 @@ def extract(root: Path, cik: str, accession: str, cache: Path):
                      'value': (node.text or '').strip(), 'coreg': '', 'segments': '',
                      'context_id': node.attrib.get('contextRef'), 'decimals': node.attrib.get('decimals')})
     require(bool(rows), 'qualified consolidated financial schema unavailable')
+    rows, precision_resolutions = resolve_precision(rows)
     previous_period = _comparative_period(rows, period)
     current, previous, provenance = {}, {}, {}
     for prefix, end, values in [('current', period, current), ('previous', previous_period, previous)]:
@@ -135,5 +181,6 @@ def extract(root: Path, cik: str, accession: str, cache: Path):
     return {'packet': packet, 'evidence': {'packet_hash': digest(packet), 'provenance': provenance,
             'source_url': url, 'source_sha256': source_hash, 'download_timestamp': captured,
             'source_mode': 'LIVE_SEC_EXACT_INDEX_ACCESSION', 'index_acceptance_source': clock,
+            'precision_resolutions': precision_resolutions,
             'sic': int(submissions.get('sic') or 0), 'retained_accessions': [accession],
             'future_or_other_accession_backfill': False, 'financial_api_latest_values_used': False}}
