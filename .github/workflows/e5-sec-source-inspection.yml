@@ -1,0 +1,41 @@
+name: E5 inspect immutable SEC source
+on:
+  workflow_dispatch:
+  push:
+    branches: [E5-experiment]
+    paths: ['.github/workflows/e5-sec-source-inspection.yml']
+permissions:
+  contents: read
+  actions: read
+jobs:
+  inspect:
+    if: github.ref == 'refs/heads/E5-experiment'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/download-artifact@018cc2cf5baa6db3ef3c5f8a56943fffe632ef53 # v6
+        with:
+          github-token: ${{ github.token }}
+          run-id: 39280632208
+          artifact-ids: 12201020392
+          path: ${{ runner.temp }}/sec
+          merge-multiple: true
+      - name: Verify immutable official archive and export metadata only
+        env:
+          SEC_SOURCE_DIR: ${{ runner.temp }}/sec
+        run: |
+          python - <<'PY'
+          import base64, hashlib, json, os, pathlib, zipfile, zlib
+          p = pathlib.Path(os.environ['SEC_SOURCE_DIR'])
+          m = json.loads((p/'2025q3.manifest.json').read_text())
+          assert m['sha256'] == 'ebe25fa74c3655f4738ed9eb144af3953c3981c80f57d74829fb9ad68b114710'
+          assert hashlib.sha256((p/m['file']).read_bytes()).hexdigest() == m['sha256']
+          with zipfile.ZipFile(p/m['file']) as z:
+              assert z.testzip() is None
+          data = (p/'2025q3.10k-submissions.json').read_bytes()
+          assert hashlib.sha256(data).hexdigest() == m['submission_metadata_sha256']
+          payload = base64.b64encode(zlib.compress(data)).decode()
+          print('E5_SOURCE_MANIFEST '+json.dumps(m, sort_keys=True))
+          print('E5_METADATA_ZLIB_BASE64 '+payload)
+          print('E5_SOURCE_VALIDATED_WITHOUT_OUTCOMES')
+          PY

@@ -1,10 +1,6 @@
 name: E5 authoritative SEC feature acquisition
 on:
   workflow_dispatch:
-  push:
-    branches: [E5-experiment]
-    paths:
-      - '.github/workflows/e5-sec-acquisition.yml'
 permissions:
   contents: read
 concurrency:
