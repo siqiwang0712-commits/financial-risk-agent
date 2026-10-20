@@ -53,8 +53,16 @@ class PreciseExecution(Execution):
                 'live_packet_extractor_sha256': file_hash(self.root/'research/e5/phase2/live_source.py'),
                 'archive_clock_extractor_sha256': file_hash(self.root/'research/e5/phase2/precise_source.py')}
             payload['bindings'] = dict(payload['bindings']) | {
-                'research/e5/run_e5.py': file_hash(self.root/'research/e5/run_e5.py')}
+                'research/e5/run_e5.py': file_hash(self.root/'research/e5/run_e5.py'),
+                'research/e5/phase2/Dockerfile.precise-prediction': file_hash(self.root/'research/e5/phase2/Dockerfile.precise-prediction')}
         return super().write(stage, payload)
+
+    def check_protocol(self):
+        payload = super().check_protocol()
+        verify_files(self.root, payload['assurance_source_hashes'])
+        require(file_hash(self.root/'backend/finrisk/enterprise/decision_bundle.py') == payload['certificate_schema_hash'],
+                'frozen certificate implementation drift')
+        return payload
 
     def cohort(self, universe: Path, previous: Path, availability: Path):
         p = self.check_protocol()
